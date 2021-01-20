@@ -3,11 +3,11 @@ package app
 import (
 	"io"
 	"os"
-    "path/filepath"
+	"path/filepath"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec/types"
-    "github.com/pelletier/go-toml"
+	"github.com/pelletier/go-toml"
 	"github.com/spf13/cast"
 
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -15,7 +15,10 @@ import (
 	tmos "github.com/tendermint/tendermint/libs/os"
 	dbm "github.com/tendermint/tm-db"
 
+	appparams "github.com/allinbits/cosmos-cash/app/params"
 	"github.com/cosmos/cosmos-sdk/baseapp"
+	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
+
 	"github.com/cosmos/cosmos-sdk/client/rpc"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/server/api"
@@ -81,11 +84,13 @@ import (
 	tmjson "github.com/tendermint/tendermint/libs/json"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	rpchttp "github.com/tendermint/tendermint/rpc/client/http"
-	appparams "github.com/allinbits/cosmos-cash/app/params"
-	"github.com/allinbits/cosmos-cash/x/cosmoscash"
-	cosmoscashkeeper "github.com/allinbits/cosmos-cash/x/cosmoscash/keeper"
-	cosmoscashtypes "github.com/allinbits/cosmos-cash/x/cosmoscash/types"
 	// this line is used by starport scaffolding # stargate/app/moduleImport
+	ibcidentifier "github.com/allinbits/cosmos-cash/x/ibc-identifier"
+	ibcidentifierkeeper "github.com/allinbits/cosmos-cash/x/ibc-identifier/keeper"
+	ibcidentifiertypes "github.com/allinbits/cosmos-cash/x/ibc-identifier/types"
+	"github.com/allinbits/cosmos-cash/x/identifier"
+	identifierkeeper "github.com/allinbits/cosmos-cash/x/identifier/keeper"
+	identifiertypes "github.com/allinbits/cosmos-cash/x/identifier/types"
 )
 
 var (
@@ -116,8 +121,9 @@ var (
 		evidence.AppModuleBasic{},
 		transfer.AppModuleBasic{},
 		vesting.AppModuleBasic{},
-		cosmoscash.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
+		ibcidentifier.AppModuleBasic{},
+		identifier.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -181,8 +187,9 @@ type App struct {
 	ScopedIBCKeeper      capabilitykeeper.ScopedKeeper
 	ScopedTransferKeeper capabilitykeeper.ScopedKeeper
 
-	cosmoscashKeeper cosmoscashkeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
+	ibcidentifierKeeper ibcidentifierkeeper.Keeper
+	identifierKeeper    identifierkeeper.Keeper
 
 	// the module manager
 	mm *module.Manager
@@ -210,8 +217,9 @@ func New(
 		minttypes.StoreKey, distrtypes.StoreKey, slashingtypes.StoreKey,
 		govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey,
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
-        cosmoscashtypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
+		ibcidentifiertypes.StoreKey,
+		identifiertypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -239,6 +247,7 @@ func New(
 	// grant capabilities for the ibc and ibc-transfer modules
 	scopedIBCKeeper := app.CapabilityKeeper.ScopeToModule(ibchost.ModuleName)
 	scopedTransferKeeper := app.CapabilityKeeper.ScopeToModule(ibctransfertypes.ModuleName)
+	scopedIdentifierKeeper := app.CapabilityKeeper.ScopeToModule(ibcidentifiertypes.ModuleName)
 
 	// add keepers
 	app.AccountKeeper = authkeeper.NewAccountKeeper(
@@ -276,7 +285,7 @@ func New(
 
 	// Create IBC Keeper
 	app.IBCKeeper = ibckeeper.NewKeeper(
-		appCodec, keys[ibchost.StoreKey], app.StakingKeeper, scopedIBCKeeper,
+		appCodec, keys[ibchost.StoreKey], app.GetSubspace(ibchost.ModuleName), app.StakingKeeper, scopedIBCKeeper,
 	)
 
 	// register the proposal types
@@ -299,9 +308,25 @@ func New(
 	)
 	transferModule := transfer.NewAppModule(app.TransferKeeper)
 
+	app.identifierKeeper = *identifierkeeper.NewKeeper(
+		appCodec,
+		keys[identifiertypes.StoreKey],
+		keys[identifiertypes.MemStoreKey],
+	)
+
+	app.ibcidentifierKeeper = ibcidentifierkeeper.NewKeeper(
+		appCodec,
+		keys[ibcidentifiertypes.StoreKey],
+		app.IBCKeeper.ChannelKeeper, &app.IBCKeeper.PortKeeper,
+		app.AccountKeeper, app.BankKeeper, scopedIdentifierKeeper,
+		app.identifierKeeper,
+	)
+	identifierModule := ibcidentifier.NewAppModule(appCodec, app.ibcidentifierKeeper)
+
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := porttypes.NewRouter()
 	ibcRouter.AddRoute(ibctransfertypes.ModuleName, transferModule)
+	ibcRouter.AddRoute(ibcidentifiertypes.ModuleName, identifierModule)
 	app.IBCKeeper.SetRouter(ibcRouter)
 
 	// Create evidence Keeper for to register the IBC light client misbehaviour evidence route
@@ -310,10 +335,6 @@ func New(
 	)
 	// If evidence needs to be handled for the app, set routes in router here and seal
 	app.EvidenceKeeper = *evidenceKeeper
-
-	app.cosmoscashKeeper = *cosmoscashkeeper.NewKeeper(
-        appCodec, keys[cosmoscashtypes.StoreKey], keys[cosmoscashtypes.MemStoreKey],
-	)
 
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
@@ -346,8 +367,9 @@ func New(
 		ibc.NewAppModule(app.IBCKeeper),
 		params.NewAppModule(app.ParamsKeeper),
 		transferModule,
-		cosmoscash.NewAppModule(appCodec, app.cosmoscashKeeper),
 		// this line is used by starport scaffolding # stargate/app/appModule
+		identifierModule,
+		identifier.NewAppModule(appCodec, app.identifierKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -381,6 +403,8 @@ func New(
 		evidencetypes.ModuleName,
 		ibctransfertypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
+		ibcidentifiertypes.ModuleName,
+		identifiertypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
@@ -531,11 +555,11 @@ func (app *App) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig
 	// Register legacy tx routes.
 	authrest.RegisterTxRoutes(clientCtx, apiSvr.Router)
 	// Register new tx routes from grpc-gateway.
-	authtx.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCRouter)
+	authtx.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
 
 	// Register legacy and grpc-gateway routes for all modules.
 	ModuleBasics.RegisterRESTRoutes(clientCtx, apiSvr.Router)
-	ModuleBasics.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCRouter)
+	ModuleBasics.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
 }
 
 // RegisterTxService implements the Application.RegisterTxService method.
@@ -564,6 +588,11 @@ func GetMaccPerms() map[string][]string {
 	return dupMaccPerms
 }
 
+// RegisterTendermintService implements the Application.RegisterTendermintService method.
+func (app *App) RegisterTendermintService(clientCtx client.Context) {
+	tmservice.RegisterTendermintService(app.BaseApp.GRPCQueryRouter(), clientCtx, app.interfaceRegistry)
+}
+
 // initParamsKeeper init params keeper and its subspaces
 func initParamsKeeper(appCodec codec.BinaryMarshaler, legacyAmino *codec.LegacyAmino, key, tkey sdk.StoreKey) paramskeeper.Keeper {
 	paramsKeeper := paramskeeper.NewKeeper(appCodec, legacyAmino, key, tkey)
@@ -576,8 +605,11 @@ func initParamsKeeper(appCodec codec.BinaryMarshaler, legacyAmino *codec.LegacyA
 	paramsKeeper.Subspace(slashingtypes.ModuleName)
 	paramsKeeper.Subspace(govtypes.ModuleName).WithKeyTable(govtypes.ParamKeyTable())
 	paramsKeeper.Subspace(crisistypes.ModuleName)
+	paramsKeeper.Subspace(ibchost.ModuleName)
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
+	paramsKeeper.Subspace(ibcidentifiertypes.ModuleName)
+	paramsKeeper.Subspace(identifiertypes.ModuleName)
 
 	return paramsKeeper
 }

@@ -1,11 +1,11 @@
 syntax = "proto3";
-package allinbits.cosmoscash.cosmoscash;
+package allinbits.cosmoscash.ibcidentifier;
 
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 // this line is used by starport scaffolding # 1
 
-option go_package = "github.com/allinbits/cosmos-cash/x/cosmoscash/types";
+option go_package = "github.com/allinbits/cosmos-cash/x/ibc-identifier/types";
 
 // Query defines the gRPC querier service.
 service Query {

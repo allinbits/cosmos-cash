@@ -1,0 +1,14 @@
+syntax = "proto3";
+package allinbits.cosmoscash.ibcidentifier;
+
+option go_package = "github.com/allinbits/cosmos-cash/x/ibc-identifier/types";
+
+import "gogoproto/gogo.proto";
+import "ibc/core/client/v1/client.proto";
+
+// IdentifierPacketData defines a struct for the packet payload
+message IdentifierPacketData {
+  uint64 id = 2;
+
+}
+

@@ -1,4 +1,4 @@
-package identifier
+package issuer
 
 import (
 	"encoding/json"
@@ -11,10 +11,10 @@ import (
 
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/allinbits/cosmos-cash/x/identifier/client/cli"
-	"github.com/allinbits/cosmos-cash/x/identifier/client/rest"
-	"github.com/allinbits/cosmos-cash/x/identifier/keeper"
-	"github.com/allinbits/cosmos-cash/x/identifier/types"
+	"github.com/allinbits/cosmos-cash/x/issuer/client/cli"
+	"github.com/allinbits/cosmos-cash/x/issuer/client/rest"
+	"github.com/allinbits/cosmos-cash/x/issuer/keeper"
+	"github.com/allinbits/cosmos-cash/x/issuer/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"

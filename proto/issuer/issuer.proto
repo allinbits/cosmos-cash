@@ -1,0 +1,15 @@
+syntax = "proto3";
+package allinbits.cosmoscash.issuer;
+
+option go_package = "github.com/allinbits/cosmos-cash/x/issuer/types";
+
+import "gogoproto/gogo.proto";
+
+// Issuer represents a dencentralised issuer.
+message Issuer {
+  string Name = 1;
+  string Token  = 2;
+  int32 Fee = 3;
+  string State = 4;
+  string Address = 5;
+}

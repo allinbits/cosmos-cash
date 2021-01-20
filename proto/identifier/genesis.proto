@@ -1,0 +1,8 @@
+syntax = "proto3";
+package allinbits.cosmoscash.identifier;
+
+option go_package = "github.com/allinbits/cosmos-cash/x/identifier/types";
+
+// GenesisState defines the identifier module's genesis state.
+message GenesisState {
+}

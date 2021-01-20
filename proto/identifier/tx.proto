@@ -1,0 +1,27 @@
+syntax = "proto3";
+package allinbits.cosmoscash.identifier;
+
+import "google/protobuf/any.proto";
+import "gogoproto/gogo.proto";
+
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "github.com/allinbits/cosmos-cash/x/identifier/types";
+
+// Msg defines the identity Msg service.
+service Msg {
+  // CreateDidDocument defines a method for creating a new identity.
+  rpc CreateIdentifier(MsgCreateIdentifier) returns (MsgCreateIdentifierResponse);
+}
+
+// MsgCreateIdentifier defines a SDK message for creating a new identifer.
+message MsgCreateIdentifier {
+  option (gogoproto.equal)           = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string     context        = 1; 
+  string     id             = 2; 
+}
+
+message MsgCreateIdentifierResponse {}
+

@@ -2,7 +2,7 @@ package keeper
 
 import (
 	// this line is used by starport scaffolding # 1
-	"github.com/allinbits/cosmos-cash/x/identifier/types"
+	"github.com/allinbits/cosmos-cash/x/issuer/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"

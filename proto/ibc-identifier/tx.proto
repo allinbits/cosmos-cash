@@ -1,0 +1,43 @@
+syntax = "proto3";
+package allinbits.cosmoscash.ibcidentifier;
+
+import "google/protobuf/any.proto";
+import "gogoproto/gogo.proto";
+
+import "cosmos_proto/cosmos.proto";
+import "ibc/core/client/v1/client.proto";
+
+option go_package = "github.com/allinbits/cosmos-cash/x/ibc-identifier/types";
+
+// Msg defines the identity Msg service.
+service Msg {
+  // TransferIdentifierIBC defines a method for transfering an identifier to another chain.
+  rpc TransferIdentifierIBC(MsgTransferIdentifierIBC) returns (MsgTransferIdentifierIBCResponse);
+}
+
+// MsgTransferIdentifierIBC defines a SDK message for creating a new identifer.
+message MsgTransferIdentifierIBC {
+  option (gogoproto.equal)           = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string     id             = 1; 
+
+  // the port by which the packet will be sent
+  string source_port = 2 [(gogoproto.moretags) = "yaml:\"source_port\""];
+
+  // the channel by which the packet will be sent
+  string source_channel = 3 [(gogoproto.moretags) = "yaml:\"source_channel\""];
+
+  // Timeout height relative to the current block height.
+  // The timeout is disabled when set to 0.
+  ibc.core.client.v1.Height timeout_height = 4
+      [(gogoproto.moretags) = "yaml:\"timeout_height\"", (gogoproto.nullable) = false];
+
+  // Timeout timestamp (in nanoseconds) relative to the current block timestamp.
+  // The timeout is disabled when set to 0.
+  uint64 timeout_timestamp = 5 [(gogoproto.moretags) = "yaml:\"timeout_timestamp\""];
+
+}
+
+message MsgTransferIdentifierIBCResponse {}
+

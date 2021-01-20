@@ -1,9 +1,0 @@
-syntax = "proto3";
-package allinbits.cosmoscash.cosmoscash;
-
-option go_package = "github.com/allinbits/cosmos-cash/x/cosmoscash/types";
-
-// GenesisState defines the capability module's genesis state.
-message GenesisState {
-}
-

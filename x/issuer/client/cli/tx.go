@@ -32,7 +32,7 @@ func GetTxCmd() *cobra.Command {
 // NewCreateIdentifierCmd defines the command to create a new IBC light client.
 func NewCreateIssuerCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Short:   "create issuer",
+		Short:   "create an issuer",
 		Use:     "create",
 		Example: fmt.Sprintf("creates an issuer"),
 		Args:    cobra.ExactArgs(0),

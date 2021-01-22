@@ -1,7 +1,10 @@
 package cli
 
 import (
+	"context"
 	"fmt"
+	"github.com/cosmos/cosmos-sdk/client/flags"
+
 	// "strings"
 
 	"github.com/spf13/cobra"
@@ -25,6 +28,42 @@ func GetQueryCmd(queryRoute string) *cobra.Command {
 	}
 
 	// this line is used by starport scaffolding # 1
+	cmd.AddCommand(
+		GetCmdQueryIssuers(),
+	)
+
+	return cmd
+}
+
+func GetCmdQueryIssuers() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "issuers",
+		Short: "Query for all issuers",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
+			}
+
+			result, err := queryClient.Issuers(context.Background(), &types.QueryIssuersRequest{
+				// Leaving status empty on purpose to query all validators.
+				Pagination: pageReq,
+			})
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(result)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
 
 	return cmd
 }

@@ -6,7 +6,7 @@ import (
 )
 
 func (k Keeper) SetIssuer(ctx sdk.Context, key []byte, document types.Issuer) {
-	k.Set(ctx, key, types.IssuerKey, document, k.MarshalIdentifier)
+	k.Set(ctx, key, types.IssuerKey, document, k.MarshalIssuer)
 }
 
 func (k Keeper) GetIssuer(ctx sdk.Context, key []byte) (types.Issuer, bool) {
@@ -29,7 +29,7 @@ func (k Keeper) UnmarshalIssuer(value []byte) (interface{}, bool) {
 	return issuer, true
 }
 
-func (k Keeper) MarshalIdentifier(value interface{}) []byte {
+func (k Keeper) MarshalIssuer(value interface{}) []byte {
 	identifier := value.(types.Issuer)
 
 	bytes, _ := k.cdc.MarshalBinaryBare(&identifier)
@@ -37,7 +37,7 @@ func (k Keeper) MarshalIdentifier(value interface{}) []byte {
 	return bytes
 }
 
-func (k Keeper) GetAllIdentifiersWithCondition(ctx sdk.Context, key []byte, identiferSelector func(votes types.Issuer) bool) (identifiers []types.Issuer) {
+func (k Keeper) GetAllIssuersWithCondition(ctx sdk.Context, key []byte, identiferSelector func(votes types.Issuer) bool) (identifiers []types.Issuer) {
 	val := k.GetAll(ctx, key, k.UnmarshalIssuer)
 
 	for _, value := range val {
@@ -50,6 +50,6 @@ func (k Keeper) GetAllIdentifiersWithCondition(ctx sdk.Context, key []byte, iden
 	return identifiers
 }
 
-func (k Keeper) GetAllIdentifiers(ctx sdk.Context) []types.Issuer {
-	return k.GetAllIdentifiersWithCondition(ctx, types.IssuerKey, func(votes types.Issuer) bool { return true })
+func (k Keeper) GetAllIssuers(ctx sdk.Context) []types.Issuer {
+	return k.GetAllIssuersWithCondition(ctx, types.IssuerKey, func(votes types.Issuer) bool { return true })
 }

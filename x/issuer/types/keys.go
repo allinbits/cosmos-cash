@@ -1,5 +1,9 @@
 package types
 
+var (
+	IssuerKey = []byte{0x65} // prefix for each key to a DidDocument
+)
+
 const (
 	// ModuleName defines the module name
 	ModuleName = "issuer"

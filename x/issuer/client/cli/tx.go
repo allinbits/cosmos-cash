@@ -2,6 +2,8 @@ package cli
 
 import (
 	"fmt"
+	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/cosmos/cosmos-sdk/client/tx"
 
 	"github.com/spf13/cobra"
 
@@ -21,6 +23,37 @@ func GetTxCmd() *cobra.Command {
 	}
 
 	// this line is used by starport scaffolding # 1
+	cmd.AddCommand(
+		NewCreateIssuerCmd(),
+	)
+	return cmd
+}
+
+// NewCreateIdentifierCmd defines the command to create a new IBC light client.
+func NewCreateIssuerCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Short:   "create issuer",
+		Use:     "create",
+		Example: fmt.Sprintf("creates an issuer"),
+		Args:    cobra.ExactArgs(0),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			//cdc := codec.NewProtoCodec(clientCtx.InterfaceRegistry)
+
+			msg := types.NewMsgCreateIssuer("name", "token", 0, "state", clientCtx.GetFromAddress().String())
+
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
 
 	return cmd
 }

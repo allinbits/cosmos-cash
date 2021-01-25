@@ -37,27 +37,9 @@ func (k Keeper) OnAcknowledgementPacket(
 	packet channeltypes.Packet,
 	acknowledgement []byte,
 ) error {
-	var ack channeltypes.Acknowledgement
-	if err := types.ModuleCdc.UnmarshalJSON(acknowledgement, &ack); err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal ICS-20 transfer packet acknowledgement: %v", err)
-	}
-
-	switch ack.Response.(type) {
-	case *channeltypes.Acknowledgement_Error:
-		return nil
-	default:
-		// the acknowledgement succeeded on the receiving chain so nothing
-		// needs to be executed and no error needs to be returned
-		return nil
-	}
-
 	return nil
 }
 
 func (k Keeper) OnTimeoutPacket(ctx sdk.Context, packet channeltypes.Packet) error {
-	//	var data types.FungibleTokenPacketData
-	//	if err := types.ModuleCdc.UnmarshalJSON(packet.GetData(), &data); err != nil {
-	//		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal ICS-20 transfer packet data: %s", err.Error())
-	//	}
 	return nil
 }

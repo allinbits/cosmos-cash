@@ -1,6 +1,7 @@
 package ibcidentifier
 
 import (
+	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
@@ -88,22 +89,19 @@ func (am AppModule) OnRecvPacket(
 	ctx sdk.Context,
 	packet channeltypes.Packet,
 ) (*sdk.Result, []byte, error) {
-	acknowledgement := channeltypes.NewResultAcknowledgement([]byte{byte(0)})
+	acknowledgement := channeltypes.NewResultAcknowledgement([]byte{byte(1)})
 
-	if err := am.keeper.OnRecvPacket(ctx, packet); err != nil {
+	err := am.keeper.OnRecvPacket(ctx, packet)
+	if err != nil {
 		return nil, nil, err
 	}
 
-	//ctx.EventManager().EmitEvent(
-	//	sdk.NewEvent(
-	//		types.EventTypePacket,
-	//		sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-	//		sdk.NewAttribute(types.AttributeKeyReceiver, data.Receiver),
-	//		sdk.NewAttribute(types.AttributeKeyDenom, data.Denom),
-	//		sdk.NewAttribute(types.AttributeKeyAmount, fmt.Sprintf("%d", data.Amount)),
-	//		sdk.NewAttribute(types.AttributeKeyAckSuccess, fmt.Sprintf("%t", err != nil)),
-	//	),
-	//)
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			"did-document",
+			sdk.NewAttribute("success", fmt.Sprintf("%t", err != nil)),
+		),
+	)
 
 	// NOTE: acknowledgement will be written synchronously during IBC handler execution.
 	return &sdk.Result{
@@ -120,33 +118,6 @@ func (am AppModule) OnAcknowledgementPacket(
 	if err := am.keeper.OnAcknowledgementPacket(ctx, packet, acknowledgement); err != nil {
 		return nil, err
 	}
-	//	ctx.EventManager().EmitEvent(
-	//		sdk.NewEvent(
-	//			types.EventTypePacket,
-	//			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-	//			sdk.NewAttribute(types.AttributeKeyReceiver, data.Receiver),
-	//			sdk.NewAttribute(types.AttributeKeyDenom, data.Denom),
-	//			sdk.NewAttribute(types.AttributeKeyAmount, fmt.Sprintf("%d", data.Amount)),
-	//			sdk.NewAttribute(types.AttributeKeyAck, fmt.Sprintf("%v", ack)),
-	//		),
-	//	)
-	//
-	//	switch resp := ack.Response.(type) {
-	//	case *channeltypes.Acknowledgement_Result:
-	//		ctx.EventManager().EmitEvent(
-	//			sdk.NewEvent(
-	//				types.EventTypePacket,
-	//				sdk.NewAttribute(types.AttributeKeyAckSuccess, string(resp.Result)),
-	//			),
-	//		)
-	//	case *channeltypes.Acknowledgement_Error:
-	//		ctx.EventManager().EmitEvent(
-	//			sdk.NewEvent(
-	//				types.EventTypePacket,
-	//				sdk.NewAttribute(types.AttributeKeyAckError, resp.Error),
-	//			),
-	//		)
-	//	}
 
 	return &sdk.Result{
 		Events: ctx.EventManager().Events().ToABCIEvents(),
@@ -161,16 +132,6 @@ func (am AppModule) OnTimeoutPacket(
 	if err := am.keeper.OnTimeoutPacket(ctx, packet); err != nil {
 		return nil, err
 	}
-
-	//	ctx.EventManager().EmitEvent(
-	//		sdk.NewEvent(
-	//			types.EventTypeTimeout,
-	//			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-	//			sdk.NewAttribute(types.AttributeKeyRefundReceiver, data.Sender),
-	//			sdk.NewAttribute(types.AttributeKeyRefundDenom, data.Denom),
-	//			sdk.NewAttribute(types.AttributeKeyRefundAmount, fmt.Sprintf("%d", data.Amount)),
-	//		),
-	//	)
 
 	return &sdk.Result{
 		Events: ctx.EventManager().Events().ToABCIEvents(),

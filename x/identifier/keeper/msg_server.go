@@ -2,17 +2,8 @@ package keeper
 
 import (
 	"context"
-	"fmt"
-	//	"time"
-	//
-	//	metrics "github.com/armon/go-metrics"
-	//	tmstrings "github.com/tendermint/tendermint/libs/strings"
-	//
-	//	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
-	//	"github.com/cosmos/cosmos-sdk/telemetry"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	//	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/allinbits/cosmos-cash/x/identifier/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 type msgServer struct {
@@ -30,13 +21,12 @@ var _ types.MsgServer = msgServer{}
 func (k msgServer) CreateIdentifier(goCtx context.Context, msg *types.MsgCreateIdentifier) (*types.MsgCreateIdentifierResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	acc, _ := sdk.AccAddressFromBech32(msg.Id)
+	// TODO: check if identifier exists
 
-	identifer, _ := types.NewIdentifier(acc)
+	identifer, _ := types.NewIdentifier(msg.Id, msg.Authentication)
 	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), identifer)
 
-	id, _ := k.Keeper.GetIdentifier(ctx, []byte(msg.Id))
-	fmt.Println(id)
+	//	id, _ := k.Keeper.GetIdentifier(ctx, []byte(msg.Id))
 
 	return &types.MsgCreateIdentifierResponse{}, nil
 }

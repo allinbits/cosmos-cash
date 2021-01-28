@@ -3,6 +3,7 @@ package allinbits.cosmoscash.identifier;
 
 import "google/protobuf/any.proto";
 import "gogoproto/gogo.proto";
+import "identifier/identifier.proto";
 
 import "cosmos_proto/cosmos.proto";
 
@@ -21,6 +22,14 @@ message MsgCreateIdentifier {
 
   string     context        = 1; 
   string     id             = 2; 
+
+  // authentication represents public key associated with the did document.
+  repeated Authentication authentication = 3;
+
+  // services represents each service associated with a did
+  repeated Service services = 4;
+
+  string owner = 5;
 }
 
 message MsgCreateIdentifierResponse {}

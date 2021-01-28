@@ -21,7 +21,7 @@ func (k Keeper) OnSendPacket(ctx sdk.Context, packet channeltypes.Packet) error 
 func (k Keeper) OnRecvPacket(ctx sdk.Context, packet channeltypes.Packet) error {
 	var data identifiertypes.DidDocument
 	if err := types.ModuleCdc.UnmarshalJSON(packet.GetData(), &data); err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal ICS-20 transfer packet data: %s", err.Error())
+		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal identifier transfer packet data: %s", err.Error())
 	}
 
 	k.identifierKeeper.SetIdentifier(ctx, []byte(data.Id), data)

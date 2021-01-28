@@ -1,2 +1,0 @@
-# cosmos-cash
-Cosmos Cash

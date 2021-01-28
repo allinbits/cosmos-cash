@@ -12,10 +12,16 @@ const (
 var _ sdk.Msg = &MsgCreateIdentifier{}
 
 // NewMsgCreateIdentifier creates a new MsgCreateIdentifier instance
-func NewMsgCreateIdentifier(id string) *MsgCreateIdentifier {
+func NewMsgCreateIdentifier(
+	id string,
+	authentication []*Authentication,
+	owner string,
+) *MsgCreateIdentifier {
 	return &MsgCreateIdentifier{
-		Context: "context",
-		Id:      id,
+		Context:        "https://www.w3.org/ns/did/v1",
+		Id:             id,
+		Authentication: authentication,
+		Owner:          owner,
 	}
 }
 
@@ -40,7 +46,7 @@ func (msg MsgCreateIdentifier) GetSignBytes() []byte {
 
 // GetSigners implements sdk.Msg
 func (msg MsgCreateIdentifier) GetSigners() []sdk.AccAddress {
-	accAddr, err := sdk.AccAddressFromBech32(msg.Id)
+	accAddr, err := sdk.AccAddressFromBech32(msg.Owner)
 	if err != nil {
 		panic(err)
 	}

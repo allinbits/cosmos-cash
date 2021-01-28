@@ -89,13 +89,9 @@ func (k msgServer) Transfer(
 		return sdkerrors.Wrap(channeltypes.ErrChannelCapabilityNotFound, "module does not own channel capability")
 	}
 
-	senderAcc, err := sdk.AccAddressFromBech32(sender)
-	if err != nil {
-		return err
-	}
-
 	packetData, _ := identifiertypes.NewIdentifier(
-		senderAcc,
+		sender,
+		nil,
 	)
 
 	packet := channeltypes.NewPacket(

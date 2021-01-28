@@ -32,18 +32,38 @@ func GetTxCmd() *cobra.Command {
 // NewCreateIdentifierCmd defines the command to create a new IBC light client.
 func NewCreateIdentifierCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "create",
+		Use:     "create [id]",
 		Short:   "create decentralized identifier (did) document",
 		Example: fmt.Sprintf("creates a did document for users"),
-		Args:    cobra.ExactArgs(0),
+		Args:    cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 			//cdc := codec.NewProtoCodec(clientCtx.InterfaceRegistry)
+			accAddr := clientCtx.GetFromAddress()
 
-			msg := types.NewMsgCreateIdentifier(clientCtx.GetFromAddress().String())
+			info, err := clientCtx.Keyring.KeyByAddress(accAddr)
+			if err != nil {
+				return err
+			}
+			pubKey := info.GetPubKey()
+			accAddrBech32 := accAddr.String()
+			id := types.DidPrefix + accAddrBech32
+
+			auth := types.NewAuthentication(
+				accAddrBech32,
+				"sepk256",
+				id,
+				pubKey.Address().String(),
+			)
+
+			msg := types.NewMsgCreateIdentifier(
+				id,
+				types.Authentications{&auth},
+				accAddrBech32,
+			)
 
 			if err := msg.ValidateBasic(); err != nil {
 				return err

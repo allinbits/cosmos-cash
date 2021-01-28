@@ -17,6 +17,9 @@ const (
 	// QuerierRoute defines the module's query routing key
 	QuerierRoute = ModuleName
 
+	// QuerierRoute defines the module's query routing key
+	DidPrefix = "did:cash:"
+
 	// MemStoreKey defines the in-memory store key
 	MemStoreKey = "mem_capability"
 )

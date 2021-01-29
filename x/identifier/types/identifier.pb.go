@@ -23,7 +23,7 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// DidDocument represents a dencentralised identifer .
+// DidDocument represents a dencentralised identifer.
 type DidDocument struct {
 	// @context is spec for did document.
 	Context string `protobuf:"bytes,1,opt,name=context,proto3" json:"context,omitempty"`
@@ -96,7 +96,7 @@ func (m *DidDocument) GetServices() []*Service {
 	return nil
 }
 
-// Authentication defines a validator description.
+// Authentication defines how to authenticate a did document.
 type Authentication struct {
 	Id         string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Type       string `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`

@@ -18,15 +18,16 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 
 var _ types.MsgServer = msgServer{}
 
-func (k msgServer) CreateIdentifier(goCtx context.Context, msg *types.MsgCreateIdentifier) (*types.MsgCreateIdentifierResponse, error) {
+func (k msgServer) CreateIdentifier(
+	goCtx context.Context,
+	msg *types.MsgCreateIdentifier,
+) (*types.MsgCreateIdentifierResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// TODO: check if identifier exists
 
 	identifer, _ := types.NewIdentifier(msg.Id, msg.Authentication)
 	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), identifer)
-
-	//	id, _ := k.Keeper.GetIdentifier(ctx, []byte(msg.Id))
 
 	return &types.MsgCreateIdentifierResponse{}, nil
 }

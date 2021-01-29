@@ -13,13 +13,14 @@ const (
 var _ sdk.Msg = &MsgTransferIdentifierIBC{}
 
 // NewMsgTransferIdentifierIBC creates a new MsgTransferIdentifierIBC instance
-func NewMsgTransferIdentifierIBC(id, port, channel string, height clienttypes.Height, timestamp uint64) *MsgTransferIdentifierIBC {
+func NewMsgTransferIdentifierIBC(id, port, channel string, height clienttypes.Height, timestamp uint64, owner string) *MsgTransferIdentifierIBC {
 	return &MsgTransferIdentifierIBC{
 		Id:               id,
 		SourcePort:       port,
 		SourceChannel:    channel,
 		TimeoutHeight:    height,
 		TimeoutTimestamp: timestamp,
+		Owner:            owner,
 	}
 }
 
@@ -44,7 +45,7 @@ func (msg MsgTransferIdentifierIBC) GetSignBytes() []byte {
 
 // GetSigners implements sdk.Msg
 func (msg MsgTransferIdentifierIBC) GetSigners() []sdk.AccAddress {
-	accAddr, err := sdk.AccAddressFromBech32(msg.Id)
+	accAddr, err := sdk.AccAddressFromBech32(msg.Owner)
 	if err != nil {
 		panic(err)
 	}

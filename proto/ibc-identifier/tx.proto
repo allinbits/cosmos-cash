@@ -36,6 +36,7 @@ message MsgTransferIdentifierIBC {
   // Timeout timestamp (in nanoseconds) relative to the current block timestamp.
   // The timeout is disabled when set to 0.
   uint64 timeout_timestamp = 5 [(gogoproto.moretags) = "yaml:\"timeout_timestamp\""];
+  string owner=6;
 
 }
 

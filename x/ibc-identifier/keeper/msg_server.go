@@ -2,7 +2,7 @@ package keeper
 
 import (
 	"context"
-	//"fmt"
+	"fmt"
 	//	"time"
 	//
 	//	metrics "github.com/armon/go-metrics"
@@ -11,7 +11,6 @@ import (
 	//	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	//	"github.com/cosmos/cosmos-sdk/telemetry"
 	"github.com/allinbits/cosmos-cash/x/ibc-identifier/types"
-	identifiertypes "github.com/allinbits/cosmos-cash/x/identifier/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	clienttypes "github.com/cosmos/cosmos-sdk/x/ibc/core/02-client/types"
@@ -89,10 +88,8 @@ func (k msgServer) Transfer(
 		return sdkerrors.Wrap(channeltypes.ErrChannelCapabilityNotFound, "module does not own channel capability")
 	}
 
-	packetData, _ := identifiertypes.NewIdentifier(
-		sender,
-		nil,
-	)
+	packetData, _ := k.identifierKeeper.GetIdentifier(ctx, []byte(sender))
+	fmt.Println(packetData)
 
 	packet := channeltypes.NewPacket(
 		packetData.GetBytes(),

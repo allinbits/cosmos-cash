@@ -54,8 +54,6 @@ func NewTransferIdentifierCmd() *cobra.Command {
 
 			srcPort := args[1]
 			srcChannel := args[2]
-			fmt.Println(srcChannel)
-			fmt.Println(srcPort)
 
 			timeoutHeightStr, err := cmd.Flags().GetString(flagPacketTimeoutHeight)
 			if err != nil {
@@ -97,11 +95,12 @@ func NewTransferIdentifierCmd() *cobra.Command {
 			}
 
 			msg := types.NewMsgTransferIdentifierIBC(
-				clientCtx.GetFromAddress().String(),
+				args[0],
 				srcPort,
 				srcChannel,
 				timeoutHeight,
 				timeoutTimestamp,
+				clientCtx.GetFromAddress().String(),
 			)
 
 			if err := msg.ValidateBasic(); err != nil {

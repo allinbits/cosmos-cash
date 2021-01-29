@@ -32,10 +32,10 @@ func GetTxCmd() *cobra.Command {
 // NewCreateIdentifierCmd defines the command to create a new IBC light client.
 func NewCreateIdentifierCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "create [id]",
+		Use:     "create-identifier [id]",
 		Short:   "create decentralized identifier (did) document",
 		Example: fmt.Sprintf("creates a did document for users"),
-		Args:    cobra.ExactArgs(1),
+		Args:    cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {

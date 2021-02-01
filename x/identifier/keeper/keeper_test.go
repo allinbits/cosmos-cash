@@ -52,7 +52,9 @@ func (suite *KeeperTestSuite) SetupTest() {
 	types.RegisterQueryServer(queryHelper, k)
 	queryClient := types.NewQueryClient(queryHelper)
 
-	suite.ctx, suite.keeper, suite.queryClient = ctx, *k, queryClient
+	msgServer := NewMsgServerImpl(*k)
+
+	suite.ctx, suite.keeper, suite.queryClient, suite.msgServer = ctx, *k, queryClient, msgServer
 }
 
 func TestKeeperTestSuite(t *testing.T) {
@@ -77,8 +79,18 @@ func (suite *KeeperTestSuite) TestGenericKeeperSetAndGet() {
 		},
 	}
 	for _, tc := range testCases {
-		suite.keeper.Set(suite.ctx, []byte(tc.identifier.Id), []byte{0x01}, tc.identifier, suite.keeper.MarshalIdentifier)
-		suite.keeper.Set(suite.ctx, []byte(tc.identifier.Id+"1"), []byte{0x01}, tc.identifier, suite.keeper.MarshalIdentifier)
+		suite.keeper.Set(suite.ctx,
+			[]byte(tc.identifier.Id),
+			[]byte{0x01},
+			tc.identifier,
+			suite.keeper.MarshalIdentifier,
+		)
+		suite.keeper.Set(suite.ctx,
+			[]byte(tc.identifier.Id+"1"),
+			[]byte{0x01},
+			tc.identifier,
+			suite.keeper.MarshalIdentifier,
+		)
 		suite.Run(fmt.Sprintf("Case %s", tc.msg), func() {
 			if tc.expPass {
 				_, found := suite.keeper.Get(

@@ -2,6 +2,7 @@ package types
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 // msg types
@@ -37,7 +38,16 @@ func (MsgCreateIdentifier) Type() string {
 
 // ValidateBasic performs a basic check of the MsgCreateIdentifier fields.
 func (msg MsgCreateIdentifier) ValidateBasic() error {
+	if msg.Id == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "empty id")
+	}
+
+	if msg.Authentication == nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "authentication is required")
+	}
+
 	return nil
+
 }
 
 func (msg MsgCreateIdentifier) GetSignBytes() []byte {

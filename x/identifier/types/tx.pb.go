@@ -38,7 +38,8 @@ type MsgCreateIdentifier struct {
 	Authentication []*Authentication `protobuf:"bytes,3,rep,name=authentication,proto3" json:"authentication,omitempty"`
 	// services represents each service associated with a did
 	Services []*Service `protobuf:"bytes,4,rep,name=services,proto3" json:"services,omitempty"`
-	Owner    string     `protobuf:"bytes,5,opt,name=owner,proto3" json:"owner,omitempty"`
+	// owner represents the user creating the message
+	Owner string `protobuf:"bytes,5,opt,name=owner,proto3" json:"owner,omitempty"`
 }
 
 func (m *MsgCreateIdentifier) Reset()         { *m = MsgCreateIdentifier{} }
@@ -110,38 +111,121 @@ func (m *MsgCreateIdentifierResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgCreateIdentifierResponse proto.InternalMessageInfo
 
+type MsgAddAuthentication struct {
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// authentication represents public key associated with the did document.
+	Authentication *Authentication `protobuf:"bytes,2,opt,name=authentication,proto3" json:"authentication,omitempty"`
+	// owner is the address of the user creating the message
+	Owner string `protobuf:"bytes,3,opt,name=owner,proto3" json:"owner,omitempty"`
+}
+
+func (m *MsgAddAuthentication) Reset()         { *m = MsgAddAuthentication{} }
+func (m *MsgAddAuthentication) String() string { return proto.CompactTextString(m) }
+func (*MsgAddAuthentication) ProtoMessage()    {}
+func (*MsgAddAuthentication) Descriptor() ([]byte, []int) {
+	return fileDescriptor_c7826d264b5e2237, []int{2}
+}
+func (m *MsgAddAuthentication) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgAddAuthentication) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgAddAuthentication.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgAddAuthentication) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgAddAuthentication.Merge(m, src)
+}
+func (m *MsgAddAuthentication) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgAddAuthentication) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgAddAuthentication.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgAddAuthentication proto.InternalMessageInfo
+
+type MsgAddAuthenticationResponse struct {
+}
+
+func (m *MsgAddAuthenticationResponse) Reset()         { *m = MsgAddAuthenticationResponse{} }
+func (m *MsgAddAuthenticationResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgAddAuthenticationResponse) ProtoMessage()    {}
+func (*MsgAddAuthenticationResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_c7826d264b5e2237, []int{3}
+}
+func (m *MsgAddAuthenticationResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgAddAuthenticationResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgAddAuthenticationResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgAddAuthenticationResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgAddAuthenticationResponse.Merge(m, src)
+}
+func (m *MsgAddAuthenticationResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgAddAuthenticationResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgAddAuthenticationResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgAddAuthenticationResponse proto.InternalMessageInfo
+
 func init() {
 	proto.RegisterType((*MsgCreateIdentifier)(nil), "allinbits.cosmoscash.identifier.MsgCreateIdentifier")
 	proto.RegisterType((*MsgCreateIdentifierResponse)(nil), "allinbits.cosmoscash.identifier.MsgCreateIdentifierResponse")
+	proto.RegisterType((*MsgAddAuthentication)(nil), "allinbits.cosmoscash.identifier.MsgAddAuthentication")
+	proto.RegisterType((*MsgAddAuthenticationResponse)(nil), "allinbits.cosmoscash.identifier.MsgAddAuthenticationResponse")
 }
 
 func init() { proto.RegisterFile("identifier/tx.proto", fileDescriptor_c7826d264b5e2237) }
 
 var fileDescriptor_c7826d264b5e2237 = []byte{
-	// 360 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x92, 0xbd, 0x4e, 0x02, 0x41,
-	0x10, 0xc7, 0x6f, 0x41, 0x14, 0xd7, 0x84, 0x98, 0x85, 0xe2, 0x80, 0x78, 0x10, 0x2a, 0x1a, 0x6f,
-	0x13, 0xb0, 0x32, 0x36, 0x7e, 0x34, 0x16, 0x34, 0x67, 0x61, 0x62, 0x63, 0xee, 0x8e, 0x65, 0xd9,
-	0x04, 0x76, 0xc8, 0xed, 0xa2, 0xf0, 0x02, 0xc6, 0xca, 0xf8, 0x08, 0x3c, 0x8e, 0x25, 0xa5, 0xa5,
-	0x81, 0xc6, 0xa7, 0x30, 0x86, 0x5b, 0xbe, 0x54, 0x12, 0x12, 0xbb, 0x99, 0x9d, 0xf9, 0xfd, 0xff,
-	0x33, 0x77, 0x83, 0xb3, 0xa2, 0xc9, 0xa4, 0x16, 0x2d, 0xc1, 0x22, 0xaa, 0x07, 0x6e, 0x2f, 0x02,
-	0x0d, 0xa4, 0xe4, 0x77, 0x3a, 0x42, 0x06, 0x42, 0x2b, 0x37, 0x04, 0xd5, 0x05, 0x15, 0xfa, 0xaa,
-	0xed, 0xae, 0x3a, 0x0b, 0x79, 0x0e, 0xc0, 0x3b, 0x8c, 0xc6, 0xed, 0x41, 0xbf, 0x45, 0x7d, 0x39,
-	0x34, 0x6c, 0x21, 0xc7, 0x81, 0x43, 0x1c, 0xd2, 0x59, 0x34, 0x7f, 0x2d, 0xae, 0xd9, 0xac, 0xc2,
-	0x79, 0x31, 0x6f, 0x4c, 0xee, 0x0d, 0x65, 0x12, 0x53, 0xaa, 0x7c, 0x21, 0x9c, 0x6d, 0x28, 0x7e,
-	0x19, 0x31, 0x5f, 0xb3, 0xeb, 0x25, 0x48, 0x6c, 0xbc, 0x17, 0x82, 0xd4, 0x6c, 0xa0, 0x6d, 0x54,
-	0x46, 0xd5, 0x7d, 0x6f, 0x91, 0x92, 0x0c, 0x4e, 0x88, 0xa6, 0x9d, 0x88, 0x1f, 0x13, 0xa2, 0x49,
-	0x6e, 0x71, 0xc6, 0xef, 0xeb, 0xf6, 0x8c, 0x0c, 0x7d, 0x2d, 0x40, 0xda, 0xc9, 0x72, 0xb2, 0x7a,
-	0x50, 0xa3, 0xee, 0x96, 0x25, 0xdd, 0xf3, 0x1f, 0x98, 0xf7, 0x4b, 0x86, 0x5c, 0xe1, 0xb4, 0x62,
-	0xd1, 0x83, 0x08, 0x99, 0xb2, 0x77, 0x62, 0xc9, 0xea, 0x56, 0xc9, 0x1b, 0x03, 0x78, 0x4b, 0x92,
-	0xe4, 0x70, 0x0a, 0x1e, 0x25, 0x8b, 0xec, 0x54, 0x3c, 0xb1, 0x49, 0x4e, 0xd3, 0xcf, 0xa3, 0x92,
-	0xf5, 0x39, 0x2a, 0x59, 0x95, 0x23, 0x5c, 0xdc, 0xb0, 0xbf, 0xc7, 0x54, 0x0f, 0xa4, 0x62, 0xb5,
-	0x17, 0x84, 0x93, 0x0d, 0xc5, 0xc9, 0x13, 0xc2, 0x87, 0x7f, 0x3e, 0xd2, 0xc9, 0xd6, 0x79, 0x36,
-	0x48, 0x17, 0xce, 0xfe, 0x43, 0x2d, 0x06, 0xba, 0x68, 0xbc, 0x4d, 0x1c, 0x34, 0x9e, 0x38, 0xe8,
-	0x63, 0xe2, 0xa0, 0xd7, 0xa9, 0x63, 0x8d, 0xa7, 0x8e, 0xf5, 0x3e, 0x75, 0xac, 0xbb, 0x3a, 0x17,
-	0xba, 0xdd, 0x0f, 0xdc, 0x10, 0xba, 0x74, 0xe9, 0x30, 0xff, 0xdb, 0xc7, 0x33, 0x0b, 0x3a, 0xa0,
-	0xeb, 0xc7, 0x38, 0xec, 0x31, 0x15, 0xec, 0xc6, 0x67, 0x50, 0xff, 0x0e, 0x00, 0x00, 0xff, 0xff,
-	0x38, 0x7e, 0xcc, 0x35, 0xa7, 0x02, 0x00, 0x00,
+	// 419 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x93, 0xbd, 0xae, 0x12, 0x41,
+	0x14, 0xc7, 0x77, 0x76, 0x45, 0x71, 0x4c, 0x88, 0x0e, 0x14, 0xcb, 0xa2, 0x0b, 0xa1, 0xa2, 0x71,
+	0x27, 0x01, 0x6d, 0x8c, 0x16, 0xa8, 0x8d, 0xc5, 0x36, 0x6b, 0x61, 0x62, 0x63, 0xf6, 0x63, 0x18,
+	0x26, 0x81, 0x1d, 0xb2, 0x33, 0x28, 0xbc, 0x80, 0xd1, 0xce, 0xda, 0x46, 0x1e, 0xc7, 0x92, 0xd2,
+	0xd2, 0x40, 0x73, 0x9f, 0xe2, 0xe6, 0x66, 0x3f, 0x81, 0xcb, 0xe6, 0x72, 0x43, 0x6e, 0x77, 0xce,
+	0xcc, 0xfc, 0xce, 0xf9, 0x9f, 0xff, 0xe4, 0xc0, 0x3a, 0x0b, 0x48, 0x28, 0xd9, 0x88, 0x91, 0x08,
+	0xcb, 0x85, 0x35, 0x8b, 0xb8, 0xe4, 0xa8, 0xed, 0x4e, 0x26, 0x2c, 0xf4, 0x98, 0x14, 0x96, 0xcf,
+	0xc5, 0x94, 0x0b, 0xdf, 0x15, 0x63, 0x6b, 0xf7, 0xd2, 0x68, 0x52, 0xce, 0xe9, 0x84, 0xe0, 0xe4,
+	0xb9, 0x37, 0x1f, 0x61, 0x37, 0x5c, 0xa6, 0xac, 0xd1, 0xa0, 0x9c, 0xf2, 0x24, 0xc4, 0x71, 0x94,
+	0x9d, 0xb6, 0xf6, 0xda, 0xec, 0xc2, 0xec, 0xb2, 0x99, 0x36, 0xf9, 0x92, 0x52, 0x69, 0x92, 0x5e,
+	0x75, 0x2f, 0x01, 0xac, 0xdb, 0x82, 0xbe, 0x8b, 0x88, 0x2b, 0xc9, 0x87, 0x02, 0x44, 0x3a, 0x7c,
+	0xe0, 0xf3, 0x50, 0x92, 0x85, 0xd4, 0x41, 0x07, 0xf4, 0x1e, 0x3a, 0x79, 0x8a, 0x6a, 0x50, 0x65,
+	0x81, 0xae, 0x26, 0x87, 0x2a, 0x0b, 0xd0, 0x27, 0x58, 0x73, 0xe7, 0x72, 0x1c, 0x93, 0xbe, 0x2b,
+	0x19, 0x0f, 0x75, 0xad, 0xa3, 0xf5, 0x1e, 0xf5, 0xb1, 0x75, 0x62, 0x48, 0x6b, 0x78, 0x80, 0x39,
+	0xd7, 0xca, 0xa0, 0xf7, 0xb0, 0x2a, 0x48, 0xf4, 0x95, 0xf9, 0x44, 0xe8, 0xf7, 0x92, 0x92, 0xbd,
+	0x93, 0x25, 0x3f, 0xa6, 0x80, 0x53, 0x90, 0xa8, 0x01, 0x2b, 0xfc, 0x5b, 0x48, 0x22, 0xbd, 0x92,
+	0x28, 0x4e, 0x93, 0x57, 0xd5, 0x1f, 0xab, 0xb6, 0x72, 0xb1, 0x6a, 0x2b, 0xdd, 0x67, 0xb0, 0x55,
+	0x32, 0xbf, 0x43, 0xc4, 0x8c, 0x87, 0x82, 0x74, 0xff, 0x00, 0xd8, 0xb0, 0x05, 0x1d, 0x06, 0xc1,
+	0xa1, 0xda, 0xcc, 0x06, 0x70, 0x83, 0x0d, 0xb1, 0x45, 0x77, 0x60, 0x43, 0x31, 0x80, 0x56, 0x3e,
+	0x80, 0x09, 0x9f, 0x96, 0x09, 0xcc, 0x27, 0xe8, 0xff, 0x56, 0xa1, 0x66, 0x0b, 0x8a, 0xbe, 0x03,
+	0xf8, 0xf8, 0xe8, 0x9b, 0x5f, 0x9c, 0x54, 0x57, 0x62, 0x8e, 0xf1, 0xfa, 0x1c, 0x2a, 0x17, 0x84,
+	0x7e, 0x02, 0xf8, 0xe4, 0xd8, 0xcf, 0x97, 0xb7, 0xa9, 0x79, 0x84, 0x19, 0x6f, 0xce, 0xc2, 0x72,
+	0x2d, 0x6f, 0xed, 0xbf, 0x1b, 0x13, 0xac, 0x37, 0x26, 0xf8, 0xbf, 0x31, 0xc1, 0xaf, 0xad, 0xa9,
+	0xac, 0xb7, 0xa6, 0xf2, 0x6f, 0x6b, 0x2a, 0x9f, 0x07, 0x94, 0xc9, 0xf1, 0xdc, 0xb3, 0x7c, 0x3e,
+	0xc5, 0x45, 0x8b, 0x6c, 0x77, 0x9e, 0xc7, 0x3d, 0xf0, 0x02, 0xef, 0xaf, 0xf6, 0x72, 0x46, 0x84,
+	0x77, 0x3f, 0x59, 0xaa, 0xc1, 0x55, 0x00, 0x00, 0x00, 0xff, 0xff, 0x40, 0x68, 0x4d, 0x9c, 0xf5,
+	0x03, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -158,6 +242,7 @@ const _ = grpc.SupportPackageIsVersion4
 type MsgClient interface {
 	// CreateDidDocument defines a method for creating a new identity.
 	CreateIdentifier(ctx context.Context, in *MsgCreateIdentifier, opts ...grpc.CallOption) (*MsgCreateIdentifierResponse, error)
+	AddAuthentication(ctx context.Context, in *MsgAddAuthentication, opts ...grpc.CallOption) (*MsgAddAuthenticationResponse, error)
 }
 
 type msgClient struct {
@@ -177,10 +262,20 @@ func (c *msgClient) CreateIdentifier(ctx context.Context, in *MsgCreateIdentifie
 	return out, nil
 }
 
+func (c *msgClient) AddAuthentication(ctx context.Context, in *MsgAddAuthentication, opts ...grpc.CallOption) (*MsgAddAuthenticationResponse, error) {
+	out := new(MsgAddAuthenticationResponse)
+	err := c.cc.Invoke(ctx, "/allinbits.cosmoscash.identifier.Msg/AddAuthentication", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
 	// CreateDidDocument defines a method for creating a new identity.
 	CreateIdentifier(context.Context, *MsgCreateIdentifier) (*MsgCreateIdentifierResponse, error)
+	AddAuthentication(context.Context, *MsgAddAuthentication) (*MsgAddAuthenticationResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
@@ -189,6 +284,9 @@ type UnimplementedMsgServer struct {
 
 func (*UnimplementedMsgServer) CreateIdentifier(ctx context.Context, req *MsgCreateIdentifier) (*MsgCreateIdentifierResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateIdentifier not implemented")
+}
+func (*UnimplementedMsgServer) AddAuthentication(ctx context.Context, req *MsgAddAuthentication) (*MsgAddAuthenticationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddAuthentication not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
@@ -213,6 +311,24 @@ func _Msg_CreateIdentifier_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_AddAuthentication_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgAddAuthentication)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).AddAuthentication(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/allinbits.cosmoscash.identifier.Msg/AddAuthentication",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).AddAuthentication(ctx, req.(*MsgAddAuthentication))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "allinbits.cosmoscash.identifier.Msg",
 	HandlerType: (*MsgServer)(nil),
@@ -220,6 +336,10 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateIdentifier",
 			Handler:    _Msg_CreateIdentifier_Handler,
+		},
+		{
+			MethodName: "AddAuthentication",
+			Handler:    _Msg_AddAuthentication_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -321,6 +441,78 @@ func (m *MsgCreateIdentifierResponse) MarshalToSizedBuffer(dAtA []byte) (int, er
 	return len(dAtA) - i, nil
 }
 
+func (m *MsgAddAuthentication) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgAddAuthentication) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgAddAuthentication) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Owner) > 0 {
+		i -= len(m.Owner)
+		copy(dAtA[i:], m.Owner)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Owner)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.Authentication != nil {
+		{
+			size, err := m.Authentication.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintTx(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Id) > 0 {
+		i -= len(m.Id)
+		copy(dAtA[i:], m.Id)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Id)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgAddAuthenticationResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgAddAuthenticationResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgAddAuthenticationResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
 	offset -= sovTx(v)
 	base := offset
@@ -366,6 +558,36 @@ func (m *MsgCreateIdentifier) Size() (n int) {
 }
 
 func (m *MsgCreateIdentifierResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgAddAuthentication) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Id)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.Authentication != nil {
+		l = m.Authentication.Size()
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Owner)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgAddAuthenticationResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -579,10 +801,7 @@ func (m *MsgCreateIdentifier) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
-				return ErrInvalidLengthTx
-			}
-			if (iNdEx + skippy) < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthTx
 			}
 			if (iNdEx + skippy) > l {
@@ -632,10 +851,207 @@ func (m *MsgCreateIdentifierResponse) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthTx
 			}
-			if (iNdEx + skippy) < 0 {
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgAddAuthentication) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgAddAuthentication: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgAddAuthentication: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Id = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Authentication", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Authentication == nil {
+				m.Authentication = &Authentication{}
+			}
+			if err := m.Authentication.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Owner", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Owner = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgAddAuthenticationResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgAddAuthenticationResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgAddAuthenticationResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthTx
 			}
 			if (iNdEx + skippy) > l {

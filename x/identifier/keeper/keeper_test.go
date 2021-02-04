@@ -23,7 +23,6 @@ type KeeperTestSuite struct {
 	ctx         sdk.Context
 	keeper      Keeper
 	queryClient types.QueryClient
-	msgServer   types.MsgServer
 }
 
 // SetupTest creates a test suite to test the identifier
@@ -52,9 +51,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	types.RegisterQueryServer(queryHelper, k)
 	queryClient := types.NewQueryClient(queryHelper)
 
-	msgServer := NewMsgServerImpl(*k)
-
-	suite.ctx, suite.keeper, suite.queryClient, suite.msgServer = ctx, *k, queryClient, msgServer
+	suite.ctx, suite.keeper, suite.queryClient = ctx, *k, queryClient
 }
 
 func TestKeeperTestSuite(t *testing.T) {

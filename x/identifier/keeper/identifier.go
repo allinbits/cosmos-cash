@@ -37,7 +37,11 @@ func (k Keeper) MarshalIdentifier(value interface{}) []byte {
 	return bytes
 }
 
-func (k Keeper) GetAllIdentifiersWithCondition(ctx sdk.Context, key []byte, identiferSelector func(votes types.DidDocument) bool) (identifiers []types.DidDocument) {
+func (k Keeper) GetAllIdentifiersWithCondition(
+	ctx sdk.Context,
+	key []byte,
+	identiferSelector func(votes types.DidDocument) bool,
+) (identifiers []types.DidDocument) {
 	val := k.GetAll(ctx, key, k.UnmarshalIdentifier)
 
 	for _, value := range val {
@@ -51,5 +55,9 @@ func (k Keeper) GetAllIdentifiersWithCondition(ctx sdk.Context, key []byte, iden
 }
 
 func (k Keeper) GetAllIdentifiers(ctx sdk.Context) []types.DidDocument {
-	return k.GetAllIdentifiersWithCondition(ctx, types.IdentifierKey, func(votes types.DidDocument) bool { return true })
+	return k.GetAllIdentifiersWithCondition(
+		ctx,
+		types.IdentifierKey,
+		func(votes types.DidDocument) bool { return true },
+	)
 }

@@ -8,5 +8,6 @@ import (
 
 // x/identifier module sentinel errors
 var (
-	ErrSample = sdkerrors.Register(ModuleName, 1100, "sample error")
+	ErrIdentifierNotFound = sdkerrors.Register(ModuleName, 1100, "identifier not found")
+	ErrIdentifierFound    = sdkerrors.Register(ModuleName, 1101, "identifier found")
 )

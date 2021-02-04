@@ -20,7 +20,12 @@ func (did DidDocument) GetBytes() []byte {
 
 type Authentications []*Authentication
 
-func NewAuthentication(id string, pubKeyType string, controller string, encodedValue string) Authentication {
+func NewAuthentication(
+	id string,
+	pubKeyType string,
+	controller string,
+	encodedValue string,
+) Authentication {
 	return Authentication{
 		Id:         id,
 		Type:       pubKeyType,

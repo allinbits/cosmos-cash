@@ -16,13 +16,11 @@ type UnmarshalFn func(value []byte) (interface{}, bool)
 // UnmarshalFn is a generic function to unmarshal bytes
 type MarshalFn func(value interface{}) []byte
 
-type (
-	Keeper struct {
-		cdc      codec.Marshaler
-		storeKey sdk.StoreKey
-		memKey   sdk.StoreKey
-	}
-)
+type Keeper struct {
+	cdc      codec.Marshaler
+	storeKey sdk.StoreKey
+	memKey   sdk.StoreKey
+}
 
 func NewKeeper(cdc codec.Marshaler, storeKey, memKey sdk.StoreKey) *Keeper {
 	return &Keeper{

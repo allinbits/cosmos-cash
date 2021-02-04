@@ -30,8 +30,8 @@ lint:
 
 init-dev: init-chain init-validator
 
-start-dev: init-dev
-	go run cmd/cosmos-cashd/main.go start 
+start-dev: 
+	go run cmd/cosmos-cashd/main.go start --pruning=nothing --grpc-web.enable=false
 
 init-chain:
 	go run cmd/cosmos-cashd/main.go init --chain-id=cash cash 

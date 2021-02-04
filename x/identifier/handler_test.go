@@ -1,7 +1,8 @@
 package identifier
 
 import (
-	"github.com/stretchr/testify/assert"
+	"fmt"
+	"github.com/stretchr/testify/suite"
 	"testing"
 
 	"github.com/allinbits/cosmos-cash/x/identifier/keeper"
@@ -15,9 +16,16 @@ import (
 	dbm "github.com/tendermint/tm-db"
 )
 
-func bootstrapHandler(t *testing.T) (sdk.Context, keeper.Keeper) {
-	// TODO: can we use the KeeperTestSuite here
+// Keeper test suit enables the keeper package to be tested
+type HandlerTestSuite struct {
+	suite.Suite
 
+	ctx    sdk.Context
+	keeper keeper.Keeper
+}
+
+// SetupTest creates a test suite to test the identifier
+func (suite *HandlerTestSuite) SetupTest() {
 	keyIdentifier := sdk.NewKVStoreKey(types.StoreKey)
 	memKeyIdentifier := sdk.NewKVStoreKey(types.MemStoreKey)
 
@@ -37,28 +45,107 @@ func bootstrapHandler(t *testing.T) (sdk.Context, keeper.Keeper) {
 		keyIdentifier,
 		memKeyIdentifier,
 	)
-	return ctx, *k
+
+	suite.ctx, suite.keeper = ctx, *k
 }
 
-func TestHandleMsgCreateIdentifier(t *testing.T) {
-	// TODO: add failure cases
-	ctx, k := bootstrapHandler(t)
+func TestHandlerTestSuite(t *testing.T) {
+	suite.Run(t, new(HandlerTestSuite))
+}
 
-	handleFn := NewHandler(k)
+func (suite *HandlerTestSuite) TestHandleMsgCreateIdentifier() {
+	var (
+		req types.MsgCreateIdentifier
+	)
+
+	handleFn := NewHandler(suite.keeper)
 
 	testCases := []struct {
-		name string
-		msg  sdk.Msg
+		name      string
+		malleate  func()
+		expectErr bool
 	}{
 		{
 			"can create a an identifier",
-			types.NewMsgCreateIdentifier("", nil, ""),
+			func() { req = *types.NewMsgCreateIdentifier("did:cash:1111", nil, "did:cash:1111") },
+			false,
+		},
+		{
+			"identifier already exists",
+			func() {
+				identifier := types.DidDocument{
+					"context",
+					"did:cash:1111",
+					nil,
+					nil,
+				}
+				suite.keeper.SetIdentifier(suite.ctx, []byte(identifier.Id), identifier)
+				req = *types.NewMsgCreateIdentifier("did:cash:1111", nil, "did:cash:1111")
+			},
+			true,
 		},
 	}
 	for _, tc := range testCases {
-		t.Run(tc.name, func(*testing.T) {
-			_, err := handleFn(ctx, tc.msg)
-			assert.NoError(t, err)
+		suite.Run(fmt.Sprintf("Case %s", req), func() {
+			tc.malleate()
+			_, err := handleFn(suite.ctx, &req)
+			if tc.expectErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+			}
+		})
+	}
+}
+
+func (suite *HandlerTestSuite) TestHandleMsgAddAuthentication() {
+	var (
+		req types.MsgAddAuthentication
+	)
+
+	handleFn := NewHandler(suite.keeper)
+
+	testCases := []struct {
+		name      string
+		malleate  func()
+		expectErr bool
+	}{
+		{
+			"can not add authentication, identifier does not exist",
+			func() { req = *types.NewMsgAddAuthentication("did:cash:1111", nil, "did:cash:1111") },
+			true,
+		},
+		{
+			"can add authentication to did document",
+			func() {
+				identifier := types.DidDocument{
+					"context",
+					"did:cash:1111",
+					nil,
+					nil,
+				}
+				auth := types.NewAuthentication(
+					"",
+					"sepk256",
+					"address.String()",
+					"pubKey.Address().String()",
+				)
+				suite.keeper.SetIdentifier(suite.ctx, []byte(identifier.Id), identifier)
+				req = *types.NewMsgAddAuthentication("did:cash:1111", &auth, "did:cash:1111")
+			},
+			false,
+		},
+		// TODO: handle auth == nil case
+	}
+	for _, tc := range testCases {
+		suite.Run(fmt.Sprintf("Case %s", req), func() {
+			tc.malleate()
+			_, err := handleFn(suite.ctx, &req)
+			if tc.expectErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+			}
 		})
 	}
 }

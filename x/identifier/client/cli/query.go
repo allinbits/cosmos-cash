@@ -53,6 +53,7 @@ func GetCmdQueryIdentifers() *cobra.Command {
 				// Leaving status empty on purpose to query all validators.
 				Pagination: pageReq,
 			})
+			fmt.Println(result)
 			if err != nil {
 				return err
 			}

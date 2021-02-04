@@ -13,6 +13,7 @@ option go_package = "github.com/allinbits/cosmos-cash/x/identifier/types";
 service Msg {
   // CreateDidDocument defines a method for creating a new identity.
   rpc CreateIdentifier(MsgCreateIdentifier) returns (MsgCreateIdentifierResponse);
+  rpc AddAuthentication(MsgAddAuthentication) returns (MsgAddAuthenticationResponse);
 }
 
 // MsgCreateIdentifier defines a SDK message for creating a new identifer.
@@ -29,8 +30,23 @@ message MsgCreateIdentifier {
   // services represents each service associated with a did
   repeated Service services = 4;
 
+  // owner represents the user creating the message 
   string owner = 5;
 }
 
 message MsgCreateIdentifierResponse {}
 
+message MsgAddAuthentication {
+  option (gogoproto.equal)           = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string     id             = 1; 
+
+  // authentication represents public key associated with the did document.
+  Authentication authentication = 2;
+
+  // owner is the address of the user creating the message 
+  string owner = 3;
+}
+
+message MsgAddAuthenticationResponse {}

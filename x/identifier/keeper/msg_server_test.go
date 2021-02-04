@@ -1,17 +1,15 @@
 package keeper
 
 import (
-	//"context"
 	"fmt"
 
 	"github.com/allinbits/cosmos-cash/x/identifier/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-func (suite *KeeperTestSuite) TestMsgSeverIdentifiers() {
-	// TODO: write tests for msg server
-
-	//msgServer := suite.msgServer
-	var msg *types.MsgCreateIdentifier
+func (suite *KeeperTestSuite) TestMsgSeverCreateIdentifiers() {
+	server := NewMsgServerImpl(suite.keeper)
+	var req types.MsgCreateIdentifier
 
 	testCases := []struct {
 		msg      string
@@ -19,20 +17,75 @@ func (suite *KeeperTestSuite) TestMsgSeverIdentifiers() {
 		expPass  bool
 	}{
 		{
-			"empty request",
+			"correctly creates identifier",
+			func() { req = *types.NewMsgCreateIdentifier("did:cash:1111", nil, "did:cash:1111") },
+			true,
+		},
+		{
+			"identifier already exists",
 			func() {
+				identifier := types.DidDocument{
+					"context",
+					"did:cash:1111",
+					nil,
+					nil,
+				}
+				suite.keeper.SetIdentifier(suite.ctx, []byte(identifier.Id), identifier)
+
+				req = *types.NewMsgCreateIdentifier("did:cash:1111", nil, "did:cash:1111")
+			},
+			false,
+		},
+	}
+	for _, tc := range testCases {
+		suite.Run(fmt.Sprintf("Case %s", tc.msg), func() {
+			tc.malleate()
+
+			identifierResp, err := server.CreateIdentifier(sdk.WrapSDKContext(suite.ctx), &req)
+			if tc.expPass {
+				suite.NoError(err)
+				suite.NotNil(identifierResp)
+
+			} else {
+				suite.Require().Error(err)
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestMsgSeverAddAuthentication() {
+	server := NewMsgServerImpl(suite.keeper)
+	var (
+		req types.MsgAddAuthentication
+	)
+
+	testCases := []struct {
+		msg      string
+		malleate func()
+		expPass  bool
+	}{
+		{
+			"can not add authentication, identifier does not exist",
+			func() { req = *types.NewMsgAddAuthentication("did:cash:1111", nil, "did:cash:1111") },
+			false,
+		},
+		{
+			"can add authentication to did document",
+			func() {
+				identifier := types.DidDocument{
+					"context",
+					"did:cash:1111",
+					nil,
+					nil,
+				}
 				auth := types.NewAuthentication(
-					"accAddrBech32",
+					"",
 					"sepk256",
-					"id",
+					"address.String()",
 					"pubKey.Address().String()",
 				)
-
-				msg = types.NewMsgCreateIdentifier(
-					"id",
-					types.Authentications{&auth},
-					"accAddrBech32",
-				)
+				suite.keeper.SetIdentifier(suite.ctx, []byte(identifier.Id), identifier)
+				req = *types.NewMsgAddAuthentication("did:cash:1111", &auth, "did:cash:1111")
 			},
 			true,
 		},
@@ -40,17 +93,15 @@ func (suite *KeeperTestSuite) TestMsgSeverIdentifiers() {
 	for _, tc := range testCases {
 		suite.Run(fmt.Sprintf("Case %s", tc.msg), func() {
 			tc.malleate()
-			fmt.Println(msg)
-			// TODO: fix msgServer handler`
 
-			//createIdentifierResp, err := msgServer.CreateIdentifier(context.Background(), msg)
-			//if tc.expPass {
-			//	suite.NoError(err)
-			//	suite.NotNil(createIdentifierResp)
+			authResp, err := server.AddAuthentication(sdk.WrapSDKContext(suite.ctx), &req)
+			if tc.expPass {
+				suite.NoError(err)
+				suite.NotNil(authResp)
 
-			//} else {
-			//	suite.Require().Error(err)
-			//}
+			} else {
+				suite.Require().Error(err)
+			}
 		})
 	}
 }

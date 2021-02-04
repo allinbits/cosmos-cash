@@ -7,7 +7,7 @@ import (
 
 // msg types
 const (
-	TypeMsgCreateIdentifier = "transfer"
+	TypeMsgCreateIdentifier = "create-identifier"
 )
 
 var _ sdk.Msg = &MsgCreateIdentifier{}
@@ -56,6 +56,63 @@ func (msg MsgCreateIdentifier) GetSignBytes() []byte {
 
 // GetSigners implements sdk.Msg
 func (msg MsgCreateIdentifier) GetSigners() []sdk.AccAddress {
+	accAddr, err := sdk.AccAddressFromBech32(msg.Owner)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{accAddr}
+}
+
+// msg types
+const (
+	TypeMsgAddAuthentication = "add-authentication"
+)
+
+var _ sdk.Msg = &MsgAddAuthentication{}
+
+// NewMsgAddAuthentication creates a new MsgAddAuthentication instance
+func NewMsgAddAuthentication(
+	id string,
+	authentication *Authentication,
+	owner string,
+) *MsgAddAuthentication {
+	return &MsgAddAuthentication{
+		Id:             id,
+		Authentication: authentication,
+		Owner:          owner,
+	}
+}
+
+// Route implements sdk.Msg
+func (MsgAddAuthentication) Route() string {
+	return RouterKey
+}
+
+// Type implements sdk.Msg
+func (MsgAddAuthentication) Type() string {
+	return TypeMsgAddAuthentication
+}
+
+// ValidateBasic performs a basic check of the MsgAddAuthentication fields.
+func (msg MsgAddAuthentication) ValidateBasic() error {
+	if msg.Id == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "empty id")
+	}
+
+	if msg.Authentication == nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "authentication is required")
+	}
+
+	return nil
+
+}
+
+func (msg MsgAddAuthentication) GetSignBytes() []byte {
+	panic("IBC messages do not support amino")
+}
+
+// GetSigners implements sdk.Msg
+func (msg MsgAddAuthentication) GetSigners() []sdk.AccAddress {
 	accAddr, err := sdk.AccAddressFromBech32(msg.Owner)
 	if err != nil {
 		panic(err)

@@ -14,7 +14,32 @@ import (
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	"github.com/cosmos/cosmos-sdk/testutil/network"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/allinbits/cosmos-cash/app"
+	"github.com/allinbits/cosmos-cash/app/params"
+	"github.com/cosmos/cosmos-sdk/baseapp"
+	servertypes "github.com/cosmos/cosmos-sdk/server/types"
+	"github.com/cosmos/cosmos-sdk/simapp"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
+	dbm "github.com/tendermint/tm-db"
 )
+
+// NewAppConstructor returns a new simapp AppConstructor
+func NewAppConstructor(encodingCfg params.EncodingConfig) network.AppConstructor {
+	return func(val network.Validator) servertypes.Application {
+		return app.New(
+			"cosmos-cash",
+			val.Ctx.Logger,
+			dbm.NewMemDB(), nil, true, make(map[int64]bool),
+			val.Ctx.Config.RootDir,
+			0,
+			encodingCfg,
+			simapp.EmptyAppOptions{},
+			baseapp.SetPruning(storetypes.NewPruningOptionsFromString(val.AppConfig.Pruning)),
+			baseapp.SetMinGasPrices(val.AppConfig.MinGasPrices),
+		)
+	}
+}
 
 type IntegrationTestSuite struct {
 	suite.Suite
@@ -27,9 +52,9 @@ type IntegrationTestSuite struct {
 // the entire suite, start executing.
 func (s *IntegrationTestSuite) SetupSuite() {
 	s.T().Log("setting up integration test suite")
-
 	cfg := network.DefaultConfig()
 	types.RegisterInterfaces(cfg.InterfaceRegistry)
+	cfg.AppConstructor = NewAppConstructor(app.MakeEncodingConfig())
 	cfg.NumValidators = 1
 
 	s.cfg = cfg
@@ -47,8 +72,7 @@ func (s *IntegrationTestSuite) TearDownSuite() {
 }
 
 func (s *IntegrationTestSuite) TestGetCmdQueryIdentifiers() {
-	// TODO: fix qeury test by registering query route
-	//val := s.network.Validators[0]
+	val := s.network.Validators[0]
 
 	testCases := []struct {
 		name string
@@ -62,13 +86,11 @@ func (s *IntegrationTestSuite) TestGetCmdQueryIdentifiers() {
 
 	for _, tc := range testCases {
 		s.Run(tc.name, func() {
-			// TODO: register query functions
-			//		cmd := cli.GetCmdQueryIdentifers()
-			//		clientCtx := val.ClientCtx
+			cmd := cli.GetCmdQueryIdentifers()
+			clientCtx := val.ClientCtx
 
-			//		out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-			//		fmt.Println(out)
-			//		s.Require().NoError(err)
+			_, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+			s.Require().NoError(err)
 		})
 	}
 }
@@ -134,26 +156,26 @@ func (s *IntegrationTestSuite) TestNewAddAuthenticationCmd() {
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
-			false, &sdk.TxResponse{}, 0,
+			true, &sdk.TxResponse{}, 0,
 		},
 	}
 
 	for _, tc := range testCases {
 		s.Run(tc.name, func() {
-			//cmd := cli.NewAddAuthenticationCmd()
-			//clientCtx := val.ClientCtx
+			//	cmd := cli.NewAddAuthenticationCmd()
+			//	clientCtx := val.ClientCtx
 
-			//out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-			//fmt.Println(out, err)
-			//if tc.expectErr {
-			//	s.Require().Error(err)
-			//} else {
-			//	s.Require().NoError(err)
-			//	s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+			//	out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+			//	fmt.Println(out, err)
+			//	if tc.expectErr {
+			//		s.Require().Error(err)
+			//	} else {
+			//		s.Require().NoError(err)
+			//		s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
 
-			//	txResp := tc.respType.(*sdk.TxResponse)
-			//	s.Require().Equal(tc.expectedCode, txResp.Code, out.String())
-			//}
+			//		txResp := tc.respType.(*sdk.TxResponse)
+			//		s.Require().Equal(tc.expectedCode, txResp.Code, out.String())
+			//	}
 		})
 	}
 }

@@ -32,9 +32,15 @@ secret.yml
 *.out
 
 # Dependency directories (remove the comment below to include it)
-# vendor/
+
+# vendor
 cscope.files
 cscope.out
 
 # vim
 *.swp
+
+# terraform
+terraform.tfstate
+terraform.tfstate.backup
+.terraform

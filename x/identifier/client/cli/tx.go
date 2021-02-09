@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"encoding/base64"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -59,7 +60,7 @@ func NewCreateIdentifierCmd() *cobra.Command {
 				id+"#keys-1",
 				"sepk256",
 				accAddrBech32,
-				string(pubKey.Bytes()),
+				base64.StdEncoding.EncodeToString(pubKey.Bytes()),
 			)
 
 			msg := types.NewMsgCreateIdentifier(

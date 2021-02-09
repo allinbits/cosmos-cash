@@ -3,8 +3,8 @@ package keeper
 import (
 	"context"
 
-	//"google.golang.org/grpc/codes"
-	//"google.golang.org/grpc/status"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -15,9 +15,9 @@ var _ types.QueryServer = Keeper{}
 
 // DenomTrace implements the Query/DenomTrace gRPC method
 func (q Keeper) Identifiers(c context.Context, req *types.QueryIdentifiersRequest) (*types.QueryIdentifiersResponse, error) {
-	//	if req == nil {
-	//		return nil, status.Error(codes.InvalidArgument, "empty request")
-	//	}
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "empty request")
+	}
 
 	ctx := sdk.UnwrapSDKContext(c)
 	identifiers := q.GetAllIdentifiers(ctx)

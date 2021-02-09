@@ -189,7 +189,7 @@ type App struct {
 
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 	ibcidentifierKeeper ibcidentifierkeeper.Keeper
-	identifierKeeper    identifierkeeper.Keeper
+	IdentifierKeeper    identifierkeeper.Keeper
 
 	// the module manager
 	mm *module.Manager
@@ -308,7 +308,7 @@ func New(
 	)
 	transferModule := transfer.NewAppModule(app.TransferKeeper)
 
-	app.identifierKeeper = *identifierkeeper.NewKeeper(
+	app.IdentifierKeeper = *identifierkeeper.NewKeeper(
 		appCodec,
 		keys[identifiertypes.StoreKey],
 		keys[identifiertypes.MemStoreKey],
@@ -319,7 +319,7 @@ func New(
 		keys[ibcidentifiertypes.StoreKey],
 		app.IBCKeeper.ChannelKeeper, &app.IBCKeeper.PortKeeper,
 		app.AccountKeeper, app.BankKeeper, scopedIdentifierKeeper,
-		app.identifierKeeper,
+		app.IdentifierKeeper,
 	)
 	identifierModule := ibcidentifier.NewAppModule(appCodec, app.ibcidentifierKeeper)
 
@@ -369,7 +369,7 @@ func New(
 		transferModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 		identifierModule,
-		identifier.NewAppModule(appCodec, app.identifierKeeper),
+		identifier.NewAppModule(appCodec, app.IdentifierKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that

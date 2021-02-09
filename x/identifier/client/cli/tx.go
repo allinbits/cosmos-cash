@@ -59,7 +59,7 @@ func NewCreateIdentifierCmd() *cobra.Command {
 				id+"#keys-1",
 				"sepk256",
 				accAddrBech32,
-				pubKey.Address().String(),
+				string(pubKey.Bytes()),
 			)
 
 			msg := types.NewMsgCreateIdentifier(

@@ -39,7 +39,7 @@ func (k msgServer) CreateIdentifier(
 	return &types.MsgCreateIdentifierResponse{}, nil
 }
 
-// AddAuthentication adds a public key nad controller to am existing DID document
+// AddAuthentication adds a public key and controller to am existing DID document
 func (k msgServer) AddAuthentication(
 	goCtx context.Context,
 	msg *types.MsgAddAuthentication,
@@ -48,7 +48,14 @@ func (k msgServer) AddAuthentication(
 
 	identifier, found := k.Keeper.GetIdentifier(ctx, []byte(msg.Id))
 	if !found {
-		return nil, sdkerrors.Wrapf(types.ErrIdentifierNotFound, "identifier not found")
+		return nil, sdkerrors.Wrapf(
+			types.ErrIdentifierNotFound,
+			"identifier not found: AddAuthentication",
+		)
+	}
+
+	if identifier.Authentication[0].Controller != msg.Owner {
+		return nil, sdkerrors.Wrapf(types.ErrIdentifierNotFound, "msg sender not authorised")
 	}
 
 	// TODO: handle duplicates in the authentication slice
@@ -57,4 +64,22 @@ func (k msgServer) AddAuthentication(
 	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), identifier)
 
 	return &types.MsgAddAuthenticationResponse{}, nil
+}
+
+// AddService adds a serivce to am existing DID document
+func (k msgServer) AddService(
+	goCtx context.Context,
+	msg *types.MsgAddService,
+) (*types.MsgAddServiceResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	identifier, found := k.Keeper.GetIdentifier(ctx, []byte(msg.Id))
+	if !found {
+		return nil, sdkerrors.Wrapf(types.ErrIdentifierNotFound, "identifier not found: AddService")
+	}
+
+	identifier.Services = append(identifier.Services, msg.ServiceData)
+	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), identifier)
+
+	return &types.MsgAddServiceResponse{}, nil
 }

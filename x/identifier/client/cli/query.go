@@ -49,11 +49,13 @@ func GetCmdQueryIdentifers() *cobra.Command {
 				return err
 			}
 
-			result, err := queryClient.Identifiers(context.Background(), &types.QueryIdentifiersRequest{
-				// Leaving status empty on purpose to query all validators.
-				Pagination: pageReq,
-			})
-			fmt.Println(result)
+			result, err := queryClient.Identifiers(
+				context.Background(),
+				&types.QueryIdentifiersRequest{
+					// Leaving status empty on purpose to query all validators.
+					Pagination: pageReq,
+				},
+			)
 			if err != nil {
 				return err
 			}

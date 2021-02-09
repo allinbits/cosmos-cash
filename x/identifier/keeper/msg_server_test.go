@@ -24,10 +24,16 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateIdentifiers() {
 		{
 			"identifier already exists",
 			func() {
+				auth := types.NewAuthentication(
+					"did:cash:1111#keys-1",
+					"sepk256",
+					"did:cash:1111",
+					"pubKey.Address().String()",
+				)
 				identifier := types.DidDocument{
 					"context",
 					"did:cash:1111",
-					nil,
+					types.Authentications{&auth},
 					nil,
 				}
 				suite.keeper.SetIdentifier(suite.ctx, []byte(identifier.Id), identifier)
@@ -72,18 +78,18 @@ func (suite *KeeperTestSuite) TestMsgSeverAddAuthentication() {
 		{
 			"can add authentication to did document",
 			func() {
+				auth := types.NewAuthentication(
+					"did:cash:1111#keys-1",
+					"sepk256",
+					"did:cash:1111",
+					"pubKey.Address().String()",
+				)
 				identifier := types.DidDocument{
 					"context",
 					"did:cash:1111",
-					nil,
+					types.Authentications{&auth},
 					nil,
 				}
-				auth := types.NewAuthentication(
-					"",
-					"sepk256",
-					"address.String()",
-					"pubKey.Address().String()",
-				)
 				suite.keeper.SetIdentifier(suite.ctx, []byte(identifier.Id), identifier)
 				req = *types.NewMsgAddAuthentication("did:cash:1111", &auth, "did:cash:1111")
 			},

@@ -26,6 +26,7 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(
 		NewCreateIdentifierCmd(),
 		NewAddAuthenticationCmd(),
+		NewAddServiceCmd(),
 	)
 
 	return cmd
@@ -106,6 +107,44 @@ func NewAddAuthenticationCmd() *cobra.Command {
 			msg := types.NewMsgAddAuthentication(
 				args[0],
 				&auth,
+				accAddr.String(),
+			)
+
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func NewAddServiceCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "add-service [id] [service_id] [type] [endpoint]",
+		Short:   "add a service to a decentralized identifier (did) document",
+		Example: fmt.Sprintf("adds a service to a did document"),
+		Args:    cobra.ExactArgs(4),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			accAddr := clientCtx.GetFromAddress()
+
+			service := types.NewService(
+				args[1],
+				args[2],
+				args[3],
+			)
+
+			msg := types.NewMsgAddService(
+				args[0],
+				&service,
 				accAddr.String(),
 			)
 

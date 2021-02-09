@@ -35,3 +35,6 @@ secret.yml
 # vendor/
 cscope.files
 cscope.out
+
+# vim
+*.swp

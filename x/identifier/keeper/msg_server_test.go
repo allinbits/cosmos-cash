@@ -111,3 +111,55 @@ func (suite *KeeperTestSuite) TestMsgSeverAddAuthentication() {
 		})
 	}
 }
+
+func (suite *KeeperTestSuite) TestMsgSeverAddService() {
+	server := NewMsgServerImpl(suite.keeper)
+	var (
+		req types.MsgAddService
+	)
+
+	testCases := []struct {
+		msg      string
+		malleate func()
+		expPass  bool
+	}{
+		{
+			"can not add authentication, identifier does not exist",
+			func() { req = *types.NewMsgAddService("did:cash:1111", nil, "did:cash:1111") },
+			false,
+		},
+		{
+			"can add authentication to did document",
+			func() {
+				service := types.NewService(
+					"did:cash:1111#keys-1",
+					"sepk256",
+					"did:cash:1111",
+				)
+				identifier := types.DidDocument{
+					"context",
+					"did:cash:1111",
+					nil,
+					types.Services{&service},
+				}
+				suite.keeper.SetIdentifier(suite.ctx, []byte(identifier.Id), identifier)
+				req = *types.NewMsgAddService("did:cash:1111", &service, "did:cash:1111")
+			},
+			true,
+		},
+	}
+	for _, tc := range testCases {
+		suite.Run(fmt.Sprintf("Case %s", tc.msg), func() {
+			tc.malleate()
+
+			authResp, err := server.AddService(sdk.WrapSDKContext(suite.ctx), &req)
+			if tc.expPass {
+				suite.NoError(err)
+				suite.NotNil(authResp)
+
+			} else {
+				suite.Require().Error(err)
+			}
+		})
+	}
+}

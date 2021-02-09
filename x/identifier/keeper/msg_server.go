@@ -75,7 +75,10 @@ func (k msgServer) AddService(
 
 	identifier, found := k.Keeper.GetIdentifier(ctx, []byte(msg.Id))
 	if !found {
-		return nil, sdkerrors.Wrapf(types.ErrIdentifierNotFound, "identifier not found: AddService")
+		return nil, sdkerrors.Wrapf(
+			types.ErrIdentifierNotFound,
+			"identifier not found: AddService",
+		)
 	}
 
 	identifier.Services = append(identifier.Services, msg.ServiceData)

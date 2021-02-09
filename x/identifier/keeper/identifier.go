@@ -58,6 +58,6 @@ func (k Keeper) GetAllIdentifiers(ctx sdk.Context) []types.DidDocument {
 	return k.GetAllIdentifiersWithCondition(
 		ctx,
 		types.IdentifierKey,
-		func(votes types.DidDocument) bool { return true },
+		func(did types.DidDocument) bool { return true },
 	)
 }

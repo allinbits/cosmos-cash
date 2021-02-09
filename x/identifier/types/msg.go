@@ -119,3 +119,60 @@ func (msg MsgAddAuthentication) GetSigners() []sdk.AccAddress {
 	}
 	return []sdk.AccAddress{accAddr}
 }
+
+// msg types
+const (
+	TypeMsgAddService = "add-service"
+)
+
+var _ sdk.Msg = &MsgAddService{}
+
+// NewMsgAddService creates a new MsgAddService instance
+func NewMsgAddService(
+	id string,
+	service *Service,
+	owner string,
+) *MsgAddService {
+	return &MsgAddService{
+		Id:          id,
+		ServiceData: service,
+		Owner:       owner,
+	}
+}
+
+// Route implements sdk.Msg
+func (MsgAddService) Route() string {
+	return RouterKey
+}
+
+// Type implements sdk.Msg
+func (MsgAddService) Type() string {
+	return TypeMsgAddService
+}
+
+// ValidateBasic performs a basic check of the MsgAddService fields.
+func (msg MsgAddService) ValidateBasic() error {
+	if msg.Id == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "empty id")
+	}
+
+	if msg.ServiceData == nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "service is required")
+	}
+
+	return nil
+
+}
+
+func (msg MsgAddService) GetSignBytes() []byte {
+	panic("IBC messages do not support amino")
+}
+
+// GetSigners implements sdk.Msg
+func (msg MsgAddService) GetSigners() []sdk.AccAddress {
+	accAddr, err := sdk.AccAddressFromBech32(msg.Owner)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{accAddr}
+}

@@ -33,3 +33,5 @@ secret.yml
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+cscope.files
+cscope.out

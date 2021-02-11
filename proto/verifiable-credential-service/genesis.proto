@@ -1,0 +1,11 @@
+syntax = "proto3";
+package allinbits.cosmoscash.verifiablecredentialservice;
+
+// this line is used by starport scaffolding # genesis/proto/import
+
+option go_package = "github.com/allinbits/cosmos-cash/x/verifiable-credential-service/types";
+
+// GenesisState defines the verifiable-credential-service module's genesis state.
+message GenesisState {
+    // this line is used by starport scaffolding # genesis/proto/state
+}

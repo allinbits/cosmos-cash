@@ -54,6 +54,7 @@ func (k msgServer) AddAuthentication(
 		)
 	}
 
+	// Only the first public key can add new public keys that controls the did document
 	if identifier.Authentication[0].Controller != msg.Owner {
 		return nil, sdkerrors.Wrapf(types.ErrIdentifierNotFound, "msg sender not authorised")
 	}

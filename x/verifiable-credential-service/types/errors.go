@@ -8,5 +8,6 @@ import (
 
 // x/verifiable-credential-service module sentinel errors
 var (
-	ErrSample = sdkerrors.Register(ModuleName, 1100, "sample error")
+	ErrVerifiableCredentialNotFound = sdkerrors.Register(ModuleName, 1100, "vc not found")
+	ErrVerifiableCredentialFound    = sdkerrors.Register(ModuleName, 1101, "vc found")
 )

@@ -5,9 +5,27 @@ package allinbits.cosmoscash.verifiablecredentialservice;
 
 option go_package = "github.com/allinbits/cosmos-cash/x/verifiable-credential-service/types";
 
-// Msg defines the Msg service.
+import "google/protobuf/any.proto";
+import "gogoproto/gogo.proto";
+import "verifiable-credential-service/verifiable-credential.proto";
+
+import "cosmos_proto/cosmos.proto";
+
+
+// Msg defines the identity Msg service.
 service Msg {
-    // this line is used by starport scaffolding # proto/tx/rpc
+  rpc CreateVerifiableCredential(MsgCreateVerifiableCredential) returns (MsgCreateVerifiableCredentialResponse);
 }
 
-// this line is used by starport scaffolding # proto/tx/message
+// MsgCreateVerifiableCredential defines a SDK message for creating a new identifer.
+message MsgCreateVerifiableCredential {
+  option (gogoproto.equal)           = false;
+  option (gogoproto.goproto_getters) = false;
+
+  VerifiableCredential verifiable_credential = 1;
+
+  // owner represents the user creating the message 
+  string owner = 2;
+}
+
+message MsgCreateVerifiableCredentialResponse {}

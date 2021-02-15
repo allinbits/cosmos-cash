@@ -13,7 +13,7 @@ import (
 
 var _ types.QueryServer = Keeper{}
 
-// DenomTrace implements the Query/DenomTrace gRPC method
+// Identifers implements the Identifers gRPC method
 func (q Keeper) Identifiers(c context.Context, req *types.QueryIdentifiersRequest) (*types.QueryIdentifiersResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "empty request")

@@ -1,8 +1,12 @@
 package types
 
+var (
+	VerifiableCredentialKey = []byte{0x62} // prefix for each key to a DidDocument
+)
+
 const (
 	// ModuleName defines the module name
-	ModuleName = "verifiable-credential-service"
+	ModuleName = "verifiablecredentialservice"
 
 	// StoreKey defines the primary module store key
 	StoreKey = ModuleName

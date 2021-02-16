@@ -1,10 +1,8 @@
 syntax = "proto3";
 package allinbits.cosmoscash.ibcidentifier;
 
-import "google/protobuf/any.proto";
 import "gogoproto/gogo.proto";
 
-import "cosmos_proto/cosmos.proto";
 import "ibc/core/client/v1/client.proto";
 
 option go_package = "github.com/allinbits/cosmos-cash/x/ibc-identifier/types";

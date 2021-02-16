@@ -1,5 +1,4 @@
-#!/usr/bin/env bash
-
+#!/usr/bin/env bash 
 # see pre-requests:
 # - https://grpc.io/docs/languages/go/quickstart/
 # - gocosmos plugin is automatically installed during scaffolding.

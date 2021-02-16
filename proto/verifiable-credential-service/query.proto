@@ -11,13 +11,17 @@ option go_package = "github.com/allinbits/cosmos-cash/x/verifiable-credential-se
 
 // Query defines the gRPC querier service.
 service Query {
-  	// Identifers queries all validators that match the given status.
+  // Identifers queries all validators that match the given status.
   rpc VerifiableCredentials(QueryVerifiableCredentialsRequest) returns (QueryVerifiableCredentialsResponse) {
     option (google.api.http).get = "/allinbits/verifiablecredentials/verifiablecredentials";
   }
+  // VerifiableCredential queries validator info for given validator address.
+  rpc VerifiableCredential(QueryVerifiableCredentialRequest) returns (QueryVerifiableCredentialResponse) {
+    option (google.api.http).get = "/allinbits/verifiablecredentials/verifiablecredentials/{verifiable_credential_id}";
+  }
 }
 
-// QueryIdentifersRequest is request type for Query/Identifers RPC method.
+// QueryVerifiableCredentialsRequest is request type for Query/VerifiableCredentials RPC method.
 message QueryVerifiableCredentialsRequest {
   // status enables to query for credentials matching a given status.
   string status = 1;
@@ -26,14 +30,25 @@ message QueryVerifiableCredentialsRequest {
   cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
-// QueryIdentifersResponse is response type for the Query/Identifers RPC method
+// QueryVerifiableCredentialsResponse is response type for the Query/Identifers RPC method
 message QueryVerifiableCredentialsResponse {
   // validators contains all the queried validators.
   repeated VerifiableCredential vcs = 1  [(gogoproto.nullable) = false];
 
-
   // pagination defines the pagination in the response.
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryVerifiableCredentialRequest is response type for the Query/VerifiableCredential RPC method
+message QueryVerifiableCredentialRequest {
+  // verifiable_credential_id defines the credential id to query for.
+  string verifiable_credential_id = 1;
+}
+
+// QueryVerifiableCredentialResponse is response type for the Query/VerifiableCredential RPC method
+message QueryVerifiableCredentialResponse {
+  // verifiable_credential defines the the credential info.
+  VerifiableCredential verifiable_credential = 1 [(gogoproto.nullable) = false];
 }
 
 // this line is used by starport scaffolding # 3

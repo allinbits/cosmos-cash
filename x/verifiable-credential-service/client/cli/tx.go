@@ -1,7 +1,9 @@
 package cli
 
 import (
+	"encoding/base64"
 	"fmt"
+	"time"
 
 	"github.com/spf13/cobra"
 
@@ -43,34 +45,38 @@ func NewCreateVerifiableCredentialCmd() *cobra.Command {
 			}
 			//cdc := codec.NewProtoCodec(clientCtx.InterfaceRegistry)
 			accAddr := clientCtx.GetFromAddress()
-
-			//info, err := clientCtx.Keyring.KeyByAddress(accAddr)
-			//if err != nil {
-			//	return err
-			//}
 			accAddrBech32 := accAddr.String()
 
 			cs := types.NewCredentialSubject(
 				args[0],
 				true,
 			)
-
-			p := types.NewProof(
-				"sepk256",
-				"now",
-				"assertionMethod",
-				"sepk256",
-				"12345",
-			)
+			tm := time.Now()
 
 			vc := types.NewVerifiableCredential(
-				"id",
-				[]string{"KYCCredential"},
+				"new-verifiable-cred-3",
+				[]string{"VerifiableCredential", "KYCCredential"},
 				accAddrBech32,
-				"now",
+				fmt.Sprintf("%s", tm),
 				cs,
-				p,
+				types.NewProof("", "", "", "", ""),
 			)
+
+			signature, pubKey, err := clientCtx.Keyring.SignByAddress(accAddr, vc.GetBytes())
+			if err != nil {
+				return err
+			}
+			//isCorrectPubKey := pubKey.VerifySignature(vc.GetBytes(), signature)
+			//fmt.Println(isCorrectPubKey)
+
+			p := types.NewProof(
+				pubKey.Type(),
+				fmt.Sprintf("%s", tm),
+				"assertionMethod",
+				accAddrBech32+"#keys-1",
+				base64.StdEncoding.EncodeToString(signature),
+			)
+			vc.Proof = &p
 
 			msg := types.NewMsgCreateVerifiableCredential(
 				vc,

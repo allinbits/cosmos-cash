@@ -29,3 +29,25 @@ func (q Keeper) VerifiableCredentials(
 		Vcs: vcs,
 	}, nil
 }
+
+// VerifiableCredential queries verifiable credentials info for given verifiable credentials id
+func (q Keeper) VerifiableCredential(
+	c context.Context,
+	req *types.QueryVerifiableCredentialRequest,
+) (*types.QueryVerifiableCredentialResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "empty request")
+	}
+
+	if req.VerifiableCredentialId == "" {
+		return nil, status.Error(codes.InvalidArgument, "verifiable credential id cannot be empty")
+	}
+
+	ctx := sdk.UnwrapSDKContext(c)
+	vc, found := q.GetVerifiableCredential(ctx, []byte(req.VerifiableCredentialId))
+	if !found {
+		return nil, status.Errorf(codes.NotFound, "vc %s not found", req.VerifiableCredentialId)
+	}
+
+	return &types.QueryVerifiableCredentialResponse{VerifiableCredential: vc}, nil
+}

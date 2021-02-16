@@ -3,7 +3,7 @@ package cli
 import (
 	"context"
 	"fmt"
-	// "strings"
+	//"strings"
 
 	"github.com/spf13/cobra"
 
@@ -28,6 +28,7 @@ func GetQueryCmd(queryRoute string) *cobra.Command {
 	// this line is used by starport scaffolding # 1
 	cmd.AddCommand(
 		GetCmdQueryVerifiableCredentials(),
+		GetCmdQueryVerifiableCredential(),
 	)
 
 	return cmd
@@ -60,6 +61,35 @@ func GetCmdQueryVerifiableCredentials() *cobra.Command {
 			}
 
 			return clientCtx.PrintProto(result)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdQueryVerifiableCredential implements the VerifiableCredential query command.
+func GetCmdQueryVerifiableCredential() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "verifiable-credential [verifiable-credential-id]",
+		Short: "Query a verifiable-credential",
+		Long:  fmt.Sprintf(`Query details about an individual verifiable-credential.`),
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			params := &types.QueryVerifiableCredentialRequest{VerifiableCredentialId: args[0]}
+			res, err := queryClient.VerifiableCredential(cmd.Context(), params)
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(&res.VerifiableCredential)
 		},
 	}
 

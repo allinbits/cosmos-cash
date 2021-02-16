@@ -2,7 +2,7 @@ module github.com/allinbits/cosmos-cash
 
 go 1.15
 
-replace github.com/cosmos/cosmos-sdk => /home/ghost/git/cosmos/cosmos-sdk
+//replace github.com/cosmos/cosmos-sdk => /home/ghost/git/cosmos/cosmos-sdk
 
 require (
 	github.com/cosmos/cosmos-sdk v0.40.1

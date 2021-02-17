@@ -32,7 +32,11 @@ func (k msgServer) CreateVerifiableCredential(
 
 	}
 
-	k.Keeper.SetVerifiableCredential(ctx, []byte(msg.VerifiableCredential.Id), *msg.VerifiableCredential)
+	k.Keeper.SetVerifiableCredential(
+		ctx,
+		[]byte(msg.VerifiableCredential.Id),
+		*msg.VerifiableCredential,
+	)
 
 	return &types.MsgCreateVerifiableCredentialResponse{}, nil
 }

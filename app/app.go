@@ -192,7 +192,7 @@ type App struct {
 	ScopedTransferKeeper capabilitykeeper.ScopedKeeper
 
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
-	vcsKeeper           vcskeeper.Keeper
+	VcsKeeper           vcskeeper.Keeper
 	ibcidentifierKeeper ibcidentifierkeeper.Keeper
 	IdentifierKeeper    identifierkeeper.Keeper
 
@@ -343,7 +343,7 @@ func New(
 	app.EvidenceKeeper = *evidenceKeeper
 
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
-	app.vcsKeeper = *vcskeeper.NewKeeper(
+	app.VcsKeeper = *vcskeeper.NewKeeper(
 		appCodec,
 		keys[vcstypes.StoreKey],
 		keys[vcstypes.MemStoreKey],
@@ -379,7 +379,7 @@ func New(
 		params.NewAppModule(app.ParamsKeeper),
 		transferModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
-		vcs.NewAppModule(appCodec, app.vcsKeeper),
+		vcs.NewAppModule(appCodec, app.VcsKeeper),
 		identifierModule,
 		identifier.NewAppModule(appCodec, app.IdentifierKeeper),
 	)

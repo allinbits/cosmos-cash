@@ -11,7 +11,6 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 
 	"github.com/allinbits/cosmos-cash/x/verifiable-credential-service/client/cli"
-	"github.com/allinbits/cosmos-cash/x/verifiable-credential-service/client/rest"
 	"github.com/allinbits/cosmos-cash/x/verifiable-credential-service/keeper"
 	"github.com/allinbits/cosmos-cash/x/verifiable-credential-service/types"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -151,7 +150,6 @@ func (AppModule) ConsensusVersion() uint64 { return 1 }
 
 // RegisterRESTRoutes registers the capability module's REST service handlers.
 func (AppModuleBasic) RegisterRESTRoutes(clientCtx client.Context, rtr *mux.Router) {
-	rest.RegisterRoutes(clientCtx, rtr)
 }
 
 // LegacyQuerierHandler returns the capability module's Querier.

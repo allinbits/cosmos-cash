@@ -1,59 +1,12 @@
-package identifier
+package keeper
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/suite"
-	"testing"
 
-	"github.com/allinbits/cosmos-cash/x/identifier/keeper"
 	"github.com/allinbits/cosmos-cash/x/identifier/types"
-	"github.com/cosmos/cosmos-sdk/codec"
-	ct "github.com/cosmos/cosmos-sdk/codec/types"
-	"github.com/cosmos/cosmos-sdk/store"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
-
-	dbm "github.com/tendermint/tm-db"
 )
 
-// Keeper test suit enables the keeper package to be tested
-type HandlerTestSuite struct {
-	suite.Suite
-
-	ctx    sdk.Context
-	keeper keeper.Keeper
-}
-
-// SetupTest creates a test suite to test the identifier
-func (suite *HandlerTestSuite) SetupTest() {
-	keyIdentifier := sdk.NewKVStoreKey(types.StoreKey)
-	memKeyIdentifier := sdk.NewKVStoreKey(types.MemStoreKey)
-
-	db := dbm.NewMemDB()
-	ms := store.NewCommitMultiStore(db)
-	ms.MountStoreWithDB(keyIdentifier, sdk.StoreTypeIAVL, db)
-	ms.MountStoreWithDB(memKeyIdentifier, sdk.StoreTypeIAVL, db)
-	_ = ms.LoadLatestVersion()
-
-	ctx := sdk.NewContext(ms, tmproto.Header{ChainID: "foochainid"}, true, nil)
-
-	interfaceRegistry := ct.NewInterfaceRegistry()
-	marshaler := codec.NewProtoCodec(interfaceRegistry)
-
-	k := keeper.NewKeeper(
-		marshaler,
-		keyIdentifier,
-		memKeyIdentifier,
-	)
-
-	suite.ctx, suite.keeper = ctx, *k
-}
-
-func TestHandlerTestSuite(t *testing.T) {
-	suite.Run(t, new(HandlerTestSuite))
-}
-
-func (suite *HandlerTestSuite) TestHandleMsgCreateIdentifier() {
+func (suite *KeeperTestSuite) TestHandleMsgCreateIdentifier() {
 	var (
 		req types.MsgCreateIdentifier
 	)
@@ -104,7 +57,7 @@ func (suite *HandlerTestSuite) TestHandleMsgCreateIdentifier() {
 	}
 }
 
-func (suite *HandlerTestSuite) TestHandleMsgAddAuthentication() {
+func (suite *KeeperTestSuite) TestHandleMsgAddAuthentication() {
 	var (
 		req types.MsgAddAuthentication
 	)
@@ -156,7 +109,7 @@ func (suite *HandlerTestSuite) TestHandleMsgAddAuthentication() {
 	}
 }
 
-func (suite *HandlerTestSuite) TestHandleMsgAddService() {
+func (suite *KeeperTestSuite) TestHandleMsgAddService() {
 	var (
 		req types.MsgAddService
 	)

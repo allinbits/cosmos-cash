@@ -28,7 +28,10 @@ func (k msgServer) CreateVerifiableCredential(
 
 	_, found := k.Keeper.GetVerifiableCredential(ctx, []byte(msg.VerifiableCredential.Id))
 	if found {
-		return nil, sdkerrors.Wrapf(types.ErrVerifiableCredentialFound, "vc already exists")
+		return nil, sdkerrors.Wrapf(
+			types.ErrVerifiableCredentialFound,
+			"vc already exists",
+		)
 
 	}
 

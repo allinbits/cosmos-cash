@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"encoding/base64"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -50,4 +51,33 @@ func (q Keeper) VerifiableCredential(
 	}
 
 	return &types.QueryVerifiableCredentialResponse{VerifiableCredential: vc}, nil
+}
+
+// ValidateVerifiableCredential queries verifiable credentials info with a public key a check validity
+func (q Keeper) ValidateVerifiableCredential(
+	c context.Context,
+	req *types.QueryValidateVerifiableCredentialRequest,
+) (*types.QueryValidateVerifiableCredentialResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "empty request")
+	}
+
+	ctx := sdk.UnwrapSDKContext(c)
+	vc, found := q.GetVerifiableCredential(ctx, []byte(req.VerifiableCredentialId))
+	if !found {
+		return nil, status.Errorf(codes.NotFound, "vc %s not found", req.VerifiableCredentialId)
+	}
+	pubkey, _ := sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeAccPub, req.IssuerPubkey)
+	signature := vc.Proof.Signature
+	emptyProof := types.NewProof("", "", "", "", "")
+	vc.Proof = &emptyProof
+	s, _ := base64.StdEncoding.DecodeString(signature)
+	isCorrectPubKey := pubkey.VerifySignature(
+		vc.GetBytes(),
+		s,
+	)
+
+	return &types.QueryValidateVerifiableCredentialResponse{
+		IsValid: isCorrectPubKey,
+	}, nil
 }

@@ -29,6 +29,7 @@ func GetQueryCmd(queryRoute string) *cobra.Command {
 	cmd.AddCommand(
 		GetCmdQueryVerifiableCredentials(),
 		GetCmdQueryVerifiableCredential(),
+		GetCmdQueryValidateVerifiableCredential(),
 	)
 
 	return cmd
@@ -90,6 +91,38 @@ func GetCmdQueryVerifiableCredential() *cobra.Command {
 			}
 
 			return clientCtx.PrintProto(&res.VerifiableCredential)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdQueryVerifiableCredential implements the VerifiableCredential query command.
+func GetCmdQueryValidateVerifiableCredential() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "validate-verifiable-credential [verifiable-credential-id] [pubkey]",
+		Short: "Validate a verifiable-credential",
+		Long:  fmt.Sprintf(`Validate proof for an individual verifiable-credential.`),
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			params := &types.QueryValidateVerifiableCredentialRequest{
+				VerifiableCredentialId: args[0],
+				IssuerPubkey:           args[1],
+			}
+			res, err := queryClient.ValidateVerifiableCredential(cmd.Context(), params)
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
 		},
 	}
 

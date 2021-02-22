@@ -55,7 +55,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	cfg := network.DefaultConfig()
 	types.RegisterInterfaces(cfg.InterfaceRegistry)
 	cfg.AppConstructor = NewAppConstructor(app.MakeEncodingConfig())
-	cfg.NumValidators = 1
+	cfg.NumValidators = 2
 
 	s.cfg = cfg
 	s.network = network.New(s.T(), cfg)
@@ -111,7 +111,11 @@ func (s *IntegrationTestSuite) TestNewCreateIdentifierCmd() {
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
-				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+				fmt.Sprintf(
+					"--%s=%s",
+					flags.FlagFees,
+					sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String(),
+				),
 			},
 			false, &sdk.TxResponse{}, 0,
 		},
@@ -154,7 +158,11 @@ func (s *IntegrationTestSuite) TestNewAddAuthenticationCmd() {
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
-				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+				fmt.Sprintf(
+					"--%s=%s",
+					flags.FlagFees,
+					sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String(),
+				),
 			},
 			true, &sdk.TxResponse{}, 0,
 		},
@@ -162,20 +170,20 @@ func (s *IntegrationTestSuite) TestNewAddAuthenticationCmd() {
 
 	for _, tc := range testCases {
 		s.Run(tc.name, func() {
-			//	cmd := cli.NewAddAuthenticationCmd()
-			//	clientCtx := val.ClientCtx
+			cmd := cli.NewAddAuthenticationCmd()
+			clientCtx := val.ClientCtx
 
-			//	out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-			//	fmt.Println(out, err)
-			//	if tc.expectErr {
-			//		s.Require().Error(err)
-			//	} else {
-			//		s.Require().NoError(err)
-			//		s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+			fmt.Println(out, err)
+			if tc.expectErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
 
-			//		txResp := tc.respType.(*sdk.TxResponse)
-			//		s.Require().Equal(tc.expectedCode, txResp.Code, out.String())
-			//	}
+				txResp := tc.respType.(*sdk.TxResponse)
+				s.Require().Equal(tc.expectedCode, txResp.Code, out.String())
+			}
 		})
 	}
 }
@@ -200,7 +208,11 @@ func (s *IntegrationTestSuite) TestNewAddServiceCmd() {
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
-				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+				fmt.Sprintf(
+					"--%s=%s",
+					flags.FlagFees,
+					sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String(),
+				),
 			},
 			false, &sdk.TxResponse{}, 0,
 		},

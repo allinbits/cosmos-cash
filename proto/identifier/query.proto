@@ -33,7 +33,6 @@ message QueryIdentifiersResponse {
   // validators contains all the queried validators.
   repeated DidDocument didDocuments = 1  [(gogoproto.nullable) = false];
 
-
   // pagination defines the pagination in the response.
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }

@@ -66,8 +66,6 @@ func NewCreateVerifiableCredentialCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			//isCorrectPubKey := pubKey.VerifySignature(vc.GetBytes(), signature)
-			//fmt.Println(isCorrectPubKey)
 
 			p := types.NewProof(
 				pubKey.Type(),

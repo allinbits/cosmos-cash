@@ -29,7 +29,10 @@ func (k msgServer) CreateIdentifier(
 
 	_, found := k.Keeper.GetIdentifier(ctx, []byte(msg.Id))
 	if found {
-		return nil, sdkerrors.Wrapf(types.ErrIdentifierFound, "identifier already exists")
+		return nil, sdkerrors.Wrapf(
+			types.ErrIdentifierFound,
+			"identifier already exists",
+		)
 
 	}
 
@@ -56,7 +59,10 @@ func (k msgServer) AddAuthentication(
 
 	// Only the first public key can add new public keys that controls the did document
 	if identifier.Authentication[0].Controller != msg.Owner {
-		return nil, sdkerrors.Wrapf(types.ErrIdentifierNotFound, "msg sender not authorised")
+		return nil, sdkerrors.Wrapf(
+			types.ErrIdentifierNotFound,
+			"msg sender not authorised",
+		)
 	}
 
 	// TODO: handle duplicates in the authentication slice

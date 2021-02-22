@@ -19,6 +19,10 @@ service Query {
   rpc VerifiableCredential(QueryVerifiableCredentialRequest) returns (QueryVerifiableCredentialResponse) {
     option (google.api.http).get = "/allinbits/verifiablecredentials/verifiablecredentials/{verifiable_credential_id}";
   }
+  // ValidateVerifiableCredential queries validator info for given validator address.
+  rpc ValidateVerifiableCredential(QueryValidateVerifiableCredentialRequest) returns (QueryValidateVerifiableCredentialResponse) {
+    option (google.api.http).get = "/allinbits/verifiablecredentials/verifiablecredentials/{verifiable_credential_id}/{issuer_pubkey}";
+  }
 }
 
 // QueryVerifiableCredentialsRequest is request type for Query/VerifiableCredentials RPC method.
@@ -51,4 +55,18 @@ message QueryVerifiableCredentialResponse {
   VerifiableCredential verifiable_credential = 1 [(gogoproto.nullable) = false];
 }
 
+// QueryValidateVerifiableCredentialRequest is response type for the Query/VerifiableCredential RPC method
+message QueryValidateVerifiableCredentialRequest {
+  // verifiable_credential_id defines the credential id to query for.
+  string verifiable_credential_id = 1;
+
+  // issuer_pubkey is used to validate to verifiable_credential
+  string issuer_pubkey = 2;
+}
+
+// QueryVerifiableCredentialResponse is response type for the Query/VerifiableCredential RPC method
+message QueryValidateVerifiableCredentialResponse {
+  // is_valid defines if the credential is signed by the correct public key.
+  bool is_valid = 1;
+}
 // this line is used by starport scaffolding # 3

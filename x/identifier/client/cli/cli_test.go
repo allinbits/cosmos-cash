@@ -127,6 +127,12 @@ func (s *IntegrationTestSuite) TestNewCreateIdentifierCmd() {
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+
+			// TODO: optimise this
+			err = s.network.WaitForNextBlock()
+			s.Require().NoError(err)
+			err = s.network.WaitForNextBlock()
+			s.Require().NoError(err)
 			if tc.expectErr {
 				s.Require().Error(err)
 			} else {
@@ -164,7 +170,7 @@ func (s *IntegrationTestSuite) TestNewAddAuthenticationCmd() {
 					sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String(),
 				),
 			},
-			true, &sdk.TxResponse{}, 0,
+			false, &sdk.TxResponse{}, 0,
 		},
 	}
 
@@ -174,7 +180,12 @@ func (s *IntegrationTestSuite) TestNewAddAuthenticationCmd() {
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-			fmt.Println(out, err)
+
+			// TODO: optimise this
+			err = s.network.WaitForNextBlock()
+			s.Require().NoError(err)
+			err = s.network.WaitForNextBlock()
+			s.Require().NoError(err)
 			if tc.expectErr {
 				s.Require().Error(err)
 			} else {
@@ -220,19 +231,25 @@ func (s *IntegrationTestSuite) TestNewAddServiceCmd() {
 
 	for _, tc := range testCases {
 		s.Run(tc.name, func() {
-			//cmd := cli.NewAddServiceCmd()
-			//clientCtx := val.ClientCtx
+			cmd := cli.NewAddServiceCmd()
+			clientCtx := val.ClientCtx
 
-			//out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-			//if tc.expectErr {
-			//	s.Require().Error(err)
-			//} else {
-			//	s.Require().NoError(err)
-			//	s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
 
-			//	txResp := tc.respType.(*sdk.TxResponse)
-			//	s.Require().Equal(tc.expectedCode, txResp.Code, out.String())
-			//}
+			// TODO: optimise this
+			err = s.network.WaitForNextBlock()
+			s.Require().NoError(err)
+			err = s.network.WaitForNextBlock()
+			s.Require().NoError(err)
+			if tc.expectErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+
+				txResp := tc.respType.(*sdk.TxResponse)
+				s.Require().Equal(tc.expectedCode, txResp.Code, out.String())
+			}
 		})
 	}
 }

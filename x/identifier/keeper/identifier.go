@@ -44,6 +44,7 @@ func (k Keeper) GetAllIdentifiersWithCondition(
 ) (identifiers []types.DidDocument) {
 	val := k.GetAll(ctx, key, k.UnmarshalIdentifier)
 
+	// TODO: update to use iterator
 	for _, value := range val {
 		identifer := value.(types.DidDocument)
 		if identiferSelector(identifer) {

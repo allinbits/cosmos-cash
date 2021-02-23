@@ -15,7 +15,10 @@ option go_package = "github.com/allinbits/cosmos-cash/x/identifier/types";
 service Query {
   	// Identifers queries all validators that match the given status.
   rpc Identifiers(QueryIdentifiersRequest) returns (QueryIdentifiersResponse) {
-    option (google.api.http).get = "/allinbits/identity/identitys";
+    option (google.api.http).get = "/allinbits/identifier/identifiers";
+  }
+  rpc Identifier(QueryIdentifierRequest) returns (QueryIdentifierResponse) {
+    option (google.api.http).get = "/allinbits/identifier/identifiers/{id}";
   }
 }
 
@@ -37,4 +40,15 @@ message QueryIdentifiersResponse {
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
+// QueryIdentifersRequest is request type for Query/Identifers RPC method.
+message QueryIdentifierRequest {
+  // status enables to query for validators matching a given status.
+  string id = 1;
+}
+
+// QueryIdentifersResponse is response type for the Query/Identifers RPC method
+message QueryIdentifierResponse {
+  // validators contains all the queried validators.
+  DidDocument didDocument = 1  [(gogoproto.nullable) = false];
+}
 // this line is used by starport scaffolding # 3

@@ -35,13 +35,33 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 }
 
 // Set sets a value in the db with a prefixed key
-func (k Keeper) Set(ctx sdk.Context, key []byte, prefix []byte, i interface{}, marshal MarshalFn) {
+func (k Keeper) Set(ctx sdk.Context,
+	key []byte,
+	prefix []byte,
+	i interface{},
+	marshal MarshalFn,
+) {
 	store := ctx.KVStore(k.storeKey)
 	store.Set(append(prefix, key...), marshal(i))
 }
 
+// Deletes a value form the sotre
+func (k Keeper) Delete(
+	ctx sdk.Context,
+	key []byte,
+	prefix []byte,
+) {
+	store := ctx.KVStore(k.storeKey)
+	store.Delete(append(prefix, key...))
+}
+
 // Get gets an item from the store by bytes
-func (k Keeper) Get(ctx sdk.Context, key []byte, prefix []byte, unmarshal UnmarshalFn) (i interface{}, found bool) {
+func (k Keeper) Get(
+	ctx sdk.Context,
+	key []byte,
+	prefix []byte,
+	unmarshal UnmarshalFn,
+) (i interface{}, found bool) {
 	store := ctx.KVStore(k.storeKey)
 	value := store.Get(append(prefix, key...))
 
@@ -49,7 +69,11 @@ func (k Keeper) Get(ctx sdk.Context, key []byte, prefix []byte, unmarshal Unmars
 }
 
 // GetAll values from with a prefix from the store
-func (k Keeper) GetAll(ctx sdk.Context, prefix []byte, unmarshal UnmarshalFn) (i []interface{}) {
+func (k Keeper) GetAll(
+	ctx sdk.Context,
+	prefix []byte,
+	unmarshal UnmarshalFn,
+) (i []interface{}) {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, prefix)
 	//TODO: return iterator and remove code below

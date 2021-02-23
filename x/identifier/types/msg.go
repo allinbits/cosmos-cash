@@ -176,3 +176,60 @@ func (msg MsgAddService) GetSigners() []sdk.AccAddress {
 	}
 	return []sdk.AccAddress{accAddr}
 }
+
+// msg types
+const (
+	TypeMsgDeleteAuthentication = "delete-authentication"
+)
+
+var _ sdk.Msg = &MsgDeleteAuthentication{}
+
+// NewMsgDeleteAuthentication creates a new MsgDeleteAuthentication instance
+func NewMsgDeleteAuthentication(
+	id string,
+	key string,
+	owner string,
+) *MsgDeleteAuthentication {
+	return &MsgDeleteAuthentication{
+		Id:    id,
+		Key:   key,
+		Owner: owner,
+	}
+}
+
+// Route implements sdk.Msg
+func (MsgDeleteAuthentication) Route() string {
+	return RouterKey
+}
+
+// Type implements sdk.Msg
+func (MsgDeleteAuthentication) Type() string {
+	return TypeMsgDeleteAuthentication
+}
+
+// ValidateBasic performs a basic check of the MsgDeleteAuthentication fields.
+func (msg MsgDeleteAuthentication) ValidateBasic() error {
+	if msg.Id == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "empty id")
+	}
+
+	if msg.Key == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "authentication is required")
+	}
+
+	return nil
+
+}
+
+func (msg MsgDeleteAuthentication) GetSignBytes() []byte {
+	panic("IBC messages do not support amino")
+}
+
+// GetSigners implements sdk.Msg
+func (msg MsgDeleteAuthentication) GetSigners() []sdk.AccAddress {
+	accAddr, err := sdk.AccAddressFromBech32(msg.Owner)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{accAddr}
+}

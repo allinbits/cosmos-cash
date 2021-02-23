@@ -93,3 +93,52 @@ func (k msgServer) AddService(
 
 	return &types.MsgAddServiceResponse{}, nil
 }
+
+// AddAuthentication adds a public key and controller to am existing DID document
+func (k msgServer) DeleteAuthentication(
+	goCtx context.Context,
+	msg *types.MsgDeleteAuthentication,
+) (*types.MsgDeleteAuthenticationResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	identifier, found := k.Keeper.GetIdentifier(ctx, []byte(msg.Id))
+	if !found {
+		return nil, sdkerrors.Wrapf(
+			types.ErrIdentifierNotFound,
+			"identifier not found: DeleteAuthentication",
+		)
+	}
+
+	// Only the first public key can add new public keys that controls the did document
+	if identifier.Authentication[0].Controller != msg.Owner {
+		return nil, sdkerrors.Wrapf(
+			types.ErrIdentifierNotFound,
+			"msg sender not authorised",
+		)
+	}
+
+	pubKey, err := sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeAccPub, msg.Key)
+	if err != nil {
+		return nil, sdkerrors.Wrapf(
+			types.ErrIdentifierNotFound,
+			"pubkey not correct",
+		)
+	}
+	address := sdk.AccAddress(pubKey.Address())
+
+	// TODO: don't delete if only one auth
+	auth := identifier.Authentication
+	for i, key := range identifier.Authentication {
+		if key.Controller == address.String() {
+			auth = append(
+				identifier.Authentication[:i],
+				identifier.Authentication[i+1:]...,
+			)
+		}
+	}
+	identifier.Authentication = auth
+
+	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), identifier)
+
+	return &types.MsgDeleteAuthenticationResponse{}, nil
+}

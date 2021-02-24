@@ -29,6 +29,7 @@ func GetTxCmd() *cobra.Command {
 		NewAddAuthenticationCmd(),
 		NewAddServiceCmd(),
 		NewDeleteAuthenticationCmd(),
+		NewDeleteServiceCmd(),
 	)
 
 	return cmd
@@ -177,6 +178,38 @@ func NewDeleteAuthenticationCmd() *cobra.Command {
 			accAddr := clientCtx.GetFromAddress()
 
 			msg := types.NewMsgDeleteAuthentication(
+				args[0],
+				args[1],
+				accAddr.String(),
+			)
+
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func NewDeleteServiceCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "delete-service [id] [service-id]",
+		Short:   "deletes a service from a decentralized identifier (did) document",
+		Example: fmt.Sprintf("delete a service for a did document"),
+		Args:    cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			accAddr := clientCtx.GetFromAddress()
+
+			msg := types.NewMsgDeleteService(
 				args[0],
 				args[1],
 				accAddr.String(),

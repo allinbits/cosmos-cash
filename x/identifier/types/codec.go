@@ -19,6 +19,7 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgAddAuthentication{},
 		&MsgAddService{},
 		&MsgDeleteAuthentication{},
+		&MsgDeleteService{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)

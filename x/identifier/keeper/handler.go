@@ -28,6 +28,9 @@ func NewHandler(k Keeper) sdk.Handler {
 		case *types.MsgDeleteAuthentication:
 			res, err := msgServer.DeleteAuthentication(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
+		case *types.MsgDeleteService:
+			res, err := msgServer.DeleteService(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
 		// this line is used by starport scaffolding # 1
 		default:
 			errMsg := fmt.Sprintf("unrecognized %s message type: %T", types.ModuleName, msg)

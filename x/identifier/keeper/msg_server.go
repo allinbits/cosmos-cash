@@ -73,7 +73,7 @@ func (k msgServer) AddAuthentication(
 	return &types.MsgAddAuthenticationResponse{}, nil
 }
 
-// AddService adds a serivce to am existing DID document
+// AddService adds a serivce to a existing DID document
 func (k msgServer) AddService(
 	goCtx context.Context,
 	msg *types.MsgAddService,
@@ -94,7 +94,7 @@ func (k msgServer) AddService(
 	return &types.MsgAddServiceResponse{}, nil
 }
 
-// AddAuthentication adds a public key and controller to am existing DID document
+// DeleteAuthentication removes a public key and controller from a existing DID document
 func (k msgServer) DeleteAuthentication(
 	goCtx context.Context,
 	msg *types.MsgDeleteAuthentication,
@@ -141,4 +141,44 @@ func (k msgServer) DeleteAuthentication(
 	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), identifier)
 
 	return &types.MsgDeleteAuthenticationResponse{}, nil
+}
+
+// DeleteService remvoes a service from an existing DID document
+func (k msgServer) DeleteService(
+	goCtx context.Context,
+	msg *types.MsgDeleteService,
+) (*types.MsgDeleteServiceResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	identifier, found := k.Keeper.GetIdentifier(ctx, []byte(msg.Id))
+	if !found {
+		return nil, sdkerrors.Wrapf(
+			types.ErrIdentifierNotFound,
+			"identifier not found: DeleteServices",
+		)
+	}
+
+	// Only the first public key can add new public keys that controls the did document
+	if identifier.Authentication[0].Controller != msg.Owner {
+		return nil, sdkerrors.Wrapf(
+			types.ErrIdentifierNotFound,
+			"msg sender not authorised",
+		)
+	}
+
+	// TODO: don't delete if only one auth
+	services := identifier.Services
+	for i, key := range identifier.Services {
+		if key.Id == msg.ServiceId {
+			services = append(
+				identifier.Services[:i],
+				identifier.Services[i+1:]...,
+			)
+		}
+	}
+	identifier.Services = services
+
+	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), identifier)
+
+	return &types.MsgDeleteServiceResponse{}, nil
 }

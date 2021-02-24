@@ -28,17 +28,10 @@ lint:
 ###                           Chain Initialization                          ###
 ###############################################################################
 
-init-dev: init-chain init-validator
+start-dev: install 
+	./scripts/seeds/00_start_chain.sh
 
-start-dev: 
-	go run cmd/cosmos-cashd/main.go start --pruning=nothing --grpc-web.enable=false
-
-init-chain:
-	go run cmd/cosmos-cashd/main.go init --chain-id=cash cash 
-	echo "y" | go run cmd/cosmos-cashd/main.go keys add validator
-
-init-validator:
-	go run cmd/cosmos-cashd/main.go add-genesis-account $(shell go run cmd/cosmos-cashd/main.go keys show validator -a) 1000000000stake
-	go run cmd/cosmos-cashd/main.go gentx validator 700000000stake --chain-id cash
-	go run cmd/cosmos-cashd/main.go collect-gentxs 
+seed: 
+	./scripts/seeds/01_identifier_seeds.sh
+	./scripts/seeds/02_verifiable_credentials_seeds.sh
 

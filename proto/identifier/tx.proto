@@ -13,6 +13,7 @@ service Msg {
   rpc AddAuthentication(MsgAddAuthentication) returns (MsgAddAuthenticationResponse);
   rpc AddService(MsgAddService) returns (MsgAddServiceResponse);
   rpc DeleteAuthentication(MsgDeleteAuthentication) returns (MsgDeleteAuthenticationResponse);
+  rpc DeleteService(MsgDeleteService) returns (MsgDeleteServiceResponse);
 }
 
 // MsgCreateIdentifier defines a SDK message for creating a new identifer.
@@ -77,3 +78,16 @@ message MsgDeleteAuthentication {
 }
 
 message MsgDeleteAuthenticationResponse {}
+
+message MsgDeleteService {
+  option (gogoproto.equal)           = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string     id             = 1; 
+  
+  string     service_id = 2;
+  // owner is the address of the user creating the message 
+  string owner = 3;
+}
+
+message MsgDeleteServiceResponse {}

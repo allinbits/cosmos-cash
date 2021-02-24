@@ -7,12 +7,7 @@ Cosmos Cash is a protocol designed to be regulatory compliant that offers the sa
 - `make install`
 - `cosmos-cashd -h`
 
-### How to set up a chain locally
+### How to run the chain
 
-- `cosmos-cashd init --chain-id=cash cash`
-- `cosmos-cashd keys add validator`
-- `cosmos-cashd keys add-genesis-account $(shell cosmos-cashd keys show validator -a) 1000000000stake`
-- `cosmos-cashd keys gentx validator 700000000stake --chain-id cash`
-- `cosmos-cashd collect-gentxs`
-- `cosmos-cashd start`
+- `make start-dev`
 

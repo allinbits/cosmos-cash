@@ -40,15 +40,18 @@ func (k Keeper) MarshalIdentifier(value interface{}) []byte {
 func (k Keeper) GetAllIdentifiersWithCondition(
 	ctx sdk.Context,
 	key []byte,
-	identiferSelector func(votes types.DidDocument) bool,
+	identifierSelector func(identifiers types.DidDocument) bool,
 ) (identifiers []types.DidDocument) {
-	val := k.GetAll(ctx, key, k.UnmarshalIdentifier)
+	iterator := k.GetAll(ctx, key)
 
 	// TODO: update to use iterator
-	for _, value := range val {
-		identifer := value.(types.DidDocument)
-		if identiferSelector(identifer) {
-			identifiers = append(identifiers, value.(types.DidDocument))
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		identifier, _ := k.UnmarshalIdentifier(iterator.Value())
+		identifierTyped := identifier.(types.DidDocument)
+		if identifierSelector(identifierTyped) {
+			identifiers = append(identifiers, identifierTyped)
 		}
 	}
 

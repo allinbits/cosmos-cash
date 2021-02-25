@@ -113,7 +113,7 @@ func (k msgServer) DeleteAuthentication(
 	if identifier.Authentication[0].Controller != msg.Owner {
 		return nil, sdkerrors.Wrapf(
 			types.ErrIdentifierNotFound,
-			"msg sender not authorised",
+			"msg sender not authorised: DeleteAuthentication",
 		)
 	}
 
@@ -121,7 +121,7 @@ func (k msgServer) DeleteAuthentication(
 	if err != nil {
 		return nil, sdkerrors.Wrapf(
 			types.ErrIdentifierNotFound,
-			"pubkey not correct",
+			"pubkey not correct: DeleteAuthentication",
 		)
 	}
 	address := sdk.AccAddress(pubKey.Address())
@@ -162,11 +162,18 @@ func (k msgServer) DeleteService(
 	if identifier.Authentication[0].Controller != msg.Owner {
 		return nil, sdkerrors.Wrapf(
 			types.ErrIdentifierNotFound,
-			"msg sender not authorised",
+			"msg sender not authorised: DeleteService",
 		)
 	}
 
-	// TODO: don't delete if only one auth
+	// Only try to remove service if there are services
+	if len(identifier.Services) == 0 {
+		return nil, sdkerrors.Wrapf(
+			types.ErrIdentifierNotFound,
+			"no services found: DeleteService",
+		)
+	}
+
 	services := identifier.Services
 	for i, key := range identifier.Services {
 		if key.Id == msg.ServiceId {

@@ -23,3 +23,6 @@ cosmos-cashd query identifier identifiers --output json | jq
 
 echo "Deleting service from decentralized identifier for user: validator"
 cosmos-cashd tx identifier delete-service did:cash:$(cosmos-cashd keys show validator -a) new-verifiable-cred-3 --from validator --chain-id cash -y
+
+echo "Querying identifiers"
+cosmos-cashd query identifier identifiers --output json | jq

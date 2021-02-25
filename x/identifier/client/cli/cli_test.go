@@ -71,16 +71,24 @@ func (s *IntegrationTestSuite) TearDownSuite() {
 	s.network.Cleanup()
 }
 
+// TODO: write more test cases for happy paths
+
 func (s *IntegrationTestSuite) TestGetCmdQueryIdentifiers() {
 	val := s.network.Validators[0]
 
 	testCases := []struct {
-		name string
-		args []string
+		name      string
+		args      []string
+		expectErr bool
+		respType  proto.Message
+		expected  proto.Message
 	}{
 		{
 			"json output",
 			[]string{fmt.Sprintf("--%s=json", tmcli.OutputFlag)},
+			false,
+			&types.QueryIdentifiersResponse{},
+			&types.QueryIdentifiersResponse{},
 		},
 	}
 
@@ -89,8 +97,55 @@ func (s *IntegrationTestSuite) TestGetCmdQueryIdentifiers() {
 			cmd := cli.GetCmdQueryIdentifers()
 			clientCtx := val.ClientCtx
 
-			_, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-			s.Require().NoError(err)
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+			if tc.expectErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+				s.Require().Equal(tc.expected.String(), tc.respType.String())
+
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestGetCmdQueryIdentifier() {
+	val := s.network.Validators[0]
+
+	testCases := []struct {
+		name      string
+		args      []string
+		expectErr bool
+		respType  proto.Message
+		expected  proto.Message
+	}{
+		{
+			"json output",
+			[]string{
+				"not found",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			true,
+			&types.QueryIdentifierResponse{},
+			&types.QueryIdentifierResponse{},
+		},
+	}
+
+	for _, tc := range testCases {
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdQueryIdentifer()
+			clientCtx := val.ClientCtx
+
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+			if tc.expectErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+				s.Require().Equal(tc.expected.String(), tc.respType.String())
+
+			}
 		})
 	}
 }
@@ -159,7 +214,7 @@ func (s *IntegrationTestSuite) TestNewAddAuthenticationCmd() {
 		{
 			"invalid transaction",
 			[]string{
-				"id",
+				"identifier-id",
 				"cosmospub1addwnpepqtqutllgy55y33078dw480zlrspnvtepnfyq7x3nzhpx8vgzju3gs0ungys",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
@@ -232,6 +287,111 @@ func (s *IntegrationTestSuite) TestNewAddServiceCmd() {
 	for _, tc := range testCases {
 		s.Run(tc.name, func() {
 			cmd := cli.NewAddServiceCmd()
+			clientCtx := val.ClientCtx
+
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+
+			// TODO: optimise this
+			err = s.network.WaitForNextBlock()
+			s.Require().NoError(err)
+			err = s.network.WaitForNextBlock()
+			s.Require().NoError(err)
+			if tc.expectErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+
+				txResp := tc.respType.(*sdk.TxResponse)
+				s.Require().Equal(tc.expectedCode, txResp.Code, out.String())
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestNewDeleteAuthenticationCmd() {
+	val := s.network.Validators[0]
+
+	testCases := []struct {
+		name         string
+		args         []string
+		expectErr    bool
+		respType     proto.Message
+		expectedCode uint32
+	}{
+		{
+			"invalid transaction",
+			[]string{
+				"identifier-id",
+				"cosmospub1addwnpepqtqutllgy55y33078dw480zlrspnvtepnfyq7x3nzhpx8vgzju3gs0ungys",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
+				fmt.Sprintf(
+					"--%s=%s",
+					flags.FlagFees,
+					sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String(),
+				),
+			},
+			false, &sdk.TxResponse{}, 0,
+		},
+	}
+
+	for _, tc := range testCases {
+		s.Run(tc.name, func() {
+			cmd := cli.NewDeleteAuthenticationCmd()
+			clientCtx := val.ClientCtx
+
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+
+			err = s.network.WaitForNextBlock()
+			s.Require().NoError(err)
+			err = s.network.WaitForNextBlock()
+			s.Require().NoError(err)
+			if tc.expectErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+
+				txResp := tc.respType.(*sdk.TxResponse)
+				s.Require().Equal(tc.expectedCode, txResp.Code, out.String())
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestNewDeleteServiceCmd() {
+	val := s.network.Validators[0]
+
+	testCases := []struct {
+		name         string
+		args         []string
+		expectErr    bool
+		respType     proto.Message
+		expectedCode uint32
+	}{
+		{
+			"invalid transaction",
+			[]string{
+				"identifier-id",
+				"service_key",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
+				fmt.Sprintf(
+					"--%s=%s",
+					flags.FlagFees,
+					sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String(),
+				),
+			},
+			false, &sdk.TxResponse{}, 0,
+		},
+	}
+
+	for _, tc := range testCases {
+		s.Run(tc.name, func() {
+			cmd := cli.NewDeleteServiceCmd()
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)

@@ -98,12 +98,17 @@ func (suite *KeeperTestSuite) TestGenericKeeperSetAndGet() {
 				)
 				suite.Require().True(found)
 
-				allEntities := suite.keeper.GetAll(
+				iterator := suite.keeper.GetAll(
 					suite.ctx,
 					[]byte{0x01},
-					suite.keeper.UnmarshalIdentifier,
 				)
-				suite.Require().Equal(2, len(allEntities))
+				defer iterator.Close()
+
+				var array []interface{}
+				for ; iterator.Valid(); iterator.Next() {
+					array = append(array, iterator.Value())
+				}
+				suite.Require().Equal(2, len(array))
 			} else {
 				// TODO write failure cases
 				suite.Require().False(tc.expPass)

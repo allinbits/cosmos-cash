@@ -2,7 +2,7 @@ module github.com/allinbits/cosmos-cash
 
 go 1.15
 
-//replace github.com/cosmos/cosmos-sdk => /home/ghost/git/cosmos/cosmos-sdk
+replace github.com/cosmos/cosmos-sdk => /home/ghost/git/cosmos/cosmos-sdk
 
 require (
 	github.com/cosmos/cosmos-sdk v0.41.3
@@ -22,7 +22,7 @@ require (
 	golang.org/x/crypto v0.0.0-20210220033148-5ea612d1eb83 // indirect
 	golang.org/x/term v0.0.0-20201210144234-2321bbc49cbf // indirect
 	google.golang.org/genproto v0.0.0-20210223151946-22b48be4551b
-	google.golang.org/grpc v1.35.0
+	google.golang.org/grpc v1.36.0
 
 )
 

@@ -18,10 +18,6 @@ func (q Keeper) Identifiers(
 	c context.Context,
 	req *types.QueryIdentifiersRequest,
 ) (*types.QueryIdentifiersResponse, error) {
-	if req == nil {
-		return nil, status.Error(codes.InvalidArgument, "empty request")
-	}
-
 	ctx := sdk.UnwrapSDKContext(c)
 	identifiers := q.GetAllIdentifiers(ctx)
 
@@ -35,10 +31,6 @@ func (q Keeper) Identifier(
 	c context.Context,
 	req *types.QueryIdentifierRequest,
 ) (*types.QueryIdentifierResponse, error) {
-	if req == nil {
-		return nil, status.Error(codes.InvalidArgument, "empty request")
-	}
-
 	if req.Id == "" {
 		return nil, status.Error(codes.InvalidArgument, "verifiable credential id cannot be empty")
 	}

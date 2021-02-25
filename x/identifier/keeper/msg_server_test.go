@@ -163,3 +163,6 @@ func (suite *KeeperTestSuite) TestMsgSeverAddService() {
 		})
 	}
 }
+
+//TODO: test delete auth
+//TODO: test delete service

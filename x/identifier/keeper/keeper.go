@@ -72,17 +72,16 @@ func (k Keeper) Get(
 func (k Keeper) GetAll(
 	ctx sdk.Context,
 	prefix []byte,
-	unmarshal UnmarshalFn,
-) (i []interface{}) {
+) sdk.Iterator {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, prefix)
+	return sdk.KVStorePrefixIterator(store, prefix)
 	//TODO: return iterator and remove code below
-	defer iterator.Close()
+	//	defer iterator.Close()
+	//
+	//	for ; iterator.Valid(); iterator.Next() {
+	//		value, _ := unmarshal(iterator.Value())
+	//		i = append(i, value)
+	//	}
 
-	for ; iterator.Valid(); iterator.Next() {
-		value, _ := unmarshal(iterator.Value())
-		i = append(i, value)
-	}
-
-	return i
+	//return i
 }

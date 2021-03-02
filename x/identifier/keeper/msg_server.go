@@ -130,6 +130,8 @@ func (k msgServer) DeleteAuthentication(
 	auth := identifier.Authentication
 	for i, key := range identifier.Authentication {
 		if key.Controller == address.String() {
+			// TODO: improve this logic
+			// TODO: reorder auth ids as deleting and adding keys can lead to duplicated ids
 			auth = append(
 				identifier.Authentication[:i],
 				identifier.Authentication[i+1:]...,
@@ -177,6 +179,7 @@ func (k msgServer) DeleteService(
 	services := identifier.Services
 	for i, key := range identifier.Services {
 		if key.Id == msg.ServiceId {
+			// TODO: improve this logic
 			services = append(
 				identifier.Services[:i],
 				identifier.Services[i+1:]...,

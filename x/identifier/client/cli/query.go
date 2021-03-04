@@ -37,7 +37,7 @@ func GetQueryCmd(queryRoute string) *cobra.Command {
 func GetCmdQueryIdentifers() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "identifiers",
-		Short: "Query for all identitifers",
+		Short: "Query for all identifiers",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)

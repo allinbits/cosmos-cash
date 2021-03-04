@@ -2,12 +2,14 @@ package cli
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/spf13/cobra"
 
-	"github.com/cosmos/cosmos-sdk/client"
-	// "github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/allinbits/cosmos-cash/x/issuer/types"
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/cosmos/cosmos-sdk/client/tx"
 )
 
 // GetTxCmd returns the transaction commands for this module
@@ -21,6 +23,45 @@ func GetTxCmd() *cobra.Command {
 	}
 
 	// this line is used by starport scaffolding # 1
+	cmd.AddCommand(
+		NewCreateIssuerCmd(),
+	)
 
-	return cmd 
+	return cmd
+}
+
+// NewCreateIssuerCmd defines the command to create a new IBC light client.
+func NewCreateIssuerCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "create-issuer [token] [fee]",
+		Short:   "create an issuer of an e-money token",
+		Example: fmt.Sprintf("creates an issuer of an e-money token"),
+		Args:    cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			//cdc := codec.NewProtoCodec(clientCtx.InterfaceRegistry)
+			accAddr := clientCtx.GetFromAddress()
+			accAddrBech32 := accAddr.String()
+
+			fee, _ := strconv.ParseInt(args[1], 0, 32)
+			msg := types.NewMsgCreateIssuer(
+				args[0],
+				int32(fee),
+				accAddrBech32,
+			)
+
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
 }

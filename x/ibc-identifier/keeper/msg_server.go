@@ -2,7 +2,7 @@ package keeper
 
 import (
 	"context"
-	"fmt"
+	//	"fmt"
 	//	"time"
 	//
 	//	metrics "github.com/armon/go-metrics"
@@ -89,7 +89,6 @@ func (k msgServer) Transfer(
 	}
 
 	packetData, _ := k.identifierKeeper.GetIdentifier(ctx, []byte(sender))
-	fmt.Println(packetData)
 
 	packet := channeltypes.NewPacket(
 		packetData.GetBytes(),

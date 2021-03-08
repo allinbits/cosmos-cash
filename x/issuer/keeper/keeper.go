@@ -5,9 +5,12 @@ import (
 
 	"github.com/tendermint/tendermint/libs/log"
 
+	identifierkeeper "github.com/allinbits/cosmos-cash/x/identifier/keeper"
 	"github.com/allinbits/cosmos-cash/x/issuer/types"
+	vcskeeper "github.com/allinbits/cosmos-cash/x/verifiable-credential-service/keeper"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	bank "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 )
 
 // UnmarshalFn is a generic function to unmarshal bytes
@@ -20,13 +23,27 @@ type Keeper struct {
 	cdc      codec.Marshaler
 	storeKey sdk.StoreKey
 	memKey   sdk.StoreKey
+
+	ik   identifierkeeper.Keeper
+	vcsk vcskeeper.Keeper
+	bk   bank.Keeper
 }
 
-func NewKeeper(cdc codec.Marshaler, storeKey, memKey sdk.StoreKey) *Keeper {
+func NewKeeper(
+	cdc codec.Marshaler,
+	storeKey,
+	memKey sdk.StoreKey,
+	ik identifierkeeper.Keeper,
+	vcsk vcskeeper.Keeper,
+	bk bank.Keeper,
+) *Keeper {
 	return &Keeper{
 		cdc:      cdc,
 		storeKey: storeKey,
 		memKey:   memKey,
+		ik:       ik,
+		vcsk:     vcsk,
+		bk:       bk,
 	}
 }
 

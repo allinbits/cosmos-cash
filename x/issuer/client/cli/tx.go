@@ -33,7 +33,7 @@ func GetTxCmd() *cobra.Command {
 // NewCreateIssuerCmd defines the command to create a new IBC light client.
 func NewCreateIssuerCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "create-issuer [token] [fee]",
+		Use:     "create-issuer [did] [token] [fee]",
 		Short:   "create an issuer of an e-money token",
 		Example: fmt.Sprintf("creates an issuer of an e-money token"),
 		Args:    cobra.ExactArgs(2),
@@ -42,7 +42,7 @@ func NewCreateIssuerCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			//cdc := codec.NewProtoCodec(clientCtx.InterfaceRegistry)
+
 			accAddr := clientCtx.GetFromAddress()
 			accAddrBech32 := accAddr.String()
 

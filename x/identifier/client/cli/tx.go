@@ -60,7 +60,7 @@ func NewCreateIdentifierCmd() *cobra.Command {
 
 			auth := types.NewAuthentication(
 				id+"#keys-1",
-				"sepk256",
+				pubKey.Type(),
 				accAddrBech32,
 				base64.StdEncoding.EncodeToString(pubKey.Bytes()),
 			)
@@ -102,7 +102,7 @@ func NewAddAuthenticationCmd() *cobra.Command {
 
 			auth := types.NewAuthentication(
 				"",
-				"sepk256",
+				pubKey.Type(),
 				address.String(),
 				pubKey.Address().String(),
 			)

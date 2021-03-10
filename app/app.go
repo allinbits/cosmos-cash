@@ -197,7 +197,7 @@ type App struct {
 	ScopedTransferKeeper capabilitykeeper.ScopedKeeper
 
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
-	issuerKeeper        issuerkeeper.Keeper
+	IssuerKeeper        issuerkeeper.Keeper
 	VcsKeeper           vcskeeper.Keeper
 	ibcidentifierKeeper ibcidentifierkeeper.Keeper
 	IdentifierKeeper    identifierkeeper.Keeper
@@ -436,7 +436,7 @@ func New(
 		keys[vcstypes.StoreKey],
 		keys[vcstypes.MemStoreKey],
 	)
-	app.issuerKeeper = *issuerkeeper.NewKeeper(
+	app.IssuerKeeper = *issuerkeeper.NewKeeper(
 		appCodec,
 		keys[issuertypes.StoreKey],
 		keys[issuertypes.MemStoreKey],
@@ -520,7 +520,7 @@ func New(
 		// this line is used by starport scaffolding # stargate/app/appModule
 		issuer.NewAppModule(
 			appCodec,
-			app.issuerKeeper,
+			app.IssuerKeeper,
 		),
 		vcs.NewAppModule(
 			appCodec,
@@ -601,7 +601,7 @@ func New(
 		NewAnteHandler(
 			app.AccountKeeper,
 			app.BankKeeper,
-			app.issuerKeeper,
+			app.IssuerKeeper,
 			app.IdentifierKeeper,
 			app.VcsKeeper,
 			ante.DefaultSigVerificationGasConsumer,

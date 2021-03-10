@@ -440,8 +440,6 @@ func New(
 		appCodec,
 		keys[issuertypes.StoreKey],
 		keys[issuertypes.MemStoreKey],
-		app.IdentifierKeeper,
-		app.VcsKeeper,
 		app.BankKeeper,
 	)
 
@@ -600,9 +598,12 @@ func New(
 	app.SetInitChainer(app.InitChainer)
 	app.SetBeginBlocker(app.BeginBlocker)
 	app.SetAnteHandler(
-		ante.NewAnteHandler(
+		NewAnteHandler(
 			app.AccountKeeper,
 			app.BankKeeper,
+			app.issuerKeeper,
+			app.IdentifierKeeper,
+			app.VcsKeeper,
 			ante.DefaultSigVerificationGasConsumer,
 			encodingConfig.TxConfig.SignModeHandler(),
 		),

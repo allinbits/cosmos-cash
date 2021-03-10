@@ -7,7 +7,7 @@ import (
 
 // msg types
 const (
-	TypeMsgCreateIssuer = "create-identifier"
+	TypeMsgCreateIssuer = "create-issuer"
 )
 
 var _ sdk.Msg = &MsgCreateIssuer{}

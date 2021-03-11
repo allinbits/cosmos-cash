@@ -34,10 +34,10 @@ func GetTxCmd() *cobra.Command {
 // NewCreateVerifiableCredentialCmd defines the command to create a new verifiable credential.
 func NewCreateVerifiableCredentialCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "create-verifiable-credential [id]",
+		Use:     "create-verifiable-credential [did_url] [cred-id]",
 		Short:   "create decentralized verifiable-credential",
 		Example: fmt.Sprintf("creates a verifiable credential for users"),
-		Args:    cobra.ExactArgs(1),
+		Args:    cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -54,7 +54,7 @@ func NewCreateVerifiableCredentialCmd() *cobra.Command {
 			tm := time.Now()
 
 			vc := types.NewVerifiableCredential(
-				"new-verifiable-cred-3",
+				args[1],
 				[]string{"VerifiableCredential", "KYCCredential"},
 				accAddrBech32,
 				fmt.Sprintf("%s", tm),

@@ -34,4 +34,5 @@ start-dev: install
 seed: 
 	./scripts/seeds/01_identifier_seeds.sh
 	./scripts/seeds/02_verifiable_credentials_seeds.sh
+	./scripts/seeds/03_issuer_seeds.sh
 

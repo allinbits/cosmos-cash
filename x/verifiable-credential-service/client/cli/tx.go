@@ -25,14 +25,15 @@ func GetTxCmd() *cobra.Command {
 
 	// this line is used by starport scaffolding # 1
 	cmd.AddCommand(
-		NewCreateVerifiableCredentialCmd(),
+		NewCreateUserVerifiableCredentialCmd(),
+		NewCreateIssuerVerifiableCredentialCmd(),
 	)
 
 	return cmd
 }
 
-// NewCreateVerifiableCredentialCmd defines the command to create a new verifiable credential.
-func NewCreateVerifiableCredentialCmd() *cobra.Command {
+// NewCreateUserVerifiableCredentialCmd defines the command to create a new verifiable credential.
+func NewCreateUserVerifiableCredentialCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "create-verifiable-credential [did_url] [cred-id]",
 		Short:   "create decentralized verifiable-credential",
@@ -47,15 +48,78 @@ func NewCreateVerifiableCredentialCmd() *cobra.Command {
 			accAddr := clientCtx.GetFromAddress()
 			accAddrBech32 := accAddr.String()
 
-			cs := types.NewCredentialSubject(
+			cs := types.NewUserCredentialSubject(
 				args[0],
 				true,
 			)
 			tm := time.Now()
 
-			vc := types.NewVerifiableCredential(
+			vc := types.NewUserVerifiableCredential(
 				args[1],
 				[]string{"VerifiableCredential", "KYCCredential"},
+				accAddrBech32,
+				fmt.Sprintf("%s", tm),
+				cs,
+				types.NewProof("", "", "", "", ""),
+			)
+
+			signature, pubKey, err := clientCtx.Keyring.SignByAddress(accAddr, vc.GetBytes())
+			if err != nil {
+				return err
+			}
+
+			p := types.NewProof(
+				pubKey.Type(),
+				fmt.Sprintf("%s", tm),
+				"assertionMethod",
+				accAddrBech32+"#keys-1",
+				base64.StdEncoding.EncodeToString(signature),
+			)
+			vc.Proof = &p
+
+			msg := types.NewMsgCreateVerifiableCredential(
+				vc,
+				accAddrBech32,
+			)
+
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// NewCreateIssuerVerifiableCredentialCmd defines the command to create a new verifiable credential.
+func NewCreateIssuerVerifiableCredentialCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "create-issuer-verifiable-credential [did_url] [cred-id]",
+		Short:   "create decentralized verifiable-credential for issuer",
+		Example: fmt.Sprintf("creates a verifiable credential for issuers"),
+		Args:    cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			//cdc := codec.NewProtoCodec(clientCtx.InterfaceRegistry)
+			accAddr := clientCtx.GetFromAddress()
+			accAddrBech32 := accAddr.String()
+
+			cs := types.NewIssuerCredentialSubject(
+				args[0],
+				true,
+			)
+			tm := time.Now()
+
+			vc := types.NewIssuerVerifiableCredential(
+				args[1],
+				[]string{"VerifiableCredential", "IssuerCredential"},
 				accAddrBech32,
 				fmt.Sprintf("%s", tm),
 				cs,

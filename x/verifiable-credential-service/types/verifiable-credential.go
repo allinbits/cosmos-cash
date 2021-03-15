@@ -1,16 +1,32 @@
 package types
 
-import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
-)
-
 // NewIdentifier constructs a new Identifier
-func NewVerifiableCredential(
+func NewUserVerifiableCredential(
 	id string,
 	vctype []string,
 	issuer string,
 	issuanceDate string,
-	credentialSubject CredentialSubject,
+	credentialSubject VerifiableCredential_UserCred,
+	proof Proof,
+) VerifiableCredential {
+	return VerifiableCredential{
+		Context:           []string{"https://www.w3.org/TR/vc-data-model/"},
+		Id:                id,
+		Type:              vctype,
+		Issuer:            issuer,
+		IssuanceDate:      issuanceDate,
+		CredentialSubject: &credentialSubject,
+		Proof:             &proof,
+	}
+}
+
+// NewIdentifier constructs a new Identifier
+func NewIssuerVerifiableCredential(
+	id string,
+	vctype []string,
+	issuer string,
+	issuanceDate string,
+	credentialSubject VerifiableCredential_IssuerCred,
 	proof Proof,
 ) VerifiableCredential {
 	return VerifiableCredential{
@@ -26,16 +42,31 @@ func NewVerifiableCredential(
 
 // GetBytes is a helper for serialising
 func (vc VerifiableCredential) GetBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&vc))
+	dAtA, _ := vc.Marshal()
+	return dAtA
 }
 
-func NewCredentialSubject(
+func NewUserCredentialSubject(
 	id string,
 	hasKyc bool,
-) CredentialSubject {
-	return CredentialSubject{
-		Id:     id,
-		HasKyc: hasKyc,
+) VerifiableCredential_UserCred {
+	return VerifiableCredential_UserCred{
+		&UserCredentialSubject{
+			Id:     id,
+			HasKyc: hasKyc,
+		},
+	}
+}
+
+func NewIssuerCredentialSubject(
+	id string,
+	isVerified bool,
+) VerifiableCredential_IssuerCred {
+	return VerifiableCredential_IssuerCred{
+		&IssuerCredentialSubject{
+			Id:         id,
+			IsVerified: isVerified,
+		},
 	}
 }
 

@@ -1,7 +1,6 @@
 package ante
 
 import (
-	"fmt"
 	identifierkeeper "github.com/allinbits/cosmos-cash/x/identifier/keeper"
 	vcskeeper "github.com/allinbits/cosmos-cash/x/verifiable-credential-service/keeper"
 	//identifiertypes "github.com/allinbits/cosmos-cash/x/identifier/types"
@@ -35,10 +34,11 @@ func (cicd CheckIssuerCredentialsDecorator) AnteHandle(ctx sdk.Context, tx sdk.T
 	for _, msg := range tx.GetMsgs() {
 		if msg.Type() == "create-issuer" {
 			imsg := msg.(*types.MsgCreateIssuer)
+			didURI := "did:cash:" + imsg.Owner
 
 			// TODO: pass in the did URI as an arg {msg.Id}
 			// TODO: ensure this keeper can only read from store
-			did, found := cicd.ik.GetIdentifier(ctx, []byte("did:cash:"+imsg.Owner))
+			did, found := cicd.ik.GetIdentifier(ctx, []byte(didURI))
 			if !found {
 				return ctx, sdkerrors.Wrapf(
 					types.ErrIssuerFound,
@@ -50,7 +50,6 @@ func (cicd CheckIssuerCredentialsDecorator) AnteHandle(ctx sdk.Context, tx sdk.T
 			foundKey := false
 			for _, auth := range did.Authentication {
 				if auth.Controller == imsg.Owner {
-					fmt.Println("found key")
 					foundKey = true
 				}
 			}
@@ -66,7 +65,7 @@ func (cicd CheckIssuerCredentialsDecorator) AnteHandle(ctx sdk.Context, tx sdk.T
 			hasIssuerCredential := false
 			for _, service := range did.Services {
 				// TODO use enum here
-				if service.Type == "KYCCredential" {
+				if service.Type == "IssuerCredential" {
 					// TODO: ensure this keeper can only read from store
 					vc, found := cicd.vcsk.GetVerifiableCredential(ctx, []byte(service.Id))
 					if !found {
@@ -75,7 +74,23 @@ func (cicd CheckIssuerCredentialsDecorator) AnteHandle(ctx sdk.Context, tx sdk.T
 							"credential not found",
 						)
 					}
-					hasIssuerCredential = vc.CredentialSubject.HasKyc
+
+					issuerCred := vc.GetIssuerCred()
+					if issuerCred.Id != didURI {
+						return ctx, sdkerrors.Wrapf(
+							types.ErrIssuerFound,
+							"issuer id not correct",
+						)
+					}
+
+					if issuerCred.IsVerified == false {
+						return ctx, sdkerrors.Wrapf(
+							types.ErrIssuerFound,
+							"issuer is not verified",
+						)
+					}
+
+					hasIssuerCredential = true
 					// TODO: validate credential here
 				}
 			}

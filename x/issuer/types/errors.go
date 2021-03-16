@@ -9,4 +9,5 @@ import (
 // x/issuer module sentinel errors
 var (
 	ErrIssuerFound = sdkerrors.Register(ModuleName, 1101, "issuer found")
+	ErrUserFound   = sdkerrors.Register(ModuleName, 1102, "user found")
 )

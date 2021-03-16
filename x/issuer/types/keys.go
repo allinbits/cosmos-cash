@@ -2,6 +2,7 @@ package types
 
 var (
 	IssuerKey = []byte{0x61} // prefix for each key to a DidDocument
+	TokenKey  = []byte{0x62} // prefix for each key to a DidDocument
 )
 
 const (

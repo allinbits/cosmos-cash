@@ -5,12 +5,19 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-func (k Keeper) SetIssuer(ctx sdk.Context, key []byte, issuer types.Issuer) {
-	k.Set(ctx, key, types.IssuerKey, issuer, k.MarshalIssuer)
+func (k Keeper) SetIssuer(ctx sdk.Context, issuer types.Issuer) {
+	k.Set(ctx, []byte(issuer.Address), types.IssuerKey, issuer, k.MarshalIssuer)
+	k.Set(ctx, []byte(issuer.Token), types.TokenKey, issuer, k.MarshalIssuer)
 }
 
 func (k Keeper) GetIssuer(ctx sdk.Context, key []byte) (types.Issuer, bool) {
 	val, found := k.Get(ctx, key, types.IssuerKey, k.UnmarshalIssuer)
+	return val.(types.Issuer), found
+}
+
+// TODO: this could be improved by only calling Get once in this file
+func (k Keeper) GetIssuerByToken(ctx sdk.Context, key []byte) (types.Issuer, bool) {
+	val, found := k.Get(ctx, key, types.TokenKey, k.UnmarshalIssuer)
 	return val.(types.Issuer), found
 }
 

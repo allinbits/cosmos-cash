@@ -41,7 +41,7 @@ func (k msgServer) CreateIssuer(
 		Address: msg.Owner,
 	}
 
-	k.Keeper.SetIssuer(ctx, []byte(identifer.Address), identifer)
+	k.Keeper.SetIssuer(ctx, identifer)
 
 	// TODO: this needs to be refactored
 	circulatingSupply := 1000000000000

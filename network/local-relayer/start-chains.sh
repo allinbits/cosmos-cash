@@ -26,6 +26,6 @@ cosmos-cashd gentx validator2 7000000000stake --chain-id cash2 --home ~/.rly-cas
 cosmos-cashd collect-gentxs --home ~/.rly-cash2
 
 #echo "Running both chains"
-cosmos-cashd start --pruning nothing --grpc-web.enable false --home ~/.rly-cash &
-cosmos-cashd start --pruning nothing --grpc-web.enable false --home ~/.rly-cash2 &
+cosmos-cashd start --pruning nothing  false --home ~/.rly-cash &
+cosmos-cashd start --pruning nothing  false --home ~/.rly-cash2 &
 

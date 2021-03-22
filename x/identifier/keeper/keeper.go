@@ -75,13 +75,4 @@ func (k Keeper) GetAll(
 ) sdk.Iterator {
 	store := ctx.KVStore(k.storeKey)
 	return sdk.KVStorePrefixIterator(store, prefix)
-	//TODO: return iterator and remove code below
-	//	defer iterator.Close()
-	//
-	//	for ; iterator.Valid(); iterator.Next() {
-	//		value, _ := unmarshal(iterator.Value())
-	//		i = append(i, value)
-	//	}
-
-	//return i
 }

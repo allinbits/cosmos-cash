@@ -44,7 +44,6 @@ func (k Keeper) GetAllIdentifiersWithCondition(
 ) (identifiers []types.DidDocument) {
 	iterator := k.GetAll(ctx, key)
 
-	// TODO: update to use iterator
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {

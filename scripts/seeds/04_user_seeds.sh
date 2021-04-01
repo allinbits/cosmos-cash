@@ -35,7 +35,7 @@ cosmos-cashd tx bank send $(cosmos-cashd keys show validator -a) $(cosmos-cashd 
 cosmos-cashd tx bank send $(cosmos-cashd keys show validator -a) $(cosmos-cashd keys show user3 -a) 100000seuro --from validator --chain-id cash -y
 
 echo "Querying balances for users"
-gaiad query bank balances $(cosmos-cashd keys show user1 -a) --output json | jq
-gaiad query bank balances $(cosmos-cashd keys show user2 -a) --output json | jq
-gaiad query bank balances $(cosmos-cashd keys show user3 -a) --output json | jq
+cosmos-cashd query bank balances $(cosmos-cashd keys show user1 -a) --output json | jq
+cosmos-cashd query bank balances $(cosmos-cashd keys show user2 -a) --output json | jq
+cosmos-cashd query bank balances $(cosmos-cashd keys show user3 -a) --output json | jq
 

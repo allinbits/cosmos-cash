@@ -156,7 +156,7 @@ func (k msgServer) DeleteService(
 	if !found {
 		return nil, sdkerrors.Wrapf(
 			types.ErrIdentifierNotFound,
-			"identifier not found: DeleteServices",
+			"identifier not found: DeleteService",
 		)
 	}
 

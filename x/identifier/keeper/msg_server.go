@@ -42,7 +42,7 @@ func (k msgServer) CreateIdentifier(
 	return &types.MsgCreateIdentifierResponse{}, nil
 }
 
-// AddAuthentication adds a public key and controller to am existing DID document
+// AddAuthentication adds a public key and controller to an existing DID document
 func (k msgServer) AddAuthentication(
 	goCtx context.Context,
 	msg *types.MsgAddAuthentication,
@@ -57,11 +57,11 @@ func (k msgServer) AddAuthentication(
 		)
 	}
 
-	// Only the first public key can add new public keys that controls the did document
+	// Only the first public key can add new public keys that control the DID document
 	if identifier.Authentication[0].Controller != msg.Owner {
 		return nil, sdkerrors.Wrapf(
 			types.ErrIdentifierNotFound,
-			"msg sender not authorised",
+			"msg sender not authorised: AddAuthentication",
 		)
 	}
 
@@ -73,7 +73,7 @@ func (k msgServer) AddAuthentication(
 	return &types.MsgAddAuthenticationResponse{}, nil
 }
 
-// AddService adds a serivce to a existing DID document
+// AddService adds a service to an existing DID document
 func (k msgServer) AddService(
 	goCtx context.Context,
 	msg *types.MsgAddService,
@@ -94,7 +94,7 @@ func (k msgServer) AddService(
 	return &types.MsgAddServiceResponse{}, nil
 }
 
-// DeleteAuthentication removes a public key and controller from a existing DID document
+// DeleteAuthentication removes a public key and controller from an existing DID document
 func (k msgServer) DeleteAuthentication(
 	goCtx context.Context,
 	msg *types.MsgDeleteAuthentication,
@@ -109,7 +109,7 @@ func (k msgServer) DeleteAuthentication(
 		)
 	}
 
-	// Only the first public key can add new public keys that controls the did document
+	// Only the first public key can remove public keys that control the DID document
 	if identifier.Authentication[0].Controller != msg.Owner {
 		return nil, sdkerrors.Wrapf(
 			types.ErrIdentifierNotFound,
@@ -145,7 +145,7 @@ func (k msgServer) DeleteAuthentication(
 	return &types.MsgDeleteAuthenticationResponse{}, nil
 }
 
-// DeleteService remvoes a service from an existing DID document
+// DeleteService removes a service from an existing DID document
 func (k msgServer) DeleteService(
 	goCtx context.Context,
 	msg *types.MsgDeleteService,
@@ -160,7 +160,7 @@ func (k msgServer) DeleteService(
 		)
 	}
 
-	// Only the first public key can add new public keys that controls the did document
+	// Only the first public key can remove services from the DID document
 	if identifier.Authentication[0].Controller != msg.Owner {
 		return nil, sdkerrors.Wrapf(
 			types.ErrIdentifierNotFound,

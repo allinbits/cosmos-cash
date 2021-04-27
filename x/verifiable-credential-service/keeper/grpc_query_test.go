@@ -65,12 +65,12 @@ func (suite *KeeperTestSuite) TestGRPCQueryVerifiableCredential() {
 		{
 			"Pass: will pass because a vc is found",
 			func() {
-				cs := types.NewCredentialSubject(
+				cs := types.NewIssuerCredentialSubject(
 					"accAddr",
 					true,
 				)
 
-				vc := types.NewVerifiableCredential(
+				vc := types.NewIssuerVerifiableCredential(
 					"new-verifiable-cred-3",
 					[]string{"VerifiableCredential", "KYCCredential"},
 					"accAddr",
@@ -137,12 +137,12 @@ func (suite *KeeperTestSuite) TestGRPCQueryValidateVerifiableCredential() {
 				issuerPubkey := "cosmospub1addwnpepqg86fqwehwcjndtcluzs32eel0m4lcsghx6dkxrreqyrey4w7aqju0ks4l8"
 				signature := "HjxPB1hv/iFjnvA5c3GGSfxi8YyzaKb8qqvBk8yBPa1DPG1VV/JzowVlTSyaO3YBBxAlb6dpRfeP8SfkHjcNQQ=="
 
-				cs := types.NewCredentialSubject(
+				cs := types.NewIssuerCredentialSubject(
 					"accAddr",
 					true,
 				)
 
-				vc := types.NewVerifiableCredential(
+				vc := types.NewIssuerVerifiableCredential(
 					"new-verifiable-cred-3",
 					[]string{"VerifiableCredential", "KYCCredential"},
 					"accAddr",

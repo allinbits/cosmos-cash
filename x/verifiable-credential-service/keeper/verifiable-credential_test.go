@@ -14,12 +14,12 @@ func (suite *KeeperTestSuite) TestVerifiableCredentialsKeeperSetAndGet() {
 	}{
 		{
 			"data stored successfully",
-			types.NewVerifiableCredential(
+			types.NewIssuerVerifiableCredential(
 				"did:cash:1111",
 				[]string{"context"},
 				"",
 				"",
-				types.NewCredentialSubject("", true),
+				types.NewIssuerCredentialSubject("", true),
 				types.NewProof("", "", "", "", ""),
 			),
 			true,

@@ -196,7 +196,7 @@ func (s *IntegrationTestSuite) TestNewCreateVerifiableCredentialCmd() {
 
 	for _, tc := range testCases {
 		s.Run(tc.name, func() {
-			cmd := cli.NewCreateVerifiableCredentialCmd()
+			cmd := cli.NewCreateIssuerVerifiableCredentialCmd()
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)

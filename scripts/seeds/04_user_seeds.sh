@@ -16,9 +16,9 @@ cosmos-cashd tx identifier create-identifier --from user2 --chain-id cash -y
 cosmos-cashd tx identifier create-identifier --from user3 --chain-id cash -y
 
 echo "Creating verifiable credential for user :validator"
-cosmos-cashd tx verifiablecredentialservice create-verifiable-credential did:cash:$(cosmos-cashd keys show user1 -a) kyc-cred-1 --from validator --chain-id cash -y
-cosmos-cashd tx verifiablecredentialservice create-verifiable-credential did:cash:$(cosmos-cashd keys show user2 -a) kyc-cred-2 --from validator --chain-id cash -y
-cosmos-cashd tx verifiablecredentialservice create-verifiable-credential did:cash:$(cosmos-cashd keys show user3 -a) kyc-cred-3 --from validator --chain-id cash -y
+cosmos-cashd tx verifiablecredentialservice create-verifiable-credential did:cash:$(cosmos-cashd keys show user1 -a) kyc-cred-1 secret alice dublin 1-1-1970 1234 3531234  --from validator --chain-id cash -y
+cosmos-cashd tx verifiablecredentialservice create-verifiable-credential did:cash:$(cosmos-cashd keys show user2 -a) kyc-cred-2 secret bob berlin 1-1-1970 g1234 441234 --from validator --chain-id cash -y
+cosmos-cashd tx verifiablecredentialservice create-verifiable-credential did:cash:$(cosmos-cashd keys show user3 -a) kyc-cred-3 secret corm rome 1-1-1970 i1234 111234 --from validator --chain-id cash -y
 
 echo "Adding service to decentralized identifier for users"
 cosmos-cashd tx identifier add-service did:cash:$(cosmos-cashd keys show user1 -a) kyc-cred-1 KYCCredential cash:kyc-cred-1 --from user1 --chain-id cash -y

@@ -16,7 +16,7 @@ set_up_account() {
 
 	### issue credential
         cosmos-cashd tx verifiablecredentialservice create-verifiable-credential \
-		did:cash:$(cosmos-cashd keys show aml$2$1 --keyring-backend test -a) $2-cred-$1 --from validator --chain-id cash -y
+		did:cash:$(cosmos-cashd keys show aml$2$1 --keyring-backend test -a) $2-cred-$1 secret$1 name address dob nationalId phoneNumber --from validator --chain-id cash -y
 
 	### attach credential to did document
         cosmos-cashd tx identifier add-service \

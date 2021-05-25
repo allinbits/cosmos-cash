@@ -9,6 +9,7 @@ fi
 
 if [[
 	$delete_config == "Y" ||
+	$delete_config == "y" ||
 	! -f $GENESIS_FILE
    ]];
 then

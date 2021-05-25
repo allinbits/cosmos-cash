@@ -1,7 +1,10 @@
 package cli
 
 import (
+	"crypto/hmac"
+	"crypto/sha256"
 	"encoding/base64"
+	"encoding/hex"
 	"fmt"
 	"time"
 
@@ -35,10 +38,10 @@ func GetTxCmd() *cobra.Command {
 // NewCreateUserVerifiableCredentialCmd defines the command to create a new verifiable credential.
 func NewCreateUserVerifiableCredentialCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "create-verifiable-credential [did_url] [cred-id]",
+		Use:     "create-verifiable-credential [did_url] [cred-id] [secret] [name] [address] [date_of_birth] [nationalId] [phoneNumber]",
 		Short:   "create decentralized verifiable-credential",
 		Example: fmt.Sprintf("creates a verifiable credential for users"),
-		Args:    cobra.ExactArgs(2),
+		Args:    cobra.ExactArgs(8),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -48,8 +51,37 @@ func NewCreateUserVerifiableCredentialCmd() *cobra.Command {
 			accAddr := clientCtx.GetFromAddress()
 			accAddrBech32 := accAddr.String()
 
+			secret := args[2]
+
+			h := hmac.New(sha256.New, []byte(secret))
+
+			h.Write([]byte(args[3]))
+			name := hex.EncodeToString(h.Sum(nil))
+			h.Reset()
+
+			h.Write([]byte(args[4]))
+			address := hex.EncodeToString(h.Sum(nil))
+			h.Reset()
+
+			h.Write([]byte(args[5]))
+			dob := hex.EncodeToString(h.Sum(nil))
+			h.Reset()
+
+			h.Write([]byte(args[6]))
+			nationalId := hex.EncodeToString(h.Sum(nil))
+			h.Reset()
+
+			h.Write([]byte(args[7]))
+			phoneNumber := hex.EncodeToString(h.Sum(nil))
+			h.Reset()
+
 			cs := types.NewUserCredentialSubject(
 				args[0],
+				name,
+				address,
+				dob,
+				nationalId,
+				phoneNumber,
 				true,
 			)
 			tm := time.Now()

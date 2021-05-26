@@ -38,3 +38,10 @@ seed:
 	./scripts/seeds/03_issuer_seeds.sh
 	./scripts/seeds/04_user_seeds.sh
 
+###############################################################################
+###                                CI / CD                                  ###
+###############################################################################
+
+test-ci:
+	go test -race -coverprofile=coverage.txt -covermode=atomic -mod=readonly $(PACKAGES)
+

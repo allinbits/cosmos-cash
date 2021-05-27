@@ -29,3 +29,12 @@ For more information on the research behind the cosmos cash protocol, please loo
 
 - `make test`
 
+## Testnet 
+
+The Cosmos Cash testnet coordinates are:
+
+- **Chain ID**: `cosmoscash-testnet`
+- **Token Denom**: `cash`
+- **Genesis**: [cosmos-cash.app.beta.starport.cloud/genesis](https://cosmos-cash.app.beta.starport.cloud/genesis?)
+- **RPC URL**:  `https://rpc.cosmos-cash.app.beta.starport.cloud:443`
+- **Explorer URL**: TBD

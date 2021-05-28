@@ -17,7 +17,8 @@ go.sum: go.mod
 	GO111MODULE=on go mod verify
 
 test:
-	@go test -mod=readonly $(PACKAGES) -cover 
+	# TODO: find race condition
+	@go test -mod=readonly $(PACKAGES) -cover -race
 
 lint:
 	@echo "--> Running linter"

@@ -65,3 +65,11 @@ func NewCreateIssuerCmd() *cobra.Command {
 
 	return cmd
 }
+
+// TODO: extra commands:
+//		Use:     "mint-issuer [did] [token] [fee]",
+//		Use:     "burn-issuer [did] [token] [fee]",
+//		Use:     "deposit-emoney [did] [token] [fee]",
+//		Use:     "widthdraw-emoney [did] [token] [fee]",
+//		Use:     "freeze-all-emoney-tokens [did] [token] [fee]",
+//		Use:     "freeze-account-with-emoney [did] [token] [fee]",

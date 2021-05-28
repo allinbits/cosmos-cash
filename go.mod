@@ -19,6 +19,7 @@ require (
 	github.com/tendermint/liquidity v1.2.1-rc0.0.20210311071044-1572795241e1
 	github.com/tendermint/tendermint v0.34.8
 	github.com/tendermint/tm-db v0.6.4
+	github.com/wealdtech/go-merkletree v1.0.0
 	golang.org/x/crypto v0.0.0-20210220033148-5ea612d1eb83 // indirect
 	golang.org/x/term v0.0.0-20201210144234-2321bbc49cbf // indirect
 	google.golang.org/genproto v0.0.0-20210223151946-22b48be4551b

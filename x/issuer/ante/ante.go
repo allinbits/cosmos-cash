@@ -11,7 +11,7 @@ import (
 	bank "github.com/cosmos/cosmos-sdk/x/bank/types"
 )
 
-// CheckIssuerCredentialsDecorator deducts fees from the every send transaction
+// CheckIssuerCredentialsDecorator checks the issuer has a EMILicense in a preprocessing hook
 type CheckIssuerCredentialsDecorator struct {
 	issuerk keeper.Keeper
 	ik      identifierkeeper.Keeper
@@ -107,7 +107,7 @@ func (cicd CheckIssuerCredentialsDecorator) AnteHandle(ctx sdk.Context, tx sdk.T
 	return next(ctx, tx, simulate)
 }
 
-// CheckUserCredentialsDecorator deducts fees from the every send transaction
+// CheckUserCredentialsDecorator checks the users has a KYCCredential in a preprocessing hook
 type CheckUserCredentialsDecorator struct {
 	issuerk keeper.Keeper
 	ik      identifierkeeper.Keeper
@@ -138,7 +138,7 @@ func (cicd CheckUserCredentialsDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx,
 			if found {
 				// TODO: pass in the did URI as an arg {msg.Id}
 				// TODO: tidy this functionality into the keeper,
-				//GetIdentifierWithCondition, GetIdentifierWithService, GetIdentifierWithAuth
+				// GetIdentifierWithCondition, GetIdentifierWithService, GetIdentifierWithAuth
 				// TODO: ensure this keeper can only read from store
 				// TODO: esure to check the both from and to addresses
 				did, found := cicd.ik.GetIdentifier(ctx, []byte(didURI))

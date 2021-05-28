@@ -1,8 +1,6 @@
 package cli
 
 import (
-	"crypto/hmac"
-	"crypto/sha256"
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
@@ -14,6 +12,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
+
+	merkletree "github.com/wealdtech/go-merkletree"
 )
 
 // GetTxCmd returns the transaction commands for this module
@@ -53,35 +53,25 @@ func NewCreateUserVerifiableCredentialCmd() *cobra.Command {
 
 			secret := args[2]
 
-			h := hmac.New(sha256.New, []byte(secret))
+			data := [][]byte{
+				[]byte(args[3]),
+				[]byte(args[4]),
+				[]byte(args[5]),
+				[]byte(args[6]),
+				[]byte(args[7]),
+			}
 
-			h.Write([]byte(args[3]))
-			name := hex.EncodeToString(h.Sum(nil))
-			h.Reset()
+			tree, err := merkletree.NewUsing(data, New(secret), nil)
+			if err != nil {
+				return err
+			}
 
-			h.Write([]byte(args[4]))
-			address := hex.EncodeToString(h.Sum(nil))
-			h.Reset()
-
-			h.Write([]byte(args[5]))
-			dob := hex.EncodeToString(h.Sum(nil))
-			h.Reset()
-
-			h.Write([]byte(args[6]))
-			nationalId := hex.EncodeToString(h.Sum(nil))
-			h.Reset()
-
-			h.Write([]byte(args[7]))
-			phoneNumber := hex.EncodeToString(h.Sum(nil))
-			h.Reset()
+			root := tree.Root()
+			hexRoot := hex.EncodeToString(root)
 
 			cs := types.NewUserCredentialSubject(
 				args[0],
-				name,
-				address,
-				dob,
-				nationalId,
-				phoneNumber,
+				hexRoot,
 				true,
 			)
 			tm := time.Now()
@@ -95,6 +85,8 @@ func NewCreateUserVerifiableCredentialCmd() *cobra.Command {
 				types.NewProof("", "", "", "", ""),
 			)
 
+			// TODO: this could be expensive review this signing method
+			// TODO: we can hash this an make this less expensive
 			signature, pubKey, err := clientCtx.Keyring.SignByAddress(accAddr, vc.GetBytes())
 			if err != nil {
 				return err

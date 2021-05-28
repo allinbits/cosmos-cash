@@ -48,22 +48,14 @@ func (vc VerifiableCredential) GetBytes() []byte {
 
 func NewUserCredentialSubject(
 	id string,
-	name string,
-	address string,
-	dob string,
-	nationalId string,
-	phoneNumber string,
+	root string,
 	hasKyc bool,
 ) VerifiableCredential_UserCred {
 	return VerifiableCredential_UserCred{
 		&UserCredentialSubject{
-			Id:          id,
-			Name:        name,
-			Address:     address,
-			DateOfBirth: dob,
-			NationalId:  nationalId,
-			PhoneNumber: phoneNumber,
-			HasKyc:      hasKyc,
+			Id:     id,
+			Root:   root,
+			HasKyc: hasKyc,
 		},
 	}
 }

@@ -72,6 +72,9 @@ func (q Keeper) ValidateVerifiableCredential(
 	emptyProof := types.NewProof("", "", "", "", "")
 	vc.Proof = &emptyProof
 	s, _ := base64.StdEncoding.DecodeString(signature)
+
+	// TODO: this is an expesive operation, could lead to DDOS
+	// TODO: we can hash this and make this less expensive
 	isCorrectPubKey := pubkey.VerifySignature(
 		vc.GetBytes(),
 		s,

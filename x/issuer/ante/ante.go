@@ -76,7 +76,7 @@ func (cicd CheckIssuerCredentialsDecorator) AnteHandle(ctx sdk.Context, tx sdk.T
 						)
 					}
 
-					issuerCred := vc.GetIssuerCred()
+					issuerCred := vc.GetUserCred()
 					if issuerCred.Id != didURI {
 						return ctx, sdkerrors.Wrapf(
 							types.ErrIssuerFound,
@@ -84,12 +84,12 @@ func (cicd CheckIssuerCredentialsDecorator) AnteHandle(ctx sdk.Context, tx sdk.T
 						)
 					}
 
-					if issuerCred.IsVerified == false {
-						return ctx, sdkerrors.Wrapf(
-							types.ErrIssuerFound,
-							"issuer is not verified",
-						)
-					}
+					//	if issuerCred.IsVerified == false {
+					//		return ctx, sdkerrors.Wrapf(
+					//			types.ErrIssuerFound,
+					//			"issuer is not verified",
+					//		)
+					//	}
 
 					hasIssuerCredential = true
 					// TODO: validate credential here has been issued by regulator

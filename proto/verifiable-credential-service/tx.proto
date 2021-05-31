@@ -12,7 +12,6 @@ import "verifiable-credential-service/verifiable-credential.proto";
 // Msg defines the identity Msg service.
 service Msg {
   rpc CreateVerifiableCredential(MsgCreateVerifiableCredential) returns (MsgCreateVerifiableCredentialResponse);
-  rpc CreateIssuerVerifiableCredential(MsgCreateIssuerVerifiableCredential) returns (MsgCreateIssuerVerifiableCredentialResponse);
 }
 
 // MsgCreateVerifiableCredential defines a SDK message for creating a new identifer.
@@ -28,14 +27,3 @@ message MsgCreateVerifiableCredential {
 
 message MsgCreateVerifiableCredentialResponse {}
 
-message MsgCreateIssuerVerifiableCredential {
-  option (gogoproto.equal)           = false;
-  option (gogoproto.goproto_getters) = false;
-
-  VerifiableCredential verifiable_credential = 1;
-
-  // owner represents the user creating the message 
-  string owner = 2;
-}
-
-message MsgCreateIssuerVerifiableCredentialResponse {}

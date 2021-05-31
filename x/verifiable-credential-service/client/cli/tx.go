@@ -135,13 +135,14 @@ func NewCreateIssuerVerifiableCredentialCmd() *cobra.Command {
 			accAddr := clientCtx.GetFromAddress()
 			accAddrBech32 := accAddr.String()
 
-			cs := types.NewIssuerCredentialSubject(
+			cs := types.NewUserCredentialSubject(
 				args[0],
+				"root",
 				true,
 			)
 			tm := time.Now()
 
-			vc := types.NewIssuerVerifiableCredential(
+			vc := types.NewUserVerifiableCredential(
 				args[1],
 				[]string{"VerifiableCredential", "IssuerCredential"},
 				accAddrBech32,

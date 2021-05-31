@@ -19,12 +19,13 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateVerifableCredential() {
 		{
 			"correctly creates vc",
 			func() {
-				cs := types.NewIssuerCredentialSubject(
+				cs := types.NewUserCredentialSubject(
 					"accAddr",
+					"root",
 					true,
 				)
 
-				vc := types.NewIssuerVerifiableCredential(
+				vc := types.NewUserVerifiableCredential(
 					"new-verifiable-cred-3",
 					[]string{"VerifiableCredential", "KYCCredential"},
 					"accAddr",
@@ -39,12 +40,13 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateVerifableCredential() {
 		{
 			"vc already exists",
 			func() {
-				cs := types.NewIssuerCredentialSubject(
+				cs := types.NewUserCredentialSubject(
 					"accAddr",
+					"root",
 					true,
 				)
 
-				vc := types.NewIssuerVerifiableCredential(
+				vc := types.NewUserVerifiableCredential(
 					"new-verifiable-cred-3",
 					[]string{"VerifiableCredential", "KYCCredential"},
 					"accAddr",

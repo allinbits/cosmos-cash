@@ -44,28 +44,3 @@ func (k msgServer) CreateVerifiableCredential(
 
 	return &types.MsgCreateVerifiableCredentialResponse{}, nil
 }
-
-func (k msgServer) CreateIssuerVerifiableCredential(
-	goCtx context.Context,
-	msg *types.MsgCreateIssuerVerifiableCredential,
-) (*types.MsgCreateIssuerVerifiableCredentialResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	// TODO: only regulators can create issuer verifiable creds
-	_, found := k.Keeper.GetVerifiableCredential(ctx, []byte(msg.VerifiableCredential.Id))
-	if found {
-		return nil, sdkerrors.Wrapf(
-			types.ErrVerifiableCredentialFound,
-			"vc already exists",
-		)
-
-	}
-
-	k.Keeper.SetVerifiableCredential(
-		ctx,
-		[]byte(msg.VerifiableCredential.Id),
-		*msg.VerifiableCredential,
-	)
-
-	return &types.MsgCreateIssuerVerifiableCredentialResponse{}, nil
-}

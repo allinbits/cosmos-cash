@@ -20,26 +20,6 @@ func NewUserVerifiableCredential(
 	}
 }
 
-// NewIdentifier constructs a new Identifier
-func NewIssuerVerifiableCredential(
-	id string,
-	vctype []string,
-	issuer string,
-	issuanceDate string,
-	credentialSubject VerifiableCredential_IssuerCred,
-	proof Proof,
-) VerifiableCredential {
-	return VerifiableCredential{
-		Context:           []string{"https://www.w3.org/TR/vc-data-model/"},
-		Id:                id,
-		Type:              vctype,
-		Issuer:            issuer,
-		IssuanceDate:      issuanceDate,
-		CredentialSubject: &credentialSubject,
-		Proof:             &proof,
-	}
-}
-
 // GetBytes is a helper for serialising
 func (vc VerifiableCredential) GetBytes() []byte {
 	dAtA, _ := vc.Marshal()
@@ -56,18 +36,6 @@ func NewUserCredentialSubject(
 			Id:     id,
 			Root:   root,
 			HasKyc: hasKyc,
-		},
-	}
-}
-
-func NewIssuerCredentialSubject(
-	id string,
-	isVerified bool,
-) VerifiableCredential_IssuerCred {
-	return VerifiableCredential_IssuerCred{
-		&IssuerCredentialSubject{
-			Id:         id,
-			IsVerified: isVerified,
 		},
 	}
 }

@@ -30,7 +30,12 @@ func NewCheckIssuerCredentialsDecorator(
 	}
 }
 
-func (cicd CheckIssuerCredentialsDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler) (newCtx sdk.Context, err error) {
+func (cicd CheckIssuerCredentialsDecorator) AnteHandle(
+	ctx sdk.Context,
+	tx sdk.Tx,
+	simulate bool,
+	next sdk.AnteHandler,
+) (newCtx sdk.Context, err error) {
 	// TODO: improve logic here
 	for _, msg := range tx.GetMsgs() {
 		if msg.Type() == "create-issuer" {
@@ -126,7 +131,12 @@ func NewCheckUserCredentialsDecorator(
 	}
 }
 
-func (cicd CheckUserCredentialsDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler) (newCtx sdk.Context, err error) {
+func (cicd CheckUserCredentialsDecorator) AnteHandle(
+	ctx sdk.Context,
+	tx sdk.Tx,
+	simulate bool,
+	next sdk.AnteHandler,
+) (newCtx sdk.Context, err error) {
 	// TODO: improve logic here
 	for _, msg := range tx.GetMsgs() {
 		if msg.Type() == "send" {
@@ -186,7 +196,7 @@ func (cicd CheckUserCredentialsDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx,
 							)
 						}
 
-						if userCred.HasKyc == false {
+						if userCred.IsVerified == false {
 							return ctx, sdkerrors.Wrapf(
 								types.ErrUserFound,
 								"user is not verified",

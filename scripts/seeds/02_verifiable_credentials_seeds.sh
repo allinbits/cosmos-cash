@@ -9,8 +9,9 @@ echo "Querying verifiable credentials"
 cosmos-cashd query verifiablecredentialservice verifiable-credentials --output json | jq
 
 echo "Creating issuer verifiable credential for user :validator"
-cosmos-cashd tx verifiablecredentialservice create-verifiable-credential \
-	did:cash:$(cosmos-cashd keys show validator -a) issuer-new-verifiable-cred-3 --from validator --chain-id cash -y
+cosmos-cashd tx verifiablecredentialservice create-issuer-verifiable-credential \
+	did:cash:$(cosmos-cashd keys show validator -a) issuer-new-verifiable-cred-3 secret businessName businessRegistrationNumber businessType businessAddress \
+	--from validator --chain-id cash -y
 
 echo "Querying verifiable credentials"
 cosmos-cashd query verifiablecredentialservice verifiable-credentials --output json | jq

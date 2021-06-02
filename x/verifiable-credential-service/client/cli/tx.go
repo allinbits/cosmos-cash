@@ -38,7 +38,7 @@ func GetTxCmd() *cobra.Command {
 // NewCreateUserVerifiableCredentialCmd defines the command to create a new verifiable credential.
 func NewCreateUserVerifiableCredentialCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "create-verifiable-credential [did_url] [cred-id] [secret] [name] [address] [date_of_birth] [nationalId] [phoneNumber]",
+		Use:     `create-verifiable-credential [did_url] [cred-id] [secret] [name] [address] [date_of_birth] [nationalId] [phoneNumber]`,
 		Short:   "create decentralized verifiable-credential",
 		Example: fmt.Sprintf("creates a verifiable credential for users"),
 		Args:    cobra.ExactArgs(8),
@@ -121,11 +121,13 @@ func NewCreateUserVerifiableCredentialCmd() *cobra.Command {
 
 // NewCreateIssuerVerifiableCredentialCmd defines the command to create a new verifiable credential.
 func NewCreateIssuerVerifiableCredentialCmd() *cobra.Command {
+	// TODO: investigate add a file for schema
+	// can we use a file to allow only having one command
 	cmd := &cobra.Command{
-		Use:     "create-issuer-verifiable-credential [did_url] [cred-id]",
+		Use:     `create-issuer-verifiable-credential [did-url] [cred-id] [secret] [business-name] [business-registration-number] [business-type] [business-address]`,
 		Short:   "create decentralized verifiable-credential for issuer",
 		Example: fmt.Sprintf("creates a verifiable credential for issuers"),
-		Args:    cobra.ExactArgs(2),
+		Args:    cobra.ExactArgs(7),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -135,9 +137,26 @@ func NewCreateIssuerVerifiableCredentialCmd() *cobra.Command {
 			accAddr := clientCtx.GetFromAddress()
 			accAddrBech32 := accAddr.String()
 
+			secret := args[2]
+
+			data := [][]byte{
+				[]byte(args[3]),
+				[]byte(args[4]),
+				[]byte(args[5]),
+				[]byte(args[6]),
+			}
+
+			tree, err := merkletree.NewUsing(data, New(secret), nil)
+			if err != nil {
+				return err
+			}
+
+			root := tree.Root()
+			hexRoot := hex.EncodeToString(root)
+
 			cs := types.NewUserCredentialSubject(
 				args[0],
-				"root",
+				hexRoot,
 				true,
 			)
 			tm := time.Now()
@@ -151,6 +170,8 @@ func NewCreateIssuerVerifiableCredentialCmd() *cobra.Command {
 				types.NewProof("", "", "", "", ""),
 			)
 
+			// TODO: this could be expensive review this signing method
+			// TODO: we can hash this an make this less expensive
 			signature, pubKey, err := clientCtx.Keyring.SignByAddress(accAddr, vc.GetBytes())
 			if err != nil {
 				return err

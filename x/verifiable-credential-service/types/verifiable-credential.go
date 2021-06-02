@@ -29,13 +29,13 @@ func (vc VerifiableCredential) GetBytes() []byte {
 func NewUserCredentialSubject(
 	id string,
 	root string,
-	hasKyc bool,
+	isVerified bool,
 ) VerifiableCredential_UserCred {
 	return VerifiableCredential_UserCred{
 		&UserCredentialSubject{
-			Id:     id,
-			Root:   root,
-			HasKyc: hasKyc,
+			Id:         id,
+			Root:       root,
+			IsVerified: isVerified,
 		},
 	}
 }

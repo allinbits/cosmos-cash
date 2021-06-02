@@ -167,6 +167,11 @@ func (s *IntegrationTestSuite) TestNewCreateVerifiableCredentialCmd() {
 			[]string{
 				"did:cash:1111",
 				"test-cred-1",
+				"secret",
+				"businessName",
+				"businessRegistrationNumber",
+				"businessType",
+				"businessAddress",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),

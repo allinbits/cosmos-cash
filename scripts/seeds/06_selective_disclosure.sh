@@ -1,9 +1,13 @@
 #!/bin/bash
 
+OPTS="--node https://cosmos-cash.app.beta.starport.cloud:443 --chain-id cosmoscash-testnet"
+FAUCET=https://faucet.cosmos-cash.app.beta.starport.cloud
+CREDENTIAL_ID="what-a-demo-1"
+
 ## Context
 echo
-echo "Bob wants to obtain some emoney a.k.a collaterized stablecoin for his vacation"
-echo "since bob lives in the EU, he needs to follow regulation and adhear to AML policies to do this he needs to prove his identity"
+echo "Bob wants to obtain some emoney (a.k.a collaterized stablecoin) for his vacation"
+echo "since bob lives in the EU, he is subjected to the EU AM policies and to be compliant he needs to prove his identity"
 echo "since he is an EU citizen the process has to be privacy respecting so the identity of bob is not disclosed"
 
 ## Technical Details: The steps. 
@@ -14,6 +18,12 @@ echo "VERIFIABLE_CREDENTIALS: The emoney issuer needs to be able to verify Bobs 
 echo "VERIFIABLE_CREDENTIALS: Bob needs to be able to prove he owns the credential"
 
 echo 
+echo "STEP 0:(setup) Create an identity provider (eIDAS) account and top it up"
+read cont
+cosmos-cashd keys add eidas
+curl -X POST -d "{\"address\": \"$(cosmos-cashd keys show eidas -a)\"}" $FAUCET
+
+echo 
 echo "STEP 1: Bob generates his keys"
 read cont
 cosmos-cashd keys add bob
@@ -21,17 +31,19 @@ cosmos-cashd keys add bob
 echo
 echo "STEP 2: Bob gets some native tokens for the chain"
 read cont
-cosmos-cashd tx bank send $(cosmos-cashd keys show validator -a) $(cosmos-cashd keys show bob -a) 100000stake --from validator --chain-id cash -y
+# cosmos-cashd tx bank send $(cosmos-cashd keys show validator -a) $(cosmos-cashd keys show bob -a) 100000stake --from validator --chain-id cash -y
+curl -X POST -d "{\"address\": \"$(cosmos-cashd keys show bob -a)\"}" $FAUCET
+
 
 echo
 echo "STEP 3: Bob publishes his own decentralized identifier"
 read cont
-cosmos-cashd tx identifier create-identifier --from bob --chain-id cash  -y
+cosmos-cashd tx identifier create-identifier --from bob $OPTS -y
 
 echo
 echo "STEP 3-a: Now we can query the identifier"
 read cont
-cosmos-cashd query identifier identifiers --output json  | jq
+cosmos-cashd query identifier identifiers --output json $OPTS | jq
 
 
 echo
@@ -45,29 +57,29 @@ echo "id:      1234567"
 echo "number:  3531234567"
 read cont
 cosmos-cashd tx verifiablecredentialservice create-verifiable-credential \
-	did:cash:$(cosmos-cashd keys show bob -a) what-a-demo-1 secret bob 1-1-1970 berlin/germany 1234567 3531234567 \
-	--from validator --chain-id cash  -y 
+	did:cash:$(cosmos-cashd keys show bob -a) $CREDENTIAL_ID secret bob 1-1-1970 berlin/germany 1234567 3531234567 \
+	--from eidas -y  $OPTS
 
 echo
 echo "STEP 4-a: Now we can query the verifiable credential"
 read cont
-cosmos-cashd query verifiablecredentialservice verifiable-credential what-a-demo-1 --output json | jq 
+cosmos-cashd query verifiablecredentialservice verifiable-credential $CREDENTIAL_ID --output json $OPTS | jq 
 
 echo
 echo "STEP 4-b: What does this credential look like?"
 read cont 
-vlc ../../temp/sample.png
+# vlc ../../temp/sample.png
 read cont 
 
 echo
 echo "STEP 5: Bob associates the credential with his DID"
 read cont
-cosmos-cashd tx identifier add-service did:cash:$(cosmos-cashd keys show bob -a) what-a-demo-1 KYCCredential cash:what-a-demo-1 --from bob --chain-id cash -y
+cosmos-cashd tx identifier add-service did:cash:$(cosmos-cashd keys show bob -a) $CREDENTIAL_ID KYCCredential cash:$CREDENTIAL_ID --from bob $OPTS -y
 
 echo
 echo "STEP 5-a: Now the credential is associated with Bobs DID"
 read cont
-cosmos-cashd query identifier identifier did:cash:$(cosmos-cashd keys show bob -a) --output json  | jq
+cosmos-cashd query identifier identifier did:cash:$(cosmos-cashd keys show bob -a) --output json $OPTS | jq
 
 echo
 echo "How can Bob prove that the data in the credential is accurate?"

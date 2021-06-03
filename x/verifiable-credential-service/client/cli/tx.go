@@ -53,12 +53,11 @@ func NewCreateUserVerifiableCredentialCmd() *cobra.Command {
 
 			secret := args[2]
 
-			data := [][]byte{
-				[]byte(args[3]),
-				[]byte(args[4]),
-				[]byte(args[5]),
-				[]byte(args[6]),
-				[]byte(args[7]),
+			inputs := args[3:8]
+			// Data for the tree
+			data := make([][]byte, len(inputs))
+			for i, v := range inputs {
+				data[i] = []byte(v)
 			}
 
 			tree, err := merkletree.NewUsing(data, New(secret), nil)

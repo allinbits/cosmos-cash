@@ -1,15 +1,17 @@
 #!/bin/bash
 
 ## Context
-### Bob wants to obtain some emoney a.k.a collaterized stablecoin for his vacation
-### since bob lives in the EU, he needs to follow regulation and adhear to AML policies to do this he needs to prove his identity
-### since he is an EU citizen the process has to be privacy respecting so the identity of bob is not disclosed
+echo
+echo "Bob wants to obtain some emoney a.k.a collaterized stablecoin for his vacation"
+echo "since bob lives in the EU, he needs to follow regulation and adhear to AML policies to do this he needs to prove his identity"
+echo "since he is an EU citizen the process has to be privacy respecting so the identity of bob is not disclosed"
 
 ## Technical Details: The steps. 
-### DID: Bob needs to publish a his own decentralized identifier on-chain, this allows him own credentials
-### VERIFIABLE_CREDENTIALS: An eIDAS identity provider needs to publish Bobs privacy respecting credentials on-chain
-### VERIFIABLE_CREDENTIALS: The emoney issuer needs to be able to verify Bobs credentials
-### VERIFIABLE_CREDENTIALS: Bob needs to be able to prove he owns the credential
+echo
+echo "DID: Bob needs to publish a his own decentralized identifier on-chain, this allows him own credentials"
+echo "VERIFIABLE_CREDENTIALS: An eIDAS identity provider needs to publish Bobs privacy respecting credentials on-chain"
+echo "VERIFIABLE_CREDENTIALS: The emoney issuer needs to be able to verify Bobs credentials"
+echo "VERIFIABLE_CREDENTIALS: Bob needs to be able to prove he owns the credential"
 
 echo 
 echo "STEP 1: Bob generates his keys"
@@ -34,13 +36,13 @@ cosmos-cashd query identifier identifiers --output json  | jq
 
 echo
 echo "STEP 4: An eIDAS identity provider publishes Bobs privacy respecting credentials"
-echo "Bob shares his secret and credential with the eIDAS compliant identity provider"
-echo "secret: 	secret"
-echo "name:	bob"
-echo "DOB:	1-1-1970"
-echo "address:	berlin/germany"
-echo "id:	1234567"
-echo "number: 	3531234567"
+echo "Bob shares his secret and credential with the eIDAS compliant identity provider using a secure channel"
+echo "secret:  secret"
+echo "name:    bob"
+echo "DOB:     1-1-1970"
+echo "address: berlin/germany"
+echo "id:      1234567"
+echo "number:  3531234567"
 read cont
 cosmos-cashd tx verifiablecredentialservice create-verifiable-credential \
 	did:cash:$(cosmos-cashd keys show bob -a) what-a-demo-1 secret bob 1-1-1970 berlin/germany 1234567 3531234567 \
@@ -89,7 +91,7 @@ echo "Bob uses a tools to input his secret and his credential to generate this p
 echo "Bob then distributes this proof and his DOB to the emoney token issuer via a secure channel"
 read cont
 
-dlv debug --continue ~/git/PaddyMc/selective-disclosire/go
+echo "dlv debug --continue ~/git/PaddyMc/selective-disclosire/go"
 
 echo
 echo "Now using a webui we can as the emoney token provider verify Bobs credential is correct"

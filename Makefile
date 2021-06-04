@@ -43,5 +43,5 @@ seed:
 ###############################################################################
 
 test-ci:
-	go test -race -coverprofile=coverage.txt -covermode=atomic -mod=readonly $(PACKAGES)
+	go test -coverprofile=coverage.txt -covermode=atomic -mod=readonly $(PACKAGES)
 

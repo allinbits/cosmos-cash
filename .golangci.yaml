@@ -5,6 +5,8 @@ run:
 
   tests: false
 
+  timeout: 5m
+
   skip-files:
     - ".*\\.pb\\.go$"
 
@@ -14,7 +16,6 @@ linters:
     - bugs
     - unused
     - import
-    # - metalinter
     # - error to be enabled next
   enable:
     - misspell

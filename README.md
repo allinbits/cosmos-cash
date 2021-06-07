@@ -1,6 +1,10 @@
 # Cosmos Cash
 
+[![codecov](https://codecov.io/gh/allinbits/cosmos-cash/branch/main/graph/badge.svg?token=NLT5ZWM460)](https://codecov.io/gh/allinbits/cosmos-cash)
+
+
 ![](https://miro.medium.com/max/1000/1*8Wx44uvyJxpZUVS0WojMNw.png)
+
 
 ### Summary
 

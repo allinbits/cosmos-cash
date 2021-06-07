@@ -4,7 +4,10 @@ on:
     branches:
       - main
       - dev
-    pull_request:
+  pull_request:
+    branches:
+      - main
+      - dev
 jobs:
   tests:
     runs-on: ubuntu-latest

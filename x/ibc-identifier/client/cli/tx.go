@@ -4,15 +4,14 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/spf13/cobra"
-
 	"github.com/cosmos/cosmos-sdk/client"
-	// "github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/allinbits/cosmos-cash/x/ibc-identifier/types"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	clienttypes "github.com/cosmos/cosmos-sdk/x/ibc/core/02-client/types"
 	channelutils "github.com/cosmos/cosmos-sdk/x/ibc/core/04-channel/client/utils"
+	"github.com/spf13/cobra"
+
+	"github.com/allinbits/cosmos-cash/x/ibc-identifier/types"
 )
 
 const (

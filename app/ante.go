@@ -1,14 +1,15 @@
 package app
 
 import (
-	identifierkeeper "github.com/allinbits/cosmos-cash/x/identifier/keeper"
-	issuerante "github.com/allinbits/cosmos-cash/x/issuer/ante"
-	issuerkeeper "github.com/allinbits/cosmos-cash/x/issuer/keeper"
-	vcskeeper "github.com/allinbits/cosmos-cash/x/verifiable-credential-service/keeper"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authante "github.com/cosmos/cosmos-sdk/x/auth/ante"
 	"github.com/cosmos/cosmos-sdk/x/auth/signing"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+
+	identifierkeeper "github.com/allinbits/cosmos-cash/x/identifier/keeper"
+	issuerante "github.com/allinbits/cosmos-cash/x/issuer/ante"
+	issuerkeeper "github.com/allinbits/cosmos-cash/x/issuer/keeper"
+	vcskeeper "github.com/allinbits/cosmos-cash/x/verifiable-credential-service/keeper"
 )
 
 // NewAnteHandler returns an AnteHandler that checks and increments sequence

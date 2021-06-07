@@ -1,15 +1,12 @@
 package cli
 
 import (
-	"fmt"
-	// "strings"
 	"context"
-
-	"github.com/spf13/cobra"
+	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	// sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/spf13/cobra"
 
 	"github.com/allinbits/cosmos-cash/x/issuer/types"
 )

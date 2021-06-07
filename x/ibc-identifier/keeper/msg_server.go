@@ -2,20 +2,14 @@ package keeper
 
 import (
 	"context"
-	//	"fmt"
-	//	"time"
-	//
-	//	metrics "github.com/armon/go-metrics"
-	//	tmstrings "github.com/tendermint/tendermint/libs/strings"
-	//
-	//	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
-	//	"github.com/cosmos/cosmos-sdk/telemetry"
-	"github.com/allinbits/cosmos-cash/x/ibc-identifier/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	clienttypes "github.com/cosmos/cosmos-sdk/x/ibc/core/02-client/types"
 	channeltypes "github.com/cosmos/cosmos-sdk/x/ibc/core/04-channel/types"
 	host "github.com/cosmos/cosmos-sdk/x/ibc/core/24-host"
+
+	"github.com/allinbits/cosmos-cash/x/ibc-identifier/types"
 )
 
 type msgServer struct {
@@ -101,9 +95,5 @@ func (k msgServer) Transfer(
 		timeoutTimestamp,
 	)
 
-	if err := k.channelKeeper.SendPacket(ctx, channelCap, packet); err != nil {
-		return err
-	}
-
-	return nil
+	return k.channelKeeper.SendPacket(ctx, channelCap, packet)
 }

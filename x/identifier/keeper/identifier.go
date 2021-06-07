@@ -1,8 +1,9 @@
 package keeper
 
 import (
-	"github.com/allinbits/cosmos-cash/x/identifier/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/allinbits/cosmos-cash/x/identifier/types"
 )
 
 func (k Keeper) SetIdentifier(ctx sdk.Context, key []byte, document types.DidDocument) {

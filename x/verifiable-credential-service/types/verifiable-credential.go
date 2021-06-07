@@ -1,6 +1,6 @@
 package types
 
-// NewIdentifier constructs a new Identifier
+// NewUserVerifiableCredential constructs a new VerifiableCredential instance
 func NewUserVerifiableCredential(
 	id string,
 	vctype []string,
@@ -20,9 +20,9 @@ func NewUserVerifiableCredential(
 	}
 }
 
-// GetBytes is a helper for serialising
-func (vc VerifiableCredential) GetBytes() []byte {
-	dAtA, _ := vc.Marshal()
+// GetBytes is a helper for serializing
+func (m VerifiableCredential) GetBytes() []byte {
+	dAtA, _ := m.Marshal()
 	return dAtA
 }
 

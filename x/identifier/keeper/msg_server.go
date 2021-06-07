@@ -3,9 +3,11 @@ package keeper
 import (
 	"context"
 	"fmt"
-	"github.com/allinbits/cosmos-cash/x/identifier/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
+	"github.com/allinbits/cosmos-cash/x/identifier/types"
 )
 
 type msgServer struct {
@@ -36,8 +38,8 @@ func (k msgServer) CreateIdentifier(
 
 	}
 
-	identifer, _ := types.NewIdentifier(msg.Id, msg.Authentication)
-	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), identifer)
+	identifier, _ := types.NewIdentifier(msg.Id, msg.Authentication)
+	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), identifier)
 
 	return &types.MsgCreateIdentifierResponse{}, nil
 }
@@ -61,7 +63,7 @@ func (k msgServer) AddAuthentication(
 	if identifier.Authentication[0].Controller != msg.Owner {
 		return nil, sdkerrors.Wrapf(
 			types.ErrIdentifierNotFound,
-			"msg sender not authorised: AddAuthentication",
+			"msg sender not authorized: AddAuthentication",
 		)
 	}
 
@@ -113,7 +115,7 @@ func (k msgServer) DeleteAuthentication(
 	if identifier.Authentication[0].Controller != msg.Owner {
 		return nil, sdkerrors.Wrapf(
 			types.ErrIdentifierNotFound,
-			"msg sender not authorised: DeleteAuthentication",
+			"msg sender not authorized: DeleteAuthentication",
 		)
 	}
 
@@ -164,7 +166,7 @@ func (k msgServer) DeleteService(
 	if identifier.Authentication[0].Controller != msg.Owner {
 		return nil, sdkerrors.Wrapf(
 			types.ErrIdentifierNotFound,
-			"msg sender not authorised: DeleteService",
+			"msg sender not authorized: DeleteService",
 		)
 	}
 

@@ -3,18 +3,18 @@ package keeper
 import (
 	"fmt"
 
-	"github.com/tendermint/tendermint/libs/log"
-
-	"github.com/allinbits/cosmos-cash/x/issuer/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	"github.com/tendermint/tendermint/libs/log"
+
+	"github.com/allinbits/cosmos-cash/x/issuer/types"
 )
 
 // UnmarshalFn is a generic function to unmarshal bytes
 type UnmarshalFn func(value []byte) (interface{}, bool)
 
-// UnmarshalFn is a generic function to unmarshal bytes
+// MarshalFn is a generic function to marshal interfaces
 type MarshalFn func(value interface{}) []byte
 
 type Keeper struct {
@@ -54,7 +54,7 @@ func (k Keeper) Set(ctx sdk.Context,
 	store.Set(append(prefix, key...), marshal(i))
 }
 
-// Deletes a value form the sotre
+// Delete Deletes a value form the store
 func (k Keeper) Delete(
 	ctx sdk.Context,
 	key []byte,

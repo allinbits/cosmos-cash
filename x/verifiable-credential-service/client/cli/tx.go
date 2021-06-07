@@ -6,14 +6,13 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/spf13/cobra"
-
-	"github.com/allinbits/cosmos-cash/x/verifiable-credential-service/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
+	"github.com/spf13/cobra"
+	"github.com/wealdtech/go-merkletree"
 
-	merkletree "github.com/wealdtech/go-merkletree"
+	"github.com/allinbits/cosmos-cash/x/verifiable-credential-service/types"
 )
 
 // GetTxCmd returns the transaction commands for this module

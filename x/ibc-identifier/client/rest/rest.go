@@ -1,13 +1,12 @@
 package rest
 
-import (
-	"github.com/gorilla/mux"
-
+import ( // this line is used by starport scaffolding # 1
 	"github.com/cosmos/cosmos-sdk/client"
-	// this line is used by starport scaffolding # 1
+	"github.com/gorilla/mux"
 )
 
 const (
+	// MethodGet http get method name
 	MethodGet = "GET"
 )
 
@@ -15,4 +14,3 @@ const (
 func RegisterRoutes(clientCtx client.Context, r *mux.Router) {
 	// this line is used by starport scaffolding # 2
 }
-

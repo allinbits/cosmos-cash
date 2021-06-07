@@ -5,13 +5,10 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	// clienttypes "github.com/cosmos/cosmos-sdk/x/ibc/core/02-client/types"
-	identifiertypes "github.com/allinbits/cosmos-cash/x/identifier/types"
 	channeltypes "github.com/cosmos/cosmos-sdk/x/ibc/core/04-channel/types"
 
-	//	host "github.com/cosmos/cosmos-sdk/x/ibc/core/24-host"
-	//	"github.com/tendermint/tendermint/crypto/tmhash"
 	"github.com/allinbits/cosmos-cash/x/ibc-identifier/types"
+	identifiertypes "github.com/allinbits/cosmos-cash/x/identifier/types"
 )
 
 func (k Keeper) OnSendPacket(ctx sdk.Context, packet channeltypes.Packet) error {

@@ -1,13 +1,12 @@
 package keeper
 
-import (
-	// this line is used by starport scaffolding # 1
-	"github.com/allinbits/cosmos-cash/x/ibc-identifier/types"
+import ( // this line is used by starport scaffolding # 1
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-
 	abci "github.com/tendermint/tendermint/abci/types"
+
+	"github.com/allinbits/cosmos-cash/x/ibc-identifier/types"
 )
 
 func NewQuerier(k Keeper, legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {

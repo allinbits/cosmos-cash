@@ -4,13 +4,13 @@ import (
 	"encoding/base64"
 	"fmt"
 
-	"github.com/spf13/cobra"
-
-	"github.com/allinbits/cosmos-cash/x/identifier/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/spf13/cobra"
+
+	"github.com/allinbits/cosmos-cash/x/identifier/types"
 )
 
 // GetTxCmd returns the transaction commands for this module
@@ -98,6 +98,9 @@ func NewAddAuthenticationCmd() *cobra.Command {
 			accAddr := clientCtx.GetFromAddress()
 
 			pubKey, err := sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeAccPub, args[1])
+			if err != nil {
+				return err
+			}
 			address := sdk.AccAddress(pubKey.Address())
 
 			auth := types.NewAuthentication(

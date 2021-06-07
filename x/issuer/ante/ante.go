@@ -1,14 +1,14 @@
 package ante
 
 import (
-	identifierkeeper "github.com/allinbits/cosmos-cash/x/identifier/keeper"
-	vcskeeper "github.com/allinbits/cosmos-cash/x/verifiable-credential-service/keeper"
-	//identifiertypes "github.com/allinbits/cosmos-cash/x/identifier/types"
-	"github.com/allinbits/cosmos-cash/x/issuer/keeper"
-	"github.com/allinbits/cosmos-cash/x/issuer/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/types"
+
+	identifierkeeper "github.com/allinbits/cosmos-cash/x/identifier/keeper"
+	"github.com/allinbits/cosmos-cash/x/issuer/keeper"
+	"github.com/allinbits/cosmos-cash/x/issuer/types"
+	vcskeeper "github.com/allinbits/cosmos-cash/x/verifiable-credential-service/keeper"
 )
 
 // CheckIssuerCredentialsDecorator checks the issuer has a EMILicense in a preprocessing hook
@@ -48,11 +48,11 @@ func (cicd CheckIssuerCredentialsDecorator) AnteHandle(
 			if !found {
 				return ctx, sdkerrors.Wrapf(
 					types.ErrIssuerFound,
-					"identifer does not exists",
+					"identifier does not exists",
 				)
 			}
 
-			// TODO: optimise here
+			// TODO: optimize here
 			foundKey := false
 			for _, auth := range did.Authentication {
 				if auth.Controller == imsg.Owner {
@@ -66,7 +66,7 @@ func (cicd CheckIssuerCredentialsDecorator) AnteHandle(
 				)
 			}
 
-			// TODO: optimise here
+			// TODO: optimize here
 			// check if the did document has the issuer credential
 			hasIssuerCredential := false
 			for _, service := range did.Services {
@@ -155,11 +155,11 @@ func (cicd CheckUserCredentialsDecorator) AnteHandle(
 				if !found {
 					return ctx, sdkerrors.Wrapf(
 						types.ErrIssuerFound,
-						"identifer does not exists",
+						"identifier does not exists",
 					)
 				}
 
-				// TODO: optimise here
+				// TODO: optimize here
 				foundKey := false
 				for _, auth := range did.Authentication {
 					if auth.Controller == imsg.ToAddress {
@@ -173,7 +173,7 @@ func (cicd CheckUserCredentialsDecorator) AnteHandle(
 					)
 				}
 
-				// TODO: optimise here
+				// TODO: optimize here
 				// check if the did document has the issuer credential
 				hasUserCredential := false
 				for _, service := range did.Services {

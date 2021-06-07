@@ -1,27 +1,23 @@
 package ibcidentifier
 
-import (
+import ( // this line is used by starport scaffolding # 1
 	"encoding/json"
 	"fmt"
-	// this line is used by starport scaffolding # 1
 
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/codec"
+	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
-
 	abci "github.com/tendermint/tendermint/abci/types"
 
 	"github.com/allinbits/cosmos-cash/x/ibc-identifier/client/cli"
 	"github.com/allinbits/cosmos-cash/x/ibc-identifier/client/rest"
 	"github.com/allinbits/cosmos-cash/x/ibc-identifier/keeper"
 	"github.com/allinbits/cosmos-cash/x/ibc-identifier/types"
-	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
-	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/cosmos/cosmos-sdk/types/module"
-	//	host "github.com/cosmos/cosmos-sdk/x/ibc/core/24-host"
 )
 
 var (

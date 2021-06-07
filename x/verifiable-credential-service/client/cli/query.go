@@ -3,13 +3,10 @@ package cli
 import (
 	"context"
 	"fmt"
-	//"strings"
-
-	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	//sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/spf13/cobra"
 
 	"github.com/allinbits/cosmos-cash/x/verifiable-credential-service/types"
 )
@@ -99,7 +96,7 @@ func GetCmdQueryVerifiableCredential() *cobra.Command {
 	return cmd
 }
 
-// GetCmdQueryVerifiableCredential implements the VerifiableCredential query command.
+// GetCmdQueryValidateVerifiableCredential implements the VerifiableCredential query command.
 func GetCmdQueryValidateVerifiableCredential() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "validate-verifiable-credential [verifiable-credential-id] [pubkey]",

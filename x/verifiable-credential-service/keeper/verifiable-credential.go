@@ -1,23 +1,24 @@
 package keeper
 
 import (
-	"github.com/allinbits/cosmos-cash/x/verifiable-credential-service/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/allinbits/cosmos-cash/x/verifiable-credential-service/types"
 )
 
-func (k Keeper) SetVerifiableCredential(ctx sdk.Context, key []byte, vc types.VerifiableCredential) {
-	k.Set(ctx, key, types.VerifiableCredentialKey, vc, k.MarshalVerifiableCredential)
+func (q Keeper) SetVerifiableCredential(ctx sdk.Context, key []byte, vc types.VerifiableCredential) {
+	q.Set(ctx, key, types.VerifiableCredentialKey, vc, q.MarshalVerifiableCredential)
 }
 
-func (k Keeper) GetVerifiableCredential(ctx sdk.Context, key []byte) (types.VerifiableCredential, bool) {
-	val, found := k.Get(ctx, key, types.VerifiableCredentialKey, k.UnmarshalVerifiableCredential)
+func (q Keeper) GetVerifiableCredential(ctx sdk.Context, key []byte) (types.VerifiableCredential, bool) {
+	val, found := q.Get(ctx, key, types.VerifiableCredentialKey, q.UnmarshalVerifiableCredential)
 	return val.(types.VerifiableCredential), found
 }
 
-func (k Keeper) UnmarshalVerifiableCredential(value []byte) (interface{}, bool) {
+func (q Keeper) UnmarshalVerifiableCredential(value []byte) (interface{}, bool) {
 	vc := types.VerifiableCredential{}
 
-	err := k.cdc.UnmarshalBinaryBare(value, &vc)
+	err := q.cdc.UnmarshalBinaryBare(value, &vc)
 	if err != nil {
 		return types.VerifiableCredential{}, false
 	}
@@ -29,24 +30,24 @@ func (k Keeper) UnmarshalVerifiableCredential(value []byte) (interface{}, bool) 
 	return vc, true
 }
 
-func (k Keeper) MarshalVerifiableCredential(value interface{}) []byte {
+func (q Keeper) MarshalVerifiableCredential(value interface{}) []byte {
 	identifier := value.(types.VerifiableCredential)
 
-	bytes, _ := k.cdc.MarshalBinaryBare(&identifier)
+	bytes, _ := q.cdc.MarshalBinaryBare(&identifier)
 
 	return bytes
 }
 
-func (k Keeper) GetAllVerifiableCredentialsWithCondition(
+func (q Keeper) GetAllVerifiableCredentialsWithCondition(
 	ctx sdk.Context,
 	key []byte,
 	vcSelector func(votes types.VerifiableCredential) bool,
 ) (vcs []types.VerifiableCredential) {
-	iterator := k.GetAll(ctx, key)
+	iterator := q.GetAll(ctx, key)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
-		vc, _ := k.UnmarshalVerifiableCredential(iterator.Value())
+		vc, _ := q.UnmarshalVerifiableCredential(iterator.Value())
 		vcTyped := vc.(types.VerifiableCredential)
 		if vcSelector(vcTyped) {
 			vcs = append(vcs, vcTyped)
@@ -56,8 +57,8 @@ func (k Keeper) GetAllVerifiableCredentialsWithCondition(
 	return vcs
 }
 
-func (k Keeper) GetAllVerifiableCredentials(ctx sdk.Context) []types.VerifiableCredential {
-	return k.GetAllVerifiableCredentialsWithCondition(
+func (q Keeper) GetAllVerifiableCredentials(ctx sdk.Context) []types.VerifiableCredential {
+	return q.GetAllVerifiableCredentialsWithCondition(
 		ctx,
 		types.VerifiableCredentialKey,
 		func(vc types.VerifiableCredential) bool { return true },

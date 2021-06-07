@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/spf13/cobra"
-
-	"github.com/allinbits/cosmos-cash/x/issuer/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
+	"github.com/spf13/cobra"
+
+	"github.com/allinbits/cosmos-cash/x/issuer/types"
 )
 
 // GetTxCmd returns the transaction commands for this module

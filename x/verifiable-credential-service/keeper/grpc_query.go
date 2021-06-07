@@ -4,17 +4,16 @@ import (
 	"context"
 	"encoding/base64"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-
-	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/allinbits/cosmos-cash/x/verifiable-credential-service/types"
 )
 
 var _ types.QueryServer = Keeper{}
 
-// VerifiableCredential implements the VerifiableCredentials gRPC method
+// VerifiableCredentials implements the VerifiableCredentials gRPC method
 func (q Keeper) VerifiableCredentials(
 	c context.Context,
 	req *types.QueryVerifiableCredentialsRequest,

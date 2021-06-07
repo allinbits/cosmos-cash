@@ -3,31 +3,30 @@ package keeper
 import (
 	"context"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-
-	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/allinbits/cosmos-cash/x/identifier/types"
 )
 
 var _ types.QueryServer = Keeper{}
 
-// Identifers implements the Identifers gRPC method
-func (q Keeper) Identifiers(
+// Identifiers implements the Identifiers gRPC method
+func (k Keeper) Identifiers(
 	c context.Context,
 	req *types.QueryIdentifiersRequest,
 ) (*types.QueryIdentifiersResponse, error) {
 	ctx := sdk.UnwrapSDKContext(c)
-	identifiers := q.GetAllIdentifiers(ctx)
+	identifiers := k.GetAllIdentifiers(ctx)
 
 	return &types.QueryIdentifiersResponse{
 		DidDocuments: identifiers,
 	}, nil
 }
 
-// Identifers implements the Identifers gRPC method
-func (q Keeper) Identifier(
+// Identifier implements the Identifier gRPC method
+func (k Keeper) Identifier(
 	c context.Context,
 	req *types.QueryIdentifierRequest,
 ) (*types.QueryIdentifierResponse, error) {
@@ -36,12 +35,12 @@ func (q Keeper) Identifier(
 	}
 
 	ctx := sdk.UnwrapSDKContext(c)
-	identifier, found := q.GetIdentifier(ctx, []byte(req.Id))
+	identifier, found := k.GetIdentifier(ctx, []byte(req.Id))
 	if !found {
 		return nil, status.Error(codes.NotFound, "identifier not found: QueryIdentifier")
 	}
 
 	return &types.QueryIdentifierResponse{
-		identifier,
+		DidDocument: identifier,
 	}, nil
 }

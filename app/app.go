@@ -1,24 +1,15 @@
 package app
 
-import (
+import ( // this line is used by starport scaffolding # stargate/app/moduleImport
 	"io"
 	"os"
 
-	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec/types"
-	"github.com/spf13/cast"
-
-	abci "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/libs/log"
-	tmos "github.com/tendermint/tendermint/libs/os"
-	dbm "github.com/tendermint/tm-db"
-
-	appparams "github.com/allinbits/cosmos-cash/app/params"
 	"github.com/cosmos/cosmos-sdk/baseapp"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
-
 	"github.com/cosmos/cosmos-sdk/client/rpc"
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/server/api"
 	"github.com/cosmos/cosmos-sdk/server/config"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
@@ -79,15 +70,18 @@ import (
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-
+	"github.com/spf13/cast"
 	"github.com/tendermint/liquidity/x/liquidity"
 	liquiditykeeper "github.com/tendermint/liquidity/x/liquidity/keeper"
 	liquiditytypes "github.com/tendermint/liquidity/x/liquidity/types"
-
+	abci "github.com/tendermint/tendermint/abci/types"
 	tmjson "github.com/tendermint/tendermint/libs/json"
+	"github.com/tendermint/tendermint/libs/log"
+	tmos "github.com/tendermint/tendermint/libs/os"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
+	dbm "github.com/tendermint/tm-db"
 
-	// this line is used by starport scaffolding # stargate/app/moduleImport
+	appparams "github.com/allinbits/cosmos-cash/app/params"
 	ibcidentifier "github.com/allinbits/cosmos-cash/x/ibc-identifier"
 	ibcidentifierkeeper "github.com/allinbits/cosmos-cash/x/ibc-identifier/keeper"
 	ibcidentifiertypes "github.com/allinbits/cosmos-cash/x/ibc-identifier/types"
@@ -430,7 +424,7 @@ func New(
 	ibcRouter.AddRoute(ibcidentifiertypes.ModuleName, identifierModule)
 	app.IBCKeeper.SetRouter(ibcRouter)
 
-	// Create evidence Keeper for to register the IBC light client misbehaviour evidence route
+	// Create evidence Keeper for to register the IBC light client misbehavior evidence route
 	evidenceKeeper := evidencekeeper.NewKeeper(
 		appCodec,
 		keys[evidencetypes.StoreKey],
@@ -695,7 +689,7 @@ func (app *App) LegacyAmino() *codec.LegacyAmino {
 	return app.cdc
 }
 
-//// GetSubspace returns a param subspace for a given module name.
+// GetSubspace returns a param subspace for a given module name.
 func (app *App) GetSubspace(moduleName string) paramstypes.Subspace {
 	subspace, _ := app.ParamsKeeper.GetSubspace(moduleName)
 	return subspace

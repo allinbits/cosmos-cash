@@ -1,7 +1,8 @@
 package types
 
 var (
-	IdentifierKey = []byte{0x61} // prefix for each key to a DidDocument
+	// IdentifierKey prefix for each key to a DidDocument
+	IdentifierKey = []byte{0x61}
 )
 
 const (
@@ -17,7 +18,7 @@ const (
 	// QuerierRoute defines the module's query routing key
 	QuerierRoute = ModuleName
 
-	// QuerierRoute defines the module's query routing key
+	// DidPrefix defines the did prefix for this chain
 	DidPrefix = "did:cash:"
 
 	// MemStoreKey defines the in-memory store key

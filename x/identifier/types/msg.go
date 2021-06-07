@@ -241,12 +241,12 @@ const (
 
 func NewMsgDeleteService(
 	id string,
-	serviceId string,
+	serviceID string,
 	owner string,
 ) *MsgDeleteService {
 	return &MsgDeleteService{
 		Id:        id,
-		ServiceId: serviceId,
+		ServiceId: serviceID,
 		Owner:     owner,
 	}
 }

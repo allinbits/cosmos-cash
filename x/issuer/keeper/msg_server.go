@@ -2,9 +2,11 @@ package keeper
 
 import (
 	"context"
-	"github.com/allinbits/cosmos-cash/x/issuer/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
+	"github.com/allinbits/cosmos-cash/x/issuer/types"
 )
 
 type msgServer struct {
@@ -35,13 +37,13 @@ func (k msgServer) CreateIssuer(
 	}
 
 	// TODO: should the did URI be the issuer address
-	identifer := types.Issuer{
+	identifier := types.Issuer{
 		Token:   msg.Token,
 		Fee:     msg.Fee,
 		Address: msg.Owner,
 	}
 
-	k.Keeper.SetIssuer(ctx, identifer)
+	k.Keeper.SetIssuer(ctx, identifier)
 
 	// TODO: this needs to be refactored
 	circulatingSupply := 1000000000000

@@ -1,8 +1,9 @@
 package app
 
 import (
-	"github.com/allinbits/cosmos-cash/app/params"
 	"github.com/cosmos/cosmos-sdk/std"
+
+	"github.com/allinbits/cosmos-cash/app/params"
 )
 
 // MakeEncodingConfig creates an EncodingConfig for testing

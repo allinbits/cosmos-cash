@@ -4,15 +4,14 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/spf13/cobra"
-
 	"github.com/cosmos/cosmos-sdk/client"
-	// "github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/allinbits/cosmos-cash/x/ibc-identifier/types"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	clienttypes "github.com/cosmos/cosmos-sdk/x/ibc/core/02-client/types"
 	channelutils "github.com/cosmos/cosmos-sdk/x/ibc/core/04-channel/client/utils"
+	"github.com/spf13/cobra"
+
+	"github.com/allinbits/cosmos-cash/x/ibc-identifier/types"
 )
 
 const (
@@ -44,7 +43,7 @@ func NewTransferIdentifierCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "transfer-ibc [id] [src-port] [src-channel]",
 		Short:   "transfer decentralized identifier (did) document",
-		Example: fmt.Sprintf("creates a did document for users"),
+		Example: "creates a did document for users",
 		Args:    cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)

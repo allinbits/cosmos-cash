@@ -13,7 +13,7 @@ func NewIdentifier(id string, authentication Authentications) (DidDocument, erro
 	}, nil
 }
 
-// GetBytes is a helper for serialising
+// GetBytes is a helper for serializing
 func (did DidDocument) GetBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&did))
 }

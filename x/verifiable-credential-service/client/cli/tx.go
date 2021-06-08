@@ -6,14 +6,13 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/spf13/cobra"
-
-	"github.com/allinbits/cosmos-cash/x/verifiable-credential-service/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
+	"github.com/spf13/cobra"
+	"github.com/wealdtech/go-merkletree"
 
-	merkletree "github.com/wealdtech/go-merkletree"
+	"github.com/allinbits/cosmos-cash/x/verifiable-credential-service/types"
 )
 
 // GetTxCmd returns the transaction commands for this module
@@ -40,7 +39,7 @@ func NewCreateUserVerifiableCredentialCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     `create-verifiable-credential [did_url] [cred-id] [secret] [name] [address] [date_of_birth] [nationalId] [phoneNumber]`,
 		Short:   "create decentralized verifiable-credential",
-		Example: fmt.Sprintf("creates a verifiable credential for users"),
+		Example: "creates a verifiable credential for users",
 		Args:    cobra.ExactArgs(8),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -79,7 +78,7 @@ func NewCreateUserVerifiableCredentialCmd() *cobra.Command {
 				args[1],
 				[]string{"VerifiableCredential", "KYCCredential"},
 				accAddrBech32,
-				fmt.Sprintf("%s", tm),
+				tm.Format(time.RFC3339),
 				cs,
 				types.NewProof("", "", "", "", ""),
 			)
@@ -93,7 +92,7 @@ func NewCreateUserVerifiableCredentialCmd() *cobra.Command {
 
 			p := types.NewProof(
 				pubKey.Type(),
-				fmt.Sprintf("%s", tm),
+				tm.Format(time.RFC3339),
 				"assertionMethod",
 				accAddrBech32+"#keys-1",
 				base64.StdEncoding.EncodeToString(signature),
@@ -125,7 +124,7 @@ func NewCreateIssuerVerifiableCredentialCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     `create-issuer-verifiable-credential [did-url] [cred-id] [secret] [business-name] [business-registration-number] [business-type] [business-address]`,
 		Short:   "create decentralized verifiable-credential for issuer",
-		Example: fmt.Sprintf("creates a verifiable credential for issuers"),
+		Example: "creates a verifiable credential for issuers",
 		Args:    cobra.ExactArgs(7),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -164,7 +163,7 @@ func NewCreateIssuerVerifiableCredentialCmd() *cobra.Command {
 				args[1],
 				[]string{"VerifiableCredential", "IssuerCredential"},
 				accAddrBech32,
-				fmt.Sprintf("%s", tm),
+				tm.Format(time.RFC3339),
 				cs,
 				types.NewProof("", "", "", "", ""),
 			)
@@ -178,7 +177,7 @@ func NewCreateIssuerVerifiableCredentialCmd() *cobra.Command {
 
 			p := types.NewProof(
 				pubKey.Type(),
-				fmt.Sprintf("%s", tm),
+				tm.Format(time.RFC3339),
 				"assertionMethod",
 				accAddrBech32+"#keys-1",
 				base64.StdEncoding.EncodeToString(signature),

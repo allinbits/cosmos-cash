@@ -3,13 +3,10 @@ package cli
 import (
 	"context"
 	"fmt"
-	//"strings"
-
-	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	//sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/spf13/cobra"
 
 	"github.com/allinbits/cosmos-cash/x/verifiable-credential-service/types"
 )
@@ -75,7 +72,7 @@ func GetCmdQueryVerifiableCredential() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "verifiable-credential [verifiable-credential-id]",
 		Short: "Query a verifiable-credential",
-		Long:  fmt.Sprintf(`Query details about an individual verifiable-credential.`),
+		Long:  `Query details about an individual verifiable-credential.`,
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
@@ -99,12 +96,12 @@ func GetCmdQueryVerifiableCredential() *cobra.Command {
 	return cmd
 }
 
-// GetCmdQueryVerifiableCredential implements the VerifiableCredential query command.
+// GetCmdQueryValidateVerifiableCredential implements the VerifiableCredential query command.
 func GetCmdQueryValidateVerifiableCredential() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "validate-verifiable-credential [verifiable-credential-id] [pubkey]",
 		Short: "Validate a verifiable-credential",
-		Long:  fmt.Sprintf(`Validate proof for an individual verifiable-credential.`),
+		Long:  `Validate proof for an individual verifiable-credential.`,
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)

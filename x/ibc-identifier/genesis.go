@@ -1,9 +1,10 @@
 package ibcidentifier
 
 import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/allinbits/cosmos-cash/x/ibc-identifier/keeper"
 	"github.com/allinbits/cosmos-cash/x/ibc-identifier/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // InitGenesis initializes the capability module's state from a provided genesis
@@ -11,7 +12,7 @@ import (
 func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) {
 	k.SetPort(ctx, genState.PortId)
 
-	k.BindPort(ctx, genState.PortId)
+	_ = k.BindPort(ctx, genState.PortId)
 }
 
 // ExportGenesis returns the capability module's exported genesis.

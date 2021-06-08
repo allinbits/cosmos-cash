@@ -183,7 +183,7 @@ func (s *IntegrationTestSuite) TestNewCreateIdentifierCmd() {
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
 
-			// TODO: optimise this
+			// TODO: optimize this
 			err = s.network.WaitForNextBlock()
 			s.Require().NoError(err)
 			err = s.network.WaitForNextBlock()
@@ -236,7 +236,7 @@ func (s *IntegrationTestSuite) TestNewAddAuthenticationCmd() {
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
 
-			// TODO: optimise this
+			// TODO: optimize this
 			err = s.network.WaitForNextBlock()
 			s.Require().NoError(err)
 			err = s.network.WaitForNextBlock()
@@ -291,7 +291,7 @@ func (s *IntegrationTestSuite) TestNewAddServiceCmd() {
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
 
-			// TODO: optimise this
+			// TODO: optimize this
 			err = s.network.WaitForNextBlock()
 			s.Require().NoError(err)
 			err = s.network.WaitForNextBlock()
@@ -396,7 +396,7 @@ func (s *IntegrationTestSuite) TestNewDeleteServiceCmd() {
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
 
-			// TODO: optimise this
+			// TODO: optimize this
 			err = s.network.WaitForNextBlock()
 			s.Require().NoError(err)
 			err = s.network.WaitForNextBlock()

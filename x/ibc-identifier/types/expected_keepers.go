@@ -1,13 +1,14 @@
 package types
 
 import (
-	identifiertypes "github.com/allinbits/cosmos-cash/x/identifier/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	connectiontypes "github.com/cosmos/cosmos-sdk/x/ibc/core/03-connection/types"
 	channeltypes "github.com/cosmos/cosmos-sdk/x/ibc/core/04-channel/types"
 	ibcexported "github.com/cosmos/cosmos-sdk/x/ibc/core/exported"
+
+	identifiertypes "github.com/allinbits/cosmos-cash/x/identifier/types"
 )
 
 // AccountKeeper defines the contract required for account APIs.

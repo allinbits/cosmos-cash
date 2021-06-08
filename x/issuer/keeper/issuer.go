@@ -1,8 +1,9 @@
 package keeper
 
 import (
-	"github.com/allinbits/cosmos-cash/x/issuer/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/allinbits/cosmos-cash/x/issuer/types"
 )
 
 func (k Keeper) SetIssuer(ctx sdk.Context, issuer types.Issuer) {
@@ -15,6 +16,7 @@ func (k Keeper) GetIssuer(ctx sdk.Context, key []byte) (types.Issuer, bool) {
 	return val.(types.Issuer), found
 }
 
+// GetIssuerByToken retrieve an issuer by it's key
 // TODO: this could be improved by only calling Get once in this file
 func (k Keeper) GetIssuerByToken(ctx sdk.Context, key []byte) (types.Issuer, bool) {
 	val, found := k.Get(ctx, key, types.TokenKey, k.UnmarshalIssuer)

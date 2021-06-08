@@ -5,9 +5,11 @@ import (
 )
 
 const (
+	// AccountAddressPrefix default account prefix for the address in the chain
 	AccountAddressPrefix = "cosmos"
 )
 
+// Various prefixes for accounts and public keys
 var (
 	AccountPubKeyPrefix    = AccountAddressPrefix + "pub"
 	ValidatorAddressPrefix = AccountAddressPrefix + "valoper"
@@ -16,6 +18,7 @@ var (
 	ConsNodePubKeyPrefix   = AccountAddressPrefix + "valconspub"
 )
 
+// SetConfig initialize the configuration instance for the sdk
 func SetConfig() {
 	config := sdk.GetConfig()
 	config.SetBech32PrefixForAccount(AccountAddressPrefix, AccountPubKeyPrefix)

@@ -1,0 +1,23 @@
+version = 1
+
+test_patterns = [
+    "**/*_test.go",
+    "tests"
+]
+
+exclude_patterns = [
+    "proto/**",
+    "testutil/**",
+    "contrib/**",
+    "**/*.pb.go"
+]
+
+[[analyzers]]
+name = "go"
+enabled = true
+
+[analyzers.meta]
+import_root = "github.com/allinbits/cosmos-cash"
+
+
+

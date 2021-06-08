@@ -206,7 +206,7 @@ func (s *IntegrationTestSuite) TestNewCreateVerifiableCredentialCmd() {
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
 
-			// TODO: optimise this
+			// TODO: optimize this
 			errNet := s.network.WaitForNextBlock()
 			s.Require().NoError(errNet)
 			errNet = s.network.WaitForNextBlock()

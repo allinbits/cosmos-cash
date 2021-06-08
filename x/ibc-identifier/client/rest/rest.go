@@ -1,25 +1,16 @@
 package rest
 
-import (
-	"github.com/gorilla/mux"
-
+import ( // this line is used by starport scaffolding # 1
 	"github.com/cosmos/cosmos-sdk/client"
-	// this line is used by starport scaffolding # 1
+	"github.com/gorilla/mux"
 )
 
 const (
+	// MethodGet http get method name
 	MethodGet = "GET"
 )
 
 // RegisterRoutes registers ibc-identifier-related REST handlers to a router
 func RegisterRoutes(clientCtx client.Context, r *mux.Router) {
 	// this line is used by starport scaffolding # 2
-}
-
-func registerQueryRoutes(clientCtx client.Context, r *mux.Router) {
-	// this line is used by starport scaffolding # 3
-}
-
-func registerTxHandlers(clientCtx client.Context, r *mux.Router) {
-	// this line is used by starport scaffolding # 4
 }

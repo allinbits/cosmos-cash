@@ -4,13 +4,13 @@ import (
 	"encoding/base64"
 	"fmt"
 
-	"github.com/spf13/cobra"
-
-	"github.com/allinbits/cosmos-cash/x/identifier/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/spf13/cobra"
+
+	"github.com/allinbits/cosmos-cash/x/identifier/types"
 )
 
 // GetTxCmd returns the transaction commands for this module
@@ -40,7 +40,7 @@ func NewCreateIdentifierCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "create-identifier [id]",
 		Short:   "create decentralized identifier (did) document",
-		Example: fmt.Sprintf("creates a did document for users"),
+		Example: "creates a did document for users",
 		Args:    cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -88,7 +88,7 @@ func NewAddAuthenticationCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "add-authentication [id] [pubkey]",
 		Short:   "add an authentication method to a decentralized identifier (did) document",
-		Example: fmt.Sprintf("adds an authentication method for a did document"),
+		Example: "adds an authentication method for a did document",
 		Args:    cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -98,6 +98,9 @@ func NewAddAuthenticationCmd() *cobra.Command {
 			accAddr := clientCtx.GetFromAddress()
 
 			pubKey, err := sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeAccPub, args[1])
+			if err != nil {
+				return err
+			}
 			address := sdk.AccAddress(pubKey.Address())
 
 			auth := types.NewAuthentication(
@@ -130,7 +133,7 @@ func NewAddServiceCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "add-service [id] [service_id] [type] [endpoint]",
 		Short:   "add a service to a decentralized identifier (did) document",
-		Example: fmt.Sprintf("adds a service to a did document"),
+		Example: "adds a service to a did document",
 		Args:    cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -168,7 +171,7 @@ func NewDeleteAuthenticationCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "delete-authentication [id] [pubkey]",
 		Short:   "delete an authentication method from a decentralized identifier (did) document",
-		Example: fmt.Sprintf("delete an authentication method for a did document"),
+		Example: "delete an authentication method for a did document",
 		Args:    cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -200,7 +203,7 @@ func NewDeleteServiceCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "delete-service [id] [service-id]",
 		Short:   "deletes a service from a decentralized identifier (did) document",
-		Example: fmt.Sprintf("delete a service for a did document"),
+		Example: "delete a service for a did document",
 		Args:    cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)

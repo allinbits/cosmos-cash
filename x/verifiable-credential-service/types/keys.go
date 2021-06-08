@@ -1,7 +1,8 @@
 package types
 
 var (
-	VerifiableCredentialKey = []byte{0x62} // prefix for each key to a DidDocument
+	// VerifiableCredentialKey prefix for each key to a DidDocument
+	VerifiableCredentialKey = []byte{0x62}
 )
 
 const (

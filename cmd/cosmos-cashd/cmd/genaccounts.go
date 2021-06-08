@@ -6,8 +6,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/spf13/cobra"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -19,6 +17,7 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
+	"github.com/spf13/cobra"
 )
 
 const (
@@ -50,20 +49,21 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 
 			addr, err := sdk.AccAddressFromBech32(args[0])
 			if err != nil {
+				var err1 error
 				inBuf := bufio.NewReader(cmd.InOrStdin())
-				keyringBackend, err := cmd.Flags().GetString(flags.FlagKeyringBackend)
-				if err != nil {
-					return err
+				keyringBackend, err1 := cmd.Flags().GetString(flags.FlagKeyringBackend)
+				if err1 != nil {
+					return err1
 				}
 
 				// attempt to lookup address from Keybase if no address was provided
-				kb, err := keyring.New(sdk.KeyringServiceName(), keyringBackend, clientCtx.HomeDir, inBuf)
-				if err != nil {
-					return err
+				kb, err1 := keyring.New(sdk.KeyringServiceName(), keyringBackend, clientCtx.HomeDir, inBuf)
+				if err1 != nil {
+					return err1
 				}
 
-				info, err := kb.Key(args[0])
-				if err != nil {
+				info, err1 := kb.Key(args[0])
+				if err1 != nil {
 					return fmt.Errorf("failed to get address from Keybase: %w", err)
 				}
 
@@ -121,7 +121,7 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 				genAccount = baseAccount
 			}
 
-			if err := genAccount.Validate(); err != nil {
+			if err = genAccount.Validate(); err != nil {
 				return fmt.Errorf("failed to validate new genesis account: %w", err)
 			}
 

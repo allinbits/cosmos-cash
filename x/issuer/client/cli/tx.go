@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/spf13/cobra"
-
-	"github.com/allinbits/cosmos-cash/x/issuer/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
+	"github.com/spf13/cobra"
+
+	"github.com/allinbits/cosmos-cash/x/issuer/types"
 )
 
 // GetTxCmd returns the transaction commands for this module
@@ -35,7 +35,7 @@ func NewCreateIssuerCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "create-issuer [did] [token] [fee]",
 		Short:   "create an issuer of an e-money token",
-		Example: fmt.Sprintf("creates an issuer of an e-money token"),
+		Example: "creates an issuer of an e-money token",
 		Args:    cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)

@@ -1,24 +1,22 @@
 package identifier
 
-import (
+import ( // this line is used by starport scaffolding # 1
 	"context"
 	"encoding/json"
-	// this line is used by starport scaffolding # 1
 
-	"github.com/gorilla/mux"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"github.com/spf13/cobra"
-
-	abci "github.com/tendermint/tendermint/abci/types"
-
-	"github.com/allinbits/cosmos-cash/x/identifier/client/cli"
-	"github.com/allinbits/cosmos-cash/x/identifier/keeper"
-	"github.com/allinbits/cosmos-cash/x/identifier/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	"github.com/gorilla/mux"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+	"github.com/spf13/cobra"
+	abci "github.com/tendermint/tendermint/abci/types"
+
+	"github.com/allinbits/cosmos-cash/x/identifier/client/cli"
+	"github.com/allinbits/cosmos-cash/x/identifier/keeper"
+	"github.com/allinbits/cosmos-cash/x/identifier/types"
 )
 
 var (
@@ -74,7 +72,7 @@ func (AppModuleBasic) RegisterGRPCGatewayRoutes(
 	clientCtx client.Context,
 	mux *runtime.ServeMux,
 ) {
-	types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx))
+	_ = types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx))
 	// this line is used by starport scaffolding # 2
 }
 

@@ -3,10 +3,11 @@ package ibcidentifier
 import (
 	"fmt"
 
-	"github.com/allinbits/cosmos-cash/x/ibc-identifier/keeper"
-	"github.com/allinbits/cosmos-cash/x/ibc-identifier/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
+	"github.com/allinbits/cosmos-cash/x/ibc-identifier/keeper"
+	"github.com/allinbits/cosmos-cash/x/ibc-identifier/types"
 )
 
 // NewHandler ...

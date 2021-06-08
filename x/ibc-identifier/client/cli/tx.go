@@ -43,7 +43,7 @@ func NewTransferIdentifierCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "transfer-ibc [id] [src-port] [src-channel]",
 		Short:   "transfer decentralized identifier (did) document",
-		Example: fmt.Sprintf("creates a did document for users"),
+		Example: "creates a did document for users",
 		Args:    cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)

@@ -196,7 +196,7 @@ func (cicd CheckUserCredentialsDecorator) AnteHandle(
 							)
 						}
 
-						if userCred.IsVerified == false {
+						if !userCred.IsVerified {
 							return ctx, sdkerrors.Wrapf(
 								types.ErrUserFound,
 								"user is not verified",

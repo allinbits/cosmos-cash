@@ -25,6 +25,7 @@ func GetTxCmd() *cobra.Command {
 	// this line is used by starport scaffolding # 1
 	cmd.AddCommand(
 		NewCreateIssuerCmd(),
+		NewBurnTokenCmd(),
 	)
 
 	return cmd
@@ -66,9 +67,42 @@ func NewCreateIssuerCmd() *cobra.Command {
 	return cmd
 }
 
+// NewCreateIssuerCmd defines the command to create a new IBC light client.
+func NewBurnTokenCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "burn-token [amount]",
+		Short: "burn e-money tokens for an issuer",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			accAddr := clientCtx.GetFromAddress()
+			accAddrBech32 := accAddr.String()
+
+			fee, _ := strconv.ParseInt(args[0], 0, 32)
+			msg := types.NewMsgBurnToken(
+				int32(fee),
+				accAddrBech32,
+			)
+
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
 // TODO: extra commands:
 //		Use:     "mint-issuer [did] [token] [fee]",
-//		Use:     "burn-issuer [did] [token] [fee]",
 //		Use:     "deposit-emoney [did] [token] [fee]",
 //		Use:     "widthdraw-emoney [did] [token] [fee]",
 //		Use:     "freeze-all-emoney-tokens [did] [token] [fee]",

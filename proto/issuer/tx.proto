@@ -9,19 +9,30 @@ option go_package = "github.com/allinbits/cosmos-cash/x/issuer/types";
 // Msg defines the Msg service.
 service Msg {
   rpc CreateIssuer(MsgCreateIssuer) returns (MsgCreateIssuerResponse);
+  rpc BurnToken(MsgBurnToken) returns (MsgBurnTokenResponse);
 }
 
-// MsgCreateIssuer defines a SDK message for creating a new identifer.
+// MsgCreateIssuer defines a SDK message for creating a new issuer.
 message MsgCreateIssuer {
   option (gogoproto.equal)           = false;
   option (gogoproto.goproto_getters) = false;
 
   string    token        = 1; 
   int32     fee          = 2; 
-
-  string owner = 3;
+  string    owner        = 3;
 }
 
 message MsgCreateIssuerResponse {}
+
+// MsgBurnToken defines a SDK message for burning issuer tokens.
+message MsgBurnToken {
+  option (gogoproto.equal)           = false;
+  option (gogoproto.goproto_getters) = false;
+
+  int32     amount       = 1; 
+  string    owner        = 2;
+}
+
+message MsgBurnTokenResponse {}
 
 // this line is used by starport scaffolding # proto/tx/message

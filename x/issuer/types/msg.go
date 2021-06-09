@@ -61,3 +61,53 @@ func (msg MsgCreateIssuer) GetSigners() []sdk.AccAddress {
 	}
 	return []sdk.AccAddress{accAddr}
 }
+
+const (
+	TypeMsgBurnToken = "burn-token"
+)
+
+var _ sdk.Msg = &MsgBurnToken{}
+
+// NewMsgBurnToken creates a new MsgBurnToken instance
+func NewMsgBurnToken(
+	amount int32,
+	owner string,
+) *MsgBurnToken {
+	return &MsgBurnToken{
+		Amount: amount,
+		Owner:  owner,
+	}
+}
+
+// Route implements sdk.Msg
+func (MsgBurnToken) Route() string {
+	return RouterKey
+}
+
+// Type implements sdk.Msg
+func (MsgBurnToken) Type() string {
+	return TypeMsgBurnToken
+}
+
+// ValidateBasic performs a basic check of the MsgBurnToken fields.
+func (msg MsgBurnToken) ValidateBasic() error {
+	if msg.Amount == 0 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "please enter a fee greater than 0")
+	}
+
+	return nil
+
+}
+
+func (msg MsgBurnToken) GetSignBytes() []byte {
+	panic("IBC messages do not support amino")
+}
+
+// GetSigners implements sdk.Msg
+func (msg MsgBurnToken) GetSigners() []sdk.AccAddress {
+	accAddr, err := sdk.AccAddressFromBech32(msg.Owner)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{accAddr}
+}

@@ -29,7 +29,7 @@ message MsgBurnToken {
   option (gogoproto.equal)           = false;
   option (gogoproto.goproto_getters) = false;
 
-  int32     amount       = 1; 
+  string    amount       = 1; 
   string    owner        = 2;
 }
 

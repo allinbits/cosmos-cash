@@ -8,6 +8,7 @@ import (
 // msg types
 const (
 	TypeMsgCreateIssuer = "create-issuer"
+	TypeMsgBurnToken    = "burn-token"
 )
 
 var _ sdk.Msg = &MsgCreateIssuer{}
@@ -62,19 +63,17 @@ func (msg MsgCreateIssuer) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{accAddr}
 }
 
-const (
-	TypeMsgBurnToken = "burn-token"
-)
+// Token burn
 
 var _ sdk.Msg = &MsgBurnToken{}
 
 // NewMsgBurnToken creates a new MsgBurnToken instance
 func NewMsgBurnToken(
-	amount int32,
+	amount sdk.Coin,
 	owner string,
 ) *MsgBurnToken {
 	return &MsgBurnToken{
-		Amount: amount,
+		Amount: amount.String(),
 		Owner:  owner,
 	}
 }
@@ -91,12 +90,14 @@ func (MsgBurnToken) Type() string {
 
 // ValidateBasic performs a basic check of the MsgBurnToken fields.
 func (msg MsgBurnToken) ValidateBasic() error {
-	if msg.Amount == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "please enter a fee greater than 0")
+	amount, err := sdk.ParseCoinNormalized(msg.Amount)
+	if err != nil {
+		return err
 	}
-
+	if amount.IsZero() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "please enter an amount greater than 0")
+	}
 	return nil
-
 }
 
 func (msg MsgBurnToken) GetSignBytes() []byte {

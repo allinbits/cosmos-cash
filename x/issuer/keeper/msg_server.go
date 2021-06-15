@@ -90,13 +90,20 @@ func (k msgServer) BurnToken(
 		)
 	}
 
-	issuerToken := sdk.NewCoins(sdk.NewInt64Coin(issuer.Token, int64(msg.Amount)))
-
-	receipent, _ := sdk.AccAddressFromBech32(msg.Owner)
+	// parse the token amount and verify that the amount requested is for the issuer token
+	amounts, err := sdk.ParseCoinsNormalized(msg.Amount)
+	if err != nil {
+		return nil, sdkerrors.Wrapf(
+			sdk.ErrInvalidDecimalStr,
+			"coin string format not recognized",
+		)
+	}
+	// sender is the issuer
+	sender, _ := sdk.AccAddressFromBech32(issuer.Address)
 
 	// send tokens from module to issuer
 	if err := k.bk.SendCoinsFromAccountToModule(
-		ctx, receipent, types.ModuleName, issuerToken,
+		ctx, sender, types.ModuleName, amounts,
 	); err != nil {
 		return nil, sdkerrors.Wrapf(
 			types.ErrIssuerFound,
@@ -106,7 +113,7 @@ func (k msgServer) BurnToken(
 
 	// burn tokens for the issuer
 	if err := k.bk.BurnCoins(
-		ctx, types.ModuleName, issuerToken,
+		ctx, types.ModuleName, amounts,
 	); err != nil {
 		return nil, sdkerrors.Wrapf(
 			types.ErrIssuerFound,

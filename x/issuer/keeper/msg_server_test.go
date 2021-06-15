@@ -18,7 +18,7 @@ func (suite *KeeperTestSuite) TestMsgSeverBurnToken() {
 	}{
 		{
 			"FAIL: issuer does not exist so tokens cannot be burned",
-			func() { req = *types.NewMsgBurnToken(999, "did:cash:1111") },
+			func() { req = *types.NewMsgBurnToken(sdk.NewCoin("eeuro", sdk.NewInt(100)), "did:cash:1111") },
 			false,
 		},
 		// TODO: uncomment when the latest version of the cosmos-sdk is released

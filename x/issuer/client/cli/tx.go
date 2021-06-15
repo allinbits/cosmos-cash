@@ -7,6 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
 
 	"github.com/allinbits/cosmos-cash/x/issuer/types"
@@ -67,7 +68,7 @@ func NewCreateIssuerCmd() *cobra.Command {
 	return cmd
 }
 
-// NewCreateIssuerCmd defines the command to create a new IBC light client.
+// NewBurnTokenCmd defines the command to burn tokens.
 func NewBurnTokenCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "burn-token [amount]",
@@ -82,9 +83,13 @@ func NewBurnTokenCmd() *cobra.Command {
 			accAddr := clientCtx.GetFromAddress()
 			accAddrBech32 := accAddr.String()
 
-			fee, _ := strconv.ParseInt(args[0], 0, 32)
+			amount, err := sdk.ParseCoinNormalized(args[0])
+			if err != nil {
+				return err
+			}
+
 			msg := types.NewMsgBurnToken(
-				int32(fee),
+				amount,
 				accAddrBech32,
 			)
 

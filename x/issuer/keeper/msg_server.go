@@ -74,3 +74,52 @@ func (k msgServer) CreateIssuer(
 
 	return &types.MsgCreateIssuerResponse{}, nil
 }
+
+// CreateIssuer creates a new e-money token issuer
+func (k msgServer) BurnToken(
+	goCtx context.Context,
+	msg *types.MsgBurnToken,
+) (*types.MsgBurnTokenResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	issuer, found := k.Keeper.GetIssuer(ctx, []byte(msg.Owner))
+	if !found {
+		return nil, sdkerrors.Wrapf(
+			types.ErrIssuerFound,
+			"issuer does not exists",
+		)
+	}
+
+	// parse the token amount and verify that the amount requested is for the issuer token
+	amounts, err := sdk.ParseCoinsNormalized(msg.Amount)
+	if err != nil {
+		return nil, sdkerrors.Wrapf(
+			sdk.ErrInvalidDecimalStr,
+			"coin string format not recognized",
+		)
+	}
+	// sender is the issuer
+	sender, _ := sdk.AccAddressFromBech32(issuer.Address)
+
+	// send tokens from module to issuer
+	if err := k.bk.SendCoinsFromAccountToModule(
+		ctx, sender, types.ModuleName, amounts,
+	); err != nil {
+		return nil, sdkerrors.Wrapf(
+			types.ErrIssuerFound,
+			"cannot send tokens from issuer account to module",
+		)
+	}
+
+	// burn tokens for the issuer
+	if err := k.bk.BurnCoins(
+		ctx, types.ModuleName, amounts,
+	); err != nil {
+		return nil, sdkerrors.Wrapf(
+			types.ErrIssuerFound,
+			"cannot burn coins",
+		)
+	}
+
+	return &types.MsgBurnTokenResponse{}, nil
+}

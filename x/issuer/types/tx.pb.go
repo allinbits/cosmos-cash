@@ -28,7 +28,7 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// MsgCreateIssuer defines a SDK message for creating a new identifer.
+// MsgCreateIssuer defines a SDK message for creating a new issuer.
 type MsgCreateIssuer struct {
 	Token string `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
 	Fee   int32  `protobuf:"varint,2,opt,name=fee,proto3" json:"fee,omitempty"`
@@ -104,15 +104,92 @@ func (m *MsgCreateIssuerResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgCreateIssuerResponse proto.InternalMessageInfo
 
+// MsgBurnToken defines a SDK message for burning issuer tokens.
+type MsgBurnToken struct {
+	Amount string `protobuf:"bytes,1,opt,name=amount,proto3" json:"amount,omitempty"`
+	Owner  string `protobuf:"bytes,2,opt,name=owner,proto3" json:"owner,omitempty"`
+}
+
+func (m *MsgBurnToken) Reset()         { *m = MsgBurnToken{} }
+func (m *MsgBurnToken) String() string { return proto.CompactTextString(m) }
+func (*MsgBurnToken) ProtoMessage()    {}
+func (*MsgBurnToken) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8167a165536ee83e, []int{2}
+}
+func (m *MsgBurnToken) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgBurnToken) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgBurnToken.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgBurnToken) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgBurnToken.Merge(m, src)
+}
+func (m *MsgBurnToken) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgBurnToken) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgBurnToken.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgBurnToken proto.InternalMessageInfo
+
+type MsgBurnTokenResponse struct {
+}
+
+func (m *MsgBurnTokenResponse) Reset()         { *m = MsgBurnTokenResponse{} }
+func (m *MsgBurnTokenResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgBurnTokenResponse) ProtoMessage()    {}
+func (*MsgBurnTokenResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8167a165536ee83e, []int{3}
+}
+func (m *MsgBurnTokenResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgBurnTokenResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgBurnTokenResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgBurnTokenResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgBurnTokenResponse.Merge(m, src)
+}
+func (m *MsgBurnTokenResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgBurnTokenResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgBurnTokenResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgBurnTokenResponse proto.InternalMessageInfo
+
 func init() {
 	proto.RegisterType((*MsgCreateIssuer)(nil), "allinbits.cosmoscash.issuer.MsgCreateIssuer")
 	proto.RegisterType((*MsgCreateIssuerResponse)(nil), "allinbits.cosmoscash.issuer.MsgCreateIssuerResponse")
+	proto.RegisterType((*MsgBurnToken)(nil), "allinbits.cosmoscash.issuer.MsgBurnToken")
+	proto.RegisterType((*MsgBurnTokenResponse)(nil), "allinbits.cosmoscash.issuer.MsgBurnTokenResponse")
 }
 
 func init() { proto.RegisterFile("issuer/tx.proto", fileDescriptor_8167a165536ee83e) }
 
 var fileDescriptor_8167a165536ee83e = []byte{
-	// 257 bytes of a gzipped FileDescriptorProto
+	// 317 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0xcf, 0x2c, 0x2e, 0x2e,
 	0x4d, 0x2d, 0xd2, 0x2f, 0xa9, 0xd0, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x92, 0x4e, 0xcc, 0xc9,
 	0xc9, 0xcc, 0x4b, 0xca, 0x2c, 0x29, 0xd6, 0x4b, 0xce, 0x2f, 0xce, 0xcd, 0x2f, 0x4e, 0x4e, 0x2c,
@@ -122,14 +199,17 @@ var fileDescriptor_8167a165536ee83e = []byte{
 	0x83, 0x20, 0x1c, 0x21, 0x01, 0x2e, 0xe6, 0xb4, 0xd4, 0x54, 0x09, 0x26, 0x05, 0x46, 0x0d, 0xd6,
 	0x20, 0x10, 0x13, 0xa4, 0x2e, 0xbf, 0x3c, 0x2f, 0xb5, 0x48, 0x82, 0x19, 0xa2, 0x0e, 0xcc, 0xb1,
 	0xe2, 0xe8, 0x58, 0x20, 0xcf, 0xf0, 0x62, 0x81, 0x3c, 0x83, 0x92, 0x24, 0x97, 0x38, 0x9a, 0xd1,
-	0x41, 0xa9, 0xc5, 0x05, 0xf9, 0x79, 0xc5, 0xa9, 0x46, 0x95, 0x5c, 0xcc, 0xbe, 0xc5, 0xe9, 0x42,
-	0x45, 0x5c, 0x3c, 0x28, 0x36, 0xeb, 0xe8, 0xe1, 0xf1, 0x80, 0x1e, 0x9a, 0x61, 0x52, 0x26, 0xa4,
-	0xa8, 0x86, 0x59, 0xed, 0xe4, 0x79, 0xe2, 0x91, 0x1c, 0xe3, 0x85, 0x47, 0x72, 0x8c, 0x0f, 0x1e,
-	0xc9, 0x31, 0x4e, 0x78, 0x2c, 0xc7, 0x70, 0xe1, 0xb1, 0x1c, 0xc3, 0x8d, 0xc7, 0x72, 0x0c, 0x51,
-	0xfa, 0xe9, 0x99, 0x25, 0x19, 0xa5, 0x49, 0x7a, 0xc9, 0xf9, 0xb9, 0xfa, 0x70, 0x93, 0xf5, 0x21,
-	0x26, 0xeb, 0x82, 0x8c, 0xd6, 0xaf, 0xd0, 0x87, 0x85, 0x78, 0x65, 0x41, 0x6a, 0x71, 0x12, 0x1b,
-	0x38, 0x08, 0x8d, 0x01, 0x01, 0x00, 0x00, 0xff, 0xff, 0x34, 0xe0, 0x4a, 0x40, 0x88, 0x01, 0x00,
-	0x00,
+	0x41, 0xa9, 0xc5, 0x05, 0xf9, 0x79, 0xc5, 0xa9, 0x4a, 0x6e, 0x5c, 0x3c, 0xbe, 0xc5, 0xe9, 0x4e,
+	0xa5, 0x45, 0x79, 0x21, 0x60, 0xc3, 0xc5, 0xb8, 0xd8, 0x12, 0x73, 0xf3, 0x4b, 0xf3, 0x4a, 0xa0,
+	0x76, 0x42, 0x79, 0x08, 0x2b, 0x98, 0xb0, 0x5b, 0x21, 0xc6, 0x25, 0x82, 0x6c, 0x0e, 0xcc, 0x7c,
+	0xa3, 0x27, 0x8c, 0x5c, 0xcc, 0xbe, 0xc5, 0xe9, 0x42, 0x45, 0x5c, 0x3c, 0x28, 0x5e, 0xd3, 0xd1,
+	0xc3, 0x13, 0x42, 0x7a, 0x68, 0xae, 0x95, 0x32, 0x21, 0x45, 0x35, 0xcc, 0x6e, 0xa1, 0x4c, 0x2e,
+	0x4e, 0x84, 0xc7, 0x34, 0x09, 0x19, 0x01, 0x57, 0x2a, 0x65, 0x48, 0xb4, 0x52, 0x98, 0x55, 0x4e,
+	0x9e, 0x27, 0x1e, 0xc9, 0x31, 0x5e, 0x78, 0x24, 0xc7, 0xf8, 0xe0, 0x91, 0x1c, 0xe3, 0x84, 0xc7,
+	0x72, 0x0c, 0x17, 0x1e, 0xcb, 0x31, 0xdc, 0x78, 0x2c, 0xc7, 0x10, 0xa5, 0x9f, 0x9e, 0x59, 0x92,
+	0x51, 0x9a, 0xa4, 0x97, 0x9c, 0x9f, 0xab, 0x0f, 0x37, 0x56, 0x1f, 0x62, 0xac, 0x2e, 0xc8, 0x5c,
+	0xfd, 0x0a, 0x7d, 0x58, 0xea, 0xa9, 0x2c, 0x48, 0x2d, 0x4e, 0x62, 0x03, 0x27, 0x07, 0x63, 0x40,
+	0x00, 0x00, 0x00, 0xff, 0xff, 0x75, 0x87, 0x6e, 0x93, 0x54, 0x02, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -145,6 +225,7 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MsgClient interface {
 	CreateIssuer(ctx context.Context, in *MsgCreateIssuer, opts ...grpc.CallOption) (*MsgCreateIssuerResponse, error)
+	BurnToken(ctx context.Context, in *MsgBurnToken, opts ...grpc.CallOption) (*MsgBurnTokenResponse, error)
 }
 
 type msgClient struct {
@@ -164,9 +245,19 @@ func (c *msgClient) CreateIssuer(ctx context.Context, in *MsgCreateIssuer, opts 
 	return out, nil
 }
 
+func (c *msgClient) BurnToken(ctx context.Context, in *MsgBurnToken, opts ...grpc.CallOption) (*MsgBurnTokenResponse, error) {
+	out := new(MsgBurnTokenResponse)
+	err := c.cc.Invoke(ctx, "/allinbits.cosmoscash.issuer.Msg/BurnToken", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
 	CreateIssuer(context.Context, *MsgCreateIssuer) (*MsgCreateIssuerResponse, error)
+	BurnToken(context.Context, *MsgBurnToken) (*MsgBurnTokenResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
@@ -175,6 +266,9 @@ type UnimplementedMsgServer struct {
 
 func (*UnimplementedMsgServer) CreateIssuer(ctx context.Context, req *MsgCreateIssuer) (*MsgCreateIssuerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateIssuer not implemented")
+}
+func (*UnimplementedMsgServer) BurnToken(ctx context.Context, req *MsgBurnToken) (*MsgBurnTokenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BurnToken not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
@@ -199,6 +293,24 @@ func _Msg_CreateIssuer_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_BurnToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgBurnToken)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).BurnToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/allinbits.cosmoscash.issuer.Msg/BurnToken",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).BurnToken(ctx, req.(*MsgBurnToken))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "allinbits.cosmoscash.issuer.Msg",
 	HandlerType: (*MsgServer)(nil),
@@ -206,6 +318,10 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateIssuer",
 			Handler:    _Msg_CreateIssuer_Handler,
+		},
+		{
+			MethodName: "BurnToken",
+			Handler:    _Msg_BurnToken_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -277,6 +393,66 @@ func (m *MsgCreateIssuerResponse) MarshalToSizedBuffer(dAtA []byte) (int, error)
 	return len(dAtA) - i, nil
 }
 
+func (m *MsgBurnToken) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgBurnToken) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgBurnToken) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Owner) > 0 {
+		i -= len(m.Owner)
+		copy(dAtA[i:], m.Owner)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Owner)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Amount) > 0 {
+		i -= len(m.Amount)
+		copy(dAtA[i:], m.Amount)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Amount)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgBurnTokenResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgBurnTokenResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgBurnTokenResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
 	offset -= sovTx(v)
 	base := offset
@@ -309,6 +485,32 @@ func (m *MsgCreateIssuer) Size() (n int) {
 }
 
 func (m *MsgCreateIssuerResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgBurnToken) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Amount)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Owner)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgBurnTokenResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -483,6 +685,170 @@ func (m *MsgCreateIssuerResponse) Unmarshal(dAtA []byte) error {
 		}
 		if fieldNum <= 0 {
 			return fmt.Errorf("proto: MsgCreateIssuerResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgBurnToken) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgBurnToken: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgBurnToken: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Amount", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Amount = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Owner", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Owner = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgBurnTokenResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgBurnTokenResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgBurnTokenResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:

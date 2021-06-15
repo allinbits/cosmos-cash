@@ -8,6 +8,7 @@ import (
 
 // x/issuer module sentinel errors
 var (
-	ErrIssuerFound = sdkerrors.Register(ModuleName, 1101, "issuer found")
-	ErrUserFound   = sdkerrors.Register(ModuleName, 1102, "user found")
+	ErrIssuerFound        = sdkerrors.Register(ModuleName, 1101, "issuer found")
+	ErrUserFound          = sdkerrors.Register(ModuleName, 1102, "user found")
+	ErrInvalidIssuerDenom = sdkerrors.Register(ModuleName, 1103, "invalid denom for issuer coin")
 )

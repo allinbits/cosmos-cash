@@ -18,6 +18,7 @@ func (suite *KeeperTestSuite) TestMsgSeverBurnToken() {
 	}{
 		{
 			"FAIL: issuer does not exist so tokens cannot be burned",
+
 			func() { req = *types.NewMsgBurnToken(sdk.NewCoin("eeuro", sdk.NewInt(100)), "did:cash:1111") },
 			false,
 		},
@@ -35,11 +36,47 @@ func (suite *KeeperTestSuite) TestMsgSeverBurnToken() {
 		//			true,
 		//		},
 	}
+
 	for _, tc := range testCases {
 		suite.Run(fmt.Sprintf("Case %s", tc.msg), func() {
 			tc.malleate()
 
 			identifierResp, err := server.BurnToken(sdk.WrapSDKContext(suite.ctx), &req)
+			if tc.expPass {
+				suite.NoError(err)
+				suite.NotNil(identifierResp)
+
+			} else {
+				suite.Require().Error(err)
+			}
+		})
+	}
+}
+func (suite *KeeperTestSuite) Test_msgServer_MintToken() {
+
+	// create the keeper
+	server := NewMsgServerImpl(suite.keeper)
+	var req types.MsgMintToken
+	// owner := "cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a"
+	ctx := sdk.WrapSDKContext(suite.ctx)
+
+	testCases := []struct {
+		msg      string
+		malleate func()
+		expPass  bool
+	}{
+		{
+			"FAIL: issuer does not exist so tokens cannot be burned",
+			func() { req = *types.NewMsgMintToken(sdk.NewCoin("cash", sdk.NewInt(100)), "did:cash:1111") },
+			false,
+		},
+		// TODO: add successful case when 0.43 is done
+	}
+	for _, tc := range testCases {
+		suite.Run(fmt.Sprintf("Case %s", tc.msg), func() {
+			tc.malleate()
+
+			identifierResp, err := server.MintToken(ctx, &req)
 			if tc.expPass {
 				suite.NoError(err)
 				suite.NotNil(identifierResp)

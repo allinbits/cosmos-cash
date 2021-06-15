@@ -89,6 +89,14 @@ func (k msgServer) AddService(
 			"identifier not found: AddService",
 		)
 	}
+	for _, service := range identifier.Services {
+		if service.Id == msg.ServiceData.Id {
+			return nil, sdkerrors.Wrapf(
+				types.ErrIdentifierNotFound,
+				"service already exists: AddService",
+			)
+		}
+	}
 
 	identifier.Services = append(identifier.Services, msg.ServiceData)
 	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), identifier)

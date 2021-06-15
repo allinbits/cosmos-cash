@@ -137,92 +137,100 @@ func (cicd CheckUserCredentialsDecorator) AnteHandle(
 	simulate bool,
 	next sdk.AnteHandler,
 ) (newCtx sdk.Context, err error) {
+	// TODO: ensure this keepers can only read from store
 	// TODO: improve logic here
 	for _, msg := range tx.GetMsgs() {
 		if msg.Type() == "send" {
 			imsg := msg.(*bank.MsgSend)
-			didURI := "did:cash:" + imsg.ToAddress
-			_ = "did:cash:" + imsg.FromAddress
-			_, found := cicd.issuerk.GetIssuerByToken(ctx, []byte(imsg.Amount[0].Denom))
+			// FIXME: iterate over tokens and check the multi-send
+			issuer, found := cicd.issuerk.GetIssuerByToken(ctx, []byte(imsg.Amount[0].Denom))
 
 			if found {
-				// TODO: pass in the did URI as an arg {msg.Id}
-				// TODO: tidy this functionality into the keeper,
-				// GetIdentifierWithCondition, GetIdentifierWithService, GetIdentifierWithAuth
-				// TODO: ensure this keeper can only read from store
-				// TODO: esure to check the both from and to addresses
-				did, found := cicd.ik.GetIdentifier(ctx, []byte(didURI))
-				if !found {
-					return ctx, sdkerrors.Wrapf(
-						types.ErrIssuerFound,
-						"identifier does not exists",
-					)
+				err := cicd.validateKYCCredential(ctx, imsg.ToAddress, issuer.Address)
+				if err != nil {
+					return ctx, err
 				}
 
-				// TODO: optimize here
-				foundKey := false
-				for _, auth := range did.Authentication {
-					if auth.Controller == imsg.ToAddress {
-						foundKey = true
-					}
-				}
-				if !foundKey {
-					return ctx, sdkerrors.Wrapf(
-						types.ErrUserFound,
-						"msg sender not in auth array in did document",
-					)
-				}
-
-				// TODO: optimize here
-				// check if the did document has the issuer credential
-				hasUserCredential := false
-				for _, service := range did.Services {
-					// TODO use enum here
-					if service.Type == "KYCCredential" {
-						// TODO: ensure this keeper can only read from store
-						vc, found := cicd.vcsk.GetVerifiableCredential(ctx, []byte(service.Id))
-						if !found {
-							return ctx, sdkerrors.Wrapf(
-								types.ErrUserFound,
-								"credential not found",
-							)
-						}
-
-						userCred := vc.GetUserCred()
-						if userCred.Id != didURI {
-							return ctx, sdkerrors.Wrapf(
-								types.ErrUserFound,
-								"user id not correct",
-							)
-						}
-
-						if !userCred.IsVerified {
-							return ctx, sdkerrors.Wrapf(
-								types.ErrUserFound,
-								"user is not verified",
-							)
-						}
-
-						//if vc.Issuer != issuer.Address {
-						//	return ctx, sdkerrors.Wrapf(
-						//		types.ErrUserFound,
-						//		"user is not verified",
-						//	)
-						//}
-
-						hasUserCredential = true
-						// TODO: validate credential here has been issued by issuer
-					}
-				}
-				if !hasUserCredential {
-					return ctx, sdkerrors.Wrapf(
-						types.ErrIssuerFound,
-						"did document doesnt have a credential to send e-money tokens",
-					)
+				err = cicd.validateKYCCredential(ctx, imsg.FromAddress, issuer.Address)
+				if err != nil {
+					return ctx, err
 				}
 			}
 		}
 	}
 
 	return next(ctx, tx, simulate)
+}
+
+func (cicd CheckUserCredentialsDecorator) validateKYCCredential(
+	ctx sdk.Context,
+	address string,
+	issuerAddress string,
+) error {
+	didURI := "did:cash:" + address
+
+	// TODO: tidy this functionality into the keeper,
+	// GetIdentifierWithCondition, GetIdentifierWithService, GetIdentifierWithAuth
+	did, found := cicd.ik.GetIdentifier(ctx, []byte(didURI))
+	if !found {
+		return sdkerrors.Wrapf(
+			types.ErrIssuerFound,
+			"identifier does not exists",
+		)
+	}
+
+	foundKey := false
+	for _, auth := range did.Authentication {
+		if auth.Controller == address {
+			foundKey = true
+			break
+		}
+	}
+	if !foundKey {
+		return sdkerrors.Wrapf(
+			types.ErrUserFound,
+			"msg sender not in auth slice in did document",
+		)
+	}
+
+	// check if the did document has the issuer credential
+	hasUserCredential := false
+	for _, service := range did.Services {
+		// TODO use enum here
+		if service.Type != "KYCCredential" {
+			continue
+		}
+
+		// TODO: ensure this keeper can only read from store
+		vc, found := cicd.vcsk.GetVerifiableCredential(ctx, []byte(service.Id))
+		if !found {
+			continue
+		}
+
+		userCred := vc.GetUserCred()
+		if userCred.Id != didURI {
+			continue
+		}
+
+		if !userCred.IsVerified {
+			continue
+		}
+
+		if vc.Issuer != issuerAddress {
+			continue
+		}
+
+		// TODO: We need to verify the signature here
+		hasUserCredential = true
+
+		break
+	}
+	if !hasUserCredential {
+		return sdkerrors.Wrapf(
+			types.ErrIssuerFound,
+			"did document does not have a credential to send e-money tokens",
+		)
+	}
+
+	return nil
 }

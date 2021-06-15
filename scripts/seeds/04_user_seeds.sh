@@ -21,9 +21,9 @@ cosmos-cashd tx verifiablecredentialservice create-verifiable-credential did:cas
 cosmos-cashd tx verifiablecredentialservice create-verifiable-credential did:cash:$(cosmos-cashd keys show user3 -a) kyc-cred-3 secret corm rome 1-1-1970 i1234 111234 --from validator --chain-id cash -y
 
 echo "Adding service to decentralized identifier for users"
-cosmos-cashd tx identifier add-service did:cash:$(cosmos-cashd keys show user1 -a) kyc-cred-1 KYCCredential cash:kyc-cred-1 --from user1 --chain-id cash -y
-cosmos-cashd tx identifier add-service did:cash:$(cosmos-cashd keys show user2 -a) kyc-cred-2 KYCCredential cash:kyc-cred-2 --from user2 --chain-id cash -y
-cosmos-cashd tx identifier add-service did:cash:$(cosmos-cashd keys show user3 -a) kyc-cred-3 KYCCredential cash:kyc-cred-3 --from user3 --chain-id cash -y
+cosmos-cashd tx identifier add-service did:cash:$(cosmos-cashd keys show user1 -a) kyc-cred-1 IdentityCredential cash:kyc-cred-1 --from user1 --chain-id cash -y
+cosmos-cashd tx identifier add-service did:cash:$(cosmos-cashd keys show user2 -a) kyc-cred-2 IdentityCredential cash:kyc-cred-2 --from user2 --chain-id cash -y
+cosmos-cashd tx identifier add-service did:cash:$(cosmos-cashd keys show user3 -a) kyc-cred-3 IdentityCredential cash:kyc-cred-3 --from user3 --chain-id cash -y
 
 echo "Querying all data"
 cosmos-cashd query identifier identifiers --output json | jq

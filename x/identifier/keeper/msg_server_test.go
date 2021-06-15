@@ -124,15 +124,15 @@ func (suite *KeeperTestSuite) TestMsgSeverAddService() {
 		expPass  bool
 	}{
 		{
-			"can not add authentication, identifier does not exist",
+			"FAIL: can not add service, identifier does not exist",
 			func() { req = *types.NewMsgAddService("did:cash:1111", nil, "did:cash:1111") },
 			false,
 		},
 		{
-			"can add authentication to did document",
+			"PASS: can add service to did document",
 			func() {
 				service := types.NewService(
-					"did:cash:1111#keys-1",
+					"did:cash:1111",
 					"sepk256",
 					"did:cash:1111",
 				)
@@ -140,10 +140,11 @@ func (suite *KeeperTestSuite) TestMsgSeverAddService() {
 					"context",
 					"did:cash:1111",
 					nil,
-					types.Services{&service},
+					nil,
 				}
 				suite.keeper.SetIdentifier(suite.ctx, []byte(identifier.Id), identifier)
-				req = *types.NewMsgAddService("did:cash:1111", &service, "did:cash:1111")
+
+				req = *types.NewMsgAddService("did:cash:1111", &service, "cash:cash:1111")
 			},
 			true,
 		},

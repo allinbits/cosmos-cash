@@ -234,7 +234,7 @@ func (suite *KeeperTestSuite) TestHandleMsgAddService() {
 					"context",
 					"did:cash:1111",
 					types.Authentications{&auth},
-					types.Services{&service},
+					nil,
 				}
 				suite.keeper.SetIdentifier(suite.ctx, []byte(identifier.Id), identifier)
 				req = *types.NewMsgAddService("did:cash:1111", &service, "did:cash:1111")

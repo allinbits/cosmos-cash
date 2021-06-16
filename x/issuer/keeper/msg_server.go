@@ -60,11 +60,11 @@ func (k msgServer) CreateIssuer(
 		)
 	}
 
-	receipent, _ := sdk.AccAddressFromBech32(msg.Owner)
+	recipient, _ := sdk.AccAddressFromBech32(msg.Owner)
 
 	// send tokens from module to issuer
 	if err := k.bk.SendCoinsFromModuleToAccount(
-		ctx, types.ModuleName, receipent, issuerToken,
+		ctx, types.ModuleName, recipient, issuerToken,
 	); err != nil {
 		return nil, sdkerrors.Wrapf(
 			types.ErrIssuerFound,
@@ -122,4 +122,61 @@ func (k msgServer) BurnToken(
 	}
 
 	return &types.MsgBurnTokenResponse{}, nil
+}
+
+func (k msgServer) MintToken(
+	goCtx context.Context,
+	msg *types.MsgMintToken,
+) (*types.MsgMintTokenResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	issuer, found := k.Keeper.GetIssuer(ctx, []byte(msg.Owner))
+	if !found {
+		return nil, sdkerrors.Wrapf(
+			types.ErrIssuerFound,
+			"issuer does not exists",
+		)
+	}
+
+	// parse the token amount and verify that the amount requested is for the issuer token
+	amounts, err := sdk.ParseCoinsNormalized(msg.Amount)
+	if err != nil {
+		return nil, sdkerrors.Wrapf(
+			sdk.ErrInvalidDecimalStr,
+			"coin string format not recognized",
+		)
+	}
+	for _, a := range amounts {
+		if a.GetDenom() != issuer.Token {
+			return nil, sdkerrors.Wrapf(
+				types.ErrInvalidIssuerDenom,
+				"issuer can only issue tokens of %s (requested %s)",
+				issuer.Token, a.GetDenom(),
+			)
+		}
+	}
+	// the recipient is the issuer itself
+	recipient, _ := sdk.AccAddressFromBech32(issuer.Address)
+
+	// mint tokens
+	if err := k.bk.MintCoins(
+		ctx, types.ModuleName, amounts,
+	); err != nil {
+		return nil, sdkerrors.Wrapf(
+			types.ErrIssuerFound,
+			"cannot mint coins",
+		)
+	}
+
+	// send minted tokens to the issuer account
+	if err := k.bk.SendCoinsFromModuleToAccount(
+		ctx, types.ModuleName, recipient, amounts,
+	); err != nil {
+		return nil, sdkerrors.Wrapf(
+			types.ErrIssuerFound,
+			"failed sending tokens from module to issuer",
+		)
+	}
+
+	return &types.MsgMintTokenResponse{}, nil
 }

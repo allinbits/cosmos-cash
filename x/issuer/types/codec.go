@@ -21,6 +21,7 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCreateIssuer{},
 		&MsgBurnToken{},
+		&MsgMintToken{},
 	)
 }
 

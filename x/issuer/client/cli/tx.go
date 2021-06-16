@@ -27,6 +27,7 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(
 		NewCreateIssuerCmd(),
 		NewBurnTokenCmd(),
+		NewMintCommand(),
 	)
 
 	return cmd
@@ -82,32 +83,67 @@ func NewBurnTokenCmd() *cobra.Command {
 
 			accAddr := clientCtx.GetFromAddress()
 			accAddrBech32 := accAddr.String()
-
+			// read the amount to burn
 			amount, err := sdk.ParseCoinNormalized(args[0])
 			if err != nil {
 				return err
 			}
-
+			// build the burn message
 			msg := types.NewMsgBurnToken(
 				amount,
 				accAddrBech32,
 			)
-
+			// validate the message
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
-
+			// submit the transaction
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
 
 	flags.AddTxFlagsToCmd(cmd)
+	return cmd
 
+}
+
+func NewMintCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "mint-token [amount]",
+		Short: "mint e-money tokens for an issuer",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			accAddr := clientCtx.GetFromAddress()
+			accAddrBech32 := accAddr.String()
+
+			// read the amount to mint
+			amount, err := sdk.ParseCoinNormalized(args[0])
+			if err != nil {
+				return err
+			}
+			// build the message
+			msg := types.NewMsgMintToken(
+				amount,
+				accAddrBech32,
+			)
+			// validate the message
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			// submit the transaction
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+	flags.AddTxFlagsToCmd(cmd)
 	return cmd
 }
 
 // TODO: extra commands:
-//		Use:     "mint-issuer [did] [token] [fee]",
 //		Use:     "deposit-emoney [did] [token] [fee]",
 //		Use:     "widthdraw-emoney [did] [token] [fee]",
 //		Use:     "freeze-all-emoney-tokens [did] [token] [fee]",

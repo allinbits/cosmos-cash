@@ -9,6 +9,7 @@ import (
 const (
 	TypeMsgCreateIssuer = "create-issuer"
 	TypeMsgBurnToken    = "burn-token"
+	TypeMsgMintToken    = "mint-token"
 )
 
 var _ sdk.Msg = &MsgCreateIssuer{}
@@ -64,7 +65,6 @@ func (msg MsgCreateIssuer) GetSigners() []sdk.AccAddress {
 }
 
 // Token burn
-
 var _ sdk.Msg = &MsgBurnToken{}
 
 // NewMsgBurnToken creates a new MsgBurnToken instance
@@ -100,12 +100,60 @@ func (msg MsgBurnToken) ValidateBasic() error {
 	return nil
 }
 
+// GetSigners implements sdk.Msg
+func (msg MsgBurnToken) GetSigners() []sdk.AccAddress {
+	accAddr, err := sdk.AccAddressFromBech32(msg.Owner)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{accAddr}
+}
+
 func (msg MsgBurnToken) GetSignBytes() []byte {
 	panic("IBC messages do not support amino")
 }
 
-// GetSigners implements sdk.Msg
-func (msg MsgBurnToken) GetSigners() []sdk.AccAddress {
+// Mint token
+var _ sdk.Msg = &MsgMintToken{}
+
+// NewMsgMintToken creates a new MsgMintToken instance
+func NewMsgMintToken(
+	amount sdk.Coin,
+	owner string,
+) *MsgMintToken {
+	return &MsgMintToken{
+		Amount: amount.String(),
+		Owner:  owner,
+	}
+}
+
+// Route implements sdk.Msg
+func (MsgMintToken) Route() string {
+	return RouterKey
+}
+
+// Type implements sdk.Msg
+func (MsgMintToken) Type() string {
+	return TypeMsgMintToken
+}
+
+// ValidateBasic performs a basic check of the MsgMintToken fields.
+func (msg MsgMintToken) ValidateBasic() error {
+	amount, err := sdk.ParseCoinNormalized(msg.Amount)
+	if err != nil {
+		return err
+	}
+	if amount.IsZero() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "please enter an amount greater than 0")
+	}
+	return nil
+}
+
+func (msg MsgMintToken) GetSignBytes() []byte {
+	panic("IBC messages do not support amino")
+}
+
+func (msg MsgMintToken) GetSigners() []sdk.AccAddress {
 	accAddr, err := sdk.AccAddressFromBech32(msg.Owner)
 	if err != nil {
 		panic(err)

@@ -1,14 +1,17 @@
 package ante
 
 import (
+	"encoding/base64"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	accountKeeper "github.com/cosmos/cosmos-sdk/x/auth/ante"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/types"
 
 	identifierkeeper "github.com/allinbits/cosmos-cash/x/identifier/keeper"
 	"github.com/allinbits/cosmos-cash/x/issuer/keeper"
 	"github.com/allinbits/cosmos-cash/x/issuer/types"
 	vcskeeper "github.com/allinbits/cosmos-cash/x/verifiable-credential-service/keeper"
+	vcstypes "github.com/allinbits/cosmos-cash/x/verifiable-credential-service/types"
 )
 
 // CheckIssuerCredentialsDecorator checks the issuer has a EMILicense in a preprocessing hook
@@ -114,20 +117,23 @@ func (cicd CheckIssuerCredentialsDecorator) AnteHandle(
 
 // CheckUserCredentialsDecorator checks the users has a KYCCredential in a preprocessing hook
 type CheckUserCredentialsDecorator struct {
-	issuerk keeper.Keeper
-	ik      identifierkeeper.Keeper
-	vcsk    vcskeeper.Keeper
+	accountk accountKeeper.AccountKeeper
+	issuerk  keeper.Keeper
+	ik       identifierkeeper.Keeper
+	vcsk     vcskeeper.Keeper
 }
 
 func NewCheckUserCredentialsDecorator(
+	accountk accountKeeper.AccountKeeper,
 	issuerk keeper.Keeper,
 	ik identifierkeeper.Keeper,
 	vcsk vcskeeper.Keeper,
 ) CheckUserCredentialsDecorator {
 	return CheckUserCredentialsDecorator{
-		issuerk: issuerk,
-		ik:      ik,
-		vcsk:    vcsk,
+		accountk: accountk,
+		issuerk:  issuerk,
+		ik:       ik,
+		vcsk:     vcsk,
 	}
 }
 
@@ -220,8 +226,27 @@ func (cicd CheckUserCredentialsDecorator) validateKYCCredential(
 			continue
 		}
 
-		// TODO: We need to verify the signature here
-		hasUserCredential = true
+		address, err := sdk.AccAddressFromBech32(issuerAddress)
+		if err != nil {
+			continue
+		}
+
+		account := cicd.accountk.GetAccount(ctx, address)
+		pubkey := account.GetPubKey()
+
+		s, err := base64.StdEncoding.DecodeString(vc.Proof.Signature)
+		if err != nil {
+			continue
+		}
+		emptyProof := vcstypes.NewProof("", "", "", "", "")
+		vc.Proof = &emptyProof
+
+		// TODO: this is an expesive operation, could lead to DDOS
+		// TODO: we can hash this and make this less expensive
+		hasUserCredential = pubkey.VerifySignature(
+			vc.GetBytes(),
+			s,
+		)
 
 		break
 	}

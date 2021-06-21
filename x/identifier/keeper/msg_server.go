@@ -41,6 +41,10 @@ func (k msgServer) CreateIdentifier(
 	identifier, _ := types.NewIdentifier(msg.Id, msg.Authentication)
 	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), identifier)
 
+	ctx.EventManager().EmitEvent(
+		types.NewIdentifierCreatedEvent(msg.Id),
+	)
+
 	return &types.MsgCreateIdentifierResponse{}, nil
 }
 
@@ -72,6 +76,10 @@ func (k msgServer) AddAuthentication(
 	identifier.Authentication = append(identifier.Authentication, msg.Authentication)
 	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), identifier)
 
+	ctx.EventManager().EmitEvent(
+		types.NewAuthenticationAddedEvent(msg.Id, msg.Authentication.Controller),
+	)
+
 	return &types.MsgAddAuthenticationResponse{}, nil
 }
 
@@ -100,6 +108,10 @@ func (k msgServer) AddService(
 
 	identifier.Services = append(identifier.Services, msg.ServiceData)
 	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), identifier)
+
+	ctx.EventManager().EmitEvent(
+		types.NewServiceAddedEvent(msg.Id, msg.ServiceData.Id),
+	)
 
 	return &types.MsgAddServiceResponse{}, nil
 }
@@ -152,6 +164,10 @@ func (k msgServer) DeleteAuthentication(
 
 	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), identifier)
 
+	ctx.EventManager().EmitEvent(
+		types.NewAuthenticationDeletedEvent(msg.Id, address.String()),
+	)
+
 	return &types.MsgDeleteAuthenticationResponse{}, nil
 }
 
@@ -199,6 +215,10 @@ func (k msgServer) DeleteService(
 	identifier.Services = services
 
 	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), identifier)
+
+	ctx.EventManager().EmitEvent(
+		types.NewServiceDeletedEvent(msg.Id, msg.Id),
+	)
 
 	return &types.MsgDeleteServiceResponse{}, nil
 }

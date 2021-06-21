@@ -82,9 +82,6 @@ import ( // this line is used by starport scaffolding # stargate/app/moduleImpor
 	dbm "github.com/tendermint/tm-db"
 
 	appparams "github.com/allinbits/cosmos-cash/app/params"
-	ibcidentifier "github.com/allinbits/cosmos-cash/x/ibc-identifier"
-	ibcidentifierkeeper "github.com/allinbits/cosmos-cash/x/ibc-identifier/keeper"
-	ibcidentifiertypes "github.com/allinbits/cosmos-cash/x/ibc-identifier/types"
 	"github.com/allinbits/cosmos-cash/x/identifier"
 	identifierkeeper "github.com/allinbits/cosmos-cash/x/identifier/keeper"
 	identifiertypes "github.com/allinbits/cosmos-cash/x/identifier/types"
@@ -132,7 +129,6 @@ var (
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 		issuer.AppModuleBasic{},
 		vcs.AppModuleBasic{},
-		ibcidentifier.AppModuleBasic{},
 		identifier.AppModuleBasic{},
 	)
 
@@ -196,10 +192,9 @@ type App struct {
 	ScopedTransferKeeper capabilitykeeper.ScopedKeeper
 
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
-	IssuerKeeper        issuerkeeper.Keeper
-	VcsKeeper           vcskeeper.Keeper
-	ibcidentifierKeeper ibcidentifierkeeper.Keeper
-	IdentifierKeeper    identifierkeeper.Keeper
+	IssuerKeeper     issuerkeeper.Keeper
+	VcsKeeper        vcskeeper.Keeper
+	IdentifierKeeper identifierkeeper.Keeper
 
 	// the module manager
 	mm *module.Manager
@@ -246,7 +241,6 @@ func New(
 		// this line is used by starport scaffolding # stargate/app/storeKey
 		issuertypes.StoreKey,
 		vcstypes.StoreKey,
-		ibcidentifiertypes.StoreKey,
 		identifiertypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -286,7 +280,6 @@ func New(
 	// grant capabilities for the ibc and ibc-transfer modules
 	scopedIBCKeeper := app.CapabilityKeeper.ScopeToModule(ibchost.ModuleName)
 	scopedTransferKeeper := app.CapabilityKeeper.ScopeToModule(ibctransfertypes.ModuleName)
-	scopedIdentifierKeeper := app.CapabilityKeeper.ScopeToModule(ibcidentifiertypes.ModuleName)
 
 	// add keepers
 	app.AccountKeeper = authkeeper.NewAccountKeeper(
@@ -406,22 +399,9 @@ func New(
 		keys[identifiertypes.MemStoreKey],
 	)
 
-	app.ibcidentifierKeeper = ibcidentifierkeeper.NewKeeper(
-		appCodec,
-		keys[ibcidentifiertypes.StoreKey],
-		app.IBCKeeper.ChannelKeeper, &app.IBCKeeper.PortKeeper,
-		app.AccountKeeper, app.BankKeeper, scopedIdentifierKeeper,
-		app.IdentifierKeeper,
-	)
-	identifierModule := ibcidentifier.NewAppModule(
-		appCodec,
-		app.ibcidentifierKeeper,
-	)
-
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := porttypes.NewRouter()
 	ibcRouter.AddRoute(ibctransfertypes.ModuleName, transferModule)
-	ibcRouter.AddRoute(ibcidentifiertypes.ModuleName, identifierModule)
 	app.IBCKeeper.SetRouter(ibcRouter)
 
 	// Create evidence Keeper for to register the IBC light client misbehavior evidence route
@@ -538,7 +518,6 @@ func New(
 			appCodec,
 			app.VcsKeeper,
 		),
-		identifierModule,
 		identifier.NewAppModule(
 			appCodec,
 			app.IdentifierKeeper,
@@ -590,7 +569,6 @@ func New(
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 		issuertypes.ModuleName,
 		vcstypes.ModuleName,
-		ibcidentifiertypes.ModuleName,
 		identifiertypes.ModuleName,
 	)
 
@@ -748,7 +726,6 @@ func initParamsKeeper(appCodec codec.BinaryMarshaler, legacyAmino *codec.LegacyA
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 	paramsKeeper.Subspace(issuertypes.ModuleName)
 	paramsKeeper.Subspace(vcstypes.ModuleName)
-	paramsKeeper.Subspace(ibcidentifiertypes.ModuleName)
 	paramsKeeper.Subspace(identifiertypes.ModuleName)
 
 	return paramsKeeper

@@ -78,3 +78,8 @@ func NewProof(
 		Signature:          signature,
 	}
 }
+
+// EmptyProof - helper function to build an empty (not initialized) proof
+func EmptyProof() Proof {
+	return Proof{}
+}

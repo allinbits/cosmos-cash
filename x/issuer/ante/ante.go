@@ -1,19 +1,17 @@
 package ante
 
 import (
-	"encoding/base64"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	accountKeeper "github.com/cosmos/cosmos-sdk/x/auth/ante"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/types"
 
+	"github.com/allinbits/cosmos-cash/helpers"
 	didkeeper "github.com/allinbits/cosmos-cash/x/did/keeper"
 	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
 	"github.com/allinbits/cosmos-cash/x/issuer/keeper"
 	"github.com/allinbits/cosmos-cash/x/issuer/types"
 	vcskeeper "github.com/allinbits/cosmos-cash/x/verifiable-credential/keeper"
-	vcstypes "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 )
 
 // CheckIssuerCredentialsDecorator checks the issuer has a EMILicense in a preprocessing hook
@@ -227,21 +225,10 @@ func (cicd CheckUserCredentialsDecorator) validateKYCCredential(
 		}
 
 		account := cicd.accountk.GetAccount(ctx, address)
-		pubkey := account.GetPubKey()
-
-		s, err := base64.StdEncoding.DecodeString(vc.Proof.Signature)
+		err = helpers.VerifyCredentialSignature(account.GetPubKey(), vc)
 		if err != nil {
 			continue
 		}
-		emptyProof := vcstypes.NewProof("", "", "", "", "")
-		vc.Proof = &emptyProof
-
-		// TODO: this is an expesive operation, could lead to DDOS
-		// TODO: we can hash this and make this less expensive
-		hasUserCredential = pubkey.VerifySignature(
-			vc.GetBytes(),
-			s,
-		)
 
 		break
 	}

@@ -12,6 +12,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/wealdtech/go-merkletree"
 
+	"github.com/allinbits/cosmos-cash/helpers"
 	"github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 )
 
@@ -81,25 +82,14 @@ func NewCreateUserVerifiableCredentialCmd() *cobra.Command {
 				accAddrBech32,
 				tm.Format(time.RFC3339),
 				cs,
-				types.NewProof("", "", "", "", ""),
+				types.EmptyProof(),
 			)
-
-			// TODO: this could be expensive review this signing method
-			// TODO: we can hash this an make this less expensive
-			signature, pubKey, err := clientCtx.Keyring.SignByAddress(accAddr, vc.GetBytes())
+			// sign the credentials
+			err = helpers.SignCredential(clientCtx.Keyring, accAddr, &vc)
 			if err != nil {
 				return err
 			}
-
-			p := types.NewProof(
-				pubKey.Type(),
-				tm.Format(time.RFC3339),
-				"assertionMethod",
-				accAddrBech32+"#keys-1",
-				base64.StdEncoding.EncodeToString(signature),
-			)
-			vc.Proof = &p
-
+			//
 			msg := types.NewMsgCreateVerifiableCredential(
 				vc,
 				accAddrBech32,

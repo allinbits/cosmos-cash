@@ -106,7 +106,7 @@ func TestSignCredential(t *testing.T) {
 				t.Errorf("SignCredential() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
-			// TODO: somehow this is always different
+			// TODO: is the signature not deterministic?
 			// if tt.signature != tt.params.vc.GetProof().Signature {
 			// 	t.Errorf("SignCredential() \nexpected  %v\ngot       %v", tt.signature, tt.params.vc.GetProof().Signature)
 			// }
@@ -126,7 +126,7 @@ func TestSignCredentialHash(t *testing.T) {
 				t.Errorf("SignCredentialHash() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
-			// TODO: the signature is not deterministic?
+			// TODO:  is the signature not deterministic?
 			// if tt.signature != tt.params.vc.GetProof().Signature {
 			// 	t.Errorf("SignCredentialHash() \nexpected  %v\ngot       %v", tt.signature, tt.params.vc.GetProof().Signature)
 			// }
@@ -145,17 +145,6 @@ func BenchmarkSignatureSignCredential(b *testing.B) {
 	}
 }
 
-// need to have a valid signature for this one
-// func BenchmarkSignatureVerifyCredential(b *testing.B) {
-// 	test := tests[0].params
-// 	for i := 0; i < b.N; i++ {
-// 		err := VerifyCredentialSignature(test.account.GetPubKey(), &test.vc)
-// 		if err != nil {
-// 			b.Error(err)
-// 		}
-// 	}
-// }
-
 func BenchmarkSignatureSignCredentialHash(b *testing.B) {
 	test := tests[0].params
 	for i := 0; i < b.N; i++ {
@@ -165,17 +154,6 @@ func BenchmarkSignatureSignCredentialHash(b *testing.B) {
 		}
 	}
 }
-
-// need to have a valid signature for this one
-// func BenchmarkSignatureVerifyCredentialHash(b *testing.B) {
-// 	test := tests[0].params
-// 	for i := 0; i < b.N; i++ {
-// 		err := VerifyCredentialHashSignature(test.account.GetPubKey(), &test.vc)
-// 		if err != nil {
-// 			b.Error(err)
-// 		}
-// 	}
-// }
 
 func BenchmarkSignature(b *testing.B) {
 	var (
@@ -218,3 +196,89 @@ func BenchmarkSignatureHash(b *testing.B) {
 		}
 	}
 }
+
+// malicious bench
+
+func BenchmarkSignatureSignCredentialMalicious(b *testing.B) {
+	test := tests[1].params
+	for i := 0; i < b.N; i++ {
+		err := SignCredential(k, test.account.GetAddress(), &test.vc)
+		if err != nil {
+			b.Error(err)
+		}
+	}
+}
+
+func BenchmarkSignatureSignCredentialHashMalicious(b *testing.B) {
+	test := tests[1].params
+	for i := 0; i < b.N; i++ {
+		err := SignCredentialHash(k, test.account.GetAddress(), &test.vc)
+		if err != nil {
+			b.Error(err)
+		}
+	}
+}
+
+func BenchmarkSignatureMalicious(b *testing.B) {
+	var (
+		err  error
+		vc   = tests[1].params.vc
+		addr = tests[1].params.account.GetAddress()
+		pk   = tests[1].params.account.GetPubKey()
+	)
+	for i := 0; i < b.N; i++ {
+		err = SignCredential(k, addr, &vc)
+		if err != nil {
+			b.Error(err)
+			b.FailNow()
+		}
+		err = VerifyCredentialSignature(pk, vc)
+		if err != nil {
+			b.Error(err)
+			b.FailNow()
+		}
+	}
+}
+
+func BenchmarkSignatureHashMalicious(b *testing.B) {
+	var (
+		err  error
+		vc   = tests[1].params.vc
+		addr = tests[1].params.account.GetAddress()
+		pk   = tests[1].params.account.GetPubKey()
+	)
+	for i := 0; i < b.N; i++ {
+		err = SignCredentialHash(k, addr, &vc)
+		if err != nil {
+			b.Error(err)
+			b.FailNow()
+		}
+		err = VerifyCredentialHashSignature(pk, vc)
+		if err != nil {
+			b.Error(err)
+			b.FailNow()
+		}
+	}
+}
+
+// need to have a valid signature for this one
+// func BenchmarkSignatureVerifyCredential(b *testing.B) {
+// 	test := tests[0].params
+// 	for i := 0; i < b.N; i++ {
+// 		err := VerifyCredentialSignature(test.account.GetPubKey(), &test.vc)
+// 		if err != nil {
+// 			b.Error(err)
+// 		}
+// 	}
+// }
+
+// need to have a valid signature for this one
+// func BenchmarkSignatureVerifyCredentialHash(b *testing.B) {
+// 	test := tests[0].params
+// 	for i := 0; i < b.N; i++ {
+// 		err := VerifyCredentialHashSignature(test.account.GetPubKey(), &test.vc)
+// 		if err != nil {
+// 			b.Error(err)
+// 		}
+// 	}
+// }

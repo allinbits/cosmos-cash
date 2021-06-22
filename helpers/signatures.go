@@ -100,7 +100,7 @@ func VerifyCredentialHashSignature(pubkey types.PubKey, vc credential.Verifiable
 		return
 	}
 	// remove the proof from the message
-	emptyProof := credential.NewProof("", "", "", "", "")
+	emptyProof := credential.EmptyProof()
 	vc.Proof = &emptyProof
 	// hash the verifiable credentials
 	sigHash := blake2b.Sum256(vc.GetBytes())

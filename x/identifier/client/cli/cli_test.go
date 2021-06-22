@@ -269,7 +269,7 @@ func (s *IntegrationTestSuite) TestNewAddServiceCmd() {
 			[]string{
 				"id",
 				"service_key",
-				"VerifiableCred",
+				"KYCCredential",
 				"cash:serivce_key",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),

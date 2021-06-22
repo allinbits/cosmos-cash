@@ -217,6 +217,31 @@ func (suite *KeeperTestSuite) TestHandleMsgAddService() {
 			true,
 		},
 		{
+			"Pass: cannot add service to did document with an incorrect type",
+			func() {
+				auth := types.NewAuthentication(
+					"did:cash:1111#keys-1",
+					"sepk256",
+					"did:cash:1111",
+					"pubKey.Address().String()",
+				)
+				service := types.NewService(
+					"service-id",
+					"NonKYCCredential",
+					"cash/multihash",
+				)
+				identifier := types.DidDocument{
+					"context",
+					"did:cash:1111",
+					types.Authentications{&auth},
+					nil,
+				}
+				suite.keeper.SetIdentifier(suite.ctx, []byte(identifier.Id), identifier)
+				req = *types.NewMsgAddService("did:cash:1111", &service, "did:cash:1111")
+			},
+			true,
+		},
+		{
 			"Pass: can add service to did document",
 			func() {
 				auth := types.NewAuthentication(
@@ -227,7 +252,7 @@ func (suite *KeeperTestSuite) TestHandleMsgAddService() {
 				)
 				service := types.NewService(
 					"service-id",
-					"VerifiableCredentials",
+					"KYCCredential",
 					"cash/multihash",
 				)
 				identifier := types.DidDocument{

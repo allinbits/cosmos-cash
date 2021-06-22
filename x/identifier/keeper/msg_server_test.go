@@ -129,11 +129,31 @@ func (suite *KeeperTestSuite) TestMsgSeverAddService() {
 			false,
 		},
 		{
+			"FAIL: cannot add a service to did document with an incorrect type",
+			func() {
+				service := types.NewService(
+					"did:cash:1111",
+					"NonKYCCredential",
+					"did:cash:1111",
+				)
+				identifier := types.DidDocument{
+					"context",
+					"did:cash:1111",
+					nil,
+					nil,
+				}
+				suite.keeper.SetIdentifier(suite.ctx, []byte(identifier.Id), identifier)
+
+				req = *types.NewMsgAddService("did:cash:1111", &service, "cash:cash:1111")
+			},
+			false,
+		},
+		{
 			"PASS: can add service to did document",
 			func() {
 				service := types.NewService(
 					"did:cash:1111",
-					"sepk256",
+					"IssuerCredential",
 					"did:cash:1111",
 				)
 				identifier := types.DidDocument{

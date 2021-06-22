@@ -1,5 +1,24 @@
 package types
 
+const (
+	IdentityCredential  = "IdentityCredential"
+	KYCCredential       = "KYCCredential"
+	IssuerCredential    = "IssuerCredential"
+	RegulatorCredential = "RegulatorCredential"
+)
+
+func IsValidCredential(credential string) bool {
+	switch credential {
+	case IdentityCredential,
+		KYCCredential,
+		IssuerCredential,
+		RegulatorCredential:
+		return true
+	default:
+		return false
+	}
+}
+
 // NewUserVerifiableCredential constructs a new VerifiableCredential instance
 func NewUserVerifiableCredential(
 	id string,

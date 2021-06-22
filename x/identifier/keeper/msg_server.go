@@ -8,6 +8,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/allinbits/cosmos-cash/x/identifier/types"
+	vcstypes "github.com/allinbits/cosmos-cash/x/verifiable-credential-service/types"
 )
 
 type msgServer struct {
@@ -97,6 +98,7 @@ func (k msgServer) AddService(
 			"identifier not found: AddService",
 		)
 	}
+
 	for _, service := range identifier.Services {
 		if service.Id == msg.ServiceData.Id {
 			return nil, sdkerrors.Wrapf(
@@ -104,6 +106,14 @@ func (k msgServer) AddService(
 				"service already exists: AddService",
 			)
 		}
+	}
+
+	isCredentialValid := vcstypes.IsValidCredential(msg.ServiceData.Type)
+	if isCredentialValid == false {
+		return nil, sdkerrors.Wrapf(
+			types.ErrIdentifierNotFound,
+			"invalid service type: AddService",
+		)
 	}
 
 	identifier.Services = append(identifier.Services, msg.ServiceData)

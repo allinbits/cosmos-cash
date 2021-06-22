@@ -28,7 +28,6 @@ func (k msgServer) CreateVerifiableCredential(
 ) (*types.MsgCreateVerifiableCredentialResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// TODO: only issuers can create user verifiable creds
 	_, found := k.Keeper.GetVerifiableCredential(ctx, []byte(msg.VerifiableCredential.Id))
 	if found {
 		return nil, sdkerrors.Wrapf(

@@ -26,6 +26,7 @@ func (m VerifiableCredential) GetBytes() []byte {
 	return dAtA
 }
 
+// NewUserCredentialSubject build a new user credential subject
 func NewUserCredentialSubject(
 	id string,
 	root string,
@@ -40,6 +41,7 @@ func NewUserCredentialSubject(
 	}
 }
 
+// NewProof returns a new proof
 func NewProof(
 	proofType string,
 	created string,
@@ -54,4 +56,9 @@ func NewProof(
 		VerificationMethod: verificationMethod,
 		Signature:          signature,
 	}
+}
+
+// EmptyProof - helper function to build an empty (not initialized) proof
+func EmptyProof() Proof {
+	return Proof{}
 }

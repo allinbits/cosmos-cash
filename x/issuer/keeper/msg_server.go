@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -72,6 +73,10 @@ func (k msgServer) CreateIssuer(
 		)
 	}
 
+	ctx.EventManager().EmitEvent(
+		types.NewIssuerCreatedEvent(msg.Owner, msg.Token, fmt.Sprint(circulatingSupply)),
+	)
+
 	return &types.MsgCreateIssuerResponse{}, nil
 }
 
@@ -120,6 +125,10 @@ func (k msgServer) BurnToken(
 			"cannot burn coins",
 		)
 	}
+
+	ctx.EventManager().EmitEvent(
+		types.NewTokenBurnedEvent(msg.Owner, issuer.Token, string(msg.Amount)),
+	)
 
 	return &types.MsgBurnTokenResponse{}, nil
 }
@@ -177,6 +186,10 @@ func (k msgServer) MintToken(
 			"failed sending tokens from module to issuer",
 		)
 	}
+
+	ctx.EventManager().EmitEvent(
+		types.NewTokenMintedEvent(msg.Owner, issuer.Token, string(msg.Amount)),
+	)
 
 	return &types.MsgMintTokenResponse{}, nil
 }

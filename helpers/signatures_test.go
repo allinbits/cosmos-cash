@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	credential "github.com/allinbits/cosmos-cash/x/verifiable-credential-service/types"
+	credential "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"

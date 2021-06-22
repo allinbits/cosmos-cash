@@ -9,7 +9,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"golang.org/x/crypto/blake2b"
 
-	credential "github.com/allinbits/cosmos-cash/x/verifiable-credential-service/types"
+	credential "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 )
 
 // SignCredential adds proof (signature) to the verifiable credentials
@@ -100,7 +100,7 @@ func VerifyCredentialHashSignature(pubkey types.PubKey, vc credential.Verifiable
 		return
 	}
 	// remove the proof from the message
-	emptyProof := credential.NewProof("", "", "", "", "")
+	emptyProof := credential.EmptyProof()
 	vc.Proof = &emptyProof
 	// hash the verifiable credentials
 	sigHash := blake2b.Sum256(vc.GetBytes())

@@ -3,7 +3,16 @@
 
 
 <a name="v0.2.0"></a>
-## [v0.2.0] - 2021-06-17
+## [v0.2.0] - 2021-06-23
+### Build
+- add makefile targets to simplify release
+
+### Chore
+- remove ibc-identifier module
+
+
+<a name="v0.2.0-pre"></a>
+## [v0.2.0-pre] - 2021-06-18
 ### Chore
 - fix lint error
 - minor update seed for selective disclosure
@@ -86,4 +95,5 @@
 
 
 [Unreleased]: https://github.com/allinbits/cosmos-cash/compare/v0.2.0...HEAD
-[v0.2.0]: https://github.com/allinbits/cosmos-cash/compare/v21.06.03...v0.2.0
+[v0.2.0]: https://github.com/allinbits/cosmos-cash/compare/v0.2.0-pre...v0.2.0
+[v0.2.0-pre]: https://github.com/allinbits/cosmos-cash/compare/v21.06.03...v0.2.0-pre

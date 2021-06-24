@@ -44,5 +44,9 @@ func (k msgServer) CreateVerifiableCredential(
 		*msg.VerifiableCredential,
 	)
 
+	ctx.EventManager().EmitEvent(
+		types.NewCredentialCreatedEvent(msg.Owner, msg.VerifiableCredential.Id),
+	)
+
 	return &types.MsgCreateVerifiableCredentialResponse{}, nil
 }

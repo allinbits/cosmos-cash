@@ -27,7 +27,7 @@ func NewIssuerCreatedEvent(issuer string, denom string, amount string) sdk.Event
 	)
 }
 
-// NewTokenMintedvent constructs a new token_minted sdk.Event
+// NewTokenMintedEvent constructs a new token_minted sdk.Event
 func NewTokenMintedEvent(issuer string, denom string, amount string) sdk.Event {
 	return sdk.NewEvent(
 		EventTypeTokenMinted,

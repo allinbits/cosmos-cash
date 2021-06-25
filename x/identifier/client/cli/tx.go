@@ -2,6 +2,7 @@ package cli
 
 import (
 	"encoding/base64"
+	"errors"
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -11,6 +12,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/allinbits/cosmos-cash/x/identifier/types"
+	vcstypes "github.com/allinbits/cosmos-cash/x/verifiable-credential-service/types"
 )
 
 // GetTxCmd returns the transaction commands for this module
@@ -141,6 +143,10 @@ func NewAddServiceCmd() *cobra.Command {
 				return err
 			}
 			accAddr := clientCtx.GetFromAddress()
+
+			if !vcstypes.IsValidCredentialType(args[2]) {
+				return errors.New("invalid credential type")
+			}
 
 			service := types.NewService(
 				args[1],

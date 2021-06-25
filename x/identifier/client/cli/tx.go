@@ -144,8 +144,7 @@ func NewAddServiceCmd() *cobra.Command {
 			}
 			accAddr := clientCtx.GetFromAddress()
 
-			isCredentialValid := vcstypes.IsValidCredential(args[2])
-			if isCredentialValid == false {
+			if !vcstypes.IsValidCredentialType(args[2]) {
 				return errors.New("invalid credential type")
 			}
 

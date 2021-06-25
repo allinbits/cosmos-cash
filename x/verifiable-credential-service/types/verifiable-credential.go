@@ -1,5 +1,6 @@
 package types
 
+// Defines the accepted credential types
 const (
 	IdentityCredential  = "IdentityCredential"
 	KYCCredential       = "KYCCredential"
@@ -7,7 +8,8 @@ const (
 	RegulatorCredential = "RegulatorCredential"
 )
 
-func IsValidCredential(credential string) bool {
+// IsValidCredentialType tells if a credential type is valid (accepted)
+func IsValidCredentialType(credential string) bool {
 	switch credential {
 	case IdentityCredential,
 		KYCCredential,
@@ -45,6 +47,7 @@ func (m VerifiableCredential) GetBytes() []byte {
 	return dAtA
 }
 
+// NewUserCredentialSubject create a new credential subject
 func NewUserCredentialSubject(
 	id string,
 	root string,
@@ -59,6 +62,7 @@ func NewUserCredentialSubject(
 	}
 }
 
+// NewProof create a new proof for a verifiable credential
 func NewProof(
 	proofType string,
 	created string,

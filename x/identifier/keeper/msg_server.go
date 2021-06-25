@@ -108,8 +108,7 @@ func (k msgServer) AddService(
 		}
 	}
 
-	isCredentialValid := vcstypes.IsValidCredential(msg.ServiceData.Type)
-	if isCredentialValid == false {
+	if !vcstypes.IsValidCredentialType(msg.ServiceData.Type) {
 		return nil, sdkerrors.Wrapf(
 			types.ErrIdentifierNotFound,
 			"invalid service type: AddService",

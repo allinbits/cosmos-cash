@@ -37,16 +37,24 @@ func (k msgServer) CreateIssuer(
 		)
 	}
 
+	_, found = k.Keeper.GetIssuerByToken(ctx, []byte(msg.Token))
+	if found {
+		return nil, sdkerrors.Wrapf(
+			types.ErrIssuerFound,
+			"token denom already exists",
+		)
+	}
+
 	// TODO: should the did URI be the issuer address
-	identifier := types.Issuer{
+	issuer := types.Issuer{
 		Token:   msg.Token,
 		Fee:     msg.Fee,
 		Address: msg.Owner,
 	}
 
-	k.Keeper.SetIssuer(ctx, identifier)
+	k.Keeper.SetIssuer(ctx, issuer)
 
-	// TODO: this needs to be refactored
+	// TODO: remove the next 24 lines in favor of minting tokens using the mint command
 	circulatingSupply := 1000000000000
 
 	issuerToken := sdk.NewCoins(sdk.NewInt64Coin(msg.Token, int64(circulatingSupply)))

@@ -7,6 +7,68 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
+func (suite *KeeperTestSuite) TestMsgSeverCreateIssuer() {
+	server := NewMsgServerImpl(suite.keeper)
+	var req types.MsgCreateIssuer
+
+	testCases := []struct {
+		msg      string
+		malleate func()
+		expPass  bool
+	}{
+		// TODO: uncomment when the latest version of the cosmos-sdk is released
+		// Fixed by PR https://github.com/cosmos/cosmos-sdk/pull/9229
+		//	{
+		//		"PASS: issuer can be created",
+		//		func() { req = *types.NewMsgCreateIssuer("seuro", 100, "did:cash:1111") },
+		//		true,
+		//	},
+		{
+			"FAIL: issuer already exists",
+			func() {
+				issuer := types.Issuer{
+					Token:   "seuro",
+					Fee:     1,
+					Address: "did:cash:1111",
+				}
+
+				suite.keeper.SetIssuer(suite.ctx, issuer)
+				req = *types.NewMsgCreateIssuer("seuro", 100, "did:cash:1111")
+			},
+			false,
+		},
+		{
+			"FAIL: issuer token already exists",
+			func() {
+				issuer := types.Issuer{
+					Token:   "seuro",
+					Fee:     1,
+					Address: "did:cash:1112",
+				}
+
+				suite.keeper.SetIssuer(suite.ctx, issuer)
+				req = *types.NewMsgCreateIssuer("seuro", 100, "did:cash:1111")
+			},
+			false,
+		},
+	}
+
+	for _, tc := range testCases {
+		suite.Run(fmt.Sprintf("Case %s", tc.msg), func() {
+			tc.malleate()
+
+			identifierResp, err := server.CreateIssuer(sdk.WrapSDKContext(suite.ctx), &req)
+			if tc.expPass {
+				suite.NoError(err)
+				suite.NotNil(identifierResp)
+
+			} else {
+				suite.Require().Error(err)
+			}
+		})
+	}
+}
+
 func (suite *KeeperTestSuite) TestMsgSeverBurnToken() {
 	server := NewMsgServerImpl(suite.keeper)
 	var req types.MsgBurnToken
@@ -52,8 +114,8 @@ func (suite *KeeperTestSuite) TestMsgSeverBurnToken() {
 		})
 	}
 }
-func (suite *KeeperTestSuite) Test_msgServer_MintToken() {
 
+func (suite *KeeperTestSuite) Test_msgServer_MintToken() {
 	// create the keeper
 	server := NewMsgServerImpl(suite.keeper)
 	var req types.MsgMintToken

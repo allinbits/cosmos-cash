@@ -29,35 +29,85 @@ definition: https://w3c.github.io/did-core/
 // DidDocument represents a dencentralised identifer.
 message DidDocument {
   // @context is spec for did document.
-  string context= 1;
+  repeated string context                          = 1;
 
   // id represents the id for the did document.
-  string id = 2;
+  string id                                        = 2;
 
-  // authentication represents public key associated with the did document.
-  repeated Authentication authentication = 3;
+  // A DID controller is an entity that is authorized to make changes to a DID document.
+  // cfr. https://www.w3.org/TR/did-core/#did-controller
+  repeated string controller                       = 3;
 
-  // services represents each service associated with a did
-  repeated Service services = 4;
+  // A DID document can express verification methods, 
+  // such as cryptographic public keys, which can be used 
+  // to authenticate or authorize interactions with the DID subject or associated parties.
+  // https://www.w3.org/TR/did-core/#verification-methods
+  repeated VerificationMethod verificationMethods  = 4;
+
+  // Services are used in DID documents to express ways of communicating 
+  // with the DID subject or associated entities.
+  // https://www.w3.org/TR/did-core/#services
+  repeated Service services                        = 5;
+
+  // NOTE: below this line there are the relationships
+
+  // Authentication represents public key associated with the did document.
+  // cfr. https://www.w3.org/TR/did-core/#authentication
+  repeated string authentication                   = 6;
+
+  // Used to specify how the DID subject is expected to express claims, 
+  // such as for the purposes of issuing a Verifiable Credential.
+  // cfr. https://www.w3.org/TR/did-core/#assertion
+  repeated string assertionMethod                  = 7;
+
+  // used to specify how an entity can generate encryption material 
+  // in order to transmit confidential information intended for the DID subject.
+  // https://www.w3.org/TR/did-core/#key-agreement
+  repeated string keyAgreement                     = 8;
+
+  // Used to specify a verification method that might be used by the DID subject
+  // to invoke a cryptographic capability, such as the authorization 
+  // to update the DID Document.
+  // https://www.w3.org/TR/did-core/#capability-invocation
+  repeated string capabilityInvocation             = 9;
+
+  // Used to specify a mechanism that might be used by the DID subject 
+  // to delegate a cryptographic capability to another party.
+  // https://www.w3.org/TR/did-core/#capability-delegation
+  repeated string capabilityDelegation             = 10;
 }
 
-// Authentication defines how to authenticate a did document.
-message Authentication {
+// A DID document can express verification methods, 
+// such as cryptographic public keys, which can be used 
+// to authenticate or authorize interactions 
+// with the DID subject or associated parties. 
+// https://www.w3.org/TR/did-core/#verification-methods
+message VerificationMethod {
   option (gogoproto.equal) = true;
 
-  string id          = 1;
-  string type        = 2;
-  string controller  = 3;
-  string publicKey   = 4;
+  string id                = 1;
+  string type              = 2;
+  string controller        = 3;
+  string publicKeyBase58   = 4; // by default we support only publicKeyBase58
+}
+
+// A verification relationship expresses the relationship between the DID subject and a verification method.
+// This enum is used to 
+// cfr. https://www.w3.org/TR/did-core/#verification-relationships
+enum VerificationRelationship {
+  authentication       = 0; // https://www.w3.org/TR/did-core/#authentication
+  assertionMethod      = 1; // https://www.w3.org/TR/did-core/#assertion
+  keyAgreement         = 2; // https://www.w3.org/TR/did-core/#key-agreement
+  capabilityInvocation = 3; // https://www.w3.org/TR/did-core/#capability-invocation
+  capabilityDelegation = 4; // https://www.w3.org/TR/did-core/#capability-delegation
 }
 
 // Service defines how to find data associated with a identifer
 message Service {
   option (gogoproto.equal) = true;
 
-  string id          	 = 1;
+  string id          	   = 1;
   string type         	 = 2;
   string serviceEndpoint = 3;
 }
-
 

@@ -8,86 +8,123 @@ option go_package = "github.com/allinbits/cosmos-cash/x/identifier/types";
 
 // Msg defines the identity Msg service.
 service Msg {
-  // CreateDidDocument defines a method for creating a new identity.
+  // CreateIdentifier defines a method for creating a new identity.
   rpc CreateIdentifier(MsgCreateIdentifier) returns (MsgCreateIdentifierResponse);
-  rpc AddAuthentication(MsgAddAuthentication) returns (MsgAddAuthenticationResponse);
+  // UpdateIdentifier defines a method for updating an identity.
+  rpc UpdateIdentifier(MsgUpdateIdentifier) returns (MsgUpdateIdentifierResponse);
+
+  // AddVerificationMethod adds a new verification method 
+  rpc AddVerification(MsgAddVerification) returns (MsgAddVerificationResponse);
+  // RevokeVerification remove the verification method and all associated verification Relations
+  rpc RevokeVerification(MsgRevokeVerification) returns (MsgRevokeVerificationResponse);
+  // SetVerificationRelationships overwrite current verification relationships
+  rpc SetVerificationRelationships(MsgSetVerificationRelationships) returns (MsgSetVerificationRelationshipsResponse);
+
+  // AddService add a new service
   rpc AddService(MsgAddService) returns (MsgAddServiceResponse);
-  rpc DeleteAuthentication(MsgDeleteAuthentication) returns (MsgDeleteAuthenticationResponse);
+  // DeleteService delete an existing service
   rpc DeleteService(MsgDeleteService) returns (MsgDeleteServiceResponse);
 }
 
-// MsgCreateIdentifier defines a SDK message for creating a new identifer.
+// Verification is a message that allows to assign a verification method
+// to one or more verification relationships
+message Verification {
+  // verificationRelationships defines which relationships
+  // are allowed to use the verification method
+  repeated VerificationRelationship relationships = 1; // relationships that the method is allowed into.
+  VerificationMethod                method        = 2; // public key associated with the did document.
+  repeated string                   context       = 3; // additional contexts (json ld schemas)
+}
+
+// -------------------------------
+// DID
+// -------------------------------
+
+// MsgCreateIdentifier defines a SDK message for creating a new identifier.
 message MsgCreateIdentifier {
-  option (gogoproto.equal)           = false;
-  option (gogoproto.goproto_getters) = false;
+  option (gogoproto.equal)            = false;
+  option (gogoproto.goproto_getters)  = false;
 
-  string     context        = 1; 
-  string     id             = 2; 
-
-  // authentication represents public key associated with the did document.
-  repeated Authentication authentication = 3;
-
-  // services represents each service associated with a did
-  repeated Service services = 4;
-
-  // owner represents the user creating the message 
-  string owner = 5;
+  string                id            = 1;
+  string                controller    = 2;
+  repeated Verification verifications = 3;
+  repeated Service      services      = 4;
+  string                owner         = 5;
 }
 
 message MsgCreateIdentifierResponse {}
 
-message MsgAddAuthentication {
+message MsgUpdateIdentifier {
+  option (gogoproto.equal)            = false;
+  option (gogoproto.goproto_getters)  = false;
+
+  string                id            = 1; // the id to update
+  string                controller    = 2; // the new controller
+  string                owner         = 5; // address of the user creating the message
+}
+
+message MsgUpdateIdentifierResponse {}
+
+// -------------------------------
+// Verification methods / relations
+// -------------------------------
+
+message MsgAddVerification {
   option (gogoproto.equal)           = false;
   option (gogoproto.goproto_getters) = false;
 
-  string     id             = 1; 
-
-  // authentication represents public key associated with the did document.
-  Authentication authentication = 2;
-
-  // owner is the address of the user creating the message 
-  string owner = 3;
+  string id                 = 1; // the did document id
+  Verification verification = 2; // the verification to add
+  string owner              = 3; // address of the user creating the message
 }
 
-message MsgAddAuthenticationResponse {}
+message MsgAddVerificationResponse {}
+
+message MsgSetVerificationRelationships {
+  option (gogoproto.equal)           = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string                            id             = 1; // the did document id
+  string                            method_id      = 2; // the verification to revoke
+  repeated VerificationRelationship relationships  = 3; // the verification relationships
+  string                            owner          = 4; // address of the user creating the message
+}
+
+message MsgSetVerificationRelationshipsResponse {}
+
+message MsgRevokeVerification {
+  option (gogoproto.equal)           = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string                            id             = 1; // the did document id
+  string                            method_id      = 2; // the verification to revoke
+  string                            owner          = 3; // address of the user creating the message
+}
+
+message MsgRevokeVerificationResponse {}
+
+// -------------------------------
+// Services
+// -------------------------------
 
 message MsgAddService {
   option (gogoproto.equal)           = false;
   option (gogoproto.goproto_getters) = false;
 
-  string     id             = 1; 
-
-  // authentication represents public key associated with the did document.
-  Service service_data = 2;
-
-  // owner is the address of the user creating the message 
-  string owner = 3;
+  string  id           = 1; // the did document id
+  Service service_data = 2; //
+  string owner         = 3;
 }
 
 message MsgAddServiceResponse {}
-
-message MsgDeleteAuthentication {
-  option (gogoproto.equal)           = false;
-  option (gogoproto.goproto_getters) = false;
-
-  string     id             = 1; 
-  
-  string     key = 2;
-  // owner is the address of the user creating the message 
-  string owner = 3;
-}
-
-message MsgDeleteAuthenticationResponse {}
 
 message MsgDeleteService {
   option (gogoproto.equal)           = false;
   option (gogoproto.goproto_getters) = false;
 
-  string     id             = 1; 
-  
-  string     service_id = 2;
-  // owner is the address of the user creating the message 
-  string owner = 3;
+  string id             = 1;
+  string service_id     = 2;
+  string owner          = 3;
 }
 
 message MsgDeleteServiceResponse {}

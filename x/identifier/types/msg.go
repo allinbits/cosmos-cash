@@ -15,14 +15,15 @@ var _ sdk.Msg = &MsgCreateIdentifier{}
 // NewMsgCreateIdentifier creates a new MsgCreateIdentifier instance
 func NewMsgCreateIdentifier(
 	id string,
-	authentication []*Authentication,
+	verifications []*Verification,
+	services []*Service,
 	owner string,
 ) *MsgCreateIdentifier {
 	return &MsgCreateIdentifier{
-		Context:        "https://www.w3.org/ns/did/v1",
-		Id:             id,
-		Authentication: authentication,
-		Owner:          owner,
+		Id:            id,
+		Verifications: verifications,
+		Services:      services,
+		Owner:         owner,
 	}
 }
 
@@ -42,8 +43,8 @@ func (msg MsgCreateIdentifier) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "empty id")
 	}
 
-	if msg.Authentication == nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "authentication is required")
+	if msg.Verifications == nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "verifications are required")
 	}
 
 	return nil
@@ -65,54 +66,56 @@ func (msg MsgCreateIdentifier) GetSigners() []sdk.AccAddress {
 
 // msg types
 const (
-	TypeMsgAddAuthentication = "add-authentication"
+	TypeMsgAddVerification = "add-verification"
 )
 
-var _ sdk.Msg = &MsgAddAuthentication{}
+var _ sdk.Msg = &MsgAddVerification{}
 
-// NewMsgAddAuthentication creates a new MsgAddAuthentication instance
-func NewMsgAddAuthentication(
+// NewMsgAddVerification creates a new MsgAddVerification instance
+func NewMsgAddVerification(
 	id string,
-	authentication *Authentication,
+	verification *Verification,
 	owner string,
-) *MsgAddAuthentication {
-	return &MsgAddAuthentication{
-		Id:             id,
-		Authentication: authentication,
-		Owner:          owner,
+) *MsgAddVerification {
+	return &MsgAddVerification{
+		Id:           id,
+		Verification: verification,
+		Owner:        owner,
 	}
 }
 
 // Route implements sdk.Msg
-func (MsgAddAuthentication) Route() string {
+func (MsgAddVerification) Route() string {
 	return RouterKey
 }
 
 // Type implements sdk.Msg
-func (MsgAddAuthentication) Type() string {
-	return TypeMsgAddAuthentication
+func (MsgAddVerification) Type() string {
+	return TypeMsgAddVerification
 }
 
-// ValidateBasic performs a basic check of the MsgAddAuthentication fields.
-func (msg MsgAddAuthentication) ValidateBasic() error {
+// ValidateBasic performs a basic check of the MsgAddVerification fields.
+func (msg MsgAddVerification) ValidateBasic() error {
 	if msg.Id == "" {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "empty id")
+		return sdkerrors.Wrap(ErrInvalidDIDFormat, msg.Id)
 	}
 
-	if msg.Authentication == nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "authentication is required")
+	if msg.Verification == nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "verification data is required")
 	}
+
+	// TODO: add more verification stuff
 
 	return nil
 
 }
 
-func (msg MsgAddAuthentication) GetSignBytes() []byte {
+func (msg MsgAddVerification) GetSignBytes() []byte {
 	panic("IBC messages do not support amino")
 }
 
 // GetSigners implements sdk.Msg
-func (msg MsgAddAuthentication) GetSigners() []sdk.AccAddress {
+func (msg MsgAddVerification) GetSigners() []sdk.AccAddress {
 	accAddr, err := sdk.AccAddressFromBech32(msg.Owner)
 	if err != nil {
 		panic(err)
@@ -152,12 +155,25 @@ func (MsgAddService) Type() string {
 
 // ValidateBasic performs a basic check of the MsgAddService fields.
 func (msg MsgAddService) ValidateBasic() error {
-	if msg.Id == "" {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "empty id")
+	if !IsValidDID(msg.Id) {
+		return sdkerrors.Wrap(ErrInvalidDIDFormat, msg.Id)
 	}
 
 	if msg.ServiceData == nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "service is required")
+	}
+
+	if !IsValidRFC3986Uri(msg.ServiceData.Id) {
+		return sdkerrors.Wrap(ErrInvalidRFC3986UriFormat, "service id validation error")
+	}
+
+	if IsEmpty(msg.ServiceData.Type) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "service type required")
+	}
+
+	// XXX: compliance with the spec breaks the issuer module/flow
+	if !IsValidRFC3986Uri(msg.ServiceData.ServiceEndpoint) {
+		return sdkerrors.Wrap(ErrInvalidRFC3986UriFormat, "service endpoint validation error")
 	}
 
 	return nil
@@ -179,54 +195,52 @@ func (msg MsgAddService) GetSigners() []sdk.AccAddress {
 
 // msg types
 const (
-	TypeMsgDeleteAuthentication = "delete-authentication"
+	TypeMsgRevokeVerification = "revoke-verification"
 )
 
-var _ sdk.Msg = &MsgDeleteAuthentication{}
+var _ sdk.Msg = &MsgRevokeVerification{}
 
-// NewMsgDeleteAuthentication creates a new MsgDeleteAuthentication instance
-func NewMsgDeleteAuthentication(
+// NewMsgRevokeVerification creates a new MsgRevokeVerification instance
+func NewMsgRevokeVerification(
 	id string,
-	key string,
+	methodID string,
 	owner string,
-) *MsgDeleteAuthentication {
-	return &MsgDeleteAuthentication{
-		Id:    id,
-		Key:   key,
-		Owner: owner,
+) *MsgRevokeVerification {
+	return &MsgRevokeVerification{
+		Id:       id,
+		MethodId: methodID,
+		Owner:    owner,
 	}
 }
 
 // Route implements sdk.Msg
-func (MsgDeleteAuthentication) Route() string {
+func (MsgRevokeVerification) Route() string {
 	return RouterKey
 }
 
 // Type implements sdk.Msg
-func (MsgDeleteAuthentication) Type() string {
-	return TypeMsgDeleteAuthentication
+func (MsgRevokeVerification) Type() string {
+	return TypeMsgRevokeVerification
 }
 
-// ValidateBasic performs a basic check of the MsgDeleteAuthentication fields.
-func (msg MsgDeleteAuthentication) ValidateBasic() error {
-	if msg.Id == "" {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "empty id")
+// ValidateBasic performs a basic check of the MsgRevokeVerification fields.
+func (msg MsgRevokeVerification) ValidateBasic() error {
+	if !IsValidDID(msg.Id) {
+		return sdkerrors.Wrap(ErrInvalidDIDFormat, msg.Id)
 	}
 
-	if msg.Key == "" {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "authentication is required")
+	if !IsValidDIDURL(msg.MethodId) {
+		return sdkerrors.Wrap(ErrInvalidDIDURLFormat, "verification method id validation error")
 	}
-
 	return nil
-
 }
 
-func (msg MsgDeleteAuthentication) GetSignBytes() []byte {
+func (msg MsgRevokeVerification) GetSignBytes() []byte {
 	panic("IBC messages do not support amino")
 }
 
 // GetSigners implements sdk.Msg
-func (msg MsgDeleteAuthentication) GetSigners() []sdk.AccAddress {
+func (msg MsgRevokeVerification) GetSigners() []sdk.AccAddress {
 	accAddr, err := sdk.AccAddressFromBech32(msg.Owner)
 	if err != nil {
 		panic(err)
@@ -263,16 +277,14 @@ func (MsgDeleteService) Type() string {
 
 // ValidateBasic performs a basic check of the MsgDeleteService fields.
 func (msg MsgDeleteService) ValidateBasic() error {
-	if msg.Id == "" {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "empty id")
+	if !IsValidDID(msg.Id) {
+		return sdkerrors.Wrap(ErrInvalidDIDFormat, msg.Id)
 	}
 
-	if msg.ServiceId == "" {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "authentication is required")
+	if !IsValidRFC3986Uri(msg.ServiceId) {
+		return sdkerrors.Wrap(ErrInvalidRFC3986UriFormat, "service id validation error")
 	}
-
 	return nil
-
 }
 
 func (msg MsgDeleteService) GetSignBytes() []byte {
@@ -281,6 +293,119 @@ func (msg MsgDeleteService) GetSignBytes() []byte {
 
 // GetSigners implements sdk.Msg
 func (msg MsgDeleteService) GetSigners() []sdk.AccAddress {
+	accAddr, err := sdk.AccAddressFromBech32(msg.Owner)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{accAddr}
+}
+
+// -----------------------------------------
+
+// msg types
+const (
+	TypeMsgUpdateIdentifier = "update-identifier"
+)
+
+func NewMsgUpdateIdentifier(
+	id string,
+	controller string,
+	owner string,
+) *MsgUpdateIdentifier {
+	return &MsgUpdateIdentifier{
+		Id:         id,
+		Controller: controller,
+		Owner:      owner,
+	}
+}
+
+// Route implements sdk.Msg
+func (MsgUpdateIdentifier) Route() string {
+	return RouterKey
+}
+
+// Type implements sdk.Msg
+func (MsgUpdateIdentifier) Type() string {
+	return TypeMsgUpdateIdentifier
+}
+
+// ValidateBasic performs a basic check of the MsgUpdateIdentifier fields.
+func (msg MsgUpdateIdentifier) ValidateBasic() error {
+	if !IsValidDID(msg.Id) {
+		return sdkerrors.Wrap(ErrInvalidDIDFormat, msg.Id)
+	}
+
+	// if controller is set must be compliant
+	if !IsEmpty(msg.Controller) && !IsValidDID(msg.Controller) {
+		return sdkerrors.Wrap(ErrInvalidDIDFormat, "controller validation error")
+	}
+	return nil
+}
+
+func (msg MsgUpdateIdentifier) GetSignBytes() []byte {
+	panic("IBC messages do not support amino")
+}
+
+// GetSigners implements sdk.Msg
+func (msg MsgUpdateIdentifier) GetSigners() []sdk.AccAddress {
+	accAddr, err := sdk.AccAddressFromBech32(msg.Owner)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{accAddr}
+}
+
+// -----------------------------------------
+
+// msg types
+const (
+	TypeMsgSetVerificationRelationships = "update-identifier"
+)
+
+func NewMsgSetVerificationRelationships(
+	id string,
+	methodID string,
+	relationships []VerificationRelationship,
+	owner string,
+) *MsgSetVerificationRelationships {
+	return &MsgSetVerificationRelationships{
+		Id:            id,
+		MethodId:      methodID,
+		Relationships: relationships,
+		Owner:         owner,
+	}
+}
+
+// Route implements sdk.Msg
+func (MsgSetVerificationRelationships) Route() string {
+	return RouterKey
+}
+
+// Type implements sdk.Msg
+func (MsgSetVerificationRelationships) Type() string {
+	return TypeMsgSetVerificationRelationships
+}
+
+// ValidateBasic performs a basic check of the MsgSetVerificationRelationships fields.
+func (msg MsgSetVerificationRelationships) ValidateBasic() error {
+	if !IsValidDID(msg.Id) {
+		return sdkerrors.Wrap(ErrInvalidDIDFormat, msg.Id)
+	}
+
+	// if controller is set must be compliant
+	if !IsValidDID(msg.MethodId) {
+		return sdkerrors.Wrap(ErrInvalidDIDFormat, "controller validation error")
+	}
+
+	return nil
+}
+
+func (msg MsgSetVerificationRelationships) GetSignBytes() []byte {
+	panic("IBC messages do not support amino")
+}
+
+// GetSigners implements sdk.Msg
+func (msg MsgSetVerificationRelationships) GetSigners() []sdk.AccAddress {
 	accAddr, err := sdk.AccAddressFromBech32(msg.Owner)
 	if err != nil {
 		panic(err)

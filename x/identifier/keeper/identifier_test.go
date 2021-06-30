@@ -15,10 +15,16 @@ func (suite *KeeperTestSuite) TestIdentifierKeeperSetAndGet() {
 		{
 			"data stored successfully",
 			types.DidDocument{
-				"context",
+				[]string{"context"},
 				"did:cash:1111",
-				nil,
-				nil,
+				[]string{}, // controller
+				[]*types.VerificationMethod{},
+				[]*types.Service{},
+				[]string{}, // authentication
+				[]string{},
+				[]string{},
+				[]string{},
+				[]string{},
 			},
 			true,
 		},

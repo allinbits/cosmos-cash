@@ -2,8 +2,9 @@ package keeper
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/suite"
 	"testing"
+
+	"github.com/stretchr/testify/suite"
 
 	"github.com/allinbits/cosmos-cash/x/identifier/types"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -67,10 +68,16 @@ func (suite *KeeperTestSuite) TestGenericKeeperSetAndGet() {
 		{
 			"data stored successfully",
 			types.DidDocument{
-				"context",
+				[]string{"context"},
 				"did:cash:1111",
-				nil,
-				nil,
+				[]string{}, // controller
+				[]*types.VerificationMethod{},
+				[]*types.Service{},
+				[]string{}, // authentication
+				[]string{},
+				[]string{},
+				[]string{},
+				[]string{},
 			},
 			true,
 		},

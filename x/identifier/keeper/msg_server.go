@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"context"
-	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -23,6 +22,14 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 
 var _ types.MsgServer = msgServer{}
 
+func (k msgServer) UpdateIdentifier(goCtx context.Context, msg *types.MsgUpdateIdentifier) (*types.MsgUpdateIdentifierResponse, error) {
+	return nil, nil
+}
+
+func (k msgServer) SetVerificationRelationships(goCtx context.Context, msg *types.MsgSetVerificationRelationships) (*types.MsgSetVerificationRelationshipsResponse, error) {
+	return nil, nil
+}
+
 // CreateIdentifier creates a new DID document
 func (k msgServer) CreateIdentifier(
 	goCtx context.Context,
@@ -39,7 +46,7 @@ func (k msgServer) CreateIdentifier(
 
 	}
 
-	identifier, _ := types.NewIdentifier(msg.Id, msg.Authentication)
+	identifier, _ := types.NewIdentifier(msg.Id, msg.Services, msg.Verifications)
 	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), identifier)
 
 	ctx.EventManager().EmitEvent(
@@ -50,12 +57,12 @@ func (k msgServer) CreateIdentifier(
 }
 
 // AddAuthentication adds a public key and controller to an existing DID document
-func (k msgServer) AddAuthentication(
+func (k msgServer) AddVerification(
 	goCtx context.Context,
-	msg *types.MsgAddAuthentication,
-) (*types.MsgAddAuthenticationResponse, error) {
+	msg *types.MsgAddVerification,
+) (*types.MsgAddVerificationResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-
+	// get the did document
 	identifier, found := k.Keeper.GetIdentifier(ctx, []byte(msg.Id))
 	if !found {
 		return nil, sdkerrors.Wrapf(
@@ -64,24 +71,28 @@ func (k msgServer) AddAuthentication(
 		)
 	}
 
-	// Only the first public key can add new public keys that control the DID document
-	if identifier.Authentication[0].Controller != msg.Owner {
+	// Any verification method in the authentication relationship can update the DID document
+	if !identifier.ControllerInRelationships(msg.Owner, types.VerificationRelationship_authentication) {
 		return nil, sdkerrors.Wrapf(
 			types.ErrIdentifierNotFound,
-			"msg sender not authorized: AddAuthentication",
+			"msg sender not authorized: AddVerification",
 		)
 	}
 
 	// TODO: handle duplicates in the authentication slice
-	msg.Authentication.Id = msg.Id + "#keys-" + fmt.Sprintf("%d", len(identifier.Authentication)+1)
-	identifier.Authentication = append(identifier.Authentication, msg.Authentication)
+	if err := identifier.AddVerifications(msg.Verification); err != nil {
+		return nil, err
+	}
+
+	// msg.Verification.Method.Id = msg.Id + "#keys-" + fmt.Sprintf("%d", len(identifier.Authentication)+1)
+	// identifier.VerificationMethods = append(identifier.VerificationMethods, msg.Authentication)
 	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), identifier)
 
 	ctx.EventManager().EmitEvent(
-		types.NewAuthenticationAddedEvent(msg.Id, msg.Authentication.Controller),
+		types.NewAuthenticationAddedEvent(msg.Id, msg.Verification.Method.Controller),
 	)
 
-	return &types.MsgAddAuthenticationResponse{}, nil
+	return &types.MsgAddVerificationResponse{}, nil
 }
 
 // AddService adds a service to an existing DID document
@@ -125,51 +136,45 @@ func (k msgServer) AddService(
 	return &types.MsgAddServiceResponse{}, nil
 }
 
-// DeleteAuthentication removes a public key and controller from an existing DID document
-func (k msgServer) DeleteAuthentication(
+// RevokeVerification removes a public key and controller from an existing DID document
+func (k msgServer) RevokeVerification(
 	goCtx context.Context,
-	msg *types.MsgDeleteAuthentication,
-) (*types.MsgDeleteAuthenticationResponse, error) {
+	msg *types.MsgRevokeVerification,
+) (*types.MsgRevokeVerificationResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	identifier, found := k.Keeper.GetIdentifier(ctx, []byte(msg.Id))
 	if !found {
 		return nil, sdkerrors.Wrapf(
 			types.ErrIdentifierNotFound,
-			"identifier not found: DeleteAuthentication",
+			"identifier not found: RevokeVerification",
 		)
 	}
 
 	// Only the first public key can remove public keys that control the DID document
-	if identifier.Authentication[0].Controller != msg.Owner {
+	if !identifier.ControllerInRelationships(msg.Owner, types.VerificationRelationship_authentication) {
 		return nil, sdkerrors.Wrapf(
 			types.ErrIdentifierNotFound,
-			"msg sender not authorized: DeleteAuthentication",
+			"msg sender not authorized: RevokeVerification",
 		)
 	}
 
-	pubKey, err := sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeAccPub, msg.Key)
+	// XXX: there is something wrong here
+	pubKey, err := sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeAccPub, msg.MethodId)
 	if err != nil {
 		return nil, sdkerrors.Wrapf(
 			types.ErrIdentifierNotFound,
-			"pubkey not correct: DeleteAuthentication",
+			"pubkey not correct: RevokeVerification",
 		)
 	}
 	address := sdk.AccAddress(pubKey.Address())
 
 	// TODO: don't delete if only one auth
-	auth := identifier.Authentication
-	for i, key := range identifier.Authentication {
-		if key.Controller == address.String() {
-			// TODO: improve this logic
-			// TODO: reorder auth ids as deleting and adding keys can lead to duplicated ids
-			auth = append(
-				identifier.Authentication[:i],
-				identifier.Authentication[i+1:]...,
-			)
-		}
-	}
-	identifier.Authentication = auth
+	// if len(identifier.VerificationMethods) == 1 {
+
+	// }
+
+	identifier.RevokeVerification(msg.MethodId)
 
 	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), identifier)
 
@@ -177,7 +182,7 @@ func (k msgServer) DeleteAuthentication(
 		types.NewAuthenticationDeletedEvent(msg.Id, address.String()),
 	)
 
-	return &types.MsgDeleteAuthenticationResponse{}, nil
+	return &types.MsgRevokeVerificationResponse{}, nil
 }
 
 // DeleteService removes a service from an existing DID document
@@ -195,8 +200,9 @@ func (k msgServer) DeleteService(
 		)
 	}
 
+	// TODO add check on the controller (did level)
 	// Only the first public key can remove services from the DID document
-	if identifier.Authentication[0].Controller != msg.Owner {
+	if !identifier.ControllerInRelationships(msg.Owner, types.VerificationRelationship_authentication) {
 		return nil, sdkerrors.Wrapf(
 			types.ErrIdentifierNotFound,
 			"msg sender not authorized: DeleteService",

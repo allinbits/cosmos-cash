@@ -23,7 +23,7 @@ func (k Keeper) UnmarshalIdentifier(value []byte) (interface{}, bool) {
 		return types.DidDocument{}, false
 	}
 
-	if document.Context == "" {
+	if len(document.Context) == 0 {
 		return types.DidDocument{}, false
 	}
 

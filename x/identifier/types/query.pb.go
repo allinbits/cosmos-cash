@@ -30,7 +30,7 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// QueryIdentifersRequest is request type for Query/Identifers RPC method.
+// QueryIdentifiersRequest is request type for Query/Identifiers RPC method.
 type QueryIdentifiersRequest struct {
 	// status enables to query for validators matching a given status.
 	Status string `protobuf:"bytes,1,opt,name=status,proto3" json:"status,omitempty"`
@@ -85,7 +85,7 @@ func (m *QueryIdentifiersRequest) GetPagination() *query.PageRequest {
 	return nil
 }
 
-// QueryIdentifersResponse is response type for the Query/Identifers RPC method
+// QueryIdentifiersResponse is response type for the Query/Identifiers RPC method
 type QueryIdentifiersResponse struct {
 	// validators contains all the queried validators.
 	DidDocuments []DidDocument `protobuf:"bytes,1,rep,name=didDocuments,proto3" json:"didDocuments"`
@@ -140,7 +140,7 @@ func (m *QueryIdentifiersResponse) GetPagination() *query.PageResponse {
 	return nil
 }
 
-// QueryIdentifersRequest is request type for Query/Identifers RPC method.
+// QueryIdentifiersRequest is request type for Query/Identifiers RPC method.
 type QueryIdentifierRequest struct {
 	// status enables to query for validators matching a given status.
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -186,7 +186,7 @@ func (m *QueryIdentifierRequest) GetId() string {
 	return ""
 }
 
-// QueryIdentifersResponse is response type for the Query/Identifers RPC method
+// QueryIdentifiersResponse is response type for the Query/Identifiers RPC method
 type QueryIdentifierResponse struct {
 	// validators contains all the queried validators.
 	DidDocument DidDocument `protobuf:"bytes,1,opt,name=didDocument,proto3" json:"didDocument"`
@@ -286,7 +286,7 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type QueryClient interface {
-	// Identifers queries all validators that match the given status.
+	// Identifiers queries all validators that match the given status.
 	Identifiers(ctx context.Context, in *QueryIdentifiersRequest, opts ...grpc.CallOption) (*QueryIdentifiersResponse, error)
 	Identifier(ctx context.Context, in *QueryIdentifierRequest, opts ...grpc.CallOption) (*QueryIdentifierResponse, error)
 }
@@ -319,7 +319,7 @@ func (c *queryClient) Identifier(ctx context.Context, in *QueryIdentifierRequest
 
 // QueryServer is the server API for Query service.
 type QueryServer interface {
-	// Identifers queries all validators that match the given status.
+	// Identifiers queries all validators that match the given status.
 	Identifiers(context.Context, *QueryIdentifiersRequest) (*QueryIdentifiersResponse, error)
 	Identifier(context.Context, *QueryIdentifierRequest) (*QueryIdentifierResponse, error)
 }

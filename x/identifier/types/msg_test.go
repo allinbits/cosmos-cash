@@ -1,29 +1,36 @@
 package types
 
 import (
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestMsgCreateIdentifier(t *testing.T) {
 	tests := []struct {
-		name       string
-		id         string
-		auth       Authentications
-		owner      string
-		expectPass bool
+		name          string
+		id            string
+		verifications Verifications
+		services      Services
+		owner         string
+		expectPass    bool
 	}{
 		{
 			"Pass: ",
 			"id1",
-			Authentications{
-				&Authentication{
-					"auth",
-					"type",
-					"cont",
-					"value",
+			Verifications{
+				&Verification{
+					[]VerificationRelationship{VerificationRelationship_assertionMethod},
+					&VerificationMethod{
+						"auth",
+						"type",
+						"cont",
+						"value",
+					},
+					[]string{},
 				},
 			},
+			Services{},
 			"owner",
 			true,
 		},
@@ -32,7 +39,8 @@ func TestMsgCreateIdentifier(t *testing.T) {
 	for _, tc := range tests {
 		msg := NewMsgCreateIdentifier(
 			tc.id,
-			tc.auth,
+			tc.verifications,
+			tc.services,
 			tc.owner,
 		)
 
@@ -44,22 +52,26 @@ func TestMsgCreateIdentifier(t *testing.T) {
 	}
 }
 
-func TestMsgAddAuthentication(t *testing.T) {
+func TestMsgAddVerification(t *testing.T) {
 	tests := []struct {
 		name       string
 		id         string
-		auth       Authentication
+		auth       Verification
 		owner      string
 		expectPass bool
 	}{
 		{
 			"Pass: ",
 			"id1",
-			Authentication{
-				"auth",
-				"type",
-				"cont",
-				"value",
+			Verification{
+				[]VerificationRelationship{VerificationRelationship_assertionMethod},
+				&VerificationMethod{
+					"auth",
+					"type",
+					"cont",
+					"value",
+				},
+				[]string{},
 			},
 			"owner",
 			true,
@@ -67,7 +79,7 @@ func TestMsgAddAuthentication(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		msg := NewMsgAddAuthentication(
+		msg := NewMsgAddVerification(
 			tc.id,
 			&tc.auth,
 			tc.owner,
@@ -81,7 +93,7 @@ func TestMsgAddAuthentication(t *testing.T) {
 	}
 }
 
-func TestMsgDeleteAuthentication(t *testing.T) {
+func TestMsgRevokeVerification(t *testing.T) {
 	tests := []struct {
 		name       string
 		id         string
@@ -91,7 +103,7 @@ func TestMsgDeleteAuthentication(t *testing.T) {
 	}{
 		{
 			"Pass: ",
-			"id1",
+			"id1:cash:31",
 			"key",
 			"owner",
 			true,
@@ -99,7 +111,7 @@ func TestMsgDeleteAuthentication(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		msg := NewMsgDeleteAuthentication(
+		msg := NewMsgRevokeVerification(
 			tc.id,
 			tc.key,
 			tc.owner,

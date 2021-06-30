@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"encoding/base64"
 	"errors"
 	"fmt"
 
@@ -60,16 +59,19 @@ func NewCreateIdentifierCmd() *cobra.Command {
 			accAddrBech32 := accAddr.String()
 			id := types.DidPrefix + accAddrBech32
 
-			auth := types.NewAuthentication(
+			auth := types.NewVerification(
 				id+"#keys-1",
 				pubKey.Type(),
 				accAddrBech32,
-				base64.StdEncoding.EncodeToString(pubKey.Bytes()),
+				pubKey.Bytes(),
+				[]types.VerificationRelationship{types.VerificationRelationship_authentication},
+				[]string{},
 			)
 
 			msg := types.NewMsgCreateIdentifier(
 				id,
-				types.Authentications{&auth},
+				[]*types.Verification{&auth},
+				[]*types.Service{},
 				accAddrBech32,
 			)
 
@@ -105,14 +107,16 @@ func NewAddAuthenticationCmd() *cobra.Command {
 			}
 			address := sdk.AccAddress(pubKey.Address())
 
-			auth := types.NewAuthentication(
+			auth := types.NewVerification(
 				"",
 				pubKey.Type(),
 				address.String(),
-				pubKey.Address().String(),
+				pubKey.Bytes(),
+				[]types.VerificationRelationship{types.VerificationRelationship_authentication},
+				[]string{},
 			)
 
-			msg := types.NewMsgAddAuthentication(
+			msg := types.NewMsgAddVerification(
 				args[0],
 				&auth,
 				accAddr.String(),
@@ -186,7 +190,7 @@ func NewDeleteAuthenticationCmd() *cobra.Command {
 			}
 			accAddr := clientCtx.GetFromAddress()
 
-			msg := types.NewMsgDeleteAuthentication(
+			msg := types.NewMsgRevokeVerification(
 				args[0],
 				args[1],
 				accAddr.String(),

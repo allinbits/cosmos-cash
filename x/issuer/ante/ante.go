@@ -58,7 +58,7 @@ func (cicd CheckIssuerCredentialsDecorator) AnteHandle(
 
 			foundKey := false
 			for _, auth := range did.Authentication {
-				if auth.Controller == imsg.Owner {
+				if auth == imsg.Owner {
 					foundKey = true
 				}
 			}
@@ -192,7 +192,7 @@ func (cicd CheckUserCredentialsDecorator) validateKYCCredential(
 
 	foundKey := false
 	for _, auth := range did.Authentication {
-		if auth.Controller == address {
+		if auth == address {
 			foundKey = true
 			break
 		}

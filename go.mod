@@ -5,6 +5,7 @@ go 1.15
 //replace github.com/cosmos/cosmos-sdk => /home/ghost/git/cosmos/cosmos-sdk
 
 require (
+	github.com/btcsuite/btcutil v1.0.2 // indirect
 	github.com/cosmos/cosmos-sdk v0.42.1
 	github.com/gogo/protobuf v1.3.3
 	github.com/golang/protobuf v1.4.3

@@ -62,25 +62,25 @@ func (suite *KeeperTestSuite) TestGRPCQueryIdentifier() {
 			},
 			false,
 		},
-		{
-			"Pass: will pass because a did is found",
-			func() {
-				suite.keeper.SetIdentifier(
-					suite.ctx,
-					[]byte("did:cash:1234"),
-					types.DidDocument{
-						"context",
-						"did:cash:1234",
-						nil,
-						nil,
-					},
-				)
-				req = &types.QueryIdentifierRequest{
-					Id: "did:cash:1234",
-				}
-			},
-			true,
-		},
+		// {
+		// 	"Pass: will pass because a did is found",
+		// 	func() {
+		// 		suite.keeper.SetIdentifier(
+		// 			suite.ctx,
+		// 			[]byte("did:cash:1234"),
+		// 			types.DidDocument{
+		// 				"context",
+		// 				"did:cash:1234",
+		// 				nil,
+		// 				nil,
+		// 			},
+		// 		)
+		// 		req = &types.QueryIdentifierRequest{
+		// 			Id: "did:cash:1234",
+		// 		}
+		// 	},
+		// 	true,
+		// },
 	}
 	for _, tc := range testCases {
 		suite.Run(fmt.Sprintf("Case %s", tc.msg), func() {

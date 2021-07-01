@@ -20,7 +20,7 @@ func TestMsgCreateIdentifier(t *testing.T) {
 			"id1",
 			Verifications{
 				&Verification{
-					[]VerificationRelationship{VerificationRelationship_assertionMethod},
+					[]string{RelationshipAuthentication},
 					&VerificationMethod{
 						"auth",
 						"type",
@@ -64,7 +64,7 @@ func TestMsgAddVerification(t *testing.T) {
 			"Pass: ",
 			"id1",
 			Verification{
-				[]VerificationRelationship{VerificationRelationship_assertionMethod},
+				[]string{RelationshipAuthentication},
 				&VerificationMethod{
 					"auth",
 					"type",

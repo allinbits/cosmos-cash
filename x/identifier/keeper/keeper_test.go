@@ -73,11 +73,7 @@ func (suite *KeeperTestSuite) TestGenericKeeperSetAndGet() {
 				[]string{}, // controller
 				[]*types.VerificationMethod{},
 				[]*types.Service{},
-				[]string{}, // authentication
-				[]string{},
-				[]string{},
-				[]string{},
-				[]string{},
+				map[string]*types.DidDocument_VerificationRelationships{},
 			},
 			true,
 		},

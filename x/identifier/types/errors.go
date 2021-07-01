@@ -13,4 +13,5 @@ var (
 	ErrInvalidDIDFormat        = sdkerrors.Register(ModuleName, 1102, "input is not compliant with the DID specifications (crf. https://www.w3.org/TR/did-core/#did-syntax)")
 	ErrInvalidDIDURLFormat     = sdkerrors.Register(ModuleName, 1103, "input is not compliant with the DID URL specifications (crf. https://www.w3.org/TR/did-core/#did-url-syntax)")
 	ErrInvalidRFC3986UriFormat = sdkerrors.Register(ModuleName, 1104, "input is not compliant with the RFC3986 URI specifications (crf. https://datatracker.ietf.org/doc/html/rfc3986)")
+	ErrEmptyRelationships      = sdkerrors.Register(ModuleName, 1105, "a verification method should have at least one verification relationship. Hint: use the RevokeVerification to remove a verification method")
 )

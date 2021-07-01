@@ -46,7 +46,10 @@ func (k msgServer) CreateIdentifier(
 
 	}
 
-	identifier, _ := types.NewIdentifier(msg.Id, msg.Services, msg.Verifications)
+	identifier, _ := types.NewIdentifier(msg.Id,
+		types.WithServices(msg.Services),
+		types.WithVerifications(msg.Verifications),
+	)
 	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), identifier)
 
 	ctx.EventManager().EmitEvent(
@@ -72,7 +75,7 @@ func (k msgServer) AddVerification(
 	}
 
 	// Any verification method in the authentication relationship can update the DID document
-	if !identifier.ControllerInRelationships(msg.Owner, types.VerificationRelationship_authentication) {
+	if !identifier.ControllerInRelationships(msg.Owner, types.RelationshipAuthentication) {
 		return nil, sdkerrors.Wrapf(
 			types.ErrIdentifierNotFound,
 			"msg sender not authorized: AddVerification",
@@ -152,7 +155,7 @@ func (k msgServer) RevokeVerification(
 	}
 
 	// Only the first public key can remove public keys that control the DID document
-	if !identifier.ControllerInRelationships(msg.Owner, types.VerificationRelationship_authentication) {
+	if !identifier.ControllerInRelationships(msg.Owner, types.RelationshipAuthentication) {
 		return nil, sdkerrors.Wrapf(
 			types.ErrIdentifierNotFound,
 			"msg sender not authorized: RevokeVerification",
@@ -202,7 +205,7 @@ func (k msgServer) DeleteService(
 
 	// TODO add check on the controller (did level)
 	// Only the first public key can remove services from the DID document
-	if !identifier.ControllerInRelationships(msg.Owner, types.VerificationRelationship_authentication) {
+	if !identifier.ControllerInRelationships(msg.Owner, types.RelationshipAuthentication) {
 		return nil, sdkerrors.Wrapf(
 			types.ErrIdentifierNotFound,
 			"msg sender not authorized: DeleteService",

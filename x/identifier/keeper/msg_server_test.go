@@ -31,7 +31,7 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateIdentifiers() {
 					"sepk256",
 					"did:cash:1111",
 					[]byte("pubKey.Address().String()"),
-					[]types.VerificationRelationship{types.VerificationRelationship_authentication},
+					[]string{types.RelationshipAuthentication},
 					[]string{},
 				)
 				identifier := types.DidDocument{
@@ -40,11 +40,7 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateIdentifiers() {
 					[]string{}, // controller
 					[]*types.VerificationMethod{auth.Method},
 					[]*types.Service{},
-					[]string{auth.Method.Id}, // authentication
-					[]string{},
-					[]string{},
-					[]string{},
-					[]string{},
+					map[string]*types.DidDocument_VerificationRelationships{},
 				}
 				suite.keeper.SetIdentifier(suite.ctx, []byte(identifier.Id), identifier)
 
@@ -152,11 +148,7 @@ func (suite *KeeperTestSuite) TestMsgSeverAddService() {
 					[]string{}, // controller
 					[]*types.VerificationMethod{},
 					[]*types.Service{},
-					[]string{}, // authentication
-					[]string{},
-					[]string{},
-					[]string{},
-					[]string{},
+					map[string]*types.DidDocument_VerificationRelationships{},
 				}
 				suite.keeper.SetIdentifier(suite.ctx, []byte(identifier.Id), identifier)
 

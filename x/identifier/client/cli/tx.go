@@ -64,7 +64,7 @@ func NewCreateIdentifierCmd() *cobra.Command {
 				pubKey.Type(),
 				accAddrBech32,
 				pubKey.Bytes(),
-				[]types.VerificationRelationship{types.VerificationRelationship_authentication},
+				[]string{types.RelationshipAuthentication},
 				[]string{},
 			)
 
@@ -112,7 +112,7 @@ func NewAddAuthenticationCmd() *cobra.Command {
 				pubKey.Type(),
 				address.String(),
 				pubKey.Bytes(),
-				[]types.VerificationRelationship{types.VerificationRelationship_authentication},
+				[]string{types.RelationshipAuthentication},
 				[]string{},
 			)
 

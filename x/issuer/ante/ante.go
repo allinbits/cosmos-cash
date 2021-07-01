@@ -9,6 +9,7 @@ import (
 	bank "github.com/cosmos/cosmos-sdk/x/bank/types"
 
 	identifierkeeper "github.com/allinbits/cosmos-cash/x/identifier/keeper"
+	identifiertypes "github.com/allinbits/cosmos-cash/x/identifier/types"
 	"github.com/allinbits/cosmos-cash/x/issuer/keeper"
 	"github.com/allinbits/cosmos-cash/x/issuer/types"
 	vcskeeper "github.com/allinbits/cosmos-cash/x/verifiable-credential-service/keeper"
@@ -44,6 +45,7 @@ func (cicd CheckIssuerCredentialsDecorator) AnteHandle(
 	for _, msg := range tx.GetMsgs() {
 		if msg.Type() == "create-issuer" {
 			imsg := msg.(*types.MsgCreateIssuer)
+
 			didURI := "did:cash:" + imsg.Owner
 
 			// TODO: pass in the did URI as an arg {msg.Id}
@@ -56,13 +58,8 @@ func (cicd CheckIssuerCredentialsDecorator) AnteHandle(
 				)
 			}
 
-			foundKey := false
-			for _, auth := range did.Authentication {
-				if auth == imsg.Owner {
-					foundKey = true
-				}
-			}
-			if !foundKey {
+			// verification authorization
+			if !did.ControllerInRelationships(imsg.Owner, identifiertypes.RelationshipAuthentication) {
 				return ctx, sdkerrors.Wrapf(
 					types.ErrIncorrectControllerOfDidDocument,
 					"msg sender not in auth array in did document",
@@ -190,14 +187,7 @@ func (cicd CheckUserCredentialsDecorator) validateKYCCredential(
 		)
 	}
 
-	foundKey := false
-	for _, auth := range did.Authentication {
-		if auth == address {
-			foundKey = true
-			break
-		}
-	}
-	if !foundKey {
+	if !did.ControllerInRelationships(address, identifiertypes.RelationshipAuthentication) {
 		return sdkerrors.Wrapf(
 			types.ErrIncorrectControllerOfDidDocument,
 			"msg sender not in auth slice in did document when validating the KYC credential",

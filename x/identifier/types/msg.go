@@ -2,7 +2,6 @@ package types
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 // msg types
@@ -37,20 +36,6 @@ func (MsgCreateIdentifier) Type() string {
 	return TypeMsgCreateIdentifier
 }
 
-// ValidateBasic performs a basic check of the MsgCreateIdentifier fields.
-func (msg MsgCreateIdentifier) ValidateBasic() error {
-	if msg.Id == "" {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "empty id")
-	}
-
-	if msg.Verifications == nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "verifications are required")
-	}
-
-	return nil
-
-}
-
 func (msg MsgCreateIdentifier) GetSignBytes() []byte {
 	panic("IBC messages do not support amino")
 }
@@ -64,6 +49,53 @@ func (msg MsgCreateIdentifier) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{accAddr}
 }
 
+// --------------------------
+// UPDATE IDENTIFIER
+// --------------------------
+
+// msg types
+const (
+	TypeMsgUpdateIdentifier = "update-identifier"
+)
+
+func NewMsgUpdateIdentifier(
+	id string,
+	controller string,
+	owner string,
+) *MsgUpdateIdentifier {
+	return &MsgUpdateIdentifier{
+		Id:         id,
+		Controller: controller,
+		Owner:      owner,
+	}
+}
+
+// Route implements sdk.Msg
+func (MsgUpdateIdentifier) Route() string {
+	return RouterKey
+}
+
+// Type implements sdk.Msg
+func (MsgUpdateIdentifier) Type() string {
+	return TypeMsgUpdateIdentifier
+}
+
+func (msg MsgUpdateIdentifier) GetSignBytes() []byte {
+	panic("IBC messages do not support amino")
+}
+
+// GetSigners implements sdk.Msg
+func (msg MsgUpdateIdentifier) GetSigners() []sdk.AccAddress {
+	accAddr, err := sdk.AccAddressFromBech32(msg.Owner)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{accAddr}
+}
+
+// --------------------------
+// ADD VERIFICATION
+// --------------------------
 // msg types
 const (
 	TypeMsgAddVerification = "add-verification"
@@ -94,22 +126,6 @@ func (MsgAddVerification) Type() string {
 	return TypeMsgAddVerification
 }
 
-// ValidateBasic performs a basic check of the MsgAddVerification fields.
-func (msg MsgAddVerification) ValidateBasic() error {
-	if msg.Id == "" {
-		return sdkerrors.Wrap(ErrInvalidDIDFormat, msg.Id)
-	}
-
-	if msg.Verification == nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "verification data is required")
-	}
-
-	// TODO: add more verification stuff
-
-	return nil
-
-}
-
 func (msg MsgAddVerification) GetSignBytes() []byte {
 	panic("IBC messages do not support amino")
 }
@@ -123,75 +139,9 @@ func (msg MsgAddVerification) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{accAddr}
 }
 
-// msg types
-const (
-	TypeMsgAddService = "add-service"
-)
-
-var _ sdk.Msg = &MsgAddService{}
-
-// NewMsgAddService creates a new MsgAddService instance
-func NewMsgAddService(
-	id string,
-	service *Service,
-	owner string,
-) *MsgAddService {
-	return &MsgAddService{
-		Id:          id,
-		ServiceData: service,
-		Owner:       owner,
-	}
-}
-
-// Route implements sdk.Msg
-func (MsgAddService) Route() string {
-	return RouterKey
-}
-
-// Type implements sdk.Msg
-func (MsgAddService) Type() string {
-	return TypeMsgAddService
-}
-
-// ValidateBasic performs a basic check of the MsgAddService fields.
-func (msg MsgAddService) ValidateBasic() error {
-	if !IsValidDID(msg.Id) {
-		return sdkerrors.Wrap(ErrInvalidDIDFormat, msg.Id)
-	}
-
-	if msg.ServiceData == nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "service is required")
-	}
-
-	if !IsValidRFC3986Uri(msg.ServiceData.Id) {
-		return sdkerrors.Wrap(ErrInvalidRFC3986UriFormat, "service id validation error")
-	}
-
-	if IsEmpty(msg.ServiceData.Type) {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "service type required")
-	}
-
-	// XXX: compliance with the spec breaks the issuer module/flow
-	if !IsValidRFC3986Uri(msg.ServiceData.ServiceEndpoint) {
-		return sdkerrors.Wrap(ErrInvalidRFC3986UriFormat, "service endpoint validation error")
-	}
-
-	return nil
-
-}
-
-func (msg MsgAddService) GetSignBytes() []byte {
-	panic("IBC messages do not support amino")
-}
-
-// GetSigners implements sdk.Msg
-func (msg MsgAddService) GetSigners() []sdk.AccAddress {
-	accAddr, err := sdk.AccAddressFromBech32(msg.Owner)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{accAddr}
-}
+// --------------------------
+// REVOKE VERIFICATION
+// --------------------------
 
 // msg types
 const (
@@ -223,18 +173,6 @@ func (MsgRevokeVerification) Type() string {
 	return TypeMsgRevokeVerification
 }
 
-// ValidateBasic performs a basic check of the MsgRevokeVerification fields.
-func (msg MsgRevokeVerification) ValidateBasic() error {
-	if !IsValidDID(msg.Id) {
-		return sdkerrors.Wrap(ErrInvalidDIDFormat, msg.Id)
-	}
-
-	if !IsValidDIDURL(msg.MethodId) {
-		return sdkerrors.Wrap(ErrInvalidDIDURLFormat, "verification method id validation error")
-	}
-	return nil
-}
-
 func (msg MsgRevokeVerification) GetSignBytes() []byte {
 	panic("IBC messages do not support amino")
 }
@@ -247,6 +185,102 @@ func (msg MsgRevokeVerification) GetSigners() []sdk.AccAddress {
 	}
 	return []sdk.AccAddress{accAddr}
 }
+
+// --------------------------
+// SET VERIFICATION RELATIONSHIPS
+// --------------------------
+// msg types
+const (
+	TypeMsgSetVerificationRelationships = "set-verification-relationships"
+)
+
+func NewMsgSetVerificationRelationships(
+	id string,
+	methodID string,
+	relationships []string,
+	owner string,
+) *MsgSetVerificationRelationships {
+	return &MsgSetVerificationRelationships{
+		Id:            id,
+		MethodId:      methodID,
+		Relationships: relationships,
+		Owner:         owner,
+	}
+}
+
+// Route implements sdk.Msg
+func (MsgSetVerificationRelationships) Route() string {
+	return RouterKey
+}
+
+// Type implements sdk.Msg
+func (MsgSetVerificationRelationships) Type() string {
+	return TypeMsgSetVerificationRelationships
+}
+
+func (msg MsgSetVerificationRelationships) GetSignBytes() []byte {
+	panic("IBC messages do not support amino")
+}
+
+// GetSigners implements sdk.Msg
+func (msg MsgSetVerificationRelationships) GetSigners() []sdk.AccAddress {
+	accAddr, err := sdk.AccAddressFromBech32(msg.Owner)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{accAddr}
+}
+
+// --------------------------
+// ADD SERVICE
+// --------------------------
+
+// msg types
+const (
+	TypeMsgAddService = "add-service"
+)
+
+var _ sdk.Msg = &MsgAddService{}
+
+// NewMsgAddService creates a new MsgAddService instance
+func NewMsgAddService(
+	id string,
+	service *Service,
+	owner string,
+) *MsgAddService {
+	return &MsgAddService{
+		Id:          id,
+		ServiceData: service,
+		Owner:       owner,
+	}
+}
+
+// Route implements sdk.Msg
+func (MsgAddService) Route() string {
+	return RouterKey
+}
+
+// Type implements sdk.Msg
+func (MsgAddService) Type() string {
+	return TypeMsgAddService
+}
+
+func (msg MsgAddService) GetSignBytes() []byte {
+	panic("IBC messages do not support amino")
+}
+
+// GetSigners implements sdk.Msg
+func (msg MsgAddService) GetSigners() []sdk.AccAddress {
+	accAddr, err := sdk.AccAddressFromBech32(msg.Owner)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{accAddr}
+}
+
+// --------------------------
+// DELETE SERVICE
+// --------------------------
 
 // msg types
 const (
@@ -275,137 +309,12 @@ func (MsgDeleteService) Type() string {
 	return TypeMsgDeleteService
 }
 
-// ValidateBasic performs a basic check of the MsgDeleteService fields.
-func (msg MsgDeleteService) ValidateBasic() error {
-	if !IsValidDID(msg.Id) {
-		return sdkerrors.Wrap(ErrInvalidDIDFormat, msg.Id)
-	}
-
-	if !IsValidRFC3986Uri(msg.ServiceId) {
-		return sdkerrors.Wrap(ErrInvalidRFC3986UriFormat, "service id validation error")
-	}
-	return nil
-}
-
 func (msg MsgDeleteService) GetSignBytes() []byte {
 	panic("IBC messages do not support amino")
 }
 
 // GetSigners implements sdk.Msg
 func (msg MsgDeleteService) GetSigners() []sdk.AccAddress {
-	accAddr, err := sdk.AccAddressFromBech32(msg.Owner)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{accAddr}
-}
-
-// -----------------------------------------
-
-// msg types
-const (
-	TypeMsgUpdateIdentifier = "update-identifier"
-)
-
-func NewMsgUpdateIdentifier(
-	id string,
-	controller string,
-	owner string,
-) *MsgUpdateIdentifier {
-	return &MsgUpdateIdentifier{
-		Id:         id,
-		Controller: controller,
-		Owner:      owner,
-	}
-}
-
-// Route implements sdk.Msg
-func (MsgUpdateIdentifier) Route() string {
-	return RouterKey
-}
-
-// Type implements sdk.Msg
-func (MsgUpdateIdentifier) Type() string {
-	return TypeMsgUpdateIdentifier
-}
-
-// ValidateBasic performs a basic check of the MsgUpdateIdentifier fields.
-func (msg MsgUpdateIdentifier) ValidateBasic() error {
-	if !IsValidDID(msg.Id) {
-		return sdkerrors.Wrap(ErrInvalidDIDFormat, msg.Id)
-	}
-
-	// if controller is set must be compliant
-	if !IsEmpty(msg.Controller) && !IsValidDID(msg.Controller) {
-		return sdkerrors.Wrap(ErrInvalidDIDFormat, "controller validation error")
-	}
-	return nil
-}
-
-func (msg MsgUpdateIdentifier) GetSignBytes() []byte {
-	panic("IBC messages do not support amino")
-}
-
-// GetSigners implements sdk.Msg
-func (msg MsgUpdateIdentifier) GetSigners() []sdk.AccAddress {
-	accAddr, err := sdk.AccAddressFromBech32(msg.Owner)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{accAddr}
-}
-
-// -----------------------------------------
-
-// msg types
-const (
-	TypeMsgSetVerificationRelationships = "update-identifier"
-)
-
-func NewMsgSetVerificationRelationships(
-	id string,
-	methodID string,
-	relationships []VerificationRelationship,
-	owner string,
-) *MsgSetVerificationRelationships {
-	return &MsgSetVerificationRelationships{
-		Id:            id,
-		MethodId:      methodID,
-		Relationships: relationships,
-		Owner:         owner,
-	}
-}
-
-// Route implements sdk.Msg
-func (MsgSetVerificationRelationships) Route() string {
-	return RouterKey
-}
-
-// Type implements sdk.Msg
-func (MsgSetVerificationRelationships) Type() string {
-	return TypeMsgSetVerificationRelationships
-}
-
-// ValidateBasic performs a basic check of the MsgSetVerificationRelationships fields.
-func (msg MsgSetVerificationRelationships) ValidateBasic() error {
-	if !IsValidDID(msg.Id) {
-		return sdkerrors.Wrap(ErrInvalidDIDFormat, msg.Id)
-	}
-
-	// if controller is set must be compliant
-	if !IsValidDID(msg.MethodId) {
-		return sdkerrors.Wrap(ErrInvalidDIDFormat, "controller validation error")
-	}
-
-	return nil
-}
-
-func (msg MsgSetVerificationRelationships) GetSignBytes() []byte {
-	panic("IBC messages do not support amino")
-}
-
-// GetSigners implements sdk.Msg
-func (msg MsgSetVerificationRelationships) GetSigners() []sdk.AccAddress {
 	accAddr, err := sdk.AccAddressFromBech32(msg.Owner)
 	if err != nil {
 		panic(err)

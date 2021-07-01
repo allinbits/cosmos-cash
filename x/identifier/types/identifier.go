@@ -10,6 +10,17 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
+// A verification relationship expresses the relationship between the DID subject and a verification method.
+// This enum is used to
+// cfr. https://www.w3.org/TR/did-core/#verification-relationships
+const (
+	RelationshipAuthentication       = "authentication"       // https://www.w3.org/TR/did-core/#authentication
+	RelationshipAssertionMethod      = "assertionMethod"      // https://www.w3.org/TR/did-core/#assertion
+	RelationshipKeyAgreement         = "keyAgreement"         // https://www.w3.org/TR/did-core/#key-agreement
+	RelationshipCapabilityInvocation = "capabilityInvocation" // https://www.w3.org/TR/did-core/#capability-invocation
+	RelationshipCapabilityDelegation = "capabilityDelegation" // https://www.w3.org/TR/did-core/#capability-delegation
+)
+
 /**
 Regexp generated using this ABNF specs and using https://abnf.msweet.org/index.php
 
@@ -63,14 +74,35 @@ func IsValidRFC3986Uri(input string) bool {
 
 // IsEmpty tells if the trimmed input is empty
 func IsEmpty(input string) bool {
-	if strings.TrimSpace(input) == "" {
-		return true
+	return strings.TrimSpace(input) == ""
+}
+
+type IdentifierOption func(*DidDocument) error
+
+func WithVerifications(verifications []*Verification) IdentifierOption {
+	return func(did *DidDocument) error {
+		return did.AddVerifications(verifications...)
 	}
-	return false
+}
+
+func WithServices(services []*Service) IdentifierOption {
+	return func(did *DidDocument) error {
+		return did.AddServices(services...)
+	}
+}
+
+func WithController(controller string) IdentifierOption {
+	return func(did *DidDocument) (err error) {
+		// if the controller is not set return error
+		if !IsValidDID(controller) {
+			err = fmt.Errorf("the document did %s is not compliant with the specification: cfr https://www.w3.org/TR/did-core/#did-syntax", controller)
+		}
+		return
+	}
 }
 
 // NewIdentifier constructs a new Identifier
-func NewIdentifier(id string, services []*Service, verifications []*Verification) (did DidDocument, err error) {
+func NewIdentifier(id string, options ...IdentifierOption) (did DidDocument, err error) {
 
 	if !IsValidDID(id) {
 		err = fmt.Errorf("the document did %s is not compliant with the specification: cfr https://www.w3.org/TR/did-core/#did-syntax", id)
@@ -82,6 +114,163 @@ func NewIdentifier(id string, services []*Service, verifications []*Verification
 		Id:      id,
 	}
 
+	for _, fn := range options {
+		if err = fn(&did); err != nil {
+			return
+		}
+	}
+
+	return
+}
+
+// AddVerifications add one or more verification method and relations to a did document
+func (did *DidDocument) AddVerifications(verifications ...*Verification) (err error) {
+
+	// verify that there are no duplicates in method ids
+	index := make(map[string]bool)
+	// load existing verifications if any
+	for _, v := range did.VerificationMethods {
+		index[v.Id] = true
+	}
+	// loop through the verifications and look for problems
+	for _, v := range verifications {
+		// verify that the method id is correct
+		if !IsValidDIDURL(v.Method.Id) {
+			err = fmt.Errorf("the verification method id %s is not compliant with the specification: cfr https://www.w3.org/TR/did-core/#did-url-syntax", v.Method.Id)
+			return
+		}
+
+		// if the controller is not set return error
+		if !IsValidDID(v.Method.Controller) {
+			err = fmt.Errorf("controller not set for verification method %s, consider using the document did as controller: %s", v.Method.Id, did.Id)
+			return
+		}
+
+		// check for empty method type
+		if IsEmpty(v.Method.Type) {
+			err = fmt.Errorf("type not set for verification method %s", v.Method.Id)
+			return
+		}
+
+		// check for empty publickey
+		if IsEmpty(v.Method.PublicKeyBase58) {
+			err = fmt.Errorf("public key not set for verification method %s", v.Method.Id)
+			return
+		}
+
+		// verify that there are no duplicates in method ids
+		if _, found := index[v.Method.Id]; found {
+			err = fmt.Errorf("duplicated verification method id %s", v.Method.Id)
+			return
+		}
+		index[v.Method.Id] = true
+
+		// first add the method to the list of methods
+		did.VerificationMethods = append(did.VerificationMethods, v.GetMethod())
+		// now add the relationships
+		did.SetRelationships(v.Method.Id, v.Relationships...)
+	}
+	return
+}
+
+// RevokeVerification revoke a verification method
+// and all relationships associated with it
+func (did *DidDocument) RevokeVerification(methodID string) {
+
+	del := func(x int) {
+		lastIdx := len(did.VerificationMethods) - 1
+		switch lastIdx {
+		case 0:
+			did.VerificationMethods = []*VerificationMethod{}
+		case x:
+			did.VerificationMethods = did.VerificationMethods[:lastIdx]
+		default:
+			did.VerificationMethods[x] = did.VerificationMethods[lastIdx]
+			did.VerificationMethods = did.VerificationMethods[:lastIdx]
+		}
+	}
+
+	for i, vm := range did.VerificationMethods {
+		if vm.Id == methodID {
+			del(i)
+			break
+		}
+	}
+}
+
+// SetRelationships for a did document
+func (did *DidDocument) SetRelationships(methodID string, relationships ...string) {
+
+	// XXX horrible but sometimes life is like that
+	del := func(relName string, x int) {
+		lastIdx := len(did.VerificationMethods) - 1
+		relationships := did.VerificationRelationships[relName]
+		switch lastIdx {
+		case 0: // remove the relationships since there is no elements left
+			delete(did.VerificationRelationships, relName)
+		case x: // if it's at the last position, just drop the last position
+			relationships.Labels = relationships.Labels[:lastIdx]
+		default: // swap and drop last position
+			relationships.Labels[x] = relationships.Labels[lastIdx]
+			relationships.Labels = relationships.Labels[:lastIdx]
+		}
+	}
+
+	// first remove existing
+	for _, relationship := range did.VerificationRelationships {
+		for i, mID := range relationship.Labels {
+			if mID == methodID {
+				del(mID, i)
+			}
+		}
+	}
+
+	// then assign them
+	for _, r := range relationships {
+		if mIDs, exists := did.VerificationRelationships[r]; !exists {
+			mIDs = &DidDocument_VerificationRelationships{
+				Labels: []string{methodID},
+			}
+		} else {
+			mIDs.Labels = append(mIDs.Labels, methodID)
+		}
+	}
+}
+
+// ControllerInRelationships verifies if a controller did
+// exists for at least one of the relationships in the did document
+func (did DidDocument) ControllerInRelationships(
+	contoller string,
+	relationships ...string) bool {
+	keyController := make(map[string]string)
+	// first check if the controller exists
+	for _, vm := range did.VerificationMethods {
+		if vm.Controller != contoller {
+			continue
+		}
+		keyController[vm.Id] = vm.Controller
+	}
+	// if controller was not found then return
+	if len(keyController) == 0 {
+		return false
+	}
+	// now see if the controller key is in the relationship
+	for _, r := range relationships {
+		relationships, exists := did.VerificationRelationships[r]
+		if !exists {
+			return false
+		}
+
+		for _, k := range relationships.Labels {
+			if _, found := keyController[k]; found {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func (did *DidDocument) AddServices(services ...*Service) (err error) {
 	// used to check duplicates
 	index := make(map[string]bool)
 
@@ -108,136 +297,12 @@ func NewIdentifier(id string, services []*Service, verifications []*Verification
 
 		did.Services = append(did.Services, s)
 	}
-
-	err = did.AddVerifications(verifications...)
-
 	return
-}
-
-// AddVerifications add one or more verification method and relations to a did document
-func (did *DidDocument) AddVerifications(verifications ...*Verification) (err error) {
-
-	// verify that there are no duplicates in method ids
-	index := make(map[string]bool)
-	// load existing verifications if any
-	for _, v := range did.VerificationMethods {
-		index[v.Id] = true
-	}
-	// loop through the verifications and look for problems
-	for _, v := range verifications {
-		// verify that the method id is correct
-		if !IsValidDIDURL(v.Method.Id) {
-			err = fmt.Errorf("the verification method id %s is not compliant with the specification: cfr https://www.w3.org/TR/did-core/#did-url-syntax", v.Method.Id)
-			return
-		}
-
-		// if the controller is not set return error
-		if v.Method.Controller == "" {
-			err = fmt.Errorf("controller not set for verification method %s, consider using the document did as controller: %s", v.Method.Id, did.Id)
-			return
-		}
-
-		// check for empty method type
-		if v.Method.Type == "" {
-			err = fmt.Errorf("type not set for verification method %s", v.Method.Id)
-			return
-		}
-
-		// check for empty publickey
-		if v.Method.PublicKeyBase58 == "" {
-			err = fmt.Errorf("public key not set for verification method %s", v.Method.Id)
-			return
-		}
-
-		// verify that there are no duplicates in method ids
-		if _, found := index[v.Method.Id]; found {
-			err = fmt.Errorf("duplicated verification method id %s", v.Method.Id)
-			return
-		}
-		index[v.Method.Id] = true
-
-		// first add the method to the list of methods
-		did.VerificationMethods = append(did.VerificationMethods, v.GetMethod())
-
-		// now add the relationships
-		for _, r := range v.Relationships {
-			mIDs, errR := did.getRelationships(r)
-			if errR != nil {
-				err = errR
-				return
-			}
-			*mIDs = append(*mIDs, v.Method.Id)
-		}
-	}
-	return
-}
-
-// RevokeVerification revoke a verification method
-func (did *DidDocument) RevokeVerification(methodID string) {
-	//TODO Implement
-}
-
-// ControllerInRelationships verifies if a controller did
-// exists for at least one of the relationships in the did document
-func (did DidDocument) ControllerInRelationships(
-	contoller string,
-	relationships ...VerificationRelationship) bool {
-	keyController := make(map[string]string)
-	// first check if the controller exists
-	for _, vm := range did.VerificationMethods {
-		if vm.Controller != contoller {
-			continue
-		}
-		keyController[vm.Id] = vm.Controller
-	}
-	// if controller was not found then return
-	if len(keyController) == 0 {
-		return false
-	}
-	// now see if the controller key is in the relationship
-	for _, r := range relationships {
-		methodIDs, _ := did.getRelationships(r)
-		for _, k := range *methodIDs {
-			if _, found := keyController[k]; found {
-				return true
-			}
-		}
-	}
-	return false
 }
 
 // GetBytes is a helper for serializing
 func (did DidDocument) GetBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&did))
-}
-
-// getRelationships returns the pointer to the relationship slice identified
-// by r. This is done to improve ergonomics to access relationships data
-func (did *DidDocument) getRelationships(r VerificationRelationship) (methodIDs *[]string, err error) {
-
-	lazyGet := func(data *[]string) *[]string {
-		if data == nil {
-			newData := make([]string, 0)
-			return &newData
-		}
-		return data
-	}
-
-	switch r {
-	case VerificationRelationship_authentication:
-		methodIDs = lazyGet(&did.Authentication)
-	case VerificationRelationship_assertionMethod:
-		methodIDs = lazyGet(&did.AssertionMethod)
-	case VerificationRelationship_keyAgreement:
-		methodIDs = lazyGet(&did.KeyAgreement)
-	case VerificationRelationship_capabilityInvocation:
-		methodIDs = lazyGet(&did.CapabilityInvocation)
-	case VerificationRelationship_capabilityDelegation:
-		methodIDs = lazyGet(&did.CapabilityDelegation)
-	default:
-		err = fmt.Errorf("invalid verification relationship: %v", r)
-	}
-	return
 }
 
 // Verifications is a list of verification
@@ -250,7 +315,7 @@ func NewVerification(
 	pubKeyType string,
 	controller string,
 	pubKey []byte,
-	relationships []VerificationRelationship,
+	relationships []string,
 	contexts []string,
 ) Verification {
 	return Verification{

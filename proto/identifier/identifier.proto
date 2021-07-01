@@ -49,32 +49,16 @@ message DidDocument {
   // https://www.w3.org/TR/did-core/#services
   repeated Service services                        = 5;
 
-  // NOTE: below this line there are the relationships
+  // VerificationRelationships - support structure for proto3 repeated string in map
+  message VerificationRelationships {
+    repeated string Labels = 1;
+  }
 
-  // Authentication represents public key associated with the did document.
-  // cfr. https://www.w3.org/TR/did-core/#authentication
-  repeated string authentication                   = 6;
+  // A verification relationship expresses the relationship between the DID subject and a verification method.
+// This enum is used to 
+// cfr. https://www.w3.org/TR/did-core/#verification-relationships
+  map<string,VerificationRelationships> verificationRelationships = 6;
 
-  // Used to specify how the DID subject is expected to express claims, 
-  // such as for the purposes of issuing a Verifiable Credential.
-  // cfr. https://www.w3.org/TR/did-core/#assertion
-  repeated string assertionMethod                  = 7;
-
-  // used to specify how an entity can generate encryption material 
-  // in order to transmit confidential information intended for the DID subject.
-  // https://www.w3.org/TR/did-core/#key-agreement
-  repeated string keyAgreement                     = 8;
-
-  // Used to specify a verification method that might be used by the DID subject
-  // to invoke a cryptographic capability, such as the authorization 
-  // to update the DID Document.
-  // https://www.w3.org/TR/did-core/#capability-invocation
-  repeated string capabilityInvocation             = 9;
-
-  // Used to specify a mechanism that might be used by the DID subject 
-  // to delegate a cryptographic capability to another party.
-  // https://www.w3.org/TR/did-core/#capability-delegation
-  repeated string capabilityDelegation             = 10;
 }
 
 // A DID document can express verification methods, 
@@ -89,17 +73,6 @@ message VerificationMethod {
   string type              = 2;
   string controller        = 3;
   string publicKeyBase58   = 4; // by default we support only publicKeyBase58
-}
-
-// A verification relationship expresses the relationship between the DID subject and a verification method.
-// This enum is used to 
-// cfr. https://www.w3.org/TR/did-core/#verification-relationships
-enum VerificationRelationship {
-  authentication       = 0; // https://www.w3.org/TR/did-core/#authentication
-  assertionMethod      = 1; // https://www.w3.org/TR/did-core/#assertion
-  keyAgreement         = 2; // https://www.w3.org/TR/did-core/#key-agreement
-  capabilityInvocation = 3; // https://www.w3.org/TR/did-core/#capability-invocation
-  capabilityDelegation = 4; // https://www.w3.org/TR/did-core/#capability-delegation
 }
 
 // Service defines how to find data associated with a identifer

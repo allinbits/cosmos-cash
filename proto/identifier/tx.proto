@@ -31,7 +31,7 @@ service Msg {
 message Verification {
   // verificationRelationships defines which relationships
   // are allowed to use the verification method
-  repeated VerificationRelationship relationships = 1; // relationships that the method is allowed into.
+  repeated string                   relationships = 1; // relationships that the method is allowed into.
   VerificationMethod                method        = 2; // public key associated with the did document.
   repeated string                   context       = 3; // additional contexts (json ld schemas)
 }
@@ -86,7 +86,7 @@ message MsgSetVerificationRelationships {
 
   string                            id             = 1; // the did document id
   string                            method_id      = 2; // the verification to revoke
-  repeated VerificationRelationship relationships  = 3; // the verification relationships
+  repeated string                   relationships  = 3; // the verification relationships
   string                            owner          = 4; // address of the user creating the message
 }
 

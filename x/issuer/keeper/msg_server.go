@@ -40,7 +40,7 @@ func (k msgServer) CreateIssuer(
 	_, found = k.Keeper.GetIssuerByToken(ctx, []byte(msg.Token))
 	if found {
 		return nil, sdkerrors.Wrapf(
-			types.ErrIssuerFound,
+			types.ErrTokenAlreadyExists,
 			"token denom already exists",
 		)
 	}
@@ -59,24 +59,22 @@ func (k msgServer) CreateIssuer(
 
 	issuerToken := sdk.NewCoins(sdk.NewInt64Coin(msg.Token, int64(circulatingSupply)))
 
-	// mint new tokens for the issuer
 	if err := k.bk.MintCoins(
 		ctx, types.ModuleName, issuerToken,
 	); err != nil {
 		return nil, sdkerrors.Wrapf(
-			types.ErrIssuerFound,
+			types.ErrMintingTokens,
 			"cannot mint coins",
 		)
 	}
 
 	recipient, _ := sdk.AccAddressFromBech32(msg.Owner)
 
-	// send tokens from module to issuer
 	if err := k.bk.SendCoinsFromModuleToAccount(
 		ctx, types.ModuleName, recipient, issuerToken,
 	); err != nil {
 		return nil, sdkerrors.Wrapf(
-			types.ErrIssuerFound,
+			types.ErrMintingTokens,
 			"cannot send tokens from module to issuer account",
 		)
 	}
@@ -98,7 +96,7 @@ func (k msgServer) BurnToken(
 	issuer, found := k.Keeper.GetIssuer(ctx, []byte(msg.Owner))
 	if !found {
 		return nil, sdkerrors.Wrapf(
-			types.ErrIssuerFound,
+			types.ErrIssuerNotFound,
 			"issuer does not exists",
 		)
 	}
@@ -111,25 +109,24 @@ func (k msgServer) BurnToken(
 			"coin string format not recognized",
 		)
 	}
+
 	// sender is the issuer
 	sender, _ := sdk.AccAddressFromBech32(issuer.Address)
 
-	// send tokens from module to issuer
 	if err := k.bk.SendCoinsFromAccountToModule(
 		ctx, sender, types.ModuleName, amounts,
 	); err != nil {
 		return nil, sdkerrors.Wrapf(
-			types.ErrIssuerFound,
+			types.ErrBurningTokens,
 			"cannot send tokens from issuer account to module",
 		)
 	}
 
-	// burn tokens for the issuer
 	if err := k.bk.BurnCoins(
 		ctx, types.ModuleName, amounts,
 	); err != nil {
 		return nil, sdkerrors.Wrapf(
-			types.ErrIssuerFound,
+			types.ErrBurningTokens,
 			"cannot burn coins",
 		)
 	}
@@ -172,25 +169,24 @@ func (k msgServer) MintToken(
 			)
 		}
 	}
+
 	// the recipient is the issuer itself
 	recipient, _ := sdk.AccAddressFromBech32(issuer.Address)
 
-	// mint tokens
 	if err := k.bk.MintCoins(
 		ctx, types.ModuleName, amounts,
 	); err != nil {
 		return nil, sdkerrors.Wrapf(
-			types.ErrIssuerFound,
+			types.ErrMintingTokens,
 			"cannot mint coins",
 		)
 	}
 
-	// send minted tokens to the issuer account
 	if err := k.bk.SendCoinsFromModuleToAccount(
 		ctx, types.ModuleName, recipient, amounts,
 	); err != nil {
 		return nil, sdkerrors.Wrapf(
-			types.ErrIssuerFound,
+			types.ErrMintingTokens,
 			"failed sending tokens from module to issuer",
 		)
 	}

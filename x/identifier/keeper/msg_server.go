@@ -43,7 +43,6 @@ func (k msgServer) CreateIdentifier(
 			types.ErrIdentifierFound,
 			"identifier already exists",
 		)
-
 	}
 
 	identifier, _ := types.NewIdentifier(msg.Id,
@@ -59,14 +58,14 @@ func (k msgServer) CreateIdentifier(
 	return &types.MsgCreateIdentifierResponse{}, nil
 }
 
-// AddAuthentication adds a public key and controller to an existing DID document
+// AddVerification adds a verification method and it's relationships to a DID Document
 func (k msgServer) AddVerification(
 	goCtx context.Context,
 	msg *types.MsgAddVerification,
 ) (*types.MsgAddVerificationResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	// get the did document
-	identifier, found := k.Keeper.GetIdentifier(ctx, []byte(msg.Id))
+	didDoc, found := k.Keeper.GetIdentifier(ctx, []byte(msg.Id))
 	if !found {
 		return nil, sdkerrors.Wrapf(
 			types.ErrIdentifierNotFound,
@@ -74,8 +73,10 @@ func (k msgServer) AddVerification(
 		)
 	}
 
+	ownerDid := types.DID(msg.Signer)
+
 	// Any verification method in the authentication relationship can update the DID document
-	if !identifier.ControllerInRelationships(msg.Owner, types.RelationshipAuthentication) {
+	if !didDoc.ControllerInRelationships(ownerDid, types.RelationshipAuthentication) {
 		return nil, sdkerrors.Wrapf(
 			types.ErrIdentifierNotFound,
 			"msg sender not authorized: AddVerification",
@@ -83,13 +84,13 @@ func (k msgServer) AddVerification(
 	}
 
 	// TODO: handle duplicates in the authentication slice
-	if err := identifier.AddVerifications(msg.Verification); err != nil {
+	if err := didDoc.AddVerifications(msg.Verification); err != nil {
 		return nil, err
 	}
 
 	// msg.Verification.Method.Id = msg.Id + "#keys-" + fmt.Sprintf("%d", len(identifier.Authentication)+1)
 	// identifier.VerificationMethods = append(identifier.VerificationMethods, msg.Authentication)
-	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), identifier)
+	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), didDoc)
 
 	ctx.EventManager().EmitEvent(
 		types.NewAuthenticationAddedEvent(msg.Id, msg.Verification.Method.Controller),
@@ -146,6 +147,8 @@ func (k msgServer) RevokeVerification(
 ) (*types.MsgRevokeVerificationResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	signerDID := types.DID(msg.Signer)
+
 	identifier, found := k.Keeper.GetIdentifier(ctx, []byte(msg.Id))
 	if !found {
 		return nil, sdkerrors.Wrapf(
@@ -155,7 +158,7 @@ func (k msgServer) RevokeVerification(
 	}
 
 	// Only the first public key can remove public keys that control the DID document
-	if !identifier.ControllerInRelationships(msg.Owner, types.RelationshipAuthentication) {
+	if !identifier.ControllerInRelationships(signerDID, types.RelationshipAuthentication) {
 		return nil, sdkerrors.Wrapf(
 			types.ErrIdentifierNotFound,
 			"msg sender not authorized: RevokeVerification",
@@ -171,11 +174,6 @@ func (k msgServer) RevokeVerification(
 		)
 	}
 	address := sdk.AccAddress(pubKey.Address())
-
-	// TODO: don't delete if only one auth
-	// if len(identifier.VerificationMethods) == 1 {
-
-	// }
 
 	identifier.RevokeVerification(msg.MethodId)
 
@@ -195,47 +193,37 @@ func (k msgServer) DeleteService(
 ) (*types.MsgDeleteServiceResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	identifier, found := k.Keeper.GetIdentifier(ctx, []byte(msg.Id))
+	didDoc, found := k.Keeper.GetIdentifier(ctx, []byte(msg.Id))
 	if !found {
-		return nil, sdkerrors.Wrapf(
-			types.ErrIdentifierNotFound,
-			"identifier not found: DeleteService",
-		)
+		return nil, sdkerrors.Wrapf(types.ErrIdentifierNotFound, msg.Id)
 	}
+	// compose did for the signer
+	signerDID := types.DID(msg.Signer)
 
-	// TODO add check on the controller (did level)
-	// Only the first public key can remove services from the DID document
-	if !identifier.ControllerInRelationships(msg.Owner, types.RelationshipAuthentication) {
-		return nil, sdkerrors.Wrapf(
-			types.ErrIdentifierNotFound,
-			"msg sender not authorized: DeleteService",
-		)
+	// TODO: semantic is wrong
+	if !didDoc.ControllerInRelationships(signerDID,
+		types.RelationshipAuthentication,
+		types.RelationshipCapabilityDelegation,
+	) {
+		return nil, sdkerrors.Wrapf(types.ErrUnauthorized, "DeleteService")
 	}
 
 	// Only try to remove service if there are services
-	if len(identifier.Services) == 0 {
+	if len(didDoc.Services) == 0 {
 		return nil, sdkerrors.Wrapf(
-			types.ErrIdentifierNotFound,
-			"no services found: DeleteService",
+			types.ErrInvalidState,
+			"the did document doesn't have services associated",
 		)
 	}
+	// delete the service
+	didDoc.DeleteService(msg.ServiceId)
 
-	services := identifier.Services
-	for i, key := range identifier.Services {
-		if key.Id == msg.ServiceId {
-			// TODO: improve this logic
-			services = append(
-				identifier.Services[:i],
-				identifier.Services[i+1:]...,
-			)
-		}
-	}
-	identifier.Services = services
+	// persist the did document
+	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), didDoc)
 
-	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), identifier)
-
+	// emit the delete event
 	ctx.EventManager().EmitEvent(
-		types.NewServiceDeletedEvent(msg.Id, msg.Id),
+		types.NewServiceDeletedEvent(msg.Id, msg.ServiceId),
 	)
 
 	return &types.MsgDeleteServiceResponse{}, nil

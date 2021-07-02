@@ -8,6 +8,7 @@ import (
 
 	"github.com/btcsuite/btcutil/base58"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 // A verification relationship expresses the relationship between the DID subject and a verification method.
@@ -52,6 +53,12 @@ var (
 	didURLValidationRegexp = regexp.MustCompile(didURLValidationRegexpStr)
 )
 
+// DID format a DID from a method specific identifier
+// cfr.https://www.w3.org/TR/did-core/#identifier
+func DID(didMethodSpecificIdentifier string) string {
+	return fmt.Sprint("did:cash:", didMethodSpecificIdentifier)
+}
+
 // IsValidDID validate the input string according to the
 // did specification (cfr. https://www.w3.org/TR/did-core/#did-syntax ).
 func IsValidDID(input string) bool {
@@ -72,30 +79,102 @@ func IsValidRFC3986Uri(input string) bool {
 	return true
 }
 
+// ValidateVerification perform basic validation on a verification struct
+// optionally validating the validation method controller against a list
+// of allowed controllers.
+// in case of error returns an cosmos-sdk wrapped error
+func ValidateVerification(v *Verification, allowedControllers ...string) (err error) {
+	// verify that the method id is correct
+	if !IsValidDIDURL(v.Method.Id) {
+		err = sdkerrors.Wrapf(ErrInvalidDIDURLFormat, "verification method id: %v", v.Method.Id)
+		return
+	}
+
+	// if the controller is not set return error
+	if !IsValidDID(v.Method.Controller) {
+		err = sdkerrors.Wrapf(ErrInvalidDIDFormat, "verification method controller %v", v.Method.Controller)
+		return
+	}
+
+	// check if the method controller is in the set of allowed controllers
+	if len(allowedControllers) > 0 {
+		ac := make(map[string]struct{}, len(allowedControllers))
+		for _, c := range allowedControllers {
+			ac[c] = struct{}{}
+		}
+		if _, found := ac[v.Method.Controller]; !found {
+			err = sdkerrors.Wrapf(ErrInvalidInput, "verification method controller is not in the list of valid controllers")
+			return
+		}
+	}
+
+	// check for empty method type
+	if IsEmpty(v.Method.Type) {
+		err = sdkerrors.Wrapf(ErrInvalidInput, "verification method type not set for verification method %s", v.Method.Id)
+		return
+	}
+
+	// check for empty publickey
+	if IsEmpty(v.Method.PublicKeyBase58) {
+		err = sdkerrors.Wrapf(ErrInvalidInput, "public key not set for verification method %s", v.Method.Id)
+		return
+	}
+
+	// check that there is at least a relationship
+	if len(v.Relationships) == 0 {
+		err = ErrEmptyRelationships
+		return
+	}
+	return
+}
+
+func ValidateService(s *Service) (err error) {
+	// verify that the id and endpoint are valid url (according to RFC3986)
+	if !IsValidRFC3986Uri(s.Id) {
+		err = sdkerrors.Wrapf(ErrInvalidRFC3986UriFormat, "service id %s is not a valid RFC3986 uri", s.Id)
+		return
+	}
+
+	// verify that the id and endpoint are valid url (according to RFC3986)
+	if !IsValidRFC3986Uri(s.ServiceEndpoint) {
+		err = sdkerrors.Wrapf(ErrInvalidRFC3986UriFormat, "service id %s is not a valid RFC3986 uri", s.ServiceEndpoint)
+		return
+	}
+	return
+}
+
 // IsEmpty tells if the trimmed input is empty
 func IsEmpty(input string) bool {
 	return strings.TrimSpace(input) == ""
 }
 
+// IdentifierOption implements variadic pattern for optional did document fields
 type IdentifierOption func(*DidDocument) error
 
+// WithVerifications add optional verifications
 func WithVerifications(verifications []*Verification) IdentifierOption {
 	return func(did *DidDocument) error {
 		return did.AddVerifications(verifications...)
 	}
 }
 
+//WithServices add optional services
 func WithServices(services []*Service) IdentifierOption {
 	return func(did *DidDocument) error {
 		return did.AddServices(services...)
 	}
 }
 
-func WithController(controller string) IdentifierOption {
+// WithControllers add optional did controller
+func WithControllers(controllers ...string) IdentifierOption {
 	return func(did *DidDocument) (err error) {
-		// if the controller is not set return error
-		if !IsValidDID(controller) {
-			err = fmt.Errorf("the document did %s is not compliant with the specification: cfr https://www.w3.org/TR/did-core/#did-syntax", controller)
+		for _, c := range controllers {
+			// if the controller is not set return error
+			if !IsValidDID(c) {
+				err = sdkerrors.Wrapf(ErrInvalidDIDFormat, "did controller %s", c)
+				return
+			}
+			did.Controller = append(did.Controller, c)
 		}
 		return
 	}
@@ -105,7 +184,7 @@ func WithController(controller string) IdentifierOption {
 func NewIdentifier(id string, options ...IdentifierOption) (did DidDocument, err error) {
 
 	if !IsValidDID(id) {
-		err = fmt.Errorf("the document did %s is not compliant with the specification: cfr https://www.w3.org/TR/did-core/#did-syntax", id)
+		err = sdkerrors.Wrapf(ErrInvalidDIDFormat, "did %s", id)
 		return
 	}
 
@@ -127,43 +206,25 @@ func NewIdentifier(id string, options ...IdentifierOption) (did DidDocument, err
 func (did *DidDocument) AddVerifications(verifications ...*Verification) (err error) {
 
 	// verify that there are no duplicates in method ids
-	index := make(map[string]bool)
+	index := make(map[string]struct{})
 	// load existing verifications if any
 	for _, v := range did.VerificationMethods {
-		index[v.Id] = true
+		index[v.Id] = struct{}{}
 	}
+
 	// loop through the verifications and look for problems
 	for _, v := range verifications {
-		// verify that the method id is correct
-		if !IsValidDIDURL(v.Method.Id) {
-			err = fmt.Errorf("the verification method id %s is not compliant with the specification: cfr https://www.w3.org/TR/did-core/#did-url-syntax", v.Method.Id)
-			return
-		}
 
-		// if the controller is not set return error
-		if !IsValidDID(v.Method.Controller) {
-			err = fmt.Errorf("controller not set for verification method %s, consider using the document did as controller: %s", v.Method.Id, did.Id)
-			return
-		}
-
-		// check for empty method type
-		if IsEmpty(v.Method.Type) {
-			err = fmt.Errorf("type not set for verification method %s", v.Method.Id)
-			return
-		}
-
-		// check for empty publickey
-		if IsEmpty(v.Method.PublicKeyBase58) {
-			err = fmt.Errorf("public key not set for verification method %s", v.Method.Id)
+		if err = ValidateVerification(v); err != nil {
 			return
 		}
 
 		// verify that there are no duplicates in method ids
 		if _, found := index[v.Method.Id]; found {
-			err = fmt.Errorf("duplicated verification method id %s", v.Method.Id)
+			err = sdkerrors.Wrapf(ErrInvalidInput, "duplicated verification method id %s", v.Method.Id)
 			return
 		}
-		index[v.Method.Id] = true
+		index[v.Method.Id] = struct{}{}
 
 		// first add the method to the list of methods
 		did.VerificationMethods = append(did.VerificationMethods, v.GetMethod())
@@ -201,7 +262,6 @@ func (did *DidDocument) RevokeVerification(methodID string) {
 // SetRelationships for a did document
 func (did *DidDocument) SetRelationships(methodID string, relationships ...string) {
 
-	// XXX horrible but sometimes life is like that
 	del := func(relName string, x int) {
 		lastIdx := len(did.VerificationMethods) - 1
 		relationships := did.VerificationRelationships[relName]
@@ -239,6 +299,7 @@ func (did *DidDocument) SetRelationships(methodID string, relationships ...strin
 
 // ControllerInRelationships verifies if a controller did
 // exists for at least one of the relationships in the did document
+// TODO: improve semantics for this one
 func (did DidDocument) ControllerInRelationships(
 	contoller string,
 	relationships ...string) bool {
@@ -270,34 +331,50 @@ func (did DidDocument) ControllerInRelationships(
 	return false
 }
 
+// AddServices add services to a did document
 func (did *DidDocument) AddServices(services ...*Service) (err error) {
 	// used to check duplicates
-	index := make(map[string]bool)
+	index := make(map[string]struct{})
 
 	// services must be unique
 	for _, s := range services {
-		// verify that the id and endpoint are valid url (according to RFC3986)
-		if !IsValidRFC3986Uri(s.Id) {
-			err = fmt.Errorf("service id is not a valid RFC3986 uri: %s", s.Id)
-			return
-		}
-
-		// verify that the id and endpoint are valid url (according to RFC3986)
-		if !IsValidRFC3986Uri(s.ServiceEndpoint) {
-			err = fmt.Errorf("service endpoint is not a valid RFC3986 uri: %s", s.ServiceEndpoint)
+		if err = ValidateService(s); err != nil {
 			return
 		}
 
 		// verify that there are no duplicates in method ids
 		if _, found := index[s.Id]; found {
-			err = fmt.Errorf("duplicated verification method id %s", s.Id)
+			err = sdkerrors.Wrapf(ErrInvalidInput, "duplicated verification method id %s", s.Id)
 			return
 		}
-		index[s.Id] = true
+		index[s.Id] = struct{}{}
 
 		did.Services = append(did.Services, s)
 	}
 	return
+}
+
+// DeleteService delete an existing service from a did document
+func (did *DidDocument) DeleteService(serviceID string) {
+	del := func(x int) {
+		lastIdx := len(did.VerificationMethods) - 1
+		switch lastIdx {
+		case 0: // remove the relationships since there is no elements left
+			did.Services = []*Service{}
+		case x: // if it's at the last position, just drop the last position
+			did.Services = did.Services[:lastIdx]
+		default: // swap and drop last position
+			did.Services[x] = did.Services[lastIdx]
+			did.Services = did.Services[:lastIdx]
+		}
+	}
+
+	for i, s := range did.Services {
+		if s.Id == serviceID {
+			del(i)
+			break
+		}
+	}
 }
 
 // GetBytes is a helper for serializing

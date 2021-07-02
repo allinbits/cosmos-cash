@@ -16,13 +16,13 @@ func NewMsgCreateIdentifier(
 	id string,
 	verifications []*Verification,
 	services []*Service,
-	owner string,
+	signer string,
 ) *MsgCreateIdentifier {
 	return &MsgCreateIdentifier{
 		Id:            id,
 		Verifications: verifications,
 		Services:      services,
-		Owner:         owner,
+		Signer:        signer,
 	}
 }
 
@@ -42,7 +42,7 @@ func (msg MsgCreateIdentifier) GetSignBytes() []byte {
 
 // GetSigners implements sdk.Msg
 func (msg MsgCreateIdentifier) GetSigners() []sdk.AccAddress {
-	accAddr, err := sdk.AccAddressFromBech32(msg.Owner)
+	accAddr, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
 		panic(err)
 	}
@@ -61,12 +61,12 @@ const (
 func NewMsgUpdateIdentifier(
 	id string,
 	controller string,
-	owner string,
+	signer string,
 ) *MsgUpdateIdentifier {
 	return &MsgUpdateIdentifier{
 		Id:         id,
 		Controller: controller,
-		Owner:      owner,
+		Signer:     signer,
 	}
 }
 
@@ -86,7 +86,7 @@ func (msg MsgUpdateIdentifier) GetSignBytes() []byte {
 
 // GetSigners implements sdk.Msg
 func (msg MsgUpdateIdentifier) GetSigners() []sdk.AccAddress {
-	accAddr, err := sdk.AccAddressFromBech32(msg.Owner)
+	accAddr, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
 		panic(err)
 	}
@@ -107,12 +107,12 @@ var _ sdk.Msg = &MsgAddVerification{}
 func NewMsgAddVerification(
 	id string,
 	verification *Verification,
-	owner string,
+	signer string,
 ) *MsgAddVerification {
 	return &MsgAddVerification{
 		Id:           id,
 		Verification: verification,
-		Owner:        owner,
+		Signer:       signer,
 	}
 }
 
@@ -132,7 +132,7 @@ func (msg MsgAddVerification) GetSignBytes() []byte {
 
 // GetSigners implements sdk.Msg
 func (msg MsgAddVerification) GetSigners() []sdk.AccAddress {
-	accAddr, err := sdk.AccAddressFromBech32(msg.Owner)
+	accAddr, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
 		panic(err)
 	}
@@ -154,12 +154,12 @@ var _ sdk.Msg = &MsgRevokeVerification{}
 func NewMsgRevokeVerification(
 	id string,
 	methodID string,
-	owner string,
+	signer string,
 ) *MsgRevokeVerification {
 	return &MsgRevokeVerification{
 		Id:       id,
 		MethodId: methodID,
-		Owner:    owner,
+		Signer:   signer,
 	}
 }
 
@@ -179,7 +179,7 @@ func (msg MsgRevokeVerification) GetSignBytes() []byte {
 
 // GetSigners implements sdk.Msg
 func (msg MsgRevokeVerification) GetSigners() []sdk.AccAddress {
-	accAddr, err := sdk.AccAddressFromBech32(msg.Owner)
+	accAddr, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
 		panic(err)
 	}
@@ -198,13 +198,13 @@ func NewMsgSetVerificationRelationships(
 	id string,
 	methodID string,
 	relationships []string,
-	owner string,
+	signer string,
 ) *MsgSetVerificationRelationships {
 	return &MsgSetVerificationRelationships{
 		Id:            id,
 		MethodId:      methodID,
 		Relationships: relationships,
-		Owner:         owner,
+		Signer:        signer,
 	}
 }
 
@@ -224,7 +224,7 @@ func (msg MsgSetVerificationRelationships) GetSignBytes() []byte {
 
 // GetSigners implements sdk.Msg
 func (msg MsgSetVerificationRelationships) GetSigners() []sdk.AccAddress {
-	accAddr, err := sdk.AccAddressFromBech32(msg.Owner)
+	accAddr, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
 		panic(err)
 	}
@@ -246,12 +246,12 @@ var _ sdk.Msg = &MsgAddService{}
 func NewMsgAddService(
 	id string,
 	service *Service,
-	owner string,
+	signer string,
 ) *MsgAddService {
 	return &MsgAddService{
 		Id:          id,
 		ServiceData: service,
-		Owner:       owner,
+		Signer:      signer,
 	}
 }
 
@@ -271,7 +271,7 @@ func (msg MsgAddService) GetSignBytes() []byte {
 
 // GetSigners implements sdk.Msg
 func (msg MsgAddService) GetSigners() []sdk.AccAddress {
-	accAddr, err := sdk.AccAddressFromBech32(msg.Owner)
+	accAddr, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
 		panic(err)
 	}
@@ -290,12 +290,12 @@ const (
 func NewMsgDeleteService(
 	id string,
 	serviceID string,
-	owner string,
+	signer string,
 ) *MsgDeleteService {
 	return &MsgDeleteService{
 		Id:        id,
 		ServiceId: serviceID,
-		Owner:     owner,
+		Signer:    signer,
 	}
 }
 
@@ -315,7 +315,7 @@ func (msg MsgDeleteService) GetSignBytes() []byte {
 
 // GetSigners implements sdk.Msg
 func (msg MsgDeleteService) GetSigners() []sdk.AccAddress {
-	accAddr, err := sdk.AccAddressFromBech32(msg.Owner)
+	accAddr, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
 		panic(err)
 	}

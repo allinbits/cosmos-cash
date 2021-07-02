@@ -8,7 +8,6 @@ import (
 
 func TestMsgCreateIdentifier(t *testing.T) {
 	tests := []struct {
-		name          string
 		id            string
 		verifications Verifications
 		services      Services
@@ -16,13 +15,30 @@ func TestMsgCreateIdentifier(t *testing.T) {
 		expectPass    bool
 	}{
 		{
-			"Pass: ",
-			"id1",
+			"did:auth:whatever",
 			Verifications{
 				&Verification{
 					[]string{RelationshipAuthentication},
 					&VerificationMethod{
-						"auth",
+						"did:auth:whatever#1",
+						"type",
+						"did:auth:whatever",
+						"3214141231",
+					},
+					[]string{},
+				},
+			},
+			Services{},
+			"owner",
+			true,
+		},
+		{
+			"invalid did",
+			Verifications{
+				&Verification{
+					[]string{RelationshipAuthentication},
+					&VerificationMethod{
+						"did:auth:whatever#1",
 						"type",
 						"cont",
 						"value",
@@ -32,11 +48,12 @@ func TestMsgCreateIdentifier(t *testing.T) {
 			},
 			Services{},
 			"owner",
-			true,
+			false, // invalid did
 		},
 	}
 
-	for _, tc := range tests {
+	for i, tc := range tests {
+		t.Logf("TestMsgCreateIdentifier#%d", i)
 		msg := NewMsgCreateIdentifier(
 			tc.id,
 			tc.verifications,
@@ -45,24 +62,22 @@ func TestMsgCreateIdentifier(t *testing.T) {
 		)
 
 		if tc.expectPass {
-			require.Nil(t, msg.ValidateBasic(), "test: %v", tc.name)
+			require.Nil(t, msg.ValidateBasic(), "test: TestMsgCreateIdentifier#%v", i)
 		} else {
-			require.NotNil(t, msg.ValidateBasic(), "test: %v", tc.name)
+			require.NotNil(t, msg.ValidateBasic(), "test: TestMsgCreateIdentifier#%v", i)
 		}
 	}
 }
 
 func TestMsgAddVerification(t *testing.T) {
 	tests := []struct {
-		name       string
 		id         string
 		auth       Verification
 		owner      string
 		expectPass bool
 	}{
 		{
-			"Pass: ",
-			"id1",
+			"did:cash:whatever",
 			Verification{
 				[]string{RelationshipAuthentication},
 				&VerificationMethod{
@@ -78,7 +93,8 @@ func TestMsgAddVerification(t *testing.T) {
 		},
 	}
 
-	for _, tc := range tests {
+	for i, tc := range tests {
+		t.Logf("TestMsgAddVerification#%d", i)
 		msg := NewMsgAddVerification(
 			tc.id,
 			&tc.auth,
@@ -86,31 +102,30 @@ func TestMsgAddVerification(t *testing.T) {
 		)
 
 		if tc.expectPass {
-			require.Nil(t, msg.ValidateBasic(), "test: %v", tc.name)
+			require.Nil(t, msg.ValidateBasic(), "test: TestMsgAddVerification#%v", i)
 		} else {
-			require.NotNil(t, msg.ValidateBasic(), "test: %v", tc.name)
+			require.NotNil(t, msg.ValidateBasic(), "test: TestMsgAddVerification#%v", i)
 		}
 	}
 }
 
 func TestMsgRevokeVerification(t *testing.T) {
 	tests := []struct {
-		name       string
 		id         string
 		key        string
 		owner      string
 		expectPass bool
 	}{
 		{
-			"Pass: ",
-			"id1:cash:31",
-			"key",
-			"owner",
+			"did:cash:whatever",
+			"did:cash:whatever#key-method-1",
+			"signerAddress",
 			true,
 		},
 	}
 
-	for _, tc := range tests {
+	for i, tc := range tests {
+		t.Logf("TestMsgRevokeVerification#%d", i)
 		msg := NewMsgRevokeVerification(
 			tc.id,
 			tc.key,
@@ -118,9 +133,9 @@ func TestMsgRevokeVerification(t *testing.T) {
 		)
 
 		if tc.expectPass {
-			require.Nil(t, msg.ValidateBasic(), "test: %v", tc.name)
+			require.Nil(t, msg.ValidateBasic(), "test: TestMsgRevokeVerification#%v", i)
 		} else {
-			require.NotNil(t, msg.ValidateBasic(), "test: %v", tc.name)
+			require.NotNil(t, msg.ValidateBasic(), "test: TestMsgRevokeVerification#%v", i)
 		}
 	}
 }

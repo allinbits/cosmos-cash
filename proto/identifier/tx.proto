@@ -31,9 +31,9 @@ service Msg {
 message Verification {
   // verificationRelationships defines which relationships
   // are allowed to use the verification method
-  repeated string                   relationships = 1; // relationships that the method is allowed into.
-  VerificationMethod                method        = 2; // public key associated with the did document.
-  repeated string                   context       = 3; // additional contexts (json ld schemas)
+  repeated string    relationships = 1; // relationships that the method is allowed into.
+  VerificationMethod method        = 2; // public key associated with the did document.
+  repeated string    context       = 3; // additional contexts (json ld schemas)
 }
 
 // -------------------------------
@@ -45,11 +45,11 @@ message MsgCreateIdentifier {
   option (gogoproto.equal)            = false;
   option (gogoproto.goproto_getters)  = false;
 
-  string                id            = 1;
-  string                controller    = 2;
-  repeated Verification verifications = 3;
-  repeated Service      services      = 4;
-  string                owner         = 5;
+  string                id            = 1; // the did 
+  string                controller    = 2; // the controller did
+  repeated Verification verifications = 3; // the list of verification methods and relationships
+  repeated Service      services      = 4; // the list of services
+  string                signer        = 5; // address of the account signing the message 
 }
 
 message MsgCreateIdentifierResponse {}
@@ -58,9 +58,9 @@ message MsgUpdateIdentifier {
   option (gogoproto.equal)            = false;
   option (gogoproto.goproto_getters)  = false;
 
-  string                id            = 1; // the id to update
-  string                controller    = 2; // the new controller
-  string                owner         = 5; // address of the user creating the message
+  string id         = 1; // the did
+  string controller = 2; // the new controller
+  string signer     = 5; // address of the account signing the message
 }
 
 message MsgUpdateIdentifierResponse {}
@@ -73,9 +73,9 @@ message MsgAddVerification {
   option (gogoproto.equal)           = false;
   option (gogoproto.goproto_getters) = false;
 
-  string id                 = 1; // the did document id
+  string       id           = 1; // the did
   Verification verification = 2; // the verification to add
-  string owner              = 3; // address of the user creating the message
+  string       signer       = 3; // address of the account signing the message
 }
 
 message MsgAddVerificationResponse {}
@@ -84,10 +84,10 @@ message MsgSetVerificationRelationships {
   option (gogoproto.equal)           = false;
   option (gogoproto.goproto_getters) = false;
 
-  string                            id             = 1; // the did document id
-  string                            method_id      = 2; // the verification to revoke
-  repeated string                   relationships  = 3; // the verification relationships
-  string                            owner          = 4; // address of the user creating the message
+  string          id            = 1; // the did
+  string          method_id     = 2; // the verification method id
+  repeated string relationships = 3; // the list of relationships to set
+  string          signer        = 4; // address of the account signing the message
 }
 
 message MsgSetVerificationRelationshipsResponse {}
@@ -96,9 +96,9 @@ message MsgRevokeVerification {
   option (gogoproto.equal)           = false;
   option (gogoproto.goproto_getters) = false;
 
-  string                            id             = 1; // the did document id
-  string                            method_id      = 2; // the verification to revoke
-  string                            owner          = 3; // address of the user creating the message
+  string id        = 1; // the did
+  string method_id = 2; // the verification method id
+  string signer    = 3; // address of the account signing the message
 }
 
 message MsgRevokeVerificationResponse {}
@@ -111,9 +111,9 @@ message MsgAddService {
   option (gogoproto.equal)           = false;
   option (gogoproto.goproto_getters) = false;
 
-  string  id           = 1; // the did document id
-  Service service_data = 2; //
-  string owner         = 3;
+  string  id           = 1; // the did
+  Service service_data = 2; // the service data to add
+  string signer        = 3; // address of the account signing the message 
 }
 
 message MsgAddServiceResponse {}
@@ -122,9 +122,9 @@ message MsgDeleteService {
   option (gogoproto.equal)           = false;
   option (gogoproto.goproto_getters) = false;
 
-  string id             = 1;
-  string service_id     = 2;
-  string owner          = 3;
+  string id         = 1; // the did
+  string service_id = 2; // the service id
+  string signer     = 3; // address of the account signing the message 
 }
 
 message MsgDeleteServiceResponse {}

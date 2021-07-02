@@ -18,6 +18,21 @@ func (msg MsgCreateIdentifier) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "verifications are required")
 	}
 
+	for _, v := range msg.Verifications {
+		if err := ValidateVerification(v); err != nil {
+			return err
+		}
+	}
+
+	// services are optional
+	if msg.Services != nil {
+		for _, s := range msg.Services {
+			if err := ValidateService(s); err != nil {
+				return err
+			}
+		}
+	}
+
 	return nil
 
 }
@@ -42,12 +57,12 @@ func (msg MsgUpdateIdentifier) ValidateBasic() error {
 }
 
 // --------------------------
-// ADD VERIFICATION
+// ADD VERIFICATION METHOD
 // --------------------------
 
 // ValidateBasic performs a basic check of the MsgAddVerification fields.
 func (msg MsgAddVerification) ValidateBasic() error {
-	if msg.Id == "" {
+	if !IsValidDID(msg.Id) {
 		return sdkerrors.Wrap(ErrInvalidDIDFormat, msg.Id)
 	}
 
@@ -55,14 +70,16 @@ func (msg MsgAddVerification) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "verification data is required")
 	}
 
-	// TODO: add more verification stuff
+	if len(msg.Verification.Relationships) == 0 {
+		return sdkerrors.Wrap(ErrEmptyRelationships, "at least a verification relationship is required")
+	}
 
 	return nil
 
 }
 
 // --------------------------
-// REVOKE VERIFICATION
+// REVOKE VERIFICATION METHOD
 // --------------------------
 
 // ValidateBasic performs a basic check of the MsgRevokeVerification fields.
@@ -98,7 +115,6 @@ func (msg MsgSetVerificationRelationships) ValidateBasic() error {
 	}
 
 	// TODO: there should be at least one authentication for the did subject
-
 	return nil
 }
 
@@ -124,11 +140,9 @@ func (msg MsgAddService) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "service type required")
 	}
 
-	// XXX: compliance with the spec breaks the issuer module/flow
 	if !IsValidRFC3986Uri(msg.ServiceData.ServiceEndpoint) {
 		return sdkerrors.Wrap(ErrInvalidRFC3986UriFormat, "service endpoint validation error")
 	}
-
 	return nil
 }
 

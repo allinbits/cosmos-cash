@@ -58,9 +58,9 @@ message MsgUpdateIdentifier {
   option (gogoproto.equal)            = false;
   option (gogoproto.goproto_getters)  = false;
 
-  string id         = 1; // the did
-  string controller = 2; // the new controller
-  string signer     = 5; // address of the account signing the message
+  string          id         = 1; // the did
+  repeated string controller = 2; // update controllers
+  string          signer     = 5; // address of the account signing the message
 }
 
 message MsgUpdateIdentifierResponse {}

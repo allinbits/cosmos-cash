@@ -60,7 +60,7 @@ const (
 
 func NewMsgUpdateIdentifier(
 	id string,
-	controller string,
+	controller []string,
 	signer string,
 ) *MsgUpdateIdentifier {
 	return &MsgUpdateIdentifier{

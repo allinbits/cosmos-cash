@@ -2,7 +2,6 @@ package types
 
 import (
 	"fmt"
-	"net/url"
 	"regexp"
 	"strings"
 
@@ -46,17 +45,19 @@ const (
 	contextDIDBase            = "https://www.w3.org/ns/did/v1"
 	didValidationRegexpStr    = `^did\:[a-z0-9]+\:(([A-Z.a-z0-9]|\-|_|%[0-9A-Fa-f][0-9A-Fa-f])*\:)*([A-Z.a-z0-9]|\-|_|%[0-9A-Fa-f][0-9A-Fa-f])+$`
 	didURLValidationRegexpStr = `^did\:[a-z0-9]+\:(([A-Z.a-z0-9]|\-|_|%[0-9A-Fa-f][0-9A-Fa-f])*\:)*([A-Z.a-z0-9]|\-|_|%[0-9A-Fa-f][0-9A-Fa-f])+(/(([-A-Z._a-z0-9]|~)|%[0-9A-Fa-f][0-9A-Fa-f]|(\!|\$|&|'|\(|\)|\*|\+|,|;|\=)|\:|@)*)*(\?(((([-A-Z._a-z0-9]|~)|%[0-9A-Fa-f][0-9A-Fa-f]|(\!|\$|&|'|\(|\)|\*|\+|,|;|\=)|\:|@)|/|\?)*))?(#(((([-A-Z._a-z0-9]|~)|%[0-9A-Fa-f][0-9A-Fa-f]|(\!|\$|&|'|\(|\)|\*|\+|,|;|\=)|\:|@)|/|\?)*))?$`
+	rfc3986RegexpStr          = `^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?$`
 )
 
 var (
 	didValidationRegexp    = regexp.MustCompile(didValidationRegexpStr)
 	didURLValidationRegexp = regexp.MustCompile(didURLValidationRegexpStr)
+	rfc3986Regexp          = regexp.MustCompile(rfc3986RegexpStr)
 )
 
 // DID format a DID from a method specific identifier
 // cfr.https://www.w3.org/TR/did-core/#identifier
 func DID(didMethodSpecificIdentifier string) string {
-	return fmt.Sprint("did:cash:", didMethodSpecificIdentifier)
+	return fmt.Sprint(DidPrefix, didMethodSpecificIdentifier)
 }
 
 // IsValidDID validate the input string according to the
@@ -72,11 +73,9 @@ func IsValidDIDURL(input string) bool {
 }
 
 // IsValidRFC3986Uri checks if the input string is a valid RFC3986 URI
+// (cfr https://datatracker.ietf.org/doc/html/rfc3986#page-50)
 func IsValidRFC3986Uri(input string) bool {
-	if _, err := url.Parse(input); err != nil {
-		return false
-	}
-	return true
+	return rfc3986Regexp.MatchString(input)
 }
 
 // ValidateVerification perform basic validation on a verification struct
@@ -96,18 +95,6 @@ func ValidateVerification(v *Verification, allowedControllers ...string) (err er
 		return
 	}
 
-	// check if the method controller is in the set of allowed controllers
-	if len(allowedControllers) > 0 {
-		ac := make(map[string]struct{}, len(allowedControllers))
-		for _, c := range allowedControllers {
-			ac[c] = struct{}{}
-		}
-		if _, found := ac[v.Method.Controller]; !found {
-			err = sdkerrors.Wrapf(ErrInvalidInput, "verification method controller is not in the list of valid controllers")
-			return
-		}
-	}
-
 	// check for empty method type
 	if IsEmpty(v.Method.Type) {
 		err = sdkerrors.Wrapf(ErrInvalidInput, "verification method type not set for verification method %s", v.Method.Id)
@@ -122,24 +109,43 @@ func ValidateVerification(v *Verification, allowedControllers ...string) (err er
 
 	// check that there is at least a relationship
 	if len(v.Relationships) == 0 {
-		err = ErrEmptyRelationships
+		err = sdkerrors.Wrap(ErrEmptyRelationships, "at least a verification relationship is required")
 		return
 	}
 	return
 }
 
+// ValidateService performs basic on a service struct
 func ValidateService(s *Service) (err error) {
-	// verify that the id and endpoint are valid url (according to RFC3986)
+
+	// verify that the id is not empty and is a valid url (according to RFC3986)
+	if IsEmpty(s.Id) {
+		err = sdkerrors.Wrap(ErrInvalidInput, "service id cannot be empty;")
+		return
+	}
+
 	if !IsValidRFC3986Uri(s.Id) {
 		err = sdkerrors.Wrapf(ErrInvalidRFC3986UriFormat, "service id %s is not a valid RFC3986 uri", s.Id)
 		return
 	}
 
-	// verify that the id and endpoint are valid url (according to RFC3986)
-	if !IsValidRFC3986Uri(s.ServiceEndpoint) {
-		err = sdkerrors.Wrapf(ErrInvalidRFC3986UriFormat, "service id %s is not a valid RFC3986 uri", s.ServiceEndpoint)
+	// verify that the endpoint is not empty and is a valid url (according to RFC3986)
+	if IsEmpty(s.ServiceEndpoint) {
+		err = sdkerrors.Wrap(ErrInvalidInput, "service endpoint cannot be empty;")
 		return
 	}
+
+	if !IsValidRFC3986Uri(s.ServiceEndpoint) {
+		err = sdkerrors.Wrapf(ErrInvalidRFC3986UriFormat, "service endpoint %s is not a valid RFC3986 uri", s.ServiceEndpoint)
+		return
+	}
+
+	// check that the service type is not empty
+	if IsEmpty(s.Type) {
+		err = sdkerrors.Wrap(ErrInvalidInput, "service type cannot be empty;")
+		return
+	}
+
 	return
 }
 
@@ -192,29 +198,43 @@ func NewIdentifier(id string, options ...IdentifierOption) (did DidDocument, err
 		Context: []string{contextDIDBase},
 		Id:      id,
 	}
-
+	// apply all the options
 	for _, fn := range options {
 		if err = fn(&did); err != nil {
 			return
 		}
 	}
-
 	return
 }
 
+// SetControllers replace the controllers in the did document
+func (didDoc *DidDocument) SetControllers(controllers ...string) error {
+	for _, c := range controllers {
+		if !IsValidDID(c) {
+			return sdkerrors.Wrapf(ErrInvalidDIDFormat, "did document controller %s", c)
+		}
+	}
+	didDoc.Controller = controllers
+	return nil
+}
+
 // AddVerifications add one or more verification method and relations to a did document
-func (did *DidDocument) AddVerifications(verifications ...*Verification) (err error) {
+func (didDoc *DidDocument) AddVerifications(verifications ...*Verification) (err error) {
+
+	if didDoc.VerificationMethods == nil {
+		didDoc.VerificationMethods = []*VerificationMethod{}
+	}
 
 	// verify that there are no duplicates in method ids
 	index := make(map[string]struct{})
 	// load existing verifications if any
-	for _, v := range did.VerificationMethods {
+	for _, v := range didDoc.VerificationMethods {
 		index[v.Id] = struct{}{}
 	}
 
 	// loop through the verifications and look for problems
 	for _, v := range verifications {
-
+		// perform base validation checks
 		if err = ValidateVerification(v); err != nil {
 			return
 		}
@@ -227,31 +247,36 @@ func (did *DidDocument) AddVerifications(verifications ...*Verification) (err er
 		index[v.Method.Id] = struct{}{}
 
 		// first add the method to the list of methods
-		did.VerificationMethods = append(did.VerificationMethods, v.GetMethod())
+		didDoc.VerificationMethods = append(didDoc.VerificationMethods, v.GetMethod())
+
 		// now add the relationships
-		did.SetRelationships(v.Method.Id, v.Relationships...)
+		didDoc.SetRelationships(v.Method.Id, v.Relationships...)
+
+		// update context
+		didDoc.Context = union(didDoc.Context, v.Context)
+
 	}
 	return
 }
 
 // RevokeVerification revoke a verification method
 // and all relationships associated with it
-func (did *DidDocument) RevokeVerification(methodID string) {
+func (didDoc *DidDocument) RevokeVerification(methodID string) {
 
 	del := func(x int) {
-		lastIdx := len(did.VerificationMethods) - 1
+		lastIdx := len(didDoc.VerificationMethods) - 1
 		switch lastIdx {
 		case 0:
-			did.VerificationMethods = []*VerificationMethod{}
+			didDoc.VerificationMethods = []*VerificationMethod{}
 		case x:
-			did.VerificationMethods = did.VerificationMethods[:lastIdx]
+			didDoc.VerificationMethods = didDoc.VerificationMethods[:lastIdx]
 		default:
-			did.VerificationMethods[x] = did.VerificationMethods[lastIdx]
-			did.VerificationMethods = did.VerificationMethods[:lastIdx]
+			didDoc.VerificationMethods[x] = didDoc.VerificationMethods[lastIdx]
+			didDoc.VerificationMethods = didDoc.VerificationMethods[:lastIdx]
 		}
 	}
 
-	for i, vm := range did.VerificationMethods {
+	for i, vm := range didDoc.VerificationMethods {
 		if vm.Id == methodID {
 			del(i)
 			break
@@ -260,14 +285,14 @@ func (did *DidDocument) RevokeVerification(methodID string) {
 }
 
 // SetRelationships for a did document
-func (did *DidDocument) SetRelationships(methodID string, relationships ...string) {
+func (didDoc *DidDocument) SetRelationships(methodID string, relationships ...string) {
 
 	del := func(relName string, x int) {
-		lastIdx := len(did.VerificationMethods) - 1
-		relationships := did.VerificationRelationships[relName]
+		lastIdx := len(didDoc.VerificationMethods) - 1
+		relationships := didDoc.VerificationRelationships[relName]
 		switch lastIdx {
 		case 0: // remove the relationships since there is no elements left
-			delete(did.VerificationRelationships, relName)
+			delete(didDoc.VerificationRelationships, relName)
 		case x: // if it's at the last position, just drop the last position
 			relationships.Labels = relationships.Labels[:lastIdx]
 		default: // swap and drop last position
@@ -276,8 +301,8 @@ func (did *DidDocument) SetRelationships(methodID string, relationships ...strin
 		}
 	}
 
-	// first remove existing
-	for _, relationship := range did.VerificationRelationships {
+	// first remove existing relationships
+	for _, relationship := range didDoc.VerificationRelationships {
 		for i, mID := range relationship.Labels {
 			if mID == methodID {
 				del(mID, i)
@@ -285,9 +310,9 @@ func (did *DidDocument) SetRelationships(methodID string, relationships ...strin
 		}
 	}
 
-	// then assign them
+	// then assign the new ones
 	for _, r := range relationships {
-		if mIDs, exists := did.VerificationRelationships[r]; !exists {
+		if mIDs, exists := didDoc.VerificationRelationships[r]; !exists {
 			mIDs = &DidDocument_VerificationRelationships{
 				Labels: []string{methodID},
 			}
@@ -300,12 +325,12 @@ func (did *DidDocument) SetRelationships(methodID string, relationships ...strin
 // ControllerInRelationships verifies if a controller did
 // exists for at least one of the relationships in the did document
 // TODO: improve semantics for this one
-func (did DidDocument) ControllerInRelationships(
+func (didDoc DidDocument) ControllerInRelationships(
 	contoller string,
 	relationships ...string) bool {
 	keyController := make(map[string]string)
 	// first check if the controller exists
-	for _, vm := range did.VerificationMethods {
+	for _, vm := range didDoc.VerificationMethods {
 		if vm.Controller != contoller {
 			continue
 		}
@@ -317,7 +342,7 @@ func (did DidDocument) ControllerInRelationships(
 	}
 	// now see if the controller key is in the relationship
 	for _, r := range relationships {
-		relationships, exists := did.VerificationRelationships[r]
+		relationships, exists := didDoc.VerificationRelationships[r]
 		if !exists {
 			return false
 		}
@@ -332,7 +357,12 @@ func (did DidDocument) ControllerInRelationships(
 }
 
 // AddServices add services to a did document
-func (did *DidDocument) AddServices(services ...*Service) (err error) {
+func (didDoc *DidDocument) AddServices(services ...*Service) (err error) {
+
+	if didDoc.Services == nil {
+		didDoc.Services = []*Service{}
+	}
+
 	// used to check duplicates
 	index := make(map[string]struct{})
 
@@ -349,27 +379,31 @@ func (did *DidDocument) AddServices(services ...*Service) (err error) {
 		}
 		index[s.Id] = struct{}{}
 
-		did.Services = append(did.Services, s)
+		didDoc.Services = append(didDoc.Services, s)
 	}
 	return
 }
 
 // DeleteService delete an existing service from a did document
-func (did *DidDocument) DeleteService(serviceID string) {
+func (didDoc *DidDocument) DeleteService(serviceID string) {
 	del := func(x int) {
-		lastIdx := len(did.VerificationMethods) - 1
+		lastIdx := len(didDoc.VerificationMethods) - 1
 		switch lastIdx {
 		case 0: // remove the relationships since there is no elements left
-			did.Services = []*Service{}
+			didDoc.Services = nil
 		case x: // if it's at the last position, just drop the last position
-			did.Services = did.Services[:lastIdx]
+			didDoc.Services = didDoc.Services[:lastIdx]
 		default: // swap and drop last position
-			did.Services[x] = did.Services[lastIdx]
-			did.Services = did.Services[:lastIdx]
+			didDoc.Services[x] = didDoc.Services[lastIdx]
+			didDoc.Services = didDoc.Services[:lastIdx]
 		}
 	}
 
-	for i, s := range did.Services {
+	if didDoc.Services == nil {
+		return
+	}
+
+	for i, s := range didDoc.Services {
 		if s.Id == serviceID {
 			del(i)
 			break
@@ -378,8 +412,8 @@ func (did *DidDocument) DeleteService(serviceID string) {
 }
 
 // GetBytes is a helper for serializing
-func (did DidDocument) GetBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&did))
+func (didDoc DidDocument) GetBytes() []byte {
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&didDoc))
 }
 
 // Verifications is a list of verification
@@ -422,4 +456,20 @@ func NewService(id string, serviceType string, serviceEndpoint string) Service {
 		Type:            serviceType,
 		ServiceEndpoint: serviceEndpoint,
 	}
+}
+
+func union(a, b []string) []string {
+	if len(b) == 0 {
+		return a
+	}
+	m := make(map[string]struct{})
+	for _, item := range a {
+		m[item] = struct{}{}
+	}
+	for _, item := range b {
+		if _, ok := m[item]; !ok {
+			a = append(a, item)
+		}
+	}
+	return a
 }

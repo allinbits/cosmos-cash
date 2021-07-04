@@ -14,7 +14,7 @@ func (msg MsgCreateIdentifier) ValidateBasic() error {
 		return sdkerrors.Wrap(ErrInvalidDIDFormat, msg.Id)
 	}
 
-	if msg.Verifications == nil {
+	if msg.Verifications == nil || len(msg.Verifications) == 0 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "verifications are required")
 	}
 
@@ -47,9 +47,11 @@ func (msg MsgUpdateIdentifier) ValidateBasic() error {
 		return sdkerrors.Wrap(ErrInvalidDIDFormat, msg.Id)
 	}
 
-	// if controller is set must be compliant
-	if !IsEmpty(msg.Controller) && !IsValidDID(msg.Controller) {
-		return sdkerrors.Wrap(ErrInvalidDIDFormat, "controller validation error")
+	for _, c := range msg.Controller {
+		// if controller is set must be compliant
+		if !IsValidDID(c) {
+			return sdkerrors.Wrap(ErrInvalidDIDFormat, "controller validation error")
+		}
 	}
 
 	// TODO: this
@@ -66,16 +68,7 @@ func (msg MsgAddVerification) ValidateBasic() error {
 		return sdkerrors.Wrap(ErrInvalidDIDFormat, msg.Id)
 	}
 
-	if msg.Verification == nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "verification data is required")
-	}
-
-	if len(msg.Verification.Relationships) == 0 {
-		return sdkerrors.Wrap(ErrEmptyRelationships, "at least a verification relationship is required")
-	}
-
-	return nil
-
+	return ValidateVerification(msg.Verification)
 }
 
 // --------------------------
@@ -104,9 +97,8 @@ func (msg MsgSetVerificationRelationships) ValidateBasic() error {
 		return sdkerrors.Wrap(ErrInvalidDIDFormat, msg.Id)
 	}
 
-	// if controller is set must be compliant
-	if !IsValidDID(msg.MethodId) {
-		return sdkerrors.Wrap(ErrInvalidDIDFormat, "controller validation error")
+	if !IsValidDIDURL(msg.MethodId) {
+		return sdkerrors.Wrap(ErrInvalidDIDURLFormat, "verification method id")
 	}
 
 	// there should be more then one relationship
@@ -114,7 +106,6 @@ func (msg MsgSetVerificationRelationships) ValidateBasic() error {
 		return sdkerrors.Wrap(ErrEmptyRelationships, "controller validation error")
 	}
 
-	// TODO: there should be at least one authentication for the did subject
 	return nil
 }
 
@@ -127,23 +118,7 @@ func (msg MsgAddService) ValidateBasic() error {
 	if !IsValidDID(msg.Id) {
 		return sdkerrors.Wrap(ErrInvalidDIDFormat, msg.Id)
 	}
-
-	if msg.ServiceData == nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "service is required")
-	}
-
-	if !IsValidRFC3986Uri(msg.ServiceData.Id) {
-		return sdkerrors.Wrap(ErrInvalidRFC3986UriFormat, "service id validation error")
-	}
-
-	if IsEmpty(msg.ServiceData.Type) {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "service type required")
-	}
-
-	if !IsValidRFC3986Uri(msg.ServiceData.ServiceEndpoint) {
-		return sdkerrors.Wrap(ErrInvalidRFC3986UriFormat, "service endpoint validation error")
-	}
-	return nil
+	return ValidateService(msg.ServiceData)
 }
 
 // --------------------------
@@ -154,6 +129,10 @@ func (msg MsgAddService) ValidateBasic() error {
 func (msg MsgDeleteService) ValidateBasic() error {
 	if !IsValidDID(msg.Id) {
 		return sdkerrors.Wrap(ErrInvalidDIDFormat, msg.Id)
+	}
+
+	if IsEmpty(msg.ServiceId) {
+		return sdkerrors.Wrap(ErrInvalidInput, "service id cannot be empty;")
 	}
 
 	if !IsValidRFC3986Uri(msg.ServiceId) {

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/btcsuite/btcutil/base58"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -60,17 +61,19 @@ func NewCreateIdentifierCmd() *cobra.Command {
 			id := types.DidPrefix + accAddrBech32
 
 			auth := types.NewVerification(
-				id+"#keys-1",
-				pubKey.Type(),
-				accAddrBech32,
-				pubKey.Bytes(),
+				types.NewVerificationMethod(
+					id+"#keys-1",
+					pubKey.Type(),
+					accAddrBech32,
+					base58.Encode(pubKey.Bytes()),
+				),
 				[]string{types.RelationshipAuthentication},
-				[]string{},
+				nil,
 			)
 
 			msg := types.NewMsgCreateIdentifier(
 				id,
-				[]*types.Verification{&auth},
+				[]*types.Verification{auth},
 				[]*types.Service{},
 				accAddrBech32,
 			)
@@ -107,18 +110,22 @@ func NewAddAuthenticationCmd() *cobra.Command {
 			}
 			address := sdk.AccAddress(pubKey.Address())
 
+			did := types.DID(args[0])
+
 			auth := types.NewVerification(
-				"",
-				pubKey.Type(),
-				address.String(),
-				pubKey.Bytes(),
+				types.NewVerificationMethod(
+					did, //TODO: this must be a key
+					pubKey.Type(),
+					address.String(),
+					base58.Encode(pubKey.Bytes()),
+				),
 				[]string{types.RelationshipAuthentication},
-				[]string{},
+				nil,
 			)
 
 			msg := types.NewMsgAddVerification(
-				args[0],
-				&auth,
+				did,
+				auth,
 				accAddr.String(),
 			)
 
@@ -160,7 +167,7 @@ func NewAddServiceCmd() *cobra.Command {
 
 			msg := types.NewMsgAddService(
 				args[0],
-				&service,
+				service,
 				accAddr.String(),
 			)
 

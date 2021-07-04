@@ -53,8 +53,6 @@ func (msg MsgUpdateIdentifier) ValidateBasic() error {
 			return sdkerrors.Wrap(ErrInvalidDIDFormat, "controller validation error")
 		}
 	}
-
-	// TODO: this
 	return nil
 }
 

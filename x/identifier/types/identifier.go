@@ -3,9 +3,9 @@ package types
 import (
 	"fmt"
 	"regexp"
+	"sort"
 	"strings"
 
-	"github.com/btcsuite/btcutil/base58"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -82,6 +82,7 @@ func IsValidRFC3986Uri(input string) bool {
 // optionally validating the validation method controller against a list
 // of allowed controllers.
 // in case of error returns an cosmos-sdk wrapped error
+// XXX: this pattern creates a ambiguous semantic (but maybe is not too severe (use WithCredentials and array of credentials))
 func ValidateVerification(v *Verification, allowedControllers ...string) (err error) {
 	// verify that the method id is correct
 	if !IsValidDIDURL(v.Method.Id) {
@@ -158,14 +159,14 @@ func IsEmpty(input string) bool {
 type IdentifierOption func(*DidDocument) error
 
 // WithVerifications add optional verifications
-func WithVerifications(verifications []*Verification) IdentifierOption {
+func WithVerifications(verifications ...*Verification) IdentifierOption {
 	return func(did *DidDocument) error {
 		return did.AddVerifications(verifications...)
 	}
 }
 
 //WithServices add optional services
-func WithServices(services []*Service) IdentifierOption {
+func WithServices(services ...*Service) IdentifierOption {
 	return func(did *DidDocument) error {
 		return did.AddServices(services...)
 	}
@@ -174,15 +175,7 @@ func WithServices(services []*Service) IdentifierOption {
 // WithControllers add optional did controller
 func WithControllers(controllers ...string) IdentifierOption {
 	return func(did *DidDocument) (err error) {
-		for _, c := range controllers {
-			// if the controller is not set return error
-			if !IsValidDID(c) {
-				err = sdkerrors.Wrapf(ErrInvalidDIDFormat, "did controller %s", c)
-				return
-			}
-			did.Controller = append(did.Controller, c)
-		}
-		return
+		return did.SetControllers(controllers...)
 	}
 }
 
@@ -209,24 +202,20 @@ func NewIdentifier(id string, options ...IdentifierOption) (did DidDocument, err
 
 // SetControllers replace the controllers in the did document
 func (didDoc *DidDocument) SetControllers(controllers ...string) error {
-	for _, c := range controllers {
+	dc := distinct(controllers)
+	for _, c := range dc {
 		if !IsValidDID(c) {
-			return sdkerrors.Wrapf(ErrInvalidDIDFormat, "did document controller %s", c)
+			return sdkerrors.Wrapf(ErrInvalidDIDFormat, "did document controller validation error '%s'", c)
 		}
 	}
-	didDoc.Controller = controllers
+	didDoc.Controller = dc
 	return nil
 }
 
 // AddVerifications add one or more verification method and relations to a did document
 func (didDoc *DidDocument) AddVerifications(verifications ...*Verification) (err error) {
-
-	if didDoc.VerificationMethods == nil {
-		didDoc.VerificationMethods = []*VerificationMethod{}
-	}
-
 	// verify that there are no duplicates in method ids
-	index := make(map[string]struct{})
+	index := make(map[string]struct{}, len(didDoc.VerificationMethods))
 	// load existing verifications if any
 	for _, v := range didDoc.VerificationMethods {
 		index[v.Id] = struct{}{}
@@ -250,7 +239,7 @@ func (didDoc *DidDocument) AddVerifications(verifications ...*Verification) (err
 		didDoc.VerificationMethods = append(didDoc.VerificationMethods, v.GetMethod())
 
 		// now add the relationships
-		didDoc.SetRelationships(v.Method.Id, v.Relationships...)
+		didDoc.setRelationships(v.Method.Id, v.Relationships...)
 
 		// update context
 		didDoc.Context = union(didDoc.Context, v.Context)
@@ -267,7 +256,7 @@ func (didDoc *DidDocument) RevokeVerification(methodID string) {
 		lastIdx := len(didDoc.VerificationMethods) - 1
 		switch lastIdx {
 		case 0:
-			didDoc.VerificationMethods = []*VerificationMethod{}
+			didDoc.VerificationMethods = nil
 		case x:
 			didDoc.VerificationMethods = didDoc.VerificationMethods[:lastIdx]
 		default:
@@ -276,6 +265,10 @@ func (didDoc *DidDocument) RevokeVerification(methodID string) {
 		}
 	}
 
+	// remove relationships
+	didDoc.setRelationships(methodID)
+
+	// now remove the method
 	for i, vm := range didDoc.VerificationMethods {
 		if vm.Id == methodID {
 			del(i)
@@ -284,12 +277,27 @@ func (didDoc *DidDocument) RevokeVerification(methodID string) {
 	}
 }
 
-// SetRelationships for a did document
-func (didDoc *DidDocument) SetRelationships(methodID string, relationships ...string) {
+// SetVerificationRelationships for a did document
+func (didDoc *DidDocument) SetVerificationRelationships(methodID string, relationships ...string) error {
+	// verify that the method id is correct
+	if !IsValidDIDURL(methodID) {
+		return sdkerrors.Wrapf(ErrInvalidDIDURLFormat, "verification method id: %v", methodID)
+	}
+	// check that there is at least a relationship
+	if len(relationships) == 0 {
+		return sdkerrors.Wrap(ErrEmptyRelationships, "at least a verification relationship is required")
+	}
+	// update the relationships
+	didDoc.setRelationships(methodID, relationships...)
+	return nil
+}
+
+// setRelationships overwrite relationships for a did document
+func (didDoc *DidDocument) setRelationships(methodID string, relationships ...string) {
 
 	del := func(relName string, x int) {
-		lastIdx := len(didDoc.VerificationMethods) - 1
 		relationships := didDoc.VerificationRelationships[relName]
+		lastIdx := len(relationships.Labels) - 1
 		switch lastIdx {
 		case 0: // remove the relationships since there is no elements left
 			delete(didDoc.VerificationRelationships, relName)
@@ -299,58 +307,66 @@ func (didDoc *DidDocument) SetRelationships(methodID string, relationships ...st
 			relationships.Labels[x] = relationships.Labels[lastIdx]
 			relationships.Labels = relationships.Labels[:lastIdx]
 		}
+
 	}
 
 	// first remove existing relationships
-	for _, relationship := range didDoc.VerificationRelationships {
-		for i, mID := range relationship.Labels {
+	for vr, methods := range didDoc.VerificationRelationships {
+		for i, mID := range methods.GetLabels() {
 			if mID == methodID {
-				del(mID, i)
+				del(vr, i)
 			}
 		}
 	}
 
+	// make sure that the relationships are initialized
+	if didDoc.VerificationRelationships == nil {
+		didDoc.VerificationRelationships = make(map[string]*DidDocument_VerificationRelationships)
+	}
+
 	// then assign the new ones
-	for _, r := range relationships {
+	for _, r := range distinct(relationships) {
 		if mIDs, exists := didDoc.VerificationRelationships[r]; !exists {
 			mIDs = &DidDocument_VerificationRelationships{
 				Labels: []string{methodID},
 			}
+			didDoc.VerificationRelationships[r] = mIDs
 		} else {
 			mIDs.Labels = append(mIDs.Labels, methodID)
 		}
 	}
 }
 
-// ControllerInRelationships verifies if a controller did
+// GetVerificationRelationships returns the relationships associated with the
+// verification method id.
+func (didDoc DidDocument) GetVerificationRelationships(methodID string) []string {
+	relationships := []string{}
+	for vr, methods := range didDoc.VerificationRelationships {
+		for _, mID := range methods.GetLabels() {
+			if mID == methodID {
+				relationships = append(relationships, vr)
+			}
+		}
+	}
+	return relationships
+}
+
+// HasRelationship verifies if a controller did
 // exists for at least one of the relationships in the did document
 // TODO: improve semantics for this one
-func (didDoc DidDocument) ControllerInRelationships(
+func (didDoc DidDocument) HasRelationship(
 	contoller string,
 	relationships ...string) bool {
-	keyController := make(map[string]string)
+
 	// first check if the controller exists
 	for _, vm := range didDoc.VerificationMethods {
 		if vm.Controller != contoller {
 			continue
 		}
-		keyController[vm.Id] = vm.Controller
-	}
-	// if controller was not found then return
-	if len(keyController) == 0 {
-		return false
-	}
-	// now see if the controller key is in the relationship
-	for _, r := range relationships {
-		relationships, exists := didDoc.VerificationRelationships[r]
-		if !exists {
-			return false
-		}
 
-		for _, k := range relationships.Labels {
-			if _, found := keyController[k]; found {
-				return true
-			}
+		vrs := didDoc.GetVerificationRelationships(vm.Id)
+		if len(intersection(vrs, relationships)) > 0 {
+			return true
 		}
 	}
 	return false
@@ -387,7 +403,7 @@ func (didDoc *DidDocument) AddServices(services ...*Service) (err error) {
 // DeleteService delete an existing service from a did document
 func (didDoc *DidDocument) DeleteService(serviceID string) {
 	del := func(x int) {
-		lastIdx := len(didDoc.VerificationMethods) - 1
+		lastIdx := len(didDoc.Services) - 1
 		switch lastIdx {
 		case 0: // remove the relationships since there is no elements left
 			didDoc.Services = nil
@@ -397,10 +413,6 @@ func (didDoc *DidDocument) DeleteService(serviceID string) {
 			didDoc.Services[x] = didDoc.Services[lastIdx]
 			didDoc.Services = didDoc.Services[:lastIdx]
 		}
-	}
-
-	if didDoc.Services == nil {
-		return
 	}
 
 	for i, s := range didDoc.Services {
@@ -422,22 +434,25 @@ type Verifications []*Verification
 // NewVerification build a new verification to be
 // attached to a identifier document
 func NewVerification(
-	id string,
-	pubKeyType string,
-	controller string,
-	pubKey []byte,
+	method VerificationMethod,
 	relationships []string,
 	contexts []string,
-) Verification {
-	return Verification{
-		Context: contexts,
-		Method: &VerificationMethod{
-			Id:              id,
-			Type:            pubKeyType,
-			Controller:      controller,
-			PublicKeyBase58: base58.Encode(pubKey),
-		},
+) *Verification {
+	return &Verification{
+		Context:       contexts,
+		Method:        &method,
 		Relationships: relationships,
+	}
+}
+
+// NewVerificationMethod build a new verification method
+// TODO: this only uses PublicKeyBase58
+func NewVerificationMethod(id, keyType, controller, key string) VerificationMethod {
+	return VerificationMethod{
+		Id:              id,
+		Type:            keyType,
+		Controller:      controller,
+		PublicKeyBase58: key,
 	}
 }
 
@@ -450,14 +465,16 @@ func (did Verification) GetBytes() []byte {
 type Services []*Service
 
 // NewService creates a new service
-func NewService(id string, serviceType string, serviceEndpoint string) Service {
-	return Service{
+func NewService(id string, serviceType string, serviceEndpoint string) *Service {
+	return &Service{
 		Id:              id,
 		Type:            serviceType,
 		ServiceEndpoint: serviceEndpoint,
 	}
 }
 
+// union perform union, distinct amd sort operation between two slices
+// duplicated element in list a are
 func union(a, b []string) []string {
 	if len(b) == 0 {
 		return a
@@ -468,8 +485,42 @@ func union(a, b []string) []string {
 	}
 	for _, item := range b {
 		if _, ok := m[item]; !ok {
-			a = append(a, item)
+			m[item] = struct{}{}
 		}
 	}
-	return a
+	u := make([]string, 0, len(m))
+	for k := range m {
+		u = append(u, k)
+	}
+	sort.Strings(u)
+	return u
+}
+
+func intersection(a, b []string) []string {
+	m := make(map[string]struct{})
+	for _, item := range a {
+		m[item] = struct{}{}
+	}
+	i := []string{}
+	for _, item := range distinct(b) {
+		if _, ok := m[item]; ok {
+			i = append(i, item)
+		}
+	}
+	sort.Strings(i)
+	return i
+}
+
+// distinct remove duplicates and sorts from a list of strings
+func distinct(a []string) []string {
+	m := make(map[string]struct{})
+	for _, item := range a {
+		m[item] = struct{}{}
+	}
+	d := make([]string, 0, len(m))
+	for k := range m {
+		d = append(d, k)
+	}
+	sort.Strings(d)
+	return d
 }

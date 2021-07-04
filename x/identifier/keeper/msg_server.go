@@ -37,24 +37,27 @@ func (k msgServer) CreateIdentifier(
 ) (*types.MsgCreateIdentifierResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	_, found := k.Keeper.GetIdentifier(ctx, []byte(msg.Id))
-	if found {
-		return nil, sdkerrors.Wrapf(
-			types.ErrIdentifierFound,
-			"identifier already exists",
-		)
+	// setup a new did document (performs input validation)
+	identifier, err := types.NewIdentifier(msg.Id,
+		types.WithServices(msg.Services...),
+		types.WithVerifications(msg.Verifications...),
+	)
+	if err != nil {
+		return nil, err
 	}
 
-	identifier, _ := types.NewIdentifier(msg.Id,
-		types.WithServices(msg.Services),
-		types.WithVerifications(msg.Verifications),
-	)
-	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), identifier)
+	// check that the identifier is not already taken
+	_, found := k.Keeper.GetIdentifier(ctx, []byte(msg.Id))
+	if found {
+		return nil, sdkerrors.Wrapf(types.ErrIdentifierFound, "identifier already exists")
+	}
 
+	// persist the did document
+	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), identifier)
+	// emit the event
 	ctx.EventManager().EmitEvent(
 		types.NewIdentifierCreatedEvent(msg.Id),
 	)
-
 	return &types.MsgCreateIdentifierResponse{}, nil
 }
 
@@ -64,26 +67,32 @@ func (k msgServer) AddVerification(
 	msg *types.MsgAddVerification,
 ) (*types.MsgAddVerificationResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+	// XXX: does it make sense to do it twice to avoid opening the db
+	// validate input before accessing the database
+	if !types.IsValidDID(msg.Id) {
+		return nil, sdkerrors.Wrap(types.ErrInvalidDIDFormat, "invalid identifier")
+	}
+	if err := types.ValidateVerification(msg.Verification); err != nil {
+		return nil, err
+	}
+
 	// get the did document
 	didDoc, found := k.Keeper.GetIdentifier(ctx, []byte(msg.Id))
 	if !found {
-		return nil, sdkerrors.Wrapf(
-			types.ErrIdentifierNotFound,
-			"identifier not found: AddAuthentication",
-		)
+		return nil, sdkerrors.Wrapf(types.ErrIdentifierNotFound, "identifier not found")
 	}
 
-	ownerDid := types.DID(msg.Signer)
+	signerDid := types.DID(msg.Signer)
 
 	// Any verification method in the authentication relationship can update the DID document
-	if !didDoc.ControllerInRelationships(ownerDid, types.RelationshipAuthentication) {
+	if !didDoc.HasRelationship(signerDid, types.RelationshipAuthentication) {
 		return nil, sdkerrors.Wrapf(
 			types.ErrIdentifierNotFound,
 			"msg sender not authorized: AddVerification",
 		)
 	}
 
-	// TODO: handle duplicates in the authentication slice
+	// add verifications (perform additional checks)
 	if err := didDoc.AddVerifications(msg.Verification); err != nil {
 		return nil, err
 	}
@@ -158,7 +167,7 @@ func (k msgServer) RevokeVerification(
 	}
 
 	// Only the first public key can remove public keys that control the DID document
-	if !identifier.ControllerInRelationships(signerDID, types.RelationshipAuthentication) {
+	if !identifier.HasRelationship(signerDID, types.RelationshipAuthentication) {
 		return nil, sdkerrors.Wrapf(
 			types.ErrIdentifierNotFound,
 			"msg sender not authorized: RevokeVerification",
@@ -201,7 +210,7 @@ func (k msgServer) DeleteService(
 	signerDID := types.DID(msg.Signer)
 
 	// TODO: semantic is wrong
-	if !didDoc.ControllerInRelationships(signerDID,
+	if !didDoc.HasRelationship(signerDID,
 		types.RelationshipAuthentication,
 		types.RelationshipCapabilityDelegation,
 	) {

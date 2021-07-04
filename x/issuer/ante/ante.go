@@ -46,11 +46,11 @@ func (cicd CheckIssuerCredentialsDecorator) AnteHandle(
 		if msg.Type() == "create-issuer" {
 			imsg := msg.(*types.MsgCreateIssuer)
 
-			didURI := "did:cash:" + imsg.Owner
+			signerDID := identifiertypes.DID(imsg.Owner)
 
 			// TODO: pass in the did URI as an arg {msg.Id}
 			// TODO: ensure this keeper can only read from store
-			did, found := cicd.ik.GetIdentifier(ctx, []byte(didURI))
+			did, found := cicd.ik.GetIdentifier(ctx, []byte(signerDID))
 			if !found {
 				return ctx, sdkerrors.Wrapf(
 					types.ErrIdentifierDoesNotExist,
@@ -59,7 +59,7 @@ func (cicd CheckIssuerCredentialsDecorator) AnteHandle(
 			}
 
 			// verification authorization
-			if !did.ControllerInRelationships(imsg.Owner, identifiertypes.RelationshipAuthentication) {
+			if !did.HasRelationship(signerDID, identifiertypes.RelationshipAuthentication) {
 				return ctx, sdkerrors.Wrapf(
 					types.ErrIncorrectControllerOfDidDocument,
 					"msg sender not in auth array in did document",
@@ -81,7 +81,7 @@ func (cicd CheckIssuerCredentialsDecorator) AnteHandle(
 					}
 
 					issuerCred := vc.GetUserCred()
-					if issuerCred.Id != didURI {
+					if issuerCred.Id != signerDID {
 						return ctx, sdkerrors.Wrapf(
 							types.ErrIssuerFound,
 							"issuer id not correct",
@@ -175,11 +175,11 @@ func (cicd CheckUserCredentialsDecorator) validateKYCCredential(
 	address string,
 	issuerAddress string,
 ) error {
-	didURI := "did:cash:" + address
+	issuerDID := identifiertypes.DID(address)
 
 	// TODO: tidy this functionality into the keeper,
 	// GetIdentifierWithCondition, GetIdentifierWithService, GetIdentifierWithAuth
-	did, found := cicd.ik.GetIdentifier(ctx, []byte(didURI))
+	did, found := cicd.ik.GetIdentifier(ctx, []byte(issuerDID))
 	if !found {
 		return sdkerrors.Wrapf(
 			types.ErrIdentifierDoesNotExist,
@@ -187,7 +187,7 @@ func (cicd CheckUserCredentialsDecorator) validateKYCCredential(
 		)
 	}
 
-	if !did.ControllerInRelationships(address, identifiertypes.RelationshipAuthentication) {
+	if !did.HasRelationship(issuerDID, identifiertypes.RelationshipAuthentication) {
 		return sdkerrors.Wrapf(
 			types.ErrIncorrectControllerOfDidDocument,
 			"msg sender not in auth slice in did document when validating the KYC credential",
@@ -209,7 +209,7 @@ func (cicd CheckUserCredentialsDecorator) validateKYCCredential(
 		}
 
 		userCred := vc.GetUserCred()
-		if userCred.Id != didURI {
+		if userCred.Id != issuerDID {
 			continue
 		}
 

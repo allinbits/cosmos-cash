@@ -50,10 +50,10 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateIdentifiers() {
 				suite.keeper.SetIdentifier(suite.ctx, []byte(didDoc.Id), didDoc)
 
 				req = *types.NewMsgCreateIdentifier(
-					"did:cash:1111",
+					"did:cash:subject",
 					[]*types.Verification{v},
 					[]*types.Service{},
-					"did:cash:1111",
+					"subject",
 				)
 			},
 			false,
@@ -86,31 +86,49 @@ func (suite *KeeperTestSuite) TestMsgSeverAddVerification() {
 		malleate func()
 		expPass  bool
 	}{
-		// {
-		// 	"can not add authentication, identifier does not exist",
-		// 	func() { req = *types.NewMsgAddVerification("did:cash:1111", nil, "did:cash:1111") },
-		// 	false,
-		// },
-		// {
-		// 	"can add authentication to did document",
-		// 	func() {
-		// 		auth := types.NewAuthentication(
-		// 			"did:cash:1111#keys-1",
-		// 			"sepk256",
-		// 			"did:cash:1111",
-		// 			"pubKey.Address().String()",
-		// 		)
-		// 		identifier := types.DidDocument{
-		// 			"context",
-		// 			"did:cash:1111",
-		// 			types.Authentications{&auth},
-		// 			nil,
-		// 		}
-		// 		suite.keeper.SetIdentifier(suite.ctx, []byte(identifier.Id), identifier)
-		// 		req = *types.NewMsgAddAuthentication("did:cash:1111", &auth, "did:cash:1111")
-		// 	},
-		// 	true,
-		// },
+		{
+			"can not add authentication, identifier does not exist",
+			func() { req = *types.NewMsgAddVerification("did:cash:subject", nil, "subject") },
+			false,
+		},
+		{
+			"can add authentication to did document",
+			func() {
+
+				didDoc, _ := types.NewIdentifier(
+					"did:cash:subject",
+					types.WithVerifications(types.NewVerification(
+						types.NewVerificationMethod(
+							"did:cash:subject#key-1",
+							"EcdsaSecp256k1VerificationKey2019",
+							"did:cash:subject",
+							"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+						),
+						[]string{
+							types.RelationshipAuthentication,
+						},
+						nil,
+					)),
+				)
+
+				v := types.NewVerification(
+					types.NewVerificationMethod(
+						"did:cash:controller-1#key-2",
+						"EcdsaSecp256k1VerificationKey2019",
+						"did:cash:controller-1",
+						"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+					),
+					[]string{
+						types.RelationshipAuthentication,
+					},
+					nil,
+				)
+
+				suite.keeper.SetIdentifier(suite.ctx, []byte(didDoc.Id), didDoc)
+				req = *types.NewMsgAddVerification("did:cash:subject", v, "subject")
+			},
+			true,
+		},
 	}
 	for _, tc := range testCases {
 		suite.Run(fmt.Sprintf("Case %s", tc.msg), func() {
@@ -141,19 +159,34 @@ func (suite *KeeperTestSuite) TestMsgSeverAddService() {
 	}{
 		{
 			"FAIL: can not add service, identifier does not exist",
-			func() { req = *types.NewMsgAddService("did:cash:1111", nil, "did:cash:1111") },
+			func() { req = *types.NewMsgAddService("did:cash:subject", nil, "subject") },
 			false,
 		},
 		{
 			"FAIL: cannot add a service to did document with an incorrect type",
 			func() {
+
+				didDoc, _ := types.NewIdentifier(
+					"did:cash:subject",
+					types.WithVerifications(types.NewVerification(
+						types.NewVerificationMethod(
+							"did:cash:subject#key-1",
+							"EcdsaSecp256k1VerificationKey2019",
+							"did:cash:subject",
+							"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+						),
+						[]string{
+							types.RelationshipAuthentication,
+						},
+						nil,
+					)),
+				)
+
 				s := types.NewService(
 					"did:cash:1111",
 					"NonKYCCredential",
 					"did:cash:1111",
 				)
-
-				didDoc, _ := types.NewIdentifier("did:cash:subject", types.WithServices(s))
 
 				suite.keeper.SetIdentifier(suite.ctx, []byte(didDoc.Id), didDoc)
 
@@ -164,20 +197,32 @@ func (suite *KeeperTestSuite) TestMsgSeverAddService() {
 		{
 			"PASS: can add service to did document",
 			func() {
-				// service := types.NewService(
-				// 	"did:cash:1111",
-				// 	"IssuerCredential",
-				// 	"did:cash:1111",
-				// )
-				// identifier := types.DidDocument{
-				// 	"context",
-				// 	"did:cash:1111",
-				// 	nil,
-				// 	nil,
-				// }
-				// suite.keeper.SetIdentifier(suite.ctx, []byte(identifier.Id), identifier)
 
-				// req = *types.NewMsgAddService("did:cash:1111", &service, "cash:cash:1111")
+				didDoc, _ := types.NewIdentifier(
+					"did:cash:subject",
+					types.WithVerifications(types.NewVerification(
+						types.NewVerificationMethod(
+							"did:cash:subject#key-1",
+							"EcdsaSecp256k1VerificationKey2019",
+							"did:cash:subject",
+							"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+						),
+						[]string{
+							types.RelationshipAuthentication,
+						},
+						nil,
+					)),
+				)
+
+				s := types.NewService(
+					"service:seuro",
+					"IssuerCredential",
+					"service:seuro",
+				)
+
+				suite.keeper.SetIdentifier(suite.ctx, []byte(didDoc.Id), didDoc)
+
+				req = *types.NewMsgAddService("did:cash:subject", s, "subject")
 			},
 			true,
 		},

@@ -61,41 +61,40 @@ func TestKeeperTestSuite(t *testing.T) {
 
 func (suite *KeeperTestSuite) TestGenericKeeperSetAndGet() {
 	testCases := []struct {
-		msg        string
-		identifier types.DidDocument
-		expPass    bool
+		msg      string
+		malleate func() types.DidDocument
+		expPass  bool
 	}{
 		{
 			"data stored successfully",
-			types.DidDocument{
-				[]string{"context"},
-				"did:cash:1111",
-				[]string{}, // controller
-				[]*types.VerificationMethod{},
-				[]*types.Service{},
-				map[string]*types.DidDocument_VerificationRelationships{},
+			func() types.DidDocument {
+				dd, _ := types.NewIdentifier(
+					"did:cash:subject",
+				)
+				return dd
 			},
 			true,
 		},
 	}
 	for _, tc := range testCases {
+		dd := tc.malleate()
 		suite.keeper.Set(suite.ctx,
-			[]byte(tc.identifier.Id),
+			[]byte(dd.Id),
 			[]byte{0x01},
-			tc.identifier,
+			dd,
 			suite.keeper.MarshalIdentifier,
 		)
 		suite.keeper.Set(suite.ctx,
-			[]byte(tc.identifier.Id+"1"),
+			[]byte(dd.Id+"1"),
 			[]byte{0x01},
-			tc.identifier,
+			dd,
 			suite.keeper.MarshalIdentifier,
 		)
 		suite.Run(fmt.Sprintf("Case %s", tc.msg), func() {
 			if tc.expPass {
 				_, found := suite.keeper.Get(
 					suite.ctx,
-					[]byte(tc.identifier.Id),
+					[]byte(dd.Id),
 					[]byte{0x01},
 					suite.keeper.UnmarshalIdentifier,
 				)

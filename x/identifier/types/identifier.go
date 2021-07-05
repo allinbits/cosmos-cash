@@ -84,6 +84,10 @@ func IsValidRFC3986Uri(input string) bool {
 // in case of error returns an cosmos-sdk wrapped error
 // XXX: this pattern creates a ambiguous semantic (but maybe is not too severe (use WithCredentials and array of credentials))
 func ValidateVerification(v *Verification, allowedControllers ...string) (err error) {
+	if v == nil {
+		err = sdkerrors.Wrap(ErrInvalidInput, "verification is not defined")
+		return
+	}
 	// verify that the method id is correct
 	if !IsValidDIDURL(v.Method.Id) {
 		err = sdkerrors.Wrapf(ErrInvalidDIDURLFormat, "verification method id: %v", v.Method.Id)
@@ -118,10 +122,13 @@ func ValidateVerification(v *Verification, allowedControllers ...string) (err er
 
 // ValidateService performs basic on a service struct
 func ValidateService(s *Service) (err error) {
-
+	if s == nil {
+		err = sdkerrors.Wrap(ErrInvalidInput, "service is not defined")
+		return
+	}
 	// verify that the id is not empty and is a valid url (according to RFC3986)
 	if IsEmpty(s.Id) {
-		err = sdkerrors.Wrap(ErrInvalidInput, "service id cannot be empty;")
+		err = sdkerrors.Wrap(ErrInvalidInput, "service id cannot be empty")
 		return
 	}
 

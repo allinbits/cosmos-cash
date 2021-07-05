@@ -105,40 +105,68 @@ func TestIsValidRFC3986Uri(t *testing.T) {
 }
 
 func TestValidateVerification(t *testing.T) {
-	type args struct {
-		v                  *Verification
-		allowedControllers []string
-	}
 	tests := []struct {
-		name    string
-		args    args
+		v       *Verification
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			v: NewVerification(
+				NewVerificationMethod(
+					"did:cash:subject#key-1",
+					"EcdsaSecp256k1VerificationKey2019",
+					"did:cash:subject",
+					"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+				),
+				nil,
+				nil,
+			),
+			wantErr: true, // relationships are nil
+		},
+		{
+			v:       nil,
+			wantErr: true,
+		},
+		{
+			v: NewVerification(
+				NewVerificationMethod(
+					"did:cash:subject#key-1",
+					"EcdsaSecp256k1VerificationKey2019",
+					"did:cash:subject",
+					"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+				),
+				[]string{RelationshipAssertionMethod},
+				nil,
+			),
+			wantErr: false,
+		},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if err := ValidateVerification(tt.args.v, tt.args.allowedControllers...); (err != nil) != tt.wantErr {
-				t.Errorf("ValidateVerification() error = %v, wantErr %v", err, tt.wantErr)
+	for i, tt := range tests {
+		t.Run(fmt.Sprint("TestValidateVerification#", i), func(t *testing.T) {
+			if err := ValidateVerification(tt.v); (err != nil) != tt.wantErr {
+				t.Errorf("TestValidateVerification() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
 }
 
 func TestValidateService(t *testing.T) {
-	type args struct {
-		s *Service
-	}
+
 	tests := []struct {
-		name    string
-		args    args
+		s       *Service
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			s:       NewService("agent:abc", "DIDCommMessaging", "https://agent.abc/abc"),
+			wantErr: false,
+		},
+		{
+			s:       nil,
+			wantErr: true,
+		},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if err := ValidateService(tt.args.s); (err != nil) != tt.wantErr {
+	for i, tt := range tests {
+		t.Run(fmt.Sprint("TestValidateService#", i), func(t *testing.T) {
+			if err := ValidateService(tt.s); (err != nil) != tt.wantErr {
 				t.Errorf("ValidateService() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

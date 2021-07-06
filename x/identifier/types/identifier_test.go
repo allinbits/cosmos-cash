@@ -85,19 +85,23 @@ func TestIsValidDIDURL(t *testing.T) {
 }
 
 func TestIsValidRFC3986Uri(t *testing.T) {
-	type args struct {
-		input string
-	}
+
 	tests := []struct {
-		name string
-		args args
-		want bool
+		input string
+		want  bool
 	}{
-		// TODO: Add test cases.
+		{
+			"[][àséf",
+			true,
+		},
+		{
+			"# \u007e // / / ///// //// // / / ??? ?? 不",
+			true,
+		},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := IsValidRFC3986Uri(tt.args.input); got != tt.want {
+	for i, tt := range tests {
+		t.Run(fmt.Sprint("TestIsValidRFC3986Uri#", i), func(t *testing.T) {
+			if got := IsValidRFC3986Uri(tt.input); got != tt.want {
 				t.Errorf("IsValidRFC3986Uri() = %v, want %v", got, tt.want)
 			}
 		})
@@ -440,6 +444,21 @@ func TestDidDocument_SetControllers(t *testing.T) {
 			},
 			true, // invalid controller did
 		},
+		{
+			func() DidDocument {
+				dd, _ := NewIdentifier("did:cash:subject",
+					WithControllers(
+						"did:cash:controller-1",
+						"did:cash:controller-2",
+						"did:cash:controller-3",
+						"did:cash:controller-4",
+					),
+				)
+				return dd
+			},
+			nil,
+			false,
+		},
 	}
 	for i, tt := range tests {
 		t.Run(fmt.Sprint("TestDidDocument_SetControllers#", i), func(t *testing.T) {
@@ -542,7 +561,7 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 			},
 		},
 		{
-			wantErr: true, // duplicated method id
+			wantErr: true, // duplicated existing method id
 			params: params{
 				func() DidDocument {
 					d, _ := NewIdentifier("did:cash:subject", WithVerifications(
@@ -574,9 +593,64 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 							"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
 						),
 						[]string{
-							RelationshipAuthentication,
+							RelationshipCapabilityDelegation,
+						},
+						[]string{
+							"https://gpg.jsld.org/contexts/lds-gpg2020-v0.0.jsonld",
+						},
+					),
+				},
+			},
+			wantDid: DidDocument{},
+		},
+		{
+			wantErr: true, // duplicated new method id
+			params: params{
+				func() DidDocument {
+					d, _ := NewIdentifier("did:cash:subject", WithVerifications(
+						NewVerification(
+							NewVerificationMethod(
+								"did:cash:subject#key-1",
+								"EcdsaSecp256k1VerificationKey2019",
+								"did:cash:subject",
+								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+							),
+							[]string{
+								RelationshipAuthentication,
+								RelationshipKeyAgreement,
+								RelationshipKeyAgreement, // test duplicated relationship
+							},
+							[]string{
+								"https://gpg.jsld.org/contexts/lds-gpg2020-v0.0.jsonld",
+							},
+						),
+					))
+					return d
+				},
+				[]*Verification{
+					NewVerification(
+						NewVerificationMethod(
+							"did:cash:subject#key-2",
+							"EcdsaSecp256k1VerificationKey2019",
+							"did:cash:subject",
+							"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+						),
+						[]string{
 							RelationshipKeyAgreement,
-							RelationshipKeyAgreement, // test duplicated relationship
+						},
+						[]string{
+							"https://gpg.jsld.org/contexts/lds-gpg2020-v0.0.jsonld",
+						},
+					),
+					NewVerification(
+						NewVerificationMethod(
+							"did:cash:subject#key-2",
+							"EcdsaSecp256k1VerificationKey2019",
+							"did:cash:subject",
+							"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+						),
+						[]string{
+							RelationshipAuthentication,
 						},
 						[]string{
 							"https://gpg.jsld.org/contexts/lds-gpg2020-v0.0.jsonld",
@@ -1379,7 +1453,37 @@ func TestDidDocument_AddServices(t *testing.T) {
 			},
 		},
 		{
-			wantErr: true, // duplicated service id
+			wantErr: true, // duplicated existing service id
+			params: params{
+				func() DidDocument {
+					d, _ := NewIdentifier(
+						"did:cash:subject",
+						WithServices(
+							NewService(
+								"agent:xyz",
+								"DIDCommMessaging",
+								"https://agent.xyz/1234",
+							),
+						),
+					)
+					return d
+				},
+				[]*Service{
+					{
+						"agent:abc",
+						"DIDCommMessaging",
+						"https://agent.abc/1234",
+					}, {
+						"agent:xyz",
+						"DIDCommMessaging",
+						"https://agent.xyz/1234",
+					},
+				},
+			},
+			wantDid: DidDocument{},
+		},
+		{
+			wantErr: true, // duplicated new service id
 			params: params{
 				func() DidDocument {
 					d, _ := NewIdentifier("did:cash:subject")
@@ -1389,7 +1493,7 @@ func TestDidDocument_AddServices(t *testing.T) {
 					{
 						"agent:xyz",
 						"DIDCommMessaging",
-						"https://agent.abc/1234",
+						"https://agent.xyz/1234",
 					}, {
 						"agent:xyz",
 						"DIDCommMessaging",

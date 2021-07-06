@@ -70,7 +70,7 @@ func GetCmdQueryIdentifers() *cobra.Command {
 func GetCmdQueryIdentifer() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "identifier [id]",
-		Short: "Query for an identitifer",
+		Short: "Query for an identifier",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)

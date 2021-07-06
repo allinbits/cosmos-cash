@@ -55,11 +55,6 @@ func (k msgServer) CreateIdentifier(
 // UpdateIdentifier update an existing DID document
 func (k msgServer) UpdateIdentifier(goCtx context.Context, msg *types.MsgUpdateIdentifier) (*types.MsgUpdateIdentifierResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	// XXX: does it make sense to do it twice to avoid opening the db
-	// validate input before accessing the database
-	if !types.IsValidDID(msg.Id) {
-		return nil, sdkerrors.Wrap(types.ErrInvalidDIDFormat, "invalid identifier")
-	}
 
 	// get the did document
 	didDoc, found := k.Keeper.GetIdentifier(ctx, []byte(msg.Id))
@@ -85,7 +80,7 @@ func (k msgServer) UpdateIdentifier(goCtx context.Context, msg *types.MsgUpdateI
 	// write the identifier
 	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), didDoc)
 
-	// XXX: @paddy, wdyt? rubbish?
+	// NOTE: events are expected to change during client development
 	ctx.EventManager().EmitEvent(
 		types.NewIdentifierUpdatedEvent(msg.Id, msg.Controller...),
 	)
@@ -98,14 +93,6 @@ func (k msgServer) AddVerification(
 	msg *types.MsgAddVerification,
 ) (*types.MsgAddVerificationResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	// XXX: does it make sense to do it twice to avoid opening the db
-	// validate input before accessing the database
-	if !types.IsValidDID(msg.Id) {
-		return nil, sdkerrors.Wrap(types.ErrInvalidDIDFormat, "invalid identifier")
-	}
-	if err := types.ValidateVerification(msg.Verification); err != nil {
-		return nil, err
-	}
 
 	// get the did document
 	didDoc, found := k.Keeper.GetIdentifier(ctx, []byte(msg.Id))
@@ -132,7 +119,7 @@ func (k msgServer) AddVerification(
 	// write the identifier
 	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), didDoc)
 
-	// TODO: may be useful to emit also the methodId
+	// NOTE: events are expected to change during client development
 	ctx.EventManager().EmitEvent(
 		types.NewVerificationAddedEvent(msg.Id, msg.Verification.Method.Controller),
 	)
@@ -145,24 +132,16 @@ func (k msgServer) AddService(
 	msg *types.MsgAddService,
 ) (*types.MsgAddServiceResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	// XXX: does it make sense to do it twice to avoid opening the db
-	// validate input before accessing the database
-	if !types.IsValidDID(msg.Id) {
-		return nil, sdkerrors.Wrap(types.ErrInvalidDIDFormat, "invalid identifier")
-	}
+	// perform checks on the service
 	if err := types.ValidateService(msg.ServiceData); err != nil {
 		return nil, err
 	}
 
+	// compute the signer did
+	signerDID := types.DID(msg.Signer)
 	didDoc, found := k.Keeper.GetIdentifier(ctx, []byte(msg.Id))
 	if !found {
 		return nil, sdkerrors.Wrapf(types.ErrIdentifierNotFound, "did document at %s not found", msg.Id)
-	}
-	// add the service to the document
-	err := didDoc.AddServices(msg.ServiceData)
-	if err != nil {
-		return nil, err
 	}
 	// verify that the service type is of type credential
 	if !vcstypes.IsValidCredentialType(msg.ServiceData.Type) {
@@ -171,9 +150,22 @@ func (k msgServer) AddService(
 			"invalid service type %s", msg.ServiceData.Type,
 		)
 	}
+	// Any verification method in the authentication relationship can update the DID document
+	if !didDoc.HasRelationship(signerDID, types.RelationshipAuthentication) {
+		return nil, sdkerrors.Wrapf(
+			types.ErrUnauthorized,
+			"signer did %s not authorized to add services to the target did document at %s",
+			signerDID, msg.Id,
+		)
+	}
+	// add the service to the document
+	err := didDoc.AddServices(msg.ServiceData)
+	if err != nil {
+		return nil, err
+	}
 	// write to storage
 	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), didDoc)
-	// emit events
+	// NOTE: events are expected to change during client development
 	ctx.EventManager().EmitEvent(
 		types.NewServiceAddedEvent(msg.Id, msg.ServiceData.Id),
 	)
@@ -202,17 +194,6 @@ func (k msgServer) RevokeVerification(
 			signerDID, msg.Id,
 		)
 	}
-
-	// XXX: there is something wrong here
-	// pubKey, err := sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeAccPub, msg.MethodId)
-	// if err != nil {
-	// 	return nil, sdkerrors.Wrapf(
-	// 		types.ErrIdentifierNotFound,
-	// 		"pubkey not correct: RevokeVerification",
-	// 	)
-	// }
-	// address := sdk.AccAddress(pubKey.Address())
-
 	// revoke the verification method + relationships
 	if err := didDoc.RevokeVerification(msg.MethodId); err != nil {
 		return nil, err
@@ -262,7 +243,7 @@ func (k msgServer) DeleteService(
 	// persist the did document
 	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), didDoc)
 
-	// emit the event
+	// NOTE: events are expected to change during client development
 	ctx.EventManager().EmitEvent(
 		types.NewServiceDeletedEvent(msg.Id, msg.ServiceId),
 	)
@@ -300,8 +281,7 @@ func (k msgServer) SetVerificationRelationships(goCtx context.Context, msg *type
 	// persist the did document
 	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), didDoc)
 
-	// emit the event
-	// TODO: rubbish
+	// NOTE: events are expected to change during client development
 	ctx.EventManager().EmitEvent(
 		types.NewVerificationRelationshipsUpdatedEvent(msg.Id, msg.MethodId),
 	)

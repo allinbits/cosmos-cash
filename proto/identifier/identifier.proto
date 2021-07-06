@@ -60,8 +60,8 @@ message DidDocument {
   }
 
   // A verification relationship expresses the relationship between the DID subject and a verification method.
-// This enum is used to 
-// cfr. https://www.w3.org/TR/did-core/#verification-relationships
+  // This enum is used to 
+  // cfr. https://www.w3.org/TR/did-core/#verification-relationships
   map<string,VerificationRelationships> verificationRelationships = 6;
 
 }

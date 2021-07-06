@@ -209,6 +209,10 @@ func NewIdentifier(id string, options ...IdentifierOption) (did DidDocument, err
 
 // SetControllers replace the controllers in the did document
 func (didDoc *DidDocument) SetControllers(controllers ...string) error {
+	if controllers == nil {
+		didDoc.Controller = controllers
+		return nil
+	}
 	dc := distinct(controllers)
 	for _, c := range dc {
 		if !IsValidDID(c) {
@@ -361,7 +365,6 @@ func (didDoc DidDocument) GetVerificationRelationships(methodID string) []string
 
 // HasRelationship verifies if a controller did
 // exists for at least one of the relationships in the did document
-// TODO: improve semantics for this one
 func (didDoc DidDocument) HasRelationship(
 	contoller string,
 	relationships ...string) bool {
@@ -388,7 +391,12 @@ func (didDoc *DidDocument) AddServices(services ...*Service) (err error) {
 	}
 
 	// used to check duplicates
-	index := make(map[string]struct{})
+	index := make(map[string]struct{}, len(didDoc.Services))
+
+	// load existing services
+	for _, s := range didDoc.Services {
+		index[s.Id] = struct{}{}
+	}
 
 	// services must be unique
 	for _, s := range services {

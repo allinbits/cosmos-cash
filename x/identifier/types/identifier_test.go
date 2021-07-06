@@ -845,12 +845,61 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 				},
 			},
 		},
+		{
+			wantErr: true, // verification method not found
+			params: params{
+				func() DidDocument {
+					d, _ := NewIdentifier("did:cash:subject",
+						WithVerifications(
+							NewVerification(
+								NewVerificationMethod(
+									"did:cash:subject#key-1",
+									"EcdsaSecp256k1VerificationKey2019",
+									"did:cash:subject",
+									"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+								),
+								[]string{
+									RelationshipAuthentication,
+									RelationshipKeyAgreement,
+								},
+								nil,
+							),
+							NewVerification(
+								NewVerificationMethod(
+									"did:cash:subject#key-2",
+									"EcdsaSecp256k1VerificationKey2019",
+									"did:cash:subject",
+									"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+								),
+								[]string{
+									RelationshipAuthentication,
+									RelationshipCapabilityInvocation,
+								},
+								[]string{
+									"https://gpg.jsld.org/contexts/lds-gpg2020-v0.0.jsonld",
+								},
+							),
+						),
+					)
+					return d
+				},
+				"did:cash:subject#key-3",
+			},
+			wantDid: DidDocument{},
+		},
 	}
 	for i, tt := range tests {
 		t.Run(fmt.Sprint("TestDidDocument_RevokeVerification#", i), func(t *testing.T) {
 			gotDid := tt.params.malleate()
 
-			gotDid.RevokeVerification(tt.params.methodID)
+			err := gotDid.RevokeVerification(tt.params.methodID)
+
+			if tt.wantErr {
+				require.NotNil(t, err, "test: TestDidDocument_RevokeVerification#%v", i)
+				return
+			}
+
+			require.Nil(t, err, "test: TestDidDocument_RevokeVerification#%v", i)
 
 			assert.Equal(t, tt.wantDid, gotDid)
 		})

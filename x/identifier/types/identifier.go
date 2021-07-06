@@ -257,7 +257,7 @@ func (didDoc *DidDocument) AddVerifications(verifications ...*Verification) (err
 
 // RevokeVerification revoke a verification method
 // and all relationships associated with it
-func (didDoc *DidDocument) RevokeVerification(methodID string) {
+func (didDoc *DidDocument) RevokeVerification(methodID string) error {
 
 	del := func(x int) {
 		lastIdx := len(didDoc.VerificationMethods) - 1
@@ -279,9 +279,10 @@ func (didDoc *DidDocument) RevokeVerification(methodID string) {
 	for i, vm := range didDoc.VerificationMethods {
 		if vm.Id == methodID {
 			del(i)
-			break
+			return nil
 		}
 	}
+	return sdkerrors.Wrapf(ErrVerificationMethodNotFound, "verification method id: %v", methodID)
 }
 
 // SetVerificationRelationships for a did document

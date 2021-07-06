@@ -204,24 +204,26 @@ func (k msgServer) RevokeVerification(
 	}
 
 	// XXX: there is something wrong here
-	pubKey, err := sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeAccPub, msg.MethodId)
-	if err != nil {
-		return nil, sdkerrors.Wrapf(
-			types.ErrIdentifierNotFound,
-			"pubkey not correct: RevokeVerification",
-		)
-	}
-	address := sdk.AccAddress(pubKey.Address())
+	// pubKey, err := sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeAccPub, msg.MethodId)
+	// if err != nil {
+	// 	return nil, sdkerrors.Wrapf(
+	// 		types.ErrIdentifierNotFound,
+	// 		"pubkey not correct: RevokeVerification",
+	// 	)
+	// }
+	// address := sdk.AccAddress(pubKey.Address())
 
 	// revoke the verification method + relationships
-	didDoc.RevokeVerification(msg.MethodId)
+	if err := didDoc.RevokeVerification(msg.MethodId); err != nil {
+		return nil, err
+	}
 
 	// persist to storage
 	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), didDoc)
 
 	// emit event
 	ctx.EventManager().EmitEvent(
-		types.NewVerificationRevokedEvent(msg.Id, address.String()),
+		types.NewVerificationRevokedEvent(msg.Id, msg.Signer),
 	)
 
 	return &types.MsgRevokeVerificationResponse{}, nil

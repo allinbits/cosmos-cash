@@ -17,9 +17,9 @@ This service message is expected to fail if:
 This service message creates and stores the `Identifier` object at appropriate indexes.
 
 
-## MsgAddAuthentication
+## MsgAddVerification
 
-An authentication method is added to a decentralized identifier (DID) using the `MsgAddAuthentication` service message.
+An verification method and one or more verification relationships are added to a decentralized identifier (DID) using the `MsgAddVerification` service message.
 
 +++ https://github.com/allinbits/cosmos-cash/blob/main/proto/identifier/tx.proto#L13
 
@@ -27,8 +27,14 @@ An authentication method is added to a decentralized identifier (DID) using the 
 
 This service message is expected to fail if:
 
-- sender is not associtated with the given identifier id
-- another identifier with the same id is already registered
+- the target did does not exists
+- the verification method is invalid (according to the verification method specifications)
+- the sender DID composed with the address signing the transaction is not the controller of a verification method listed in the `Authorization` verification relationships
+- another verification method identifier with the same id is already registered
+
+### Caveats :warning:
+
+- the module does not try to resolve the verification method controller
 
 This service message adds an authentication method to an `Identifier` and stores the `Identifier` object at the appropriate index.
 
@@ -76,3 +82,76 @@ This service message is expected to fail if:
 - cannot find the given identifier id
 
 This service message deletes a service from an `Identifier` and stores the `Identifier` object at the appropriate index.
+
+
+--------------------
+
+### GRPC Methods 
+
+#### Create DID Document
+
+**Params**
+- `Id`: did uri 
+- `DidDocument`: did document
+- `signer`: address of the account signing the transaction
+
+**Defaults**
+- `context`: https://www.w3.org/TR/did-core/
+
+#### Update DID Document
+
+#### Add Verification 
+
+#### Revoke Verification
+
+#### Set Verification Relationships
+
+#### Add Service 
+
+
+### Command Line Client
+
+
+---
+hic sunt leones
+
+--- 
+
+## Decentralized Identifiers 
+
+The implementation is based on the [w3c draft specifications v1.0.0](https://www.w3.org/TR/did-core/)
+
+
+## Supported Messages 
+
+### CreateIdentifier 
+
+creates a new did with the following defaults
+
+- context: ["https://www.w3.org/ns/did/v1"]
+
+
+validation:
+
+- id must be set (and be a valid did)
+- controller must be a valid did (if set)
+- upper limit of 5 Verification Methods 
+- upper limit of 5 Services 
+
+### AddVerification 
+
+add one verification to the did
+
+validation:
+
+- the owner of the call must have an `Authorization` verification relationship
+
+
+Design decisions:
+Verification Method can exists only if they exist in a relationship 
+
+
+### SetVerificationRelationships
+
+overwrites the verification relationships of an existing verification
+

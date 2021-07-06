@@ -2,27 +2,26 @@
 
 This document describes the state pertaining to:
 
-1. [Identifier || DidDocument](./02_state.md#identifier)
-2. [Authentication](./02_state.md#authentication)
+1. [DidDocument](./02_state.md#identifier)
+2. [Verification](./02_state.md#authentication)
 3. [Service](./02_state.md#service)
 
 
 Three data structues represent a DidDocument
 
 - DidDocument
-- Authentication
+- Verification
 - Service
 
-## Identifier || DidDocument
-DidDocuments are stored in the state under the 0x61 key and are stored using their ids
+## DidDocument
+DidDocuments are stored in the state under the `0x61` key and are stored using their ids
 
 - DidDocument: `0x61 | DidDocument.Id -> ProtocolBuffer(DidDocument)`
 
 ### Structure
-+++ https://github.com/allinbits/cosmos-cash/blob/main/proto/identifier/identifier.proto#L30-L42
 
 
-## Authentication
+## Verification
 Authentication is stored as a slice under in the DidDocument, the authentication data structure contains 4 fields and is used to store public key information. [[more_info]](https://w3c.github.io/did-core/#authentication)
 
 ### Structure
@@ -34,3 +33,5 @@ A Service is stored as a slice under in the DidDocument data structure, the serv
 
 ### Structure
 +++ https://github.com/allinbits/cosmos-cash/blob/main/proto/identifier/identifier.proto#L41
+
+

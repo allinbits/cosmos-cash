@@ -51,12 +51,11 @@ func (cicd CheckIssuerCredentialsDecorator) AnteHandle(
 			did, found := cicd.ik.GetIdentifier(ctx, []byte(didURI))
 			if !found {
 				return ctx, sdkerrors.Wrapf(
-					types.ErrIssuerFound,
+					types.ErrIdentifierDoesNotExist,
 					"identifier does not exists",
 				)
 			}
 
-			// TODO: optimize here
 			foundKey := false
 			for _, auth := range did.Authentication {
 				if auth.Controller == imsg.Owner {
@@ -65,12 +64,11 @@ func (cicd CheckIssuerCredentialsDecorator) AnteHandle(
 			}
 			if !foundKey {
 				return ctx, sdkerrors.Wrapf(
-					types.ErrIssuerFound,
+					types.ErrIncorrectControllerOfDidDocument,
 					"msg sender not in auth array in did document",
 				)
 			}
 
-			// TODO: optimize here
 			// check if the did document has the issuer credential
 			hasIssuerCredential := false
 			for _, service := range did.Services {
@@ -81,7 +79,7 @@ func (cicd CheckIssuerCredentialsDecorator) AnteHandle(
 					if !found {
 						return ctx, sdkerrors.Wrapf(
 							types.ErrIssuerFound,
-							"credential not found",
+							"verifiable credential not found",
 						)
 					}
 
@@ -138,6 +136,8 @@ func NewCheckUserCredentialsDecorator(
 	}
 }
 
+// AnteHandle CheckUserCredentialsDecorator is used as a hook to intercept the bank send message then
+// it will validate the KYC credential
 func (cicd CheckUserCredentialsDecorator) AnteHandle(
 	ctx sdk.Context,
 	tx sdk.Tx,
@@ -147,6 +147,8 @@ func (cicd CheckUserCredentialsDecorator) AnteHandle(
 	// TODO: ensure this keepers can only read from store
 	// TODO: improve logic here
 	for _, msg := range tx.GetMsgs() {
+		// FIXME: this will fail with the next cosmos-sdk update as Type() gone from interface
+		// use protoMessage type e.g bank/v1beta1/send
 		if msg.Type() == "send" {
 			imsg := msg.(*bank.MsgSend)
 			// FIXME: iterate over tokens and check the multi-send
@@ -169,6 +171,8 @@ func (cicd CheckUserCredentialsDecorator) AnteHandle(
 	return next(ctx, tx, simulate)
 }
 
+// validateKYCCredential validates a users KYC credential when they try to send a token
+// to another user, this is called on every bank send message
 func (cicd CheckUserCredentialsDecorator) validateKYCCredential(
 	ctx sdk.Context,
 	address string,
@@ -181,8 +185,8 @@ func (cicd CheckUserCredentialsDecorator) validateKYCCredential(
 	did, found := cicd.ik.GetIdentifier(ctx, []byte(didURI))
 	if !found {
 		return sdkerrors.Wrapf(
-			types.ErrIssuerFound,
-			"identifier does not exists",
+			types.ErrIdentifierDoesNotExist,
+			"identifier does not exists when validating the KYC credential",
 		)
 	}
 
@@ -195,8 +199,8 @@ func (cicd CheckUserCredentialsDecorator) validateKYCCredential(
 	}
 	if !foundKey {
 		return sdkerrors.Wrapf(
-			types.ErrUserFound,
-			"msg sender not in auth slice in did document",
+			types.ErrIncorrectControllerOfDidDocument,
+			"msg sender not in auth slice in did document when validating the KYC credential",
 		)
 	}
 
@@ -253,8 +257,8 @@ func (cicd CheckUserCredentialsDecorator) validateKYCCredential(
 	}
 	if !hasUserCredential {
 		return sdkerrors.Wrapf(
-			types.ErrIssuerFound,
-			"did document does not have a credential to send e-money tokens",
+			types.ErrIncorrectUserCredential,
+			"did document does not have a KYC credential to send e-money tokens",
 		)
 	}
 

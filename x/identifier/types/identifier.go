@@ -353,6 +353,9 @@ func (didDoc *DidDocument) setRelationships(methodID string, relationships ...st
 // verification method id.
 func (didDoc DidDocument) GetVerificationRelationships(methodID string) []string {
 	relationships := []string{}
+	// this seems like something odd is happening
+	// should we check the public key here?
+	// I think this functionality need to be changed?
 	for vr, methods := range didDoc.VerificationRelationships {
 		for _, mID := range methods.GetLabels() {
 			if mID == methodID {
@@ -375,6 +378,8 @@ func (didDoc DidDocument) HasRelationship(
 			continue
 		}
 
+		// XXX: Does this line only check if the caller has a relationship
+		// Should this check if the relationship is the correct one?
 		vrs := didDoc.GetVerificationRelationships(vm.Id)
 		if len(intersection(vrs, relationships)) > 0 {
 			return true

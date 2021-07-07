@@ -17,7 +17,6 @@ go.sum: go.mod
 	GO111MODULE=on go mod verify
 
 test:
-	# TODO: find race condition
 	@go test -mod=readonly $(PACKAGES) -cover -race
 
 lint:
@@ -34,9 +33,6 @@ start-dev: install
 
 seed: 
 	./scripts/seeds/01_identifier_seeds.sh
-	./scripts/seeds/02_verifiable_credentials_seeds.sh
-	./scripts/seeds/03_issuer_seeds.sh
-	./scripts/seeds/04_user_seeds.sh
 
 ###############################################################################
 ###                                CI / CD                                  ###

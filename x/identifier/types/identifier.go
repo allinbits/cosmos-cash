@@ -356,6 +356,7 @@ func (didDoc DidDocument) GetVerificationRelationships(methodID string) []string
 	for vr, methods := range didDoc.VerificationRelationships {
 		for _, mID := range methods.GetLabels() {
 			if mID == methodID {
+				//
 				relationships = append(relationships, vr)
 			}
 		}
@@ -375,7 +376,10 @@ func (didDoc DidDocument) HasRelationship(
 			continue
 		}
 
+		// XXX: Does this line only check if the caller has a relationship
+		// Should this check if the relationship is the correct one?
 		vrs := didDoc.GetVerificationRelationships(vm.Id)
+
 		if len(intersection(vrs, relationships)) > 0 {
 			return true
 		}

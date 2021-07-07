@@ -55,7 +55,6 @@ func NewCreateIdentifierCmd() *cobra.Command {
 
 			// verification
 			signer := clientCtx.GetFromAddress()
-			signerDID := types.DID(signer.String())
 			// pubkey
 			info, err := clientCtx.Keyring.KeyByAddress(signer)
 			if err != nil {
@@ -63,13 +62,13 @@ func NewCreateIdentifierCmd() *cobra.Command {
 			}
 			pubKey := info.GetPubKey()
 			// verification method id
-			vmID := fmt.Sprint(signerDID, "#", uuid.NewV4().String())
+			vmID := fmt.Sprint(did, "#", uuid.NewV4().String())
 
 			auth := types.NewVerification(
 				types.NewVerificationMethod(
 					vmID,
 					pubKey.Type(),
-					signerDID,
+					did,
 					base58.Encode(pubKey.Bytes()),
 				),
 				[]string{types.RelationshipAuthentication},
@@ -99,9 +98,9 @@ func NewCreateIdentifierCmd() *cobra.Command {
 // NewAddVerificationCmd define the command to add a verification message
 func NewAddVerificationCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "add-authentication [id] [pubkey]",
-		Short:   "add an authentication method to a decentralized identifier (did) document",
-		Example: "adds an authentication method for a did document",
+		Use:     "add-verification-method [id] [pubkey]",
+		Short:   "add an verification method to a decentralized identifier (did) document",
+		Example: "adds an verification method for a did document",
 		Args:    cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -117,8 +116,6 @@ func NewAddVerificationCmd() *cobra.Command {
 			}
 			// document did
 			did := types.DID(args[0])
-			// controller did
-			controllerDID := types.DID(signer.String())
 			// verification method id
 			vmID := fmt.Sprint(did, "#", uuid.NewV4().String())
 
@@ -126,7 +123,7 @@ func NewAddVerificationCmd() *cobra.Command {
 				types.NewVerificationMethod(
 					vmID,
 					pubKey.Type(),
-					controllerDID,
+					did,
 					base58.Encode(pubKey.Bytes()),
 				),
 				[]string{types.RelationshipAuthentication},
@@ -170,7 +167,7 @@ func NewAddServiceCmd() *cobra.Command {
 			// tx signer
 			signer := clientCtx.GetFromAddress()
 			// service parameters
-			serviceID, serviceType, endpoint := args[0], args[1], args[2]
+			serviceID, serviceType, endpoint := args[1], args[2], args[3]
 			// document did
 			did := types.DID(args[0])
 

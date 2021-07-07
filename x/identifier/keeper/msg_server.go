@@ -102,6 +102,8 @@ func (k msgServer) AddVerification(
 	// compute the signer did
 	signerDID := types.DID(msg.Signer)
 
+	// XXX: something odd is happening here?
+	// Lets pair on this tomorrow! :heart:
 	// Any verification method in the authentication relationship can update the DID document
 	if !didDoc.HasRelationship(signerDID, types.RelationshipAuthentication) {
 		return nil, sdkerrors.Wrapf(
@@ -137,8 +139,6 @@ func (k msgServer) AddService(
 		return nil, err
 	}
 
-	// compute the signer did
-	signerDID := types.DID(msg.Signer)
 	didDoc, found := k.Keeper.GetIdentifier(ctx, []byte(msg.Id))
 	if !found {
 		return nil, sdkerrors.Wrapf(types.ErrIdentifierNotFound, "did document at %s not found", msg.Id)
@@ -150,6 +150,11 @@ func (k msgServer) AddService(
 			"invalid service type %s", msg.ServiceData.Type,
 		)
 	}
+
+	// compute the signer did
+	signerDID := types.DID(msg.Signer)
+	// XXX: something odd is happening here?
+	// Lets pair on this tomorrow! :heart:
 	// Any verification method in the authentication relationship can update the DID document
 	if !didDoc.HasRelationship(signerDID, types.RelationshipAuthentication) {
 		return nil, sdkerrors.Wrapf(

@@ -15,7 +15,7 @@ The DID module provides the functionalities to create and manage the lifecycle o
 
 The lifecycle of the DID document is represented in the following sequence diagram ([src board](https://whimsical.com/did-module-tx-process-263fkjvvNa939A1yjzZUep)):
 
-![DID Creation](./docs/assets/DID%20Module%20Tx%20process.png)
+![DID Creation](./docs/assets/DID%20Module%20Tx%20process.svg)
 
 ## Reference
 

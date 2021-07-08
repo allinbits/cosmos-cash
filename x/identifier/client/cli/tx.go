@@ -170,7 +170,7 @@ func NewAddServiceCmd() *cobra.Command {
 			// tx signer
 			signer := clientCtx.GetFromAddress()
 			// service parameters
-			serviceID, serviceType, endpoint := args[0], args[1], args[2]
+			serviceID, serviceType, endpoint := args[1], args[2], args[3]
 			// document did
 			did := types.DID(args[0])
 

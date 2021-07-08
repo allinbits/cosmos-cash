@@ -61,15 +61,13 @@ func (k msgServer) UpdateIdentifier(goCtx context.Context, msg *types.MsgUpdateI
 	if !found {
 		return nil, sdkerrors.Wrapf(types.ErrIdentifierNotFound, "did document at %s not found", msg.Id)
 	}
-	// compute the signer did
-	signerDID := types.DID(msg.Signer)
 
 	// Any verification method in the authentication relationship can update the DID document
-	if !didDoc.HasRelationship(signerDID, types.RelationshipAuthentication) {
+	if !didDoc.HasRelationship(msg.Signer, types.RelationshipAuthentication) {
 		return nil, sdkerrors.Wrapf(
 			types.ErrUnauthorized,
-			"signer did %s not authorized to update the target did document at %s",
-			signerDID, msg.Id,
+			"signer %s not authorized to update the target did document at %s",
+			msg.Signer, msg.Id,
 		)
 	}
 	// set the controllers
@@ -99,15 +97,13 @@ func (k msgServer) AddVerification(
 	if !found {
 		return nil, sdkerrors.Wrapf(types.ErrIdentifierNotFound, "did document at %s not found", msg.Id)
 	}
-	// compute the signer did
-	signerDID := types.DID(msg.Signer)
 
 	// Any verification method in the authentication relationship can update the DID document
-	if !didDoc.HasRelationship(signerDID, types.RelationshipAuthentication) {
+	if !didDoc.HasRelationship(msg.Signer, types.RelationshipAuthentication) {
 		return nil, sdkerrors.Wrapf(
 			types.ErrUnauthorized,
-			"signer did %s not authorized to add verification methods to the target did document at %s",
-			signerDID, msg.Id,
+			"signer account %s not authorized to add verification methods to the target did document at %s",
+			msg.Signer, msg.Id,
 		)
 	}
 
@@ -137,8 +133,6 @@ func (k msgServer) AddService(
 		return nil, err
 	}
 
-	// compute the signer did
-	signerDID := types.DID(msg.Signer)
 	didDoc, found := k.Keeper.GetIdentifier(ctx, []byte(msg.Id))
 	if !found {
 		return nil, sdkerrors.Wrapf(types.ErrIdentifierNotFound, "did document at %s not found", msg.Id)
@@ -151,11 +145,11 @@ func (k msgServer) AddService(
 		)
 	}
 	// Any verification method in the authentication relationship can update the DID document
-	if !didDoc.HasRelationship(signerDID, types.RelationshipAuthentication) {
+	if !didDoc.HasRelationship(msg.Signer, types.RelationshipAuthentication) {
 		return nil, sdkerrors.Wrapf(
 			types.ErrUnauthorized,
-			"signer did %s not authorized to add services to the target did document at %s",
-			signerDID, msg.Id,
+			"signer %s not authorized to add services to the target did document at %s",
+			msg.Signer, msg.Id,
 		)
 	}
 	// add the service to the document
@@ -184,14 +178,12 @@ func (k msgServer) RevokeVerification(
 	if !found {
 		return nil, sdkerrors.Wrapf(types.ErrIdentifierNotFound, "did document at %s not found", msg.Id)
 	}
-	// compute the did based on the signer address
-	signerDID := types.DID(msg.Signer)
 	// any verification method in the authentication relationship can update the DID document
-	if !didDoc.HasRelationship(signerDID, types.RelationshipAuthentication) {
+	if !didDoc.HasRelationship(msg.Signer, types.RelationshipAuthentication) {
 		return nil, sdkerrors.Wrapf(
 			types.ErrUnauthorized,
-			"signer did %s not authorized to revoke verification methods from the target did document at %s",
-			signerDID, msg.Id,
+			"signer %s not authorized to revoke verification methods from the target did document at %s",
+			msg.Signer, msg.Id,
 		)
 	}
 	// revoke the verification method + relationships
@@ -222,15 +214,12 @@ func (k msgServer) DeleteService(
 	if !found {
 		return nil, sdkerrors.Wrapf(types.ErrIdentifierNotFound, "did document at %s not found", msg.Id)
 	}
-	// compute the did based on the signer address
-	signerDID := types.DID(msg.Signer)
-
 	// any verification method in the authentication relationship can update the DID document
-	if !didDoc.HasRelationship(signerDID, types.RelationshipAuthentication) {
+	if !didDoc.HasRelationship(msg.Signer, types.RelationshipAuthentication) {
 		return nil, sdkerrors.Wrapf(
 			types.ErrUnauthorized,
-			"signer did %s not authorized to delete services from the target did document at %s",
-			signerDID, msg.Id,
+			"signer %s not authorized to delete services from the target did document at %s",
+			msg.Signer, msg.Id,
 		)
 	}
 	// Only try to remove service if there are services
@@ -260,15 +249,12 @@ func (k msgServer) SetVerificationRelationships(goCtx context.Context, msg *type
 	if !found {
 		return nil, sdkerrors.Wrapf(types.ErrIdentifierNotFound, "did document at %s not found", msg.Id)
 	}
-	// compute the did based on the signer address
-	signerDID := types.DID(msg.Signer)
-
 	// any verification method in the authentication relationship can update the DID document
-	if !didDoc.HasRelationship(signerDID, types.RelationshipAuthentication) {
+	if !didDoc.HasRelationship(msg.Signer, types.RelationshipAuthentication) {
 		return nil, sdkerrors.Wrapf(
 			types.ErrUnauthorized,
-			"signer did %s not authorized to set verification relationships on the target did document at %s",
-			signerDID, msg.Id,
+			"signer %s not authorized to set verification relationships on the target did document at %s",
+			msg.Signer, msg.Id,
 		)
 	}
 

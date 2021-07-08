@@ -60,7 +60,6 @@ func TestIsValidDID(t *testing.T) {
 }
 
 func TestIsValidDIDURL(t *testing.T) {
-
 	tests := []struct {
 		input string
 		want  bool
@@ -85,7 +84,6 @@ func TestIsValidDIDURL(t *testing.T) {
 }
 
 func TestIsValidRFC3986Uri(t *testing.T) {
-
 	tests := []struct {
 		input string
 		want  bool
@@ -1242,7 +1240,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 
 	type params struct {
 		malleate      func() DidDocument
-		did           string
+		signer        string
 		relationships []string
 	}
 	tests := []struct {
@@ -1259,7 +1257,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 								"did:cash:subject#key-1",
 								"EcdsaSecp256k1VerificationKey2019",
 								"did:cash:subject",
-								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+								"signer",
 							),
 							[]string{
 								RelationshipAuthentication,
@@ -1270,7 +1268,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 					))
 					return dd
 				},
-				did: "did:cash:subject",
+				signer: "signer",
 				relationships: []string{
 					RelationshipAssertionMethod,
 					RelationshipAuthentication,
@@ -1310,7 +1308,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 					))
 					return dd
 				},
-				did: "did:cash:subject",
+				signer: "did:cash:subject",
 				relationships: []string{
 					RelationshipCapabilityDelegation,
 				},
@@ -1323,7 +1321,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 					dd, _ := NewIdentifier("did:cash:subject")
 					return dd
 				},
-				did: "did:cash:subject",
+				signer: "did:cash:subject",
 				relationships: []string{
 					RelationshipCapabilityDelegation,
 				},
@@ -1339,7 +1337,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 								"did:cash:subject#key-1",
 								"EcdsaSecp256k1VerificationKey2019",
 								"did:cash:subject",
-								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+								"signer",
 							),
 							[]string{
 								RelationshipAuthentication,
@@ -1350,7 +1348,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 					))
 					return dd
 				},
-				did:           "did:cash:subject",
+				signer:        "signer",
 				relationships: nil,
 			},
 		},
@@ -1364,7 +1362,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 								"did:cash:subject#key-1",
 								"EcdsaSecp256k1VerificationKey2019",
 								"did:cash:subject",
-								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+								"signer",
 							),
 							[]string{
 								RelationshipAuthentication,
@@ -1376,7 +1374,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 								"did:cash:subject#key-2",
 								"EcdsaSecp256k1VerificationKey2019",
 								"did:cash:subject",
-								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+								"signer",
 							),
 							[]string{
 								RelationshipKeyAgreement,
@@ -1386,7 +1384,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 					))
 					return dd
 				},
-				did: "did:cash:subject",
+				signer: "signer",
 				relationships: []string{
 					RelationshipKeyAgreement,
 				},
@@ -1396,7 +1394,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 	for i, tt := range tests {
 		t.Run(fmt.Sprint("TestDidDocument_SetVerificationRelationships#", i), func(t *testing.T) {
 			didDoc := tt.params.malleate()
-			gotHasRelationship := didDoc.HasRelationship(tt.params.did, tt.params.relationships...)
+			gotHasRelationship := didDoc.HasRelationship(tt.params.signer, tt.params.relationships...)
 			assert.Equal(t, tt.expectedHasRelationship, gotHasRelationship)
 		})
 	}

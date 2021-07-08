@@ -26,13 +26,25 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 // DidDocument represents a dencentralised identifer.
 type DidDocument struct {
 	// @context is spec for did document.
-	Context string `protobuf:"bytes,1,opt,name=context,proto3" json:"context,omitempty"`
+	Context []string `protobuf:"bytes,1,rep,name=context,proto3" json:"context,omitempty"`
 	// id represents the id for the did document.
 	Id string `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
-	// authentication represents public key associated with the did document.
-	Authentication []*Authentication `protobuf:"bytes,3,rep,name=authentication,proto3" json:"authentication,omitempty"`
-	// services represents each service associated with a did
-	Services []*Service `protobuf:"bytes,4,rep,name=services,proto3" json:"services,omitempty"`
+	// A DID controller is an entity that is authorized to make changes to a DID document.
+	// cfr. https://www.w3.org/TR/did-core/#did-controller
+	Controller []string `protobuf:"bytes,3,rep,name=controller,proto3" json:"controller,omitempty"`
+	// A DID document can express verification methods,
+	// such as cryptographic public keys, which can be used
+	// to authenticate or authorize interactions with the DID subject or associated parties.
+	// https://www.w3.org/TR/did-core/#verification-methods
+	VerificationMethods []*VerificationMethod `protobuf:"bytes,4,rep,name=verificationMethods,proto3" json:"verificationMethods,omitempty"`
+	// Services are used in DID documents to express ways of communicating
+	// with the DID subject or associated entities.
+	// https://www.w3.org/TR/did-core/#services
+	Services []*Service `protobuf:"bytes,5,rep,name=services,proto3" json:"services,omitempty"`
+	// A verification relationship expresses the relationship between the DID subject and a verification method.
+	// This enum is used to
+	// cfr. https://www.w3.org/TR/did-core/#verification-relationships
+	VerificationRelationships map[string]*DidDocument_VerificationRelationships `protobuf:"bytes,6,rep,name=verificationRelationships,proto3" json:"verificationRelationships,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
 func (m *DidDocument) Reset()         { *m = DidDocument{} }
@@ -68,54 +80,23 @@ func (m *DidDocument) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_DidDocument proto.InternalMessageInfo
 
-func (m *DidDocument) GetContext() string {
-	if m != nil {
-		return m.Context
-	}
-	return ""
+// VerificationRelationships - support structure for proto3 repeated string in map
+type DidDocument_VerificationRelationships struct {
+	Labels []string `protobuf:"bytes,1,rep,name=Labels,proto3" json:"Labels,omitempty"`
 }
 
-func (m *DidDocument) GetId() string {
-	if m != nil {
-		return m.Id
-	}
-	return ""
+func (m *DidDocument_VerificationRelationships) Reset()         { *m = DidDocument_VerificationRelationships{} }
+func (m *DidDocument_VerificationRelationships) String() string { return proto.CompactTextString(m) }
+func (*DidDocument_VerificationRelationships) ProtoMessage()    {}
+func (*DidDocument_VerificationRelationships) Descriptor() ([]byte, []int) {
+	return fileDescriptor_15f7ca54c9123638, []int{0, 0}
 }
-
-func (m *DidDocument) GetAuthentication() []*Authentication {
-	if m != nil {
-		return m.Authentication
-	}
-	return nil
-}
-
-func (m *DidDocument) GetServices() []*Service {
-	if m != nil {
-		return m.Services
-	}
-	return nil
-}
-
-// Authentication defines how to authenticate a did document.
-type Authentication struct {
-	Id         string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Type       string `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
-	Controller string `protobuf:"bytes,3,opt,name=controller,proto3" json:"controller,omitempty"`
-	PublicKey  string `protobuf:"bytes,4,opt,name=publicKey,proto3" json:"publicKey,omitempty"`
-}
-
-func (m *Authentication) Reset()         { *m = Authentication{} }
-func (m *Authentication) String() string { return proto.CompactTextString(m) }
-func (*Authentication) ProtoMessage()    {}
-func (*Authentication) Descriptor() ([]byte, []int) {
-	return fileDescriptor_15f7ca54c9123638, []int{1}
-}
-func (m *Authentication) XXX_Unmarshal(b []byte) error {
+func (m *DidDocument_VerificationRelationships) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *Authentication) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *DidDocument_VerificationRelationships) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_Authentication.Marshal(b, m, deterministic)
+		return xxx_messageInfo_DidDocument_VerificationRelationships.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -125,42 +106,94 @@ func (m *Authentication) XXX_Marshal(b []byte, deterministic bool) ([]byte, erro
 		return b[:n], nil
 	}
 }
-func (m *Authentication) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Authentication.Merge(m, src)
+func (m *DidDocument_VerificationRelationships) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DidDocument_VerificationRelationships.Merge(m, src)
 }
-func (m *Authentication) XXX_Size() int {
+func (m *DidDocument_VerificationRelationships) XXX_Size() int {
 	return m.Size()
 }
-func (m *Authentication) XXX_DiscardUnknown() {
-	xxx_messageInfo_Authentication.DiscardUnknown(m)
+func (m *DidDocument_VerificationRelationships) XXX_DiscardUnknown() {
+	xxx_messageInfo_DidDocument_VerificationRelationships.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_Authentication proto.InternalMessageInfo
+var xxx_messageInfo_DidDocument_VerificationRelationships proto.InternalMessageInfo
 
-func (m *Authentication) GetId() string {
+func (m *DidDocument_VerificationRelationships) GetLabels() []string {
+	if m != nil {
+		return m.Labels
+	}
+	return nil
+}
+
+// A DID document can express verification methods,
+// such as cryptographic public keys, which can be used
+// to authenticate or authorize interactions
+// with the DID subject or associated parties.
+// https://www.w3.org/TR/did-core/#verification-methods
+type VerificationMethod struct {
+	Id              string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Type            string `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
+	Controller      string `protobuf:"bytes,3,opt,name=controller,proto3" json:"controller,omitempty"`
+	PublicKeyBase58 string `protobuf:"bytes,4,opt,name=publicKeyBase58,proto3" json:"publicKeyBase58,omitempty"`
+}
+
+func (m *VerificationMethod) Reset()         { *m = VerificationMethod{} }
+func (m *VerificationMethod) String() string { return proto.CompactTextString(m) }
+func (*VerificationMethod) ProtoMessage()    {}
+func (*VerificationMethod) Descriptor() ([]byte, []int) {
+	return fileDescriptor_15f7ca54c9123638, []int{1}
+}
+func (m *VerificationMethod) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *VerificationMethod) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_VerificationMethod.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *VerificationMethod) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_VerificationMethod.Merge(m, src)
+}
+func (m *VerificationMethod) XXX_Size() int {
+	return m.Size()
+}
+func (m *VerificationMethod) XXX_DiscardUnknown() {
+	xxx_messageInfo_VerificationMethod.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_VerificationMethod proto.InternalMessageInfo
+
+func (m *VerificationMethod) GetId() string {
 	if m != nil {
 		return m.Id
 	}
 	return ""
 }
 
-func (m *Authentication) GetType() string {
+func (m *VerificationMethod) GetType() string {
 	if m != nil {
 		return m.Type
 	}
 	return ""
 }
 
-func (m *Authentication) GetController() string {
+func (m *VerificationMethod) GetController() string {
 	if m != nil {
 		return m.Controller
 	}
 	return ""
 }
 
-func (m *Authentication) GetPublicKey() string {
+func (m *VerificationMethod) GetPublicKeyBase58() string {
 	if m != nil {
-		return m.PublicKey
+		return m.PublicKeyBase58
 	}
 	return ""
 }
@@ -228,46 +261,149 @@ func (m *Service) GetServiceEndpoint() string {
 
 func init() {
 	proto.RegisterType((*DidDocument)(nil), "allinbits.cosmoscash.identifier.DidDocument")
-	proto.RegisterType((*Authentication)(nil), "allinbits.cosmoscash.identifier.Authentication")
+	proto.RegisterMapType((map[string]*DidDocument_VerificationRelationships)(nil), "allinbits.cosmoscash.identifier.DidDocument.VerificationRelationshipsEntry")
+	proto.RegisterType((*DidDocument_VerificationRelationships)(nil), "allinbits.cosmoscash.identifier.DidDocument.VerificationRelationships")
+	proto.RegisterType((*VerificationMethod)(nil), "allinbits.cosmoscash.identifier.VerificationMethod")
 	proto.RegisterType((*Service)(nil), "allinbits.cosmoscash.identifier.Service")
 }
 
 func init() { proto.RegisterFile("identifier/identifier.proto", fileDescriptor_15f7ca54c9123638) }
 
 var fileDescriptor_15f7ca54c9123638 = []byte{
-	// 344 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x52, 0xbd, 0x4e, 0xf3, 0x30,
-	0x14, 0xad, 0xdb, 0xe8, 0xeb, 0x57, 0x57, 0x2a, 0x92, 0xc5, 0x60, 0x01, 0x72, 0xab, 0x4e, 0x59,
-	0x88, 0x25, 0xba, 0xb1, 0x81, 0xca, 0x84, 0x58, 0xca, 0x80, 0x84, 0xc4, 0x90, 0x38, 0xa6, 0xbd,
-	0x52, 0x6a, 0x47, 0xb1, 0x83, 0xda, 0xb7, 0xe0, 0x11, 0x78, 0x1c, 0xc6, 0x4e, 0x88, 0x11, 0xb5,
-	0x0b, 0x8f, 0x81, 0xe2, 0x84, 0xfe, 0x2d, 0x65, 0xbb, 0x3e, 0xbe, 0xe7, 0x9c, 0x7b, 0xae, 0x2e,
-	0x3e, 0x85, 0x58, 0x2a, 0x0b, 0xcf, 0x20, 0x33, 0xbe, 0x29, 0x83, 0x34, 0xd3, 0x56, 0x93, 0x6e,
-	0x98, 0x24, 0xa0, 0x22, 0xb0, 0x26, 0x10, 0xda, 0x4c, 0xb5, 0x11, 0xa1, 0x99, 0x04, 0x9b, 0xb6,
-	0x93, 0xe3, 0xb1, 0x1e, 0x6b, 0xd7, 0xcb, 0x8b, 0xaa, 0xa4, 0xf5, 0x3f, 0x10, 0x6e, 0x0f, 0x21,
-	0x1e, 0x6a, 0x91, 0x4f, 0xa5, 0xb2, 0x84, 0xe2, 0xa6, 0xd0, 0xca, 0xca, 0x99, 0xa5, 0xa8, 0x87,
-	0xfc, 0xd6, 0xe8, 0xf7, 0x49, 0x3a, 0xb8, 0x0e, 0x31, 0xad, 0x3b, 0xb0, 0x0e, 0x31, 0x79, 0xc0,
-	0x9d, 0x30, 0xb7, 0x93, 0x42, 0x5f, 0x84, 0x16, 0xb4, 0xa2, 0x8d, 0x5e, 0xc3, 0x6f, 0x5f, 0xf0,
-	0xe0, 0xc0, 0x24, 0xc1, 0xd5, 0x0e, 0x6d, 0xb4, 0x27, 0x43, 0x86, 0xf8, 0xbf, 0x91, 0xd9, 0x0b,
-	0x08, 0x69, 0xa8, 0xe7, 0x24, 0xfd, 0x83, 0x92, 0xf7, 0x25, 0x61, 0xb4, 0x66, 0xf6, 0x67, 0xb8,
-	0xb3, 0xeb, 0x53, 0x05, 0x40, 0xeb, 0x00, 0x04, 0x7b, 0x76, 0x9e, 0xca, 0x2a, 0x92, 0xab, 0x09,
-	0xc3, 0xb8, 0xc8, 0x9b, 0xe9, 0x24, 0x91, 0x19, 0x6d, 0xb8, 0x9f, 0x2d, 0x84, 0x9c, 0xe1, 0x56,
-	0x9a, 0x47, 0x09, 0x88, 0x5b, 0x39, 0xa7, 0x9e, 0xfb, 0xde, 0x00, 0x97, 0xde, 0xf7, 0x5b, 0x17,
-	0xf5, 0x9f, 0x70, 0xb3, 0x1a, 0xe7, 0x4f, 0x96, 0x3e, 0x3e, 0xaa, 0x86, 0xbe, 0x51, 0x71, 0xaa,
-	0x41, 0xd9, 0xca, 0x77, 0x1f, 0x2e, 0xe5, 0xaf, 0xef, 0xde, 0x97, 0x0c, 0x2d, 0x96, 0x0c, 0x7d,
-	0x2d, 0x19, 0x7a, 0x5d, 0xb1, 0xda, 0x62, 0xc5, 0x6a, 0x9f, 0x2b, 0x56, 0x7b, 0x1c, 0x8c, 0xc1,
-	0x4e, 0xf2, 0x28, 0x10, 0x7a, 0xca, 0xd7, 0x0b, 0xe3, 0xe5, 0xc2, 0xce, 0x8b, 0x8d, 0xf1, 0xd9,
-	0xd6, 0xdd, 0xf0, 0xc2, 0xdd, 0x44, 0xff, 0xdc, 0x1d, 0x0c, 0x7e, 0x02, 0x00, 0x00, 0xff, 0xff,
-	0xfd, 0xfe, 0x2a, 0xb0, 0x5d, 0x02, 0x00, 0x00,
+	// 475 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x53, 0xbd, 0x6e, 0x13, 0x41,
+	0x10, 0xf6, 0xda, 0x17, 0x27, 0x19, 0x4b, 0x04, 0x2d, 0x08, 0x6d, 0x8c, 0x74, 0xb6, 0x5c, 0x5d,
+	0xc3, 0x9d, 0x14, 0x0b, 0x29, 0xb8, 0x8c, 0x1c, 0x9a, 0x90, 0xe6, 0x90, 0x28, 0x10, 0x14, 0xf7,
+	0x33, 0xb1, 0x57, 0x9c, 0x77, 0x4f, 0xb7, 0x6b, 0x2b, 0x7e, 0x83, 0xd0, 0x51, 0xf0, 0x00, 0x79,
+	0x1c, 0xca, 0x94, 0x94, 0xc8, 0x6e, 0x28, 0x78, 0x08, 0x74, 0x7b, 0x87, 0x73, 0xb1, 0x09, 0xa6,
+	0x48, 0x75, 0xb3, 0x73, 0xf3, 0x7d, 0x33, 0xfb, 0xcd, 0xb7, 0xf0, 0x9c, 0xc7, 0x28, 0x34, 0xbf,
+	0xe0, 0x98, 0x79, 0xb7, 0xa1, 0x9b, 0x66, 0x52, 0x4b, 0xda, 0x09, 0x92, 0x84, 0x8b, 0x90, 0x6b,
+	0xe5, 0x46, 0x52, 0x4d, 0xa4, 0x8a, 0x02, 0x35, 0x76, 0x6f, 0xcb, 0xda, 0x4f, 0x47, 0x72, 0x24,
+	0x4d, 0xad, 0x97, 0x47, 0x05, 0xac, 0xf7, 0xcb, 0x82, 0xd6, 0x90, 0xc7, 0x43, 0x19, 0x4d, 0x27,
+	0x28, 0x34, 0x65, 0xb0, 0x1b, 0x49, 0xa1, 0xf1, 0x52, 0x33, 0xd2, 0x6d, 0x38, 0xfb, 0xfe, 0x9f,
+	0x23, 0x7d, 0x04, 0x75, 0x1e, 0xb3, 0x7a, 0x97, 0x38, 0xfb, 0x7e, 0x9d, 0xc7, 0xd4, 0x06, 0xc8,
+	0x7f, 0x65, 0x32, 0x49, 0x30, 0x63, 0x0d, 0x53, 0x5c, 0xc9, 0x50, 0x84, 0x27, 0x33, 0xcc, 0xf8,
+	0x05, 0x8f, 0x02, 0xcd, 0xa5, 0x38, 0x47, 0x3d, 0x96, 0xb1, 0x62, 0x56, 0xb7, 0xe1, 0xb4, 0x8e,
+	0xfa, 0xee, 0x96, 0x71, 0xdd, 0x77, 0x1b, 0x58, 0xff, 0x6f, 0x7c, 0x74, 0x08, 0x7b, 0x0a, 0xb3,
+	0x19, 0x8f, 0x50, 0xb1, 0x1d, 0xc3, 0xed, 0x6c, 0xe5, 0x7e, 0x5b, 0x00, 0xfc, 0x15, 0x92, 0x7e,
+	0x26, 0x70, 0x58, 0x65, 0xf7, 0x31, 0x31, 0x5f, 0x35, 0xe6, 0xa9, 0x62, 0x4d, 0xc3, 0x7b, 0xb6,
+	0x95, 0xb7, 0x22, 0xe4, 0x9d, 0xf9, 0xef, 0xb0, 0x9d, 0x0a, 0x9d, 0xcd, 0xfd, 0xfb, 0xbb, 0xb5,
+	0x5f, 0xc1, 0xe1, 0xbd, 0x60, 0xfa, 0x0c, 0x9a, 0x6f, 0x82, 0x10, 0x13, 0x55, 0xae, 0xa7, 0x3c,
+	0x0d, 0xac, 0x9f, 0xd7, 0x1d, 0xd2, 0xfe, 0x4a, 0xc0, 0xfe, 0x77, 0x63, 0xfa, 0x18, 0x1a, 0x9f,
+	0x70, 0xce, 0x88, 0xd9, 0x63, 0x1e, 0xd2, 0x0f, 0xb0, 0x33, 0x0b, 0x92, 0x29, 0x9a, 0xdd, 0xb6,
+	0x8e, 0x5e, 0x3f, 0xcc, 0x35, 0xfd, 0x82, 0x74, 0x50, 0x3f, 0x26, 0x83, 0xbd, 0xab, 0xeb, 0x4e,
+	0x2d, 0x1f, 0xb0, 0x77, 0x45, 0x80, 0x6e, 0x6e, 0xb6, 0xf4, 0x16, 0x59, 0x79, 0x8b, 0x82, 0xa5,
+	0xe7, 0x29, 0x96, 0x6e, 0x33, 0xf1, 0x86, 0xdf, 0xc8, 0x9a, 0xdf, 0x1c, 0x38, 0x48, 0xa7, 0x61,
+	0xc2, 0xa3, 0x33, 0x9c, 0x9f, 0x04, 0x0a, 0x5f, 0x1e, 0x33, 0xcb, 0x14, 0xad, 0xa7, 0x0b, 0xad,
+	0x7a, 0x1f, 0x61, 0xb7, 0xf4, 0xc1, 0x7f, 0xb5, 0x77, 0xe0, 0xa0, 0x74, 0xcb, 0xa9, 0x88, 0x53,
+	0xc9, 0x85, 0x2e, 0x67, 0x58, 0x4f, 0x17, 0xf4, 0x27, 0xe7, 0xdf, 0x16, 0x36, 0xb9, 0x59, 0xd8,
+	0xe4, 0xc7, 0xc2, 0x26, 0x5f, 0x96, 0x76, 0xed, 0x66, 0x69, 0xd7, 0xbe, 0x2f, 0xed, 0xda, 0xfb,
+	0xfe, 0x88, 0xeb, 0xf1, 0x34, 0x74, 0x23, 0x39, 0xf1, 0x56, 0x52, 0x7b, 0x85, 0xd4, 0x2f, 0x72,
+	0xad, 0xbd, 0xcb, 0xca, 0xf3, 0xf6, 0xf2, 0xee, 0x2a, 0x6c, 0x9a, 0xe7, 0xda, 0xff, 0x1d, 0x00,
+	0x00, 0xff, 0xff, 0xb7, 0xa8, 0x3d, 0x27, 0x04, 0x04, 0x00, 0x00,
 }
 
-func (this *Authentication) Equal(that interface{}) bool {
+func (this *DidDocument) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
 	}
 
-	that1, ok := that.(*Authentication)
+	that1, ok := that.(*DidDocument)
 	if !ok {
-		that2, ok := that.(Authentication)
+		that2, ok := that.(DidDocument)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if len(this.Context) != len(that1.Context) {
+		return false
+	}
+	for i := range this.Context {
+		if this.Context[i] != that1.Context[i] {
+			return false
+		}
+	}
+	if this.Id != that1.Id {
+		return false
+	}
+	if len(this.Controller) != len(that1.Controller) {
+		return false
+	}
+	for i := range this.Controller {
+		if this.Controller[i] != that1.Controller[i] {
+			return false
+		}
+	}
+	if len(this.VerificationMethods) != len(that1.VerificationMethods) {
+		return false
+	}
+	for i := range this.VerificationMethods {
+		if !this.VerificationMethods[i].Equal(that1.VerificationMethods[i]) {
+			return false
+		}
+	}
+	if len(this.Services) != len(that1.Services) {
+		return false
+	}
+	for i := range this.Services {
+		if !this.Services[i].Equal(that1.Services[i]) {
+			return false
+		}
+	}
+	if len(this.VerificationRelationships) != len(that1.VerificationRelationships) {
+		return false
+	}
+	for i := range this.VerificationRelationships {
+		if !this.VerificationRelationships[i].Equal(that1.VerificationRelationships[i]) {
+			return false
+		}
+	}
+	return true
+}
+func (this *DidDocument_VerificationRelationships) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*DidDocument_VerificationRelationships)
+	if !ok {
+		that2, ok := that.(DidDocument_VerificationRelationships)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if len(this.Labels) != len(that1.Labels) {
+		return false
+	}
+	for i := range this.Labels {
+		if this.Labels[i] != that1.Labels[i] {
+			return false
+		}
+	}
+	return true
+}
+func (this *VerificationMethod) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*VerificationMethod)
+	if !ok {
+		that2, ok := that.(VerificationMethod)
 		if ok {
 			that1 = &that2
 		} else {
@@ -288,7 +424,7 @@ func (this *Authentication) Equal(that interface{}) bool {
 	if this.Controller != that1.Controller {
 		return false
 	}
-	if this.PublicKey != that1.PublicKey {
+	if this.PublicKeyBase58 != that1.PublicKeyBase58 {
 		return false
 	}
 	return true
@@ -343,6 +479,32 @@ func (m *DidDocument) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if len(m.VerificationRelationships) > 0 {
+		for k := range m.VerificationRelationships {
+			v := m.VerificationRelationships[k]
+			baseI := i
+			if v != nil {
+				{
+					size, err := v.MarshalToSizedBuffer(dAtA[:i])
+					if err != nil {
+						return 0, err
+					}
+					i -= size
+					i = encodeVarintIdentifier(dAtA, i, uint64(size))
+				}
+				i--
+				dAtA[i] = 0x12
+			}
+			i -= len(k)
+			copy(dAtA[i:], k)
+			i = encodeVarintIdentifier(dAtA, i, uint64(len(k)))
+			i--
+			dAtA[i] = 0xa
+			i = encodeVarintIdentifier(dAtA, i, uint64(baseI-i))
+			i--
+			dAtA[i] = 0x32
+		}
+	}
 	if len(m.Services) > 0 {
 		for iNdEx := len(m.Services) - 1; iNdEx >= 0; iNdEx-- {
 			{
@@ -354,19 +516,28 @@ func (m *DidDocument) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 				i = encodeVarintIdentifier(dAtA, i, uint64(size))
 			}
 			i--
-			dAtA[i] = 0x22
+			dAtA[i] = 0x2a
 		}
 	}
-	if len(m.Authentication) > 0 {
-		for iNdEx := len(m.Authentication) - 1; iNdEx >= 0; iNdEx-- {
+	if len(m.VerificationMethods) > 0 {
+		for iNdEx := len(m.VerificationMethods) - 1; iNdEx >= 0; iNdEx-- {
 			{
-				size, err := m.Authentication[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				size, err := m.VerificationMethods[iNdEx].MarshalToSizedBuffer(dAtA[:i])
 				if err != nil {
 					return 0, err
 				}
 				i -= size
 				i = encodeVarintIdentifier(dAtA, i, uint64(size))
 			}
+			i--
+			dAtA[i] = 0x22
+		}
+	}
+	if len(m.Controller) > 0 {
+		for iNdEx := len(m.Controller) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Controller[iNdEx])
+			copy(dAtA[i:], m.Controller[iNdEx])
+			i = encodeVarintIdentifier(dAtA, i, uint64(len(m.Controller[iNdEx])))
 			i--
 			dAtA[i] = 0x1a
 		}
@@ -379,16 +550,18 @@ func (m *DidDocument) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		dAtA[i] = 0x12
 	}
 	if len(m.Context) > 0 {
-		i -= len(m.Context)
-		copy(dAtA[i:], m.Context)
-		i = encodeVarintIdentifier(dAtA, i, uint64(len(m.Context)))
-		i--
-		dAtA[i] = 0xa
+		for iNdEx := len(m.Context) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Context[iNdEx])
+			copy(dAtA[i:], m.Context[iNdEx])
+			i = encodeVarintIdentifier(dAtA, i, uint64(len(m.Context[iNdEx])))
+			i--
+			dAtA[i] = 0xa
+		}
 	}
 	return len(dAtA) - i, nil
 }
 
-func (m *Authentication) Marshal() (dAtA []byte, err error) {
+func (m *DidDocument_VerificationRelationships) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -398,20 +571,52 @@ func (m *Authentication) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *Authentication) MarshalTo(dAtA []byte) (int, error) {
+func (m *DidDocument_VerificationRelationships) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *Authentication) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *DidDocument_VerificationRelationships) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.PublicKey) > 0 {
-		i -= len(m.PublicKey)
-		copy(dAtA[i:], m.PublicKey)
-		i = encodeVarintIdentifier(dAtA, i, uint64(len(m.PublicKey)))
+	if len(m.Labels) > 0 {
+		for iNdEx := len(m.Labels) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Labels[iNdEx])
+			copy(dAtA[i:], m.Labels[iNdEx])
+			i = encodeVarintIdentifier(dAtA, i, uint64(len(m.Labels[iNdEx])))
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *VerificationMethod) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *VerificationMethod) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *VerificationMethod) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.PublicKeyBase58) > 0 {
+		i -= len(m.PublicKeyBase58)
+		copy(dAtA[i:], m.PublicKeyBase58)
+		i = encodeVarintIdentifier(dAtA, i, uint64(len(m.PublicKeyBase58)))
 		i--
 		dAtA[i] = 0x22
 	}
@@ -500,16 +705,24 @@ func (m *DidDocument) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = len(m.Context)
-	if l > 0 {
-		n += 1 + l + sovIdentifier(uint64(l))
+	if len(m.Context) > 0 {
+		for _, s := range m.Context {
+			l = len(s)
+			n += 1 + l + sovIdentifier(uint64(l))
+		}
 	}
 	l = len(m.Id)
 	if l > 0 {
 		n += 1 + l + sovIdentifier(uint64(l))
 	}
-	if len(m.Authentication) > 0 {
-		for _, e := range m.Authentication {
+	if len(m.Controller) > 0 {
+		for _, s := range m.Controller {
+			l = len(s)
+			n += 1 + l + sovIdentifier(uint64(l))
+		}
+	}
+	if len(m.VerificationMethods) > 0 {
+		for _, e := range m.VerificationMethods {
 			l = e.Size()
 			n += 1 + l + sovIdentifier(uint64(l))
 		}
@@ -520,10 +733,38 @@ func (m *DidDocument) Size() (n int) {
 			n += 1 + l + sovIdentifier(uint64(l))
 		}
 	}
+	if len(m.VerificationRelationships) > 0 {
+		for k, v := range m.VerificationRelationships {
+			_ = k
+			_ = v
+			l = 0
+			if v != nil {
+				l = v.Size()
+				l += 1 + sovIdentifier(uint64(l))
+			}
+			mapEntrySize := 1 + len(k) + sovIdentifier(uint64(len(k))) + l
+			n += mapEntrySize + 1 + sovIdentifier(uint64(mapEntrySize))
+		}
+	}
 	return n
 }
 
-func (m *Authentication) Size() (n int) {
+func (m *DidDocument_VerificationRelationships) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Labels) > 0 {
+		for _, s := range m.Labels {
+			l = len(s)
+			n += 1 + l + sovIdentifier(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *VerificationMethod) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -541,7 +782,7 @@ func (m *Authentication) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovIdentifier(uint64(l))
 	}
-	l = len(m.PublicKey)
+	l = len(m.PublicKeyBase58)
 	if l > 0 {
 		n += 1 + l + sovIdentifier(uint64(l))
 	}
@@ -634,7 +875,7 @@ func (m *DidDocument) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Context = string(dAtA[iNdEx:postIndex])
+			m.Context = append(m.Context, string(dAtA[iNdEx:postIndex]))
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -670,7 +911,39 @@ func (m *DidDocument) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Authentication", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Controller", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowIdentifier
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthIdentifier
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthIdentifier
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Controller = append(m.Controller, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field VerificationMethods", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -697,12 +970,12 @@ func (m *DidDocument) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Authentication = append(m.Authentication, &Authentication{})
-			if err := m.Authentication[len(m.Authentication)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			m.VerificationMethods = append(m.VerificationMethods, &VerificationMethod{})
+			if err := m.VerificationMethods[len(m.VerificationMethods)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
-		case 4:
+		case 5:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Services", wireType)
 			}
@@ -736,6 +1009,135 @@ func (m *DidDocument) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field VerificationRelationships", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowIdentifier
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthIdentifier
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthIdentifier
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.VerificationRelationships == nil {
+				m.VerificationRelationships = make(map[string]*DidDocument_VerificationRelationships)
+			}
+			var mapkey string
+			var mapvalue *DidDocument_VerificationRelationships
+			for iNdEx < postIndex {
+				entryPreIndex := iNdEx
+				var wire uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowIdentifier
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					wire |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				fieldNum := int32(wire >> 3)
+				if fieldNum == 1 {
+					var stringLenmapkey uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowIdentifier
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						stringLenmapkey |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					intStringLenmapkey := int(stringLenmapkey)
+					if intStringLenmapkey < 0 {
+						return ErrInvalidLengthIdentifier
+					}
+					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthIdentifier
+					}
+					if postStringIndexmapkey > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapkey = string(dAtA[iNdEx:postStringIndexmapkey])
+					iNdEx = postStringIndexmapkey
+				} else if fieldNum == 2 {
+					var mapmsglen int
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowIdentifier
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						mapmsglen |= int(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					if mapmsglen < 0 {
+						return ErrInvalidLengthIdentifier
+					}
+					postmsgIndex := iNdEx + mapmsglen
+					if postmsgIndex < 0 {
+						return ErrInvalidLengthIdentifier
+					}
+					if postmsgIndex > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapvalue = &DidDocument_VerificationRelationships{}
+					if err := mapvalue.Unmarshal(dAtA[iNdEx:postmsgIndex]); err != nil {
+						return err
+					}
+					iNdEx = postmsgIndex
+				} else {
+					iNdEx = entryPreIndex
+					skippy, err := skipIdentifier(dAtA[iNdEx:])
+					if err != nil {
+						return err
+					}
+					if (skippy < 0) || (iNdEx+skippy) < 0 {
+						return ErrInvalidLengthIdentifier
+					}
+					if (iNdEx + skippy) > postIndex {
+						return io.ErrUnexpectedEOF
+					}
+					iNdEx += skippy
+				}
+			}
+			m.VerificationRelationships[mapkey] = mapvalue
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipIdentifier(dAtA[iNdEx:])
@@ -757,7 +1159,7 @@ func (m *DidDocument) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *Authentication) Unmarshal(dAtA []byte) error {
+func (m *DidDocument_VerificationRelationships) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -780,10 +1182,92 @@ func (m *Authentication) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: Authentication: wiretype end group for non-group")
+			return fmt.Errorf("proto: VerificationRelationships: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Authentication: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: VerificationRelationships: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Labels", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowIdentifier
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthIdentifier
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthIdentifier
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Labels = append(m.Labels, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipIdentifier(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthIdentifier
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *VerificationMethod) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowIdentifier
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: VerificationMethod: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: VerificationMethod: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -884,7 +1368,7 @@ func (m *Authentication) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PublicKey", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field PublicKeyBase58", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -912,7 +1396,7 @@ func (m *Authentication) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.PublicKey = string(dAtA[iNdEx:postIndex])
+			m.PublicKeyBase58 = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

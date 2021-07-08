@@ -65,15 +65,13 @@ func (suite *KeeperTestSuite) TestGRPCQueryIdentifier() {
 		{
 			"Pass: will pass because a did is found",
 			func() {
+
+				dd, _ := types.NewIdentifier("did:cash:1234")
+
 				suite.keeper.SetIdentifier(
 					suite.ctx,
-					[]byte("did:cash:1234"),
-					types.DidDocument{
-						"context",
-						"did:cash:1234",
-						nil,
-						nil,
-					},
+					[]byte(dd.Id),
+					dd,
 				)
 				req = &types.QueryIdentifierRequest{
 					Id: "did:cash:1234",

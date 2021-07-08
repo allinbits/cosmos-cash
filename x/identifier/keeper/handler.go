@@ -20,14 +20,20 @@ func NewHandler(k Keeper) sdk.Handler {
 		case *types.MsgCreateIdentifier:
 			res, err := msgServer.CreateIdentifier(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
-		case *types.MsgAddAuthentication:
-			res, err := msgServer.AddAuthentication(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgUpdateIdentifier:
+			res, err := msgServer.UpdateIdentifier(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+		case *types.MsgAddVerification:
+			res, err := msgServer.AddVerification(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+		case *types.MsgSetVerificationRelationships:
+			res, err := msgServer.SetVerificationRelationships(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+		case *types.MsgRevokeVerification:
+			res, err := msgServer.RevokeVerification(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 		case *types.MsgAddService:
 			res, err := msgServer.AddService(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-		case *types.MsgDeleteAuthentication:
-			res, err := msgServer.DeleteAuthentication(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 		case *types.MsgDeleteService:
 			res, err := msgServer.DeleteService(sdk.WrapSDKContext(ctx), msg)

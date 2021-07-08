@@ -13,7 +13,7 @@ option go_package = "github.com/allinbits/cosmos-cash/x/identifier/types";
 
 // Query defines the gRPC querier service.
 service Query {
-  	// Identifers queries all validators that match the given status.
+  	// Identifiers queries all validators that match the given status.
   rpc Identifiers(QueryIdentifiersRequest) returns (QueryIdentifiersResponse) {
     option (google.api.http).get = "/allinbits/identifier/identifiers";
   }
@@ -22,7 +22,7 @@ service Query {
   }
 }
 
-// QueryIdentifersRequest is request type for Query/Identifers RPC method.
+// QueryIdentifiersRequest is request type for Query/Identifiers RPC method.
 message QueryIdentifiersRequest {
   // status enables to query for validators matching a given status.
   string status = 1;
@@ -31,7 +31,7 @@ message QueryIdentifiersRequest {
   cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
-// QueryIdentifersResponse is response type for the Query/Identifers RPC method
+// QueryIdentifiersResponse is response type for the Query/Identifiers RPC method
 message QueryIdentifiersResponse {
   // validators contains all the queried validators.
   repeated DidDocument didDocuments = 1  [(gogoproto.nullable) = false];
@@ -40,13 +40,13 @@ message QueryIdentifiersResponse {
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
-// QueryIdentifersRequest is request type for Query/Identifers RPC method.
+// QueryIdentifiersRequest is request type for Query/Identifiers RPC method.
 message QueryIdentifierRequest {
   // status enables to query for validators matching a given status.
   string id = 1;
 }
 
-// QueryIdentifersResponse is response type for the Query/Identifers RPC method
+// QueryIdentifiersResponse is response type for the Query/Identifiers RPC method
 message QueryIdentifierResponse {
   // validators contains all the queried validators.
   DidDocument didDocument = 1  [(gogoproto.nullable) = false];

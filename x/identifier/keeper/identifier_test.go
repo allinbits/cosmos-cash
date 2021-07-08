@@ -8,29 +8,29 @@ import (
 
 func (suite *KeeperTestSuite) TestIdentifierKeeperSetAndGet() {
 	testCases := []struct {
-		msg        string
-		identifier types.DidDocument
-		expPass    bool
+		msg     string
+		didFn   func() types.DidDocument
+		expPass bool
 	}{
 		{
 			"data stored successfully",
-			types.DidDocument{
-				"context",
-				"did:cash:1111",
-				nil,
-				nil,
+			func() types.DidDocument {
+				dd, _ := types.NewIdentifier("did:cash:subject")
+				return dd
 			},
 			true,
 		},
 	}
 	for _, tc := range testCases {
-		suite.keeper.SetIdentifier(suite.ctx, []byte(tc.identifier.Id), tc.identifier)
-		suite.keeper.SetIdentifier(suite.ctx, []byte(tc.identifier.Id+"1"), tc.identifier)
+		dd := tc.didFn()
+
+		suite.keeper.SetIdentifier(suite.ctx, []byte(dd.Id), dd)
+		suite.keeper.SetIdentifier(suite.ctx, []byte(dd.Id+"1"), dd)
 		suite.Run(fmt.Sprintf("Case %s", tc.msg), func() {
 			if tc.expPass {
 				_, found := suite.keeper.GetIdentifier(
 					suite.ctx,
-					[]byte(tc.identifier.Id),
+					[]byte(dd.Id),
 				)
 				suite.Require().True(found)
 

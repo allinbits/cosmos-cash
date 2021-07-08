@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"context"
-	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -30,58 +29,101 @@ func (k msgServer) CreateIdentifier(
 ) (*types.MsgCreateIdentifierResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	// setup a new did document (performs input validation)
+	identifier, err := types.NewIdentifier(msg.Id,
+		types.WithServices(msg.Services...),
+		types.WithVerifications(msg.Verifications...),
+	)
+	if err != nil {
+		return nil, err
+	}
+	// check that the identifier is not already taken
 	_, found := k.Keeper.GetIdentifier(ctx, []byte(msg.Id))
 	if found {
-		return nil, sdkerrors.Wrapf(
-			types.ErrIdentifierFound,
-			"identifier already exists",
-		)
-
+		return nil, sdkerrors.Wrapf(types.ErrIdentifierFound, "a document with did %s already exists", msg.Id)
 	}
 
-	identifier, _ := types.NewIdentifier(msg.Id, msg.Authentication)
+	// persist the did document
 	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), identifier)
-
+	// emit the event
 	ctx.EventManager().EmitEvent(
 		types.NewIdentifierCreatedEvent(msg.Id),
 	)
-
 	return &types.MsgCreateIdentifierResponse{}, nil
 }
 
-// AddAuthentication adds a public key and controller to an existing DID document
-func (k msgServer) AddAuthentication(
-	goCtx context.Context,
-	msg *types.MsgAddAuthentication,
-) (*types.MsgAddAuthenticationResponse, error) {
+// UpdateIdentifier update an existing DID document
+func (k msgServer) UpdateIdentifier(goCtx context.Context, msg *types.MsgUpdateIdentifier) (*types.MsgUpdateIdentifierResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	identifier, found := k.Keeper.GetIdentifier(ctx, []byte(msg.Id))
+	// get the did document
+	didDoc, found := k.Keeper.GetIdentifier(ctx, []byte(msg.Id))
 	if !found {
+		return nil, sdkerrors.Wrapf(types.ErrIdentifierNotFound, "did document at %s not found", msg.Id)
+	}
+	// compute the signer did
+	signerDID := types.DID(msg.Signer)
+
+	// Any verification method in the authentication relationship can update the DID document
+	if !didDoc.HasRelationship(signerDID, types.RelationshipAuthentication) {
 		return nil, sdkerrors.Wrapf(
-			types.ErrIdentifierNotFound,
-			"identifier not found: AddAuthentication",
+			types.ErrUnauthorized,
+			"signer did %s not authorized to update the target did document at %s",
+			signerDID, msg.Id,
 		)
 	}
-
-	// Only the first public key can add new public keys that control the DID document
-	if identifier.Authentication[0].Controller != msg.Owner {
-		return nil, sdkerrors.Wrapf(
-			types.ErrIdentifierNotFound,
-			"msg sender not authorized: AddAuthentication",
-		)
+	// set the controllers
+	err := didDoc.SetControllers(msg.Controller...)
+	if err != nil {
+		return nil, err
 	}
+	// write the identifier
+	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), didDoc)
 
-	// TODO: handle duplicates in the authentication slice
-	msg.Authentication.Id = msg.Id + "#keys-" + fmt.Sprintf("%d", len(identifier.Authentication)+1)
-	identifier.Authentication = append(identifier.Authentication, msg.Authentication)
-	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), identifier)
-
+	// NOTE: events are expected to change during client development
 	ctx.EventManager().EmitEvent(
-		types.NewAuthenticationAddedEvent(msg.Id, msg.Authentication.Controller),
+		types.NewIdentifierUpdatedEvent(msg.Id, msg.Controller...),
 	)
+	return &types.MsgUpdateIdentifierResponse{}, nil
+}
 
-	return &types.MsgAddAuthenticationResponse{}, nil
+// AddVerification adds a verification method and it's relationships to a DID Document
+func (k msgServer) AddVerification(
+	goCtx context.Context,
+	msg *types.MsgAddVerification,
+) (*types.MsgAddVerificationResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// get the did document
+	didDoc, found := k.Keeper.GetIdentifier(ctx, []byte(msg.Id))
+	if !found {
+		return nil, sdkerrors.Wrapf(types.ErrIdentifierNotFound, "did document at %s not found", msg.Id)
+	}
+	// compute the signer did
+	signerDID := types.DID(msg.Signer)
+
+	// Any verification method in the authentication relationship can update the DID document
+	if !didDoc.HasRelationship(signerDID, types.RelationshipAuthentication) {
+		return nil, sdkerrors.Wrapf(
+			types.ErrUnauthorized,
+			"signer did %s not authorized to add verification methods to the target did document at %s",
+			signerDID, msg.Id,
+		)
+	}
+
+	// add verifications (perform additional checks)
+	if err := didDoc.AddVerifications(msg.Verification); err != nil {
+		return nil, err
+	}
+
+	// write the identifier
+	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), didDoc)
+
+	// NOTE: events are expected to change during client development
+	ctx.EventManager().EmitEvent(
+		types.NewVerificationAddedEvent(msg.Id, msg.Verification.Method.Controller),
+	)
+	return &types.MsgAddVerificationResponse{}, nil
 }
 
 // AddService adds a service to an existing DID document
@@ -90,34 +132,40 @@ func (k msgServer) AddService(
 	msg *types.MsgAddService,
 ) (*types.MsgAddServiceResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+	// perform checks on the service
+	if err := types.ValidateService(msg.ServiceData); err != nil {
+		return nil, err
+	}
 
-	identifier, found := k.Keeper.GetIdentifier(ctx, []byte(msg.Id))
+	// compute the signer did
+	signerDID := types.DID(msg.Signer)
+	didDoc, found := k.Keeper.GetIdentifier(ctx, []byte(msg.Id))
 	if !found {
-		return nil, sdkerrors.Wrapf(
-			types.ErrIdentifierNotFound,
-			"identifier not found: AddService",
-		)
+		return nil, sdkerrors.Wrapf(types.ErrIdentifierNotFound, "did document at %s not found", msg.Id)
 	}
-
-	for _, service := range identifier.Services {
-		if service.Id == msg.ServiceData.Id {
-			return nil, sdkerrors.Wrapf(
-				types.ErrIdentifierNotFound,
-				"service already exists: AddService",
-			)
-		}
-	}
-
+	// verify that the service type is of type credential
 	if !vcstypes.IsValidCredentialType(msg.ServiceData.Type) {
 		return nil, sdkerrors.Wrapf(
-			types.ErrIdentifierNotFound,
-			"invalid service type: AddService",
+			types.ErrInvalidInput,
+			"invalid service type %s", msg.ServiceData.Type,
 		)
 	}
-
-	identifier.Services = append(identifier.Services, msg.ServiceData)
-	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), identifier)
-
+	// Any verification method in the authentication relationship can update the DID document
+	if !didDoc.HasRelationship(signerDID, types.RelationshipAuthentication) {
+		return nil, sdkerrors.Wrapf(
+			types.ErrUnauthorized,
+			"signer did %s not authorized to add services to the target did document at %s",
+			signerDID, msg.Id,
+		)
+	}
+	// add the service to the document
+	err := didDoc.AddServices(msg.ServiceData)
+	if err != nil {
+		return nil, err
+	}
+	// write to storage
+	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), didDoc)
+	// NOTE: events are expected to change during client development
 	ctx.EventManager().EmitEvent(
 		types.NewServiceAddedEvent(msg.Id, msg.ServiceData.Id),
 	)
@@ -125,59 +173,41 @@ func (k msgServer) AddService(
 	return &types.MsgAddServiceResponse{}, nil
 }
 
-// DeleteAuthentication removes a public key and controller from an existing DID document
-func (k msgServer) DeleteAuthentication(
+// RevokeVerification removes a public key and controller from an existing DID document
+func (k msgServer) RevokeVerification(
 	goCtx context.Context,
-	msg *types.MsgDeleteAuthentication,
-) (*types.MsgDeleteAuthenticationResponse, error) {
+	msg *types.MsgRevokeVerification,
+) (*types.MsgRevokeVerificationResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	identifier, found := k.Keeper.GetIdentifier(ctx, []byte(msg.Id))
+	// retrieve the did document
+	didDoc, found := k.Keeper.GetIdentifier(ctx, []byte(msg.Id))
 	if !found {
+		return nil, sdkerrors.Wrapf(types.ErrIdentifierNotFound, "did document at %s not found", msg.Id)
+	}
+	// compute the did based on the signer address
+	signerDID := types.DID(msg.Signer)
+	// any verification method in the authentication relationship can update the DID document
+	if !didDoc.HasRelationship(signerDID, types.RelationshipAuthentication) {
 		return nil, sdkerrors.Wrapf(
-			types.ErrIdentifierNotFound,
-			"identifier not found: DeleteAuthentication",
+			types.ErrUnauthorized,
+			"signer did %s not authorized to revoke verification methods from the target did document at %s",
+			signerDID, msg.Id,
 		)
 	}
-
-	// Only the first public key can remove public keys that control the DID document
-	if identifier.Authentication[0].Controller != msg.Owner {
-		return nil, sdkerrors.Wrapf(
-			types.ErrIdentifierNotFound,
-			"msg sender not authorized: DeleteAuthentication",
-		)
+	// revoke the verification method + relationships
+	if err := didDoc.RevokeVerification(msg.MethodId); err != nil {
+		return nil, err
 	}
 
-	pubKey, err := sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeAccPub, msg.Key)
-	if err != nil {
-		return nil, sdkerrors.Wrapf(
-			types.ErrIdentifierNotFound,
-			"pubkey not correct: DeleteAuthentication",
-		)
-	}
-	address := sdk.AccAddress(pubKey.Address())
+	// persist to storage
+	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), didDoc)
 
-	// TODO: don't delete if only one auth
-	auth := identifier.Authentication
-	for i, key := range identifier.Authentication {
-		if key.Controller == address.String() {
-			// TODO: improve this logic
-			// TODO: reorder auth ids as deleting and adding keys can lead to duplicated ids
-			auth = append(
-				identifier.Authentication[:i],
-				identifier.Authentication[i+1:]...,
-			)
-		}
-	}
-	identifier.Authentication = auth
-
-	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), identifier)
-
+	// emit event
 	ctx.EventManager().EmitEvent(
-		types.NewAuthenticationDeletedEvent(msg.Id, address.String()),
+		types.NewVerificationRevokedEvent(msg.Id, msg.Signer),
 	)
 
-	return &types.MsgDeleteAuthenticationResponse{}, nil
+	return &types.MsgRevokeVerificationResponse{}, nil
 }
 
 // DeleteService removes a service from an existing DID document
@@ -187,47 +217,74 @@ func (k msgServer) DeleteService(
 ) (*types.MsgDeleteServiceResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	identifier, found := k.Keeper.GetIdentifier(ctx, []byte(msg.Id))
+	// retrieve the did document
+	didDoc, found := k.Keeper.GetIdentifier(ctx, []byte(msg.Id))
 	if !found {
+		return nil, sdkerrors.Wrapf(types.ErrIdentifierNotFound, "did document at %s not found", msg.Id)
+	}
+	// compute the did based on the signer address
+	signerDID := types.DID(msg.Signer)
+
+	// any verification method in the authentication relationship can update the DID document
+	if !didDoc.HasRelationship(signerDID, types.RelationshipAuthentication) {
 		return nil, sdkerrors.Wrapf(
-			types.ErrIdentifierNotFound,
-			"identifier not found: DeleteService",
+			types.ErrUnauthorized,
+			"signer did %s not authorized to delete services from the target did document at %s",
+			signerDID, msg.Id,
 		)
 	}
-
-	// Only the first public key can remove services from the DID document
-	if identifier.Authentication[0].Controller != msg.Owner {
-		return nil, sdkerrors.Wrapf(
-			types.ErrIdentifierNotFound,
-			"msg sender not authorized: DeleteService",
-		)
-	}
-
 	// Only try to remove service if there are services
-	if len(identifier.Services) == 0 {
-		return nil, sdkerrors.Wrapf(
-			types.ErrIdentifierNotFound,
-			"no services found: DeleteService",
-		)
+	if len(didDoc.Services) == 0 {
+		return nil, sdkerrors.Wrapf(types.ErrInvalidState, "the did document doesn't have services associated")
 	}
+	// delete the service
+	didDoc.DeleteService(msg.ServiceId)
 
-	services := identifier.Services
-	for i, key := range identifier.Services {
-		if key.Id == msg.ServiceId {
-			// TODO: improve this logic
-			services = append(
-				identifier.Services[:i],
-				identifier.Services[i+1:]...,
-			)
-		}
-	}
-	identifier.Services = services
+	// persist the did document
+	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), didDoc)
 
-	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), identifier)
-
+	// NOTE: events are expected to change during client development
 	ctx.EventManager().EmitEvent(
-		types.NewServiceDeletedEvent(msg.Id, msg.Id),
+		types.NewServiceDeletedEvent(msg.Id, msg.ServiceId),
 	)
 
 	return &types.MsgDeleteServiceResponse{}, nil
+}
+
+// SetVerificationRelationships set the verification relationships for an existing DID document
+func (k msgServer) SetVerificationRelationships(goCtx context.Context, msg *types.MsgSetVerificationRelationships) (*types.MsgSetVerificationRelationshipsResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// retrieve the did document
+	didDoc, found := k.Keeper.GetIdentifier(ctx, []byte(msg.Id))
+	if !found {
+		return nil, sdkerrors.Wrapf(types.ErrIdentifierNotFound, "did document at %s not found", msg.Id)
+	}
+	// compute the did based on the signer address
+	signerDID := types.DID(msg.Signer)
+
+	// any verification method in the authentication relationship can update the DID document
+	if !didDoc.HasRelationship(signerDID, types.RelationshipAuthentication) {
+		return nil, sdkerrors.Wrapf(
+			types.ErrUnauthorized,
+			"signer did %s not authorized to set verification relationships on the target did document at %s",
+			signerDID, msg.Id,
+		)
+	}
+
+	// set the verification relationships
+	err := didDoc.SetVerificationRelationships(msg.MethodId, msg.Relationships...)
+	if err != nil {
+		return nil, err
+	}
+
+	// persist the did document
+	k.Keeper.SetIdentifier(ctx, []byte(msg.Id), didDoc)
+
+	// NOTE: events are expected to change during client development
+	ctx.EventManager().EmitEvent(
+		types.NewVerificationRelationshipsUpdatedEvent(msg.Id, msg.MethodId),
+	)
+
+	return &types.MsgSetVerificationRelationshipsResponse{}, nil
 }

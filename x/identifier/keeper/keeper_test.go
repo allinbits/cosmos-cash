@@ -2,8 +2,9 @@ package keeper
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/suite"
 	"testing"
+
+	"github.com/stretchr/testify/suite"
 
 	"github.com/allinbits/cosmos-cash/x/identifier/types"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -60,39 +61,40 @@ func TestKeeperTestSuite(t *testing.T) {
 
 func (suite *KeeperTestSuite) TestGenericKeeperSetAndGet() {
 	testCases := []struct {
-		msg        string
-		identifier types.DidDocument
-		expPass    bool
+		msg     string
+		didFn   func() types.DidDocument
+		expPass bool
 	}{
 		{
 			"data stored successfully",
-			types.DidDocument{
-				"context",
-				"did:cash:1111",
-				nil,
-				nil,
+			func() types.DidDocument {
+				dd, _ := types.NewIdentifier(
+					"did:cash:subject",
+				)
+				return dd
 			},
 			true,
 		},
 	}
 	for _, tc := range testCases {
+		dd := tc.didFn()
 		suite.keeper.Set(suite.ctx,
-			[]byte(tc.identifier.Id),
+			[]byte(dd.Id),
 			[]byte{0x01},
-			tc.identifier,
+			dd,
 			suite.keeper.MarshalIdentifier,
 		)
 		suite.keeper.Set(suite.ctx,
-			[]byte(tc.identifier.Id+"1"),
+			[]byte(dd.Id+"1"),
 			[]byte{0x01},
-			tc.identifier,
+			dd,
 			suite.keeper.MarshalIdentifier,
 		)
 		suite.Run(fmt.Sprintf("Case %s", tc.msg), func() {
 			if tc.expPass {
 				_, found := suite.keeper.Get(
 					suite.ctx,
-					[]byte(tc.identifier.Id),
+					[]byte(dd.Id),
 					[]byte{0x01},
 					suite.keeper.UnmarshalIdentifier,
 				)
@@ -109,6 +111,61 @@ func (suite *KeeperTestSuite) TestGenericKeeperSetAndGet() {
 					array = append(array, iterator.Value())
 				}
 				suite.Require().Equal(2, len(array))
+			} else {
+				// TODO write failure cases
+				suite.Require().False(tc.expPass)
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestGenericKeeperDelete() {
+	testCases := []struct {
+		msg     string
+		didFn   func() types.DidDocument
+		expPass bool
+	}{
+		{
+			"data stored successfully",
+			func() types.DidDocument {
+				dd, _ := types.NewIdentifier(
+					"did:cash:subject",
+				)
+				return dd
+			},
+			true,
+		},
+	}
+	for _, tc := range testCases {
+		dd := tc.didFn()
+		suite.keeper.Set(suite.ctx,
+			[]byte(dd.Id),
+			[]byte{0x01},
+			dd,
+			suite.keeper.MarshalIdentifier,
+		)
+		suite.keeper.Set(suite.ctx,
+			[]byte(dd.Id+"1"),
+			[]byte{0x01},
+			dd,
+			suite.keeper.MarshalIdentifier,
+		)
+		suite.Run(fmt.Sprintf("Case %s", tc.msg), func() {
+			if tc.expPass {
+				suite.keeper.Delete(
+					suite.ctx,
+					[]byte(dd.Id),
+					[]byte{0x01},
+				)
+
+				_, found := suite.keeper.Get(
+					suite.ctx,
+					[]byte(dd.Id),
+					[]byte{0x01},
+					suite.keeper.UnmarshalIdentifier,
+				)
+				suite.Require().False(found)
+
 			} else {
 				// TODO write failure cases
 				suite.Require().False(tc.expPass)

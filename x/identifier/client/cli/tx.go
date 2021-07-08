@@ -1,14 +1,15 @@
 package cli
 
 import (
-	"encoding/base64"
 	"errors"
 	"fmt"
 
+	"github.com/btcsuite/btcutil/base58"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	uuid "github.com/satori/go.uuid"
 	"github.com/spf13/cobra"
 
 	"github.com/allinbits/cosmos-cash/x/identifier/types"
@@ -28,9 +29,9 @@ func GetTxCmd() *cobra.Command {
 	// this line is used by starport scaffolding # 1
 	cmd.AddCommand(
 		NewCreateIdentifierCmd(),
-		NewAddAuthenticationCmd(),
+		NewAddVerificationCmd(),
 		NewAddServiceCmd(),
-		NewDeleteAuthenticationCmd(),
+		NewRevokeVerificationCmd(),
 		NewDeleteServiceCmd(),
 	)
 
@@ -43,40 +44,49 @@ func NewCreateIdentifierCmd() *cobra.Command {
 		Use:     "create-identifier [id]",
 		Short:   "create decentralized identifier (did) document",
 		Example: "creates a did document for users",
-		Args:    cobra.ExactArgs(0),
+		Args:    cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
-			//cdc := codec.NewProtoCodec(clientCtx.InterfaceRegistry)
-			accAddr := clientCtx.GetFromAddress()
+			// did
+			did := types.DID(args[0])
 
-			info, err := clientCtx.Keyring.KeyByAddress(accAddr)
+			// verification
+			signer := clientCtx.GetFromAddress()
+			signerDID := types.DID(signer.String())
+			// pubkey
+			info, err := clientCtx.Keyring.KeyByAddress(signer)
 			if err != nil {
 				return err
 			}
 			pubKey := info.GetPubKey()
-			accAddrBech32 := accAddr.String()
-			id := types.DidPrefix + accAddrBech32
+			// verification method id
+			vmID := fmt.Sprint(signerDID, "#", uuid.NewV4().String())
 
-			auth := types.NewAuthentication(
-				id+"#keys-1",
-				pubKey.Type(),
-				accAddrBech32,
-				base64.StdEncoding.EncodeToString(pubKey.Bytes()),
+			auth := types.NewVerification(
+				types.NewVerificationMethod(
+					vmID,
+					pubKey.Type(),
+					signerDID,
+					base58.Encode(pubKey.Bytes()),
+				),
+				[]string{types.RelationshipAuthentication},
+				nil,
 			)
-
+			// create the message
 			msg := types.NewMsgCreateIdentifier(
-				id,
-				types.Authentications{&auth},
-				accAddrBech32,
+				did,
+				[]*types.Verification{auth},
+				[]*types.Service{},
+				signer.String(),
 			)
-
+			// validate
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
-
+			// execute
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
@@ -86,7 +96,8 @@ func NewCreateIdentifierCmd() *cobra.Command {
 	return cmd
 }
 
-func NewAddAuthenticationCmd() *cobra.Command {
+// NewAddVerificationCmd define the command to add a verification message
+func NewAddVerificationCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "add-authentication [id] [pubkey]",
 		Short:   "add an authentication method to a decentralized identifier (did) document",
@@ -97,25 +108,35 @@ func NewAddAuthenticationCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			accAddr := clientCtx.GetFromAddress()
-
+			// signer address
+			signer := clientCtx.GetFromAddress()
+			// public key
 			pubKey, err := sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeAccPub, args[1])
 			if err != nil {
 				return err
 			}
-			address := sdk.AccAddress(pubKey.Address())
+			// document did
+			did := types.DID(args[0])
+			// controller did
+			controllerDID := types.DID(signer.String())
+			// verification method id
+			vmID := fmt.Sprint(did, "#", uuid.NewV4().String())
 
-			auth := types.NewAuthentication(
-				"",
-				pubKey.Type(),
-				address.String(),
-				pubKey.Address().String(),
+			verification := types.NewVerification(
+				types.NewVerificationMethod(
+					vmID,
+					pubKey.Type(),
+					controllerDID,
+					base58.Encode(pubKey.Bytes()),
+				),
+				[]string{types.RelationshipAuthentication},
+				nil,
 			)
-
-			msg := types.NewMsgAddAuthentication(
-				args[0],
-				&auth,
-				accAddr.String(),
+			// add verification
+			msg := types.NewMsgAddVerification(
+				did,
+				verification,
+				signer.String(),
 			)
 
 			if err := msg.ValidateBasic(); err != nil {
@@ -142,28 +163,33 @@ func NewAddServiceCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			accAddr := clientCtx.GetFromAddress()
 
 			if !vcstypes.IsValidCredentialType(args[2]) {
 				return errors.New("invalid credential type")
 			}
+			// tx signer
+			signer := clientCtx.GetFromAddress()
+			// service parameters
+			serviceID, serviceType, endpoint := args[1], args[2], args[3]
+			// document did
+			did := types.DID(args[0])
 
 			service := types.NewService(
-				args[1],
-				args[2],
-				args[3],
+				serviceID,
+				serviceType,
+				endpoint,
 			)
 
 			msg := types.NewMsgAddService(
-				args[0],
-				&service,
-				accAddr.String(),
+				did,
+				service,
+				signer.String(),
 			)
-
+			// validate
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
-
+			// broadcast
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
@@ -173,29 +199,34 @@ func NewAddServiceCmd() *cobra.Command {
 	return cmd
 }
 
-func NewDeleteAuthenticationCmd() *cobra.Command {
+func NewRevokeVerificationCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "delete-authentication [id] [pubkey]",
-		Short:   "delete an authentication method from a decentralized identifier (did) document",
-		Example: "delete an authentication method for a did document",
+		Use:     "revoke-verification [id] [verification-method-id]",
+		Short:   "revoke a verification method from a decentralized identifier (did) document",
+		Example: "revoke a verification method for a did document",
 		Args:    cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
-			accAddr := clientCtx.GetFromAddress()
-
-			msg := types.NewMsgDeleteAuthentication(
-				args[0],
-				args[1],
-				accAddr.String(),
+			// document did
+			did := types.DID(args[0])
+			// signer
+			signer := clientCtx.GetFromAddress()
+			// verification method id
+			vmID := args[1]
+			// build the message
+			msg := types.NewMsgRevokeVerification(
+				did,
+				vmID,
+				signer.String(),
 			)
-
+			// validate
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
-
+			// broadcast
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
@@ -216,12 +247,17 @@ func NewDeleteServiceCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			accAddr := clientCtx.GetFromAddress()
+			// document did
+			did := types.DID(args[0])
+			// signer
+			signer := clientCtx.GetFromAddress()
+			// service id
+			sID := args[1]
 
 			msg := types.NewMsgDeleteService(
-				args[0],
-				args[1],
-				accAddr.String(),
+				did,
+				sID,
+				signer.String(),
 			)
 
 			if err := msg.ValidateBasic(); err != nil {

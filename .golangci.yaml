@@ -22,6 +22,8 @@ linters:
     - revive
 
 linters-settings:
+  unused:
+    go: "1.15"
   dupl:
     threshold: 100
   funlen:

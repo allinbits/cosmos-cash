@@ -163,6 +163,7 @@ func (s *IntegrationTestSuite) TestNewCreateIdentifierCmd() {
 		{
 			"valid transaction",
 			[]string{
+				"123456789abcdefghijk",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
@@ -201,7 +202,7 @@ func (s *IntegrationTestSuite) TestNewCreateIdentifierCmd() {
 	}
 }
 
-func (s *IntegrationTestSuite) TestNewAddAuthenticationCmd() {
+func (s *IntegrationTestSuite) TestNewAddVerificationCmd() {
 	val := s.network.Validators[0]
 
 	testCases := []struct {
@@ -214,7 +215,7 @@ func (s *IntegrationTestSuite) TestNewAddAuthenticationCmd() {
 		{
 			"invalid transaction",
 			[]string{
-				"identifier-id",
+				"123456789abcdefghijk",
 				"cosmospub1addwnpepqtqutllgy55y33078dw480zlrspnvtepnfyq7x3nzhpx8vgzju3gs0ungys",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
@@ -231,11 +232,11 @@ func (s *IntegrationTestSuite) TestNewAddAuthenticationCmd() {
 
 	for _, tc := range testCases {
 		s.Run(tc.name, func() {
-			cmd := cli.NewAddAuthenticationCmd()
+			cmd := cli.NewAddVerificationCmd()
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-
+			s.Require().NoError(err)
 			// TODO: optimize this
 			err = s.network.WaitForNextBlock()
 			s.Require().NoError(err)
@@ -267,10 +268,10 @@ func (s *IntegrationTestSuite) TestNewAddServiceCmd() {
 		{
 			"invalid transaction",
 			[]string{
-				"id",
-				"service_key",
+				"123456789abcdefghijk",
+				"service:seuro",
 				"KYCCredential",
-				"cash:serivce_key",
+				"service:euro/SIGNATURE",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
@@ -290,7 +291,7 @@ func (s *IntegrationTestSuite) TestNewAddServiceCmd() {
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-
+			s.Require().NoError(err)
 			// TODO: optimize this
 			err = s.network.WaitForNextBlock()
 			s.Require().NoError(err)
@@ -309,7 +310,7 @@ func (s *IntegrationTestSuite) TestNewAddServiceCmd() {
 	}
 }
 
-func (s *IntegrationTestSuite) TestNewDeleteAuthenticationCmd() {
+func (s *IntegrationTestSuite) TestNewRevokeVerificationCmd() {
 	val := s.network.Validators[0]
 
 	testCases := []struct {
@@ -322,8 +323,8 @@ func (s *IntegrationTestSuite) TestNewDeleteAuthenticationCmd() {
 		{
 			"invalid transaction",
 			[]string{
-				"identifier-id",
-				"cosmospub1addwnpepqtqutllgy55y33078dw480zlrspnvtepnfyq7x3nzhpx8vgzju3gs0ungys",
+				"123456789abcdefghijk",
+				"did:cash:subject#uid", // TODO when using generated ids this is difficult to test
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
@@ -339,11 +340,11 @@ func (s *IntegrationTestSuite) TestNewDeleteAuthenticationCmd() {
 
 	for _, tc := range testCases {
 		s.Run(tc.name, func() {
-			cmd := cli.NewDeleteAuthenticationCmd()
+			cmd := cli.NewRevokeVerificationCmd()
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-
+			s.Require().NoError(err)
 			err = s.network.WaitForNextBlock()
 			s.Require().NoError(err)
 			err = s.network.WaitForNextBlock()
@@ -374,8 +375,8 @@ func (s *IntegrationTestSuite) TestNewDeleteServiceCmd() {
 		{
 			"invalid transaction",
 			[]string{
-				"identifier-id",
-				"service_key",
+				"123456789abcdefghijk",
+				"service:seuro",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
@@ -395,7 +396,7 @@ func (s *IntegrationTestSuite) TestNewDeleteServiceCmd() {
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-
+			s.Require().NoError(err)
 			// TODO: optimize this
 			err = s.network.WaitForNextBlock()
 			s.Require().NoError(err)

@@ -41,7 +41,7 @@ func (suite *KeeperTestSuite) TestHandleMsgCreateIdentifier() {
 		},
 	}
 	for _, tc := range testCases {
-		suite.Run(fmt.Sprintf("Case %s", req), func() {
+		suite.Run(fmt.Sprintf("Case %s", tc.name), func() {
 			tc.malleate()
 			_, err := handleFn(suite.ctx, &req)
 			if tc.expectErr {
@@ -96,7 +96,7 @@ func (suite *KeeperTestSuite) TestHandleMsgUpdateIdentifier() {
 							"did:cash:subject#key-1",
 							"EcdsaSecp256k1RecoveryMethod2020",
 							"did:cash:subject",
-							"027560af3387d375e3342a6968179ef3c6d04f5d33b2b611cf326d4708badd7770",
+							signer,
 						),
 						[]string{types.RelationshipAuthentication},
 						nil,
@@ -119,7 +119,7 @@ func (suite *KeeperTestSuite) TestHandleMsgUpdateIdentifier() {
 							"did:cash:subject#key-1",
 							"EcdsaSecp256k1RecoveryMethod2020",
 							"did:cash:subject",
-							"027560af3387d375e3342a6968179ef3c6d04f5d33b2b611cf326d4708badd7770",
+							signer,
 						),
 						[]string{types.RelationshipAuthentication},
 						nil,
@@ -139,7 +139,7 @@ func (suite *KeeperTestSuite) TestHandleMsgUpdateIdentifier() {
 		},
 	}
 	for _, tc := range testCases {
-		suite.Run(fmt.Sprintf("Case %s", req), func() {
+		suite.Run(fmt.Sprintf("Case %s", tc.name), func() {
 			tc.malleate()
 			_, err := handleFn(suite.ctx, &req)
 			if tc.expectErr {
@@ -241,7 +241,7 @@ func (suite *KeeperTestSuite) TestHandleMsgAddVerification() {
 			true,
 		},
 		{
-			"Pass: can add verification to did document",
+			"PASS: can add verification to did document",
 			func() {
 				signer := "subject"
 				didDoc, _ := types.NewIdentifier(
@@ -252,7 +252,7 @@ func (suite *KeeperTestSuite) TestHandleMsgAddVerification() {
 								"did:cash:subject#key-1",
 								"EcdsaSecp256k1RecoveryMethod2020",
 								"did:cash:subject",
-								"027560af3387d375e3342a6968179ef3c6d04f5d33b2b611cf326d4708badd7770",
+								signer,
 							),
 							[]string{types.RelationshipAuthentication},
 							nil,
@@ -278,7 +278,7 @@ func (suite *KeeperTestSuite) TestHandleMsgAddVerification() {
 		},
 	}
 	for _, tc := range testCases {
-		suite.Run(fmt.Sprintf("Case %s", req), func() {
+		suite.Run(fmt.Sprintf("Case %s", tc.name), func() {
 			tc.malleate()
 			_, err := handleFn(suite.ctx, &req)
 			if tc.expectErr {
@@ -389,7 +389,7 @@ func (suite *KeeperTestSuite) TestHandleMsgSetVerificationRelationships() {
 								"did:cash:subject#key-1",
 								"EcdsaSecp256k1RecoveryMethod2020",
 								"did:cash:subject",
-								"027560af3387d375e3342a6968179ef3c6d04f5d33b2b611cf326d4708badd7770",
+								signer,
 							),
 							[]string{types.RelationshipAuthentication},
 							nil,
@@ -409,7 +409,7 @@ func (suite *KeeperTestSuite) TestHandleMsgSetVerificationRelationships() {
 		},
 	}
 	for _, tc := range testCases {
-		suite.Run(tc.name, func() {
+		suite.Run(fmt.Sprintf("Case %s", tc.name), func() {
 			tc.malleate()
 			_, err := handleFn(suite.ctx, &req)
 			if tc.expectErr {
@@ -490,7 +490,7 @@ func (suite *KeeperTestSuite) TestHandleMsgRevokeVerification() {
 			true,
 		},
 		{
-			"Pass: can revoke verification",
+			"PASS: can revoke verification",
 			func() {
 				signer := "subject"
 				didDoc, _ := types.NewIdentifier(
@@ -501,7 +501,7 @@ func (suite *KeeperTestSuite) TestHandleMsgRevokeVerification() {
 								"did:cash:subject#key-1",
 								"EcdsaSecp256k1RecoveryMethod2020",
 								"did:cash:subject",
-								"027560af3387d375e3342a6968179ef3c6d04f5d33b2b611cf326d4708badd7770",
+								signer,
 							),
 							[]string{types.RelationshipAuthentication},
 							nil,
@@ -662,7 +662,7 @@ func (suite *KeeperTestSuite) TestHandleMsgAddService() {
 			true,
 		},
 		{
-			"Pass: can add service to did document",
+			"PASS: can add service to did document",
 			func() {
 				signer := "subject"
 				didDoc, _ := types.NewIdentifier(
@@ -673,7 +673,7 @@ func (suite *KeeperTestSuite) TestHandleMsgAddService() {
 								"did:cash:subject#key-1",
 								"EcdsaSecp256k1RecoveryMethod2020",
 								"did:cash:subject",
-								"027560af3387d375e3342a6968179ef3c6d04f5d33b2b611cf326d4708badd7770",
+								signer,
 							),
 							[]string{types.RelationshipAuthentication},
 							nil,
@@ -736,7 +736,7 @@ func (suite *KeeperTestSuite) TestHandleMsgDeleteService() {
 								"did:cash:subject#key-1",
 								"EcdsaSecp256k1RecoveryMethod2020",
 								"did:cash:subject",
-								"027560af3387d375e3342a6968179ef3c6d04f5d33b2b611cf326d4708badd7770",
+								signer,
 							),
 							[]string{types.RelationshipAuthentication},
 							nil,

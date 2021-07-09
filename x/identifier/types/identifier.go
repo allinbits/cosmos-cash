@@ -24,20 +24,20 @@ const (
 /**
 Regexp generated using this ABNF specs and using https://abnf.msweet.org/index.php
 
-did-url = did path-abempty [ "?" query ] [ "#" fragment ]
+did-url            = did path-abempty [ "?" query ] [ "#" fragment ]
 did                = "did:" method-name ":" method-specific-id
 method-name        = 1*method-char
 method-char        = %x61-7A / DIGIT
 method-specific-id = *( *idchar ":" ) 1*idchar
 idchar             = ALPHA / DIGIT / "." / "-" / "_" / pct-encoded
 pct-encoded        = "%" HEXDIG HEXDIG
-query       = *( pchar / "/" / "?" )
-fragment    = *( pchar / "/" / "?" )
-path-abempty  = *( "/" segment )
-segment       = *pchar
-unreserved    = ALPHA / DIGIT / "-" / "." / "_" / "~"
-pchar         = unreserved / pct-encoded / sub-delims / ":" / "@"
-sub-delims    = "!" / "$" / "&" / "'" / "(" / ")"
+query              = *( pchar / "/" / "?" )
+fragment           = *( pchar / "/" / "?" )
+path-abempty       = *( "/" segment )
+segment            = *pchar
+unreserved         = ALPHA / DIGIT / "-" / "." / "_" / "~"
+pchar              = unreserved / pct-encoded / sub-delims / ":" / "@"
+sub-delims         = "!" / "$" / "&" / "'" / "(" / ")"
                  / "*" / "+" / "," / ";" / "="
 */
 
@@ -58,6 +58,12 @@ var (
 // cfr.https://www.w3.org/TR/did-core/#identifier
 func DID(didMethodSpecificIdentifier string) string {
 	return fmt.Sprint(DidPrefix, didMethodSpecificIdentifier)
+}
+
+// BlockchainAccountID return the account of the user with the chain id postfixed
+// https://w3c.github.io/did-spec-registries/#blockchainAccountId
+func BlockchainAccountID(account string) string {
+	return fmt.Sprint(account, "")
 }
 
 // IsValidDID validate the input string according to the
@@ -107,7 +113,7 @@ func ValidateVerification(v *Verification, allowedControllers ...string) (err er
 	}
 
 	// check for empty publickey
-	if IsEmpty(v.Method.PublicKeyBase58) {
+	if IsEmpty(v.Method.BlockchainAccountID) {
 		err = sdkerrors.Wrapf(ErrInvalidInput, "public key not set for verification method %s", v.Method.Id)
 		return
 	}
@@ -366,12 +372,12 @@ func (didDoc DidDocument) GetVerificationRelationships(methodID string) []string
 // HasRelationship verifies if a controller did
 // exists for at least one of the relationships in the did document
 func (didDoc DidDocument) HasRelationship(
-	contoller string,
-	relationships ...string) bool {
-
+	signer string,
+	relationships ...string,
+) bool {
 	// first check if the controller exists
 	for _, vm := range didDoc.VerificationMethods {
-		if vm.Controller != contoller {
+		if vm.BlockchainAccountID != BlockchainAccountID(signer) {
 			continue
 		}
 
@@ -385,7 +391,6 @@ func (didDoc DidDocument) HasRelationship(
 
 // AddServices add services to a did document
 func (didDoc *DidDocument) AddServices(services ...*Service) (err error) {
-
 	if didDoc.Services == nil {
 		didDoc.Services = []*Service{}
 	}
@@ -462,13 +467,13 @@ func NewVerification(
 }
 
 // NewVerificationMethod build a new verification method
-// TODO: this only uses PublicKeyBase58
+// TODO: this only uses BlockchainAccountID
 func NewVerificationMethod(id, keyType, controller, key string) VerificationMethod {
 	return VerificationMethod{
-		Id:              id,
-		Type:            keyType,
-		Controller:      controller,
-		PublicKeyBase58: key,
+		Id:                  id,
+		Type:                keyType,
+		Controller:          controller,
+		BlockchainAccountID: key,
 	}
 }
 

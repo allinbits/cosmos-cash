@@ -74,10 +74,10 @@ message DidDocument {
 message VerificationMethod {
   option (gogoproto.equal) = true;
 
-  string id                = 1;
-  string type              = 2;
-  string controller        = 3;
-  string publicKeyBase58   = 4; // by default we support only publicKeyBase58
+  string id                    = 1;
+  string type                  = 2;
+  string controller            = 3;
+  string blockchainAccountID   = 4; // by default we support only blockchainAccountID
 }
 
 // Service defines how to find data associated with a identifer

@@ -1,6 +1,6 @@
 # Architecture Decision Records (ADR)
 
-Use this location to record all high-level architecture decisions in the Cosmos SDK.
+Use this location to record all high-level architecture decisions in the Cosmos Cash.
 ### Definitions
 
 Within the context of an ADR we define the following:

@@ -16,7 +16,7 @@ ADR creation is an **iterative** process. Instead of trying to solve all decisio
 
 1. Every ADR proposal SHOULD start with a [new GitHub issue](https://github.com/tendermint/starport/issues/new/choose) or be a result of existing Issues. The Issue must contain a brief proposal summary.
 
-2. Once the motivation is validated, a GitHub Pull Request (PR) is created with a new document based on the `adr-template.md`.
+2. After the motivation is validated, create a new document that is on the `adr-template.md`.
 
 3. An ADR doesn't have to arrive to `master` with an _accepted_ status in a single PR. If the motivation is clear and the solution is sound, we SHOULD be able to merge it and keep a _proposed_ status. It's preferable to have an iterative approach rather than long, not merged Pull Requests.
 

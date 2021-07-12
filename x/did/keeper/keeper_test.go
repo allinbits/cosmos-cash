@@ -2,10 +2,11 @@ package keeper
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/suite"
 	"testing"
 
-	"github.com/allinbits/cosmos-cash/x/verifiable-credential-service/types"
+	"github.com/stretchr/testify/suite"
+
+	"github.com/allinbits/cosmos-cash/x/did/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	ct "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -60,44 +61,42 @@ func TestKeeperTestSuite(t *testing.T) {
 
 func (suite *KeeperTestSuite) TestGenericKeeperSetAndGet() {
 	testCases := []struct {
-		msg        string
-		did types.VerifiableCredential
-		// TODO: add mallate func and clean up test
+		msg     string
+		didFn   func() types.DidDocument
 		expPass bool
 	}{
 		{
 			"data stored successfully",
-			types.NewUserVerifiableCredential(
-				"did:cash:1111",
-				[]string{"context"},
-				"",
-				"",
-				types.NewUserCredentialSubject("", "root", true),
-				types.NewProof("", "", "", "", ""),
-			),
+			func() types.DidDocument {
+				dd, _ := types.NewDidDocument(
+					"did:cash:subject",
+				)
+				return dd
+			},
 			true,
 		},
 	}
 	for _, tc := range testCases {
+		dd := tc.didFn()
 		suite.keeper.Set(suite.ctx,
-			[]byte(tc.did.Id),
+			[]byte(dd.Id),
 			[]byte{0x01},
-			tc.did,
-			suite.keeper.MarshalVerifiableCredential,
+			dd,
+			suite.keeper.MarshalDidDocument,
 		)
 		suite.keeper.Set(suite.ctx,
-			[]byte(tc.did.Id+"1"),
+			[]byte(dd.Id+"1"),
 			[]byte{0x01},
-			tc.did,
-			suite.keeper.MarshalVerifiableCredential,
+			dd,
+			suite.keeper.MarshalDidDocument,
 		)
 		suite.Run(fmt.Sprintf("Case %s", tc.msg), func() {
 			if tc.expPass {
 				_, found := suite.keeper.Get(
 					suite.ctx,
-					[]byte(tc.did.Id),
+					[]byte(dd.Id),
 					[]byte{0x01},
-					suite.keeper.UnmarshalVerifiableCredential,
+					suite.keeper.UnmarshalDidDocument,
 				)
 				suite.Require().True(found)
 
@@ -112,6 +111,61 @@ func (suite *KeeperTestSuite) TestGenericKeeperSetAndGet() {
 					array = append(array, iterator.Value())
 				}
 				suite.Require().Equal(2, len(array))
+			} else {
+				// TODO write failure cases
+				suite.Require().False(tc.expPass)
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestGenericKeeperDelete() {
+	testCases := []struct {
+		msg     string
+		didFn   func() types.DidDocument
+		expPass bool
+	}{
+		{
+			"data stored successfully",
+			func() types.DidDocument {
+				dd, _ := types.NewDidDocument(
+					"did:cash:subject",
+				)
+				return dd
+			},
+			true,
+		},
+	}
+	for _, tc := range testCases {
+		dd := tc.didFn()
+		suite.keeper.Set(suite.ctx,
+			[]byte(dd.Id),
+			[]byte{0x01},
+			dd,
+			suite.keeper.MarshalDidDocument,
+		)
+		suite.keeper.Set(suite.ctx,
+			[]byte(dd.Id+"1"),
+			[]byte{0x01},
+			dd,
+			suite.keeper.MarshalDidDocument,
+		)
+		suite.Run(fmt.Sprintf("Case %s", tc.msg), func() {
+			if tc.expPass {
+				suite.keeper.Delete(
+					suite.ctx,
+					[]byte(dd.Id),
+					[]byte{0x01},
+				)
+
+				_, found := suite.keeper.Get(
+					suite.ctx,
+					[]byte(dd.Id),
+					[]byte{0x01},
+					suite.keeper.UnmarshalDidDocument,
+				)
+				suite.Require().False(found)
+
 			} else {
 				// TODO write failure cases
 				suite.Require().False(tc.expPass)

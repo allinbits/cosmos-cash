@@ -5,8 +5,8 @@ import (
 )
 
 // GenesisState The genesis state of the blockchain is represented here as a map of raw json
-// messages indexed by a identifier string.
-// The identifier is used to determine which module genesis information belongs
+// messages indexed by a did string.
+// The did is used to determine which module genesis information belongs
 // to so it may be appropriately routed during init chain.
 // Within this application default genesis information is retrieved from
 // the ModuleBasicManager which populates json from each BasicModule

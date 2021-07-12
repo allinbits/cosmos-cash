@@ -82,9 +82,9 @@ import ( // this line is used by starport scaffolding # stargate/app/moduleImpor
 	dbm "github.com/tendermint/tm-db"
 
 	appparams "github.com/allinbits/cosmos-cash/app/params"
-	"github.com/allinbits/cosmos-cash/x/identifier"
-	identifierkeeper "github.com/allinbits/cosmos-cash/x/identifier/keeper"
-	identifiertypes "github.com/allinbits/cosmos-cash/x/identifier/types"
+	"github.com/allinbits/cosmos-cash/x/did"
+	didkeeper "github.com/allinbits/cosmos-cash/x/did/keeper"
+	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
 	"github.com/allinbits/cosmos-cash/x/issuer"
 	issuerkeeper "github.com/allinbits/cosmos-cash/x/issuer/keeper"
 	issuertypes "github.com/allinbits/cosmos-cash/x/issuer/types"
@@ -129,7 +129,7 @@ var (
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 		issuer.AppModuleBasic{},
 		vcs.AppModuleBasic{},
-		identifier.AppModuleBasic{},
+		did.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -194,7 +194,7 @@ type App struct {
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 	IssuerKeeper     issuerkeeper.Keeper
 	VcsKeeper        vcskeeper.Keeper
-	IdentifierKeeper identifierkeeper.Keeper
+	DidDocumentKeeper didkeeper.Keeper
 
 	// the module manager
 	mm *module.Manager
@@ -241,7 +241,7 @@ func New(
 		// this line is used by starport scaffolding # stargate/app/storeKey
 		issuertypes.StoreKey,
 		vcstypes.StoreKey,
-		identifiertypes.StoreKey,
+		didtypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -393,10 +393,10 @@ func New(
 	)
 	transferModule := transfer.NewAppModule(app.TransferKeeper)
 
-	app.IdentifierKeeper = *identifierkeeper.NewKeeper(
+	app.DidDocumentKeeper = *didkeeper.NewKeeper(
 		appCodec,
-		keys[identifiertypes.StoreKey],
-		keys[identifiertypes.MemStoreKey],
+		keys[didtypes.StoreKey],
+		keys[didtypes.MemStoreKey],
 	)
 
 	// Create static IBC router, add transfer route, then set and seal it
@@ -518,9 +518,9 @@ func New(
 			appCodec,
 			app.VcsKeeper,
 		),
-		identifier.NewAppModule(
+		did.NewAppModule(
 			appCodec,
-			app.IdentifierKeeper,
+			app.DidDocumentKeeper,
 		),
 	)
 
@@ -569,7 +569,7 @@ func New(
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 		issuertypes.ModuleName,
 		vcstypes.ModuleName,
-		identifiertypes.ModuleName,
+		didtypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
@@ -595,7 +595,7 @@ func New(
 			app.AccountKeeper,
 			app.BankKeeper,
 			app.IssuerKeeper,
-			app.IdentifierKeeper,
+			app.DidDocumentKeeper,
 			app.VcsKeeper,
 			ante.DefaultSigVerificationGasConsumer,
 			encodingConfig.TxConfig.SignModeHandler(),
@@ -726,7 +726,7 @@ func initParamsKeeper(appCodec codec.BinaryMarshaler, legacyAmino *codec.LegacyA
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 	paramsKeeper.Subspace(issuertypes.ModuleName)
 	paramsKeeper.Subspace(vcstypes.ModuleName)
-	paramsKeeper.Subspace(identifiertypes.ModuleName)
+	paramsKeeper.Subspace(didtypes.ModuleName)
 
 	return paramsKeeper
 }

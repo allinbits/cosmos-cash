@@ -8,7 +8,7 @@
 
 {DRAFT | PROPOSED} Not Implemented
 
-> Please have a look at the [PROCESS](./PROCESS.md#adr-status) page.
+> For details on ADR workflow, see the [PROCESS](./PROCESS.md#adr-status) page.
 > Use DRAFT if the ADR is in a draft stage (draft PR) or PROPOSED if it's in review.
 
 ## Abstract
@@ -58,4 +58,3 @@ Test cases for an implementation are mandatory for ADRs that are affecting conse
 ## References
 
 - {reference link}
-

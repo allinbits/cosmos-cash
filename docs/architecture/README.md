@@ -1,6 +1,6 @@
 # Architecture Decision Records (ADR)
 
-This is a location to record all high-level architecture decisions in the Cosmos-SDK.
+Use this location to record all high-level architecture decisions in the Cosmos SDK.
 
 An Architectural Decision (**AD**) is a software design choice that addresses a functional or non-functional requirement that is architecturally significant.
 An Architecturally Significant Requirement (**ASR**) is a requirement that has a measurable effect on a software system’s architecture and quality.

@@ -48,7 +48,7 @@
 
 ## Further Discussions
 
-While an ADR is in the DRAFT or PROPOSED stage, this section should contain a summary of issues to be solved in future iterations (usually referencing comments from a pull-request discussion).
+While an ADR is in the DRAFT or PROPOSED stage, this section contains a summary of issues to be solved in future iterations. The issues summarized here can reference comments from a pull request discussion.
 Later, this section can optionally list ideas or improvements the author or reviewers found during the analysis of this ADR.
 
 ## Test Cases [optional]

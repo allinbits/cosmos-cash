@@ -12,7 +12,7 @@
 
 ## ADR life cycle
 
-ADR creation is an **iterative** process. Instead of trying to solve all decisions in a single ADR pull request, we MUST firstly understand the problem and collect feedback through a GitHub Issue.
+ADR creation is an **iterative** process. Instead of trying to solve all decisions in a single ADR pull request, we MUST initially understand the problem and collect feedback by having conversations in a GitHub Issue.
 
 1. Every ADR proposal SHOULD start with a [new GitHub issue](https://github.com/tendermint/starport/issues/new/choose) or be a result of existing Issues. The Issue must contain a brief proposal summary.
 

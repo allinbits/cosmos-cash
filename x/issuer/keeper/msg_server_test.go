@@ -57,10 +57,10 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateIssuer() {
 		suite.Run(fmt.Sprintf("Case %s", tc.msg), func() {
 			tc.malleate()
 
-			identifierResp, err := server.CreateIssuer(sdk.WrapSDKContext(suite.ctx), &req)
+			didResp, err := server.CreateIssuer(sdk.WrapSDKContext(suite.ctx), &req)
 			if tc.expPass {
 				suite.NoError(err)
-				suite.NotNil(identifierResp)
+				suite.NotNil(didResp)
 
 			} else {
 				suite.Require().Error(err)
@@ -103,10 +103,10 @@ func (suite *KeeperTestSuite) TestMsgSeverBurnToken() {
 		suite.Run(fmt.Sprintf("Case %s", tc.msg), func() {
 			tc.malleate()
 
-			identifierResp, err := server.BurnToken(sdk.WrapSDKContext(suite.ctx), &req)
+			didResp, err := server.BurnToken(sdk.WrapSDKContext(suite.ctx), &req)
 			if tc.expPass {
 				suite.NoError(err)
-				suite.NotNil(identifierResp)
+				suite.NotNil(didResp)
 
 			} else {
 				suite.Require().Error(err)
@@ -138,10 +138,10 @@ func (suite *KeeperTestSuite) Test_msgServer_MintToken() {
 		suite.Run(fmt.Sprintf("Case %s", tc.msg), func() {
 			tc.malleate()
 
-			identifierResp, err := server.MintToken(ctx, &req)
+			didResp, err := server.MintToken(ctx, &req)
 			if tc.expPass {
 				suite.NoError(err)
-				suite.NotNil(identifierResp)
+				suite.NotNil(didResp)
 
 			} else {
 				suite.Require().Error(err)

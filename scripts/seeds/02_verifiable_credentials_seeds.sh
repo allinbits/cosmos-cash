@@ -19,5 +19,5 @@ cosmos-cashd query verifiablecredentialservice verifiable-credentials --output j
 echo "Validating verifiable credentials"
 cosmos-cashd query verifiablecredentialservice validate-verifiable-credential new-verifiable-cred-3 $(cosmos-cashd keys show validator -p) --output json | jq
 
-echo "Adding service to decentralized identifier for user: validator"
-cosmos-cashd tx identifier add-service did:cash:$(cosmos-cashd keys show validator -a) issuer-new-verifiable-cred-3 IssuerCredential cash:new-verifiable-cred-3 --from validator --chain-id cash -y
+echo "Adding service to decentralized did for user: validator"
+cosmos-cashd tx did add-service did:cash:$(cosmos-cashd keys show validator -a) issuer-new-verifiable-cred-3 IssuerCredential cash:new-verifiable-cred-3 --from validator --chain-id cash -y

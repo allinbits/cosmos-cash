@@ -8,8 +8,8 @@ import (
 	accountKeeper "github.com/cosmos/cosmos-sdk/x/auth/ante"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/types"
 
-	identifierkeeper "github.com/allinbits/cosmos-cash/x/identifier/keeper"
-	identifiertypes "github.com/allinbits/cosmos-cash/x/identifier/types"
+	didkeeper "github.com/allinbits/cosmos-cash/x/did/keeper"
+	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
 	"github.com/allinbits/cosmos-cash/x/issuer/keeper"
 	"github.com/allinbits/cosmos-cash/x/issuer/types"
 	vcskeeper "github.com/allinbits/cosmos-cash/x/verifiable-credential-service/keeper"
@@ -19,13 +19,13 @@ import (
 // CheckIssuerCredentialsDecorator checks the issuer has a EMILicense in a preprocessing hook
 type CheckIssuerCredentialsDecorator struct {
 	issuerk keeper.Keeper
-	ik      identifierkeeper.Keeper
+	ik      didkeeper.Keeper
 	vcsk    vcskeeper.Keeper
 }
 
 func NewCheckIssuerCredentialsDecorator(
 	issuerk keeper.Keeper,
-	ik identifierkeeper.Keeper,
+	ik didkeeper.Keeper,
 	vcsk vcskeeper.Keeper,
 ) CheckIssuerCredentialsDecorator {
 	return CheckIssuerCredentialsDecorator{
@@ -46,20 +46,20 @@ func (cicd CheckIssuerCredentialsDecorator) AnteHandle(
 		if msg.Type() == "create-issuer" {
 			imsg := msg.(*types.MsgCreateIssuer)
 
-			signerDID := identifiertypes.DID(imsg.Owner)
+			signerDID := didtypes.DID(imsg.Owner)
 
 			// TODO: pass in the did URI as an arg {msg.Id}
 			// TODO: ensure this keeper can only read from store
-			did, found := cicd.ik.GetIdentifier(ctx, []byte(signerDID))
+			did, found := cicd.ik.GetDidDocument(ctx, []byte(signerDID))
 			if !found {
 				return ctx, sdkerrors.Wrapf(
-					types.ErrIdentifierDoesNotExist,
-					"identifier does not exists",
+					types.ErrDidDocumentDoesNotExist,
+					"did does not exists",
 				)
 			}
 
 			// verification authorization
-			if !did.HasRelationship(signerDID, identifiertypes.RelationshipAuthentication) {
+			if !did.HasRelationship(signerDID, didtypes.RelationshipAuthentication) {
 				return ctx, sdkerrors.Wrapf(
 					types.ErrIncorrectControllerOfDidDocument,
 					"msg sender not in auth array in did document",
@@ -115,14 +115,14 @@ func (cicd CheckIssuerCredentialsDecorator) AnteHandle(
 type CheckUserCredentialsDecorator struct {
 	accountk accountKeeper.AccountKeeper
 	issuerk  keeper.Keeper
-	ik       identifierkeeper.Keeper
+	ik       didkeeper.Keeper
 	vcsk     vcskeeper.Keeper
 }
 
 func NewCheckUserCredentialsDecorator(
 	accountk accountKeeper.AccountKeeper,
 	issuerk keeper.Keeper,
-	ik identifierkeeper.Keeper,
+	ik didkeeper.Keeper,
 	vcsk vcskeeper.Keeper,
 ) CheckUserCredentialsDecorator {
 	return CheckUserCredentialsDecorator{
@@ -175,19 +175,19 @@ func (cicd CheckUserCredentialsDecorator) validateKYCCredential(
 	address string,
 	issuerAddress string,
 ) error {
-	issuerDID := identifiertypes.DID(address)
+	issuerDID := didtypes.DID(address)
 
 	// TODO: tidy this functionality into the keeper,
-	// GetIdentifierWithCondition, GetIdentifierWithService, GetIdentifierWithAuth
-	did, found := cicd.ik.GetIdentifier(ctx, []byte(issuerDID))
+	// GetDidDocumentWithCondition, GetDidDocumentWithService, GetDidDocumentWithAuth
+	did, found := cicd.ik.GetDidDocument(ctx, []byte(issuerDID))
 	if !found {
 		return sdkerrors.Wrapf(
-			types.ErrIdentifierDoesNotExist,
-			"identifier does not exists when validating the KYC credential",
+			types.ErrDidDocumentDoesNotExist,
+			"did does not exists when validating the KYC credential",
 		)
 	}
 
-	if !did.HasRelationship(issuerDID, identifiertypes.RelationshipAuthentication) {
+	if !did.HasRelationship(issuerDID, didtypes.RelationshipAuthentication) {
 		return sdkerrors.Wrapf(
 			types.ErrIncorrectControllerOfDidDocument,
 			"msg sender not in auth slice in did document when validating the KYC credential",

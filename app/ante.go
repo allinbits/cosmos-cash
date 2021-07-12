@@ -6,7 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/signing"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	identifierkeeper "github.com/allinbits/cosmos-cash/x/identifier/keeper"
+	didkeeper "github.com/allinbits/cosmos-cash/x/did/keeper"
 	issuerante "github.com/allinbits/cosmos-cash/x/issuer/ante"
 	issuerkeeper "github.com/allinbits/cosmos-cash/x/issuer/keeper"
 	vcskeeper "github.com/allinbits/cosmos-cash/x/verifiable-credential-service/keeper"
@@ -18,7 +18,7 @@ import (
 func NewAnteHandler(
 	ak authante.AccountKeeper, bankKeeper authtypes.BankKeeper,
 	ik issuerkeeper.Keeper,
-	dk identifierkeeper.Keeper,
+	dk didkeeper.Keeper,
 	vcsk vcskeeper.Keeper,
 	sigGasConsumer authante.SignatureVerificationGasConsumer,
 	signModeHandler signing.SignModeHandler,

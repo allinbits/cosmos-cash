@@ -31,9 +31,9 @@ func (q Keeper) UnmarshalVerifiableCredential(value []byte) (interface{}, bool) 
 }
 
 func (q Keeper) MarshalVerifiableCredential(value interface{}) []byte {
-	identifier := value.(types.VerifiableCredential)
+	did := value.(types.VerifiableCredential)
 
-	bytes, _ := q.cdc.MarshalBinaryBare(&identifier)
+	bytes, _ := q.cdc.MarshalBinaryBare(&did)
 
 	return bytes
 }

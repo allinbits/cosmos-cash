@@ -36,7 +36,7 @@ import (
 	"github.com/allinbits/cosmos-cash/app/params"
 )
 
-// ChainID the chain identifier
+// ChainID the chain did
 var ChainID string
 
 // NewRootCmd creates a new root command for simd. It is called once in the

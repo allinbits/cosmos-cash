@@ -45,6 +45,9 @@ func (k msgServer) CreateDidDocument(
 
 	// persist the did document
 	k.Keeper.SetDidDocument(ctx, []byte(msg.Id), did)
+
+	k.Logger(ctx).Info("Created a DidDocument for", "did", msg.Id, "controller", msg.Signer)
+
 	// emit the event
 	ctx.EventManager().EmitEvent(
 		types.NewDidDocumentCreatedEvent(msg.Id),
@@ -77,6 +80,8 @@ func (k msgServer) UpdateDidDocument(goCtx context.Context, msg *types.MsgUpdate
 	}
 	// write the did
 	k.Keeper.SetDidDocument(ctx, []byte(msg.Id), didDoc)
+
+	k.Logger(ctx).Info("Updated a DidDocument for", "did", msg.Id, "controller", msg.Signer)
 
 	// NOTE: events are expected to change during client development
 	ctx.EventManager().EmitEvent(
@@ -114,6 +119,8 @@ func (k msgServer) AddVerification(
 
 	// write the did
 	k.Keeper.SetDidDocument(ctx, []byte(msg.Id), didDoc)
+
+	k.Logger(ctx).Info("Added a new verification method for", "did", msg.Id, "controller", msg.Signer)
 
 	// NOTE: events are expected to change during client development
 	ctx.EventManager().EmitEvent(
@@ -159,6 +166,8 @@ func (k msgServer) AddService(
 	}
 	// write to storage
 	k.Keeper.SetDidDocument(ctx, []byte(msg.Id), didDoc)
+
+	k.Logger(ctx).Info("Added a new service for", "did", msg.Id, "controller", msg.Signer)
 	// NOTE: events are expected to change during client development
 	ctx.EventManager().EmitEvent(
 		types.NewServiceAddedEvent(msg.Id, msg.ServiceData.Id),
@@ -193,6 +202,8 @@ func (k msgServer) RevokeVerification(
 
 	// persist to storage
 	k.Keeper.SetDidDocument(ctx, []byte(msg.Id), didDoc)
+
+	k.Logger(ctx).Info("Revoked verification method from did document for", "did", msg.Id, "controller", msg.Signer)
 
 	// emit event
 	ctx.EventManager().EmitEvent(
@@ -232,6 +243,8 @@ func (k msgServer) DeleteService(
 	// persist the did document
 	k.Keeper.SetDidDocument(ctx, []byte(msg.Id), didDoc)
 
+	k.Logger(ctx).Info("Removed service from did document for", "did", msg.Id, "controller", msg.Signer)
+
 	// NOTE: events are expected to change during client development
 	ctx.EventManager().EmitEvent(
 		types.NewServiceDeletedEvent(msg.Id, msg.ServiceId),
@@ -266,6 +279,8 @@ func (k msgServer) SetVerificationRelationships(goCtx context.Context, msg *type
 
 	// persist the did document
 	k.Keeper.SetDidDocument(ctx, []byte(msg.Id), didDoc)
+
+	k.Logger(ctx).Info("Set verification relationship from did document for", "did", msg.Id, "controller", msg.Signer)
 
 	// NOTE: events are expected to change during client development
 	ctx.EventManager().EmitEvent(

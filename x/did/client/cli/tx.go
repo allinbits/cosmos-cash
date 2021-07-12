@@ -123,7 +123,7 @@ func NewAddVerificationCmd() *cobra.Command {
 					vmID,
 					pubKey.Type(),
 					did,
-					types.BlockchainAccountID(signer.String()),
+					types.BlockchainAccountID(pubKey.Address().String()), // FIXME: this needs to be the address of args[1]
 				),
 				[]string{types.RelationshipAuthentication},
 				nil,

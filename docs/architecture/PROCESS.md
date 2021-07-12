@@ -20,7 +20,7 @@ ADR creation is an **iterative** process. Instead of trying to solve all decisio
 
 3. An ADR solution doesn't have to arrive to the `master` branch with an _accepted_ status in a single PR. If the motivation is clear and the solution is sound, we SHOULD be able to merge PRs iteratively and keep a _proposed_ status. It's preferable to have an iterative approach rather than long, not merged Pull Requests.
 
-4. If a _proposed_ ADR is merged, then it should clearly document outstanding issues either in ADR document notes or in a GitHub Issue.
+4. If a _proposed_ ADR is merged, then the outstanding changes must be clearly documented in outstanding issues in ADR document notes or in a GitHub Issue.
 
 5. The PR SHOULD always be merged. In the case of a faulty ADR, we still prefer to  merge it with a _rejected_ status. The only time the ADR SHOULD NOT be merged is if the author abandons it.
 

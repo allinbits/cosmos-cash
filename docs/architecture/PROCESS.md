@@ -62,6 +62,6 @@ DRAFT -> PROPOSED -> LAST CALL yyyy-mm-dd -> ACCEPTED | REJECTED -> SUPERSEEDED 
 
 ## Language used in ADR
 
-+ The context/background should be written in the present tense.
++ Write the context/background in the present tense.
 
 + Avoid using a first, personal form.

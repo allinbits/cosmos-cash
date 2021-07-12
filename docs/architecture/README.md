@@ -4,7 +4,7 @@ This is a location to record all high-level architecture decisions in the Cosmos
 
 An Architectural Decision (**AD**) is a software design choice that addresses a functional or non-functional requirement that is architecturally significant.
 An Architecturally Significant Requirement (**ASR**) is a requirement that has a measurable effect on a software system’s architecture and quality.
-An Architectural Decision Record (**ADR**) captures a single AD, such as often done when writing personal notes or meeting minutes; the collection of ADRs created and maintained in a project constitute its decision log. All these are within the topic of Architectural Knowledge Management (AKM).
+An Architectural Decision Record (**ADR**) captures a single AD, and is as often done when writing personal notes or meeting minutes. The collection of ADRs created and maintained in a project constitute its decision log. All these records are within the topic of Architectural Knowledge Management (AKM).
 
 You can read more about the ADR concept in this [blog post](https://product.reverb.com/documenting-architecture-decisions-the-reverb-way-a3563bb24bd0#.78xhdix6t).
 
@@ -37,4 +37,3 @@ When writing ADRs, follow the same best practices for writing RFCs. When writing
 ## ADR Table of Contents
 
 - [ADR XXX: Self Sovereign Identity](./adr-001-self-sovereign-identity.md)
-

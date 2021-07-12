@@ -26,10 +26,10 @@ func (suite *KeeperTestSuite) TestGRPCQueryVerifiableCredentials() {
 	for _, tc := range testCases {
 		suite.Run(fmt.Sprintf("Case %s", tc.msg), func() {
 			tc.malleate()
-			identifiersResp, err := queryClient.VerifiableCredentials(context.Background(), req)
+			didsResp, err := queryClient.VerifiableCredentials(context.Background(), req)
 			if tc.expPass {
 				suite.NoError(err)
-				suite.NotNil(identifiersResp)
+				suite.NotNil(didsResp)
 
 			} else {
 				suite.Require().Error(err)
@@ -94,10 +94,10 @@ func (suite *KeeperTestSuite) TestGRPCQueryVerifiableCredential() {
 	for _, tc := range testCases {
 		suite.Run(fmt.Sprintf("Case %s", tc.msg), func() {
 			tc.malleate()
-			identifiersResp, err := queryClient.VerifiableCredential(context.Background(), req)
+			didsResp, err := queryClient.VerifiableCredential(context.Background(), req)
 			if tc.expPass {
 				suite.NoError(err)
-				suite.NotNil(identifiersResp)
+				suite.NotNil(didsResp)
 
 			} else {
 				suite.Require().Error(err)
@@ -177,10 +177,10 @@ func (suite *KeeperTestSuite) TestGRPCQueryValidateVerifiableCredential() {
 	for _, tc := range testCases {
 		suite.Run(fmt.Sprintf("Case %s", tc.msg), func() {
 			tc.malleate()
-			identifiersResp, err := queryClient.ValidateVerifiableCredential(context.Background(), req)
+			didsResp, err := queryClient.ValidateVerifiableCredential(context.Background(), req)
 			if tc.expPass {
 				suite.NoError(err)
-				suite.NotNil(identifiersResp)
+				suite.NotNil(didsResp)
 
 			} else {
 				suite.Require().Error(err)

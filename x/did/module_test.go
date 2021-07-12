@@ -1,4 +1,4 @@
-package issuer_test
+package did_test
 
 import (
 	"testing"
@@ -14,7 +14,6 @@ import (
 	dbm "github.com/tendermint/tm-db"
 )
 
-// TODO: add more test cases
 func TestCreateModuleInApp(t *testing.T) {
 	app := app.New(
 		"cosmos-cash",

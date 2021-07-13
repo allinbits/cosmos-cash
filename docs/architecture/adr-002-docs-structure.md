@@ -146,7 +146,7 @@ This will be classed as reference documentation. It SHOULD BE descriptive, but e
 At docs level, this folder shall include the following files and folders:
 
 - **README.md** - SHALL USE this for introduction and orientating the user, based on the content of this ADR and other materials.
-- **CODEOWNERS** - This CodeOwners file details the reviewers for documentation folder. This SHALL INCLUDE the code maintainers in the root CODEOWNERS file plus a member of the Tendermint Technical Writing Team.
+- **CODEOWNERS** - This [CodeOwners file](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-on-github/about-code-owners) details the reviewers for documentation folder. This SHALL INCLUDE the code maintainers in the root CODEOWNERS file plus a member of the Tendermint Technical Writing Team.
 
 #### docs/Reference
 
@@ -155,7 +155,7 @@ Reference documentation includes a number of different forms:
 - **README.md** - This document would outline the purpose of the reference documentation as per the methodology above. In addition it will also links to documentation created from the code itself, specifically
     - Code Documentation in form of Go Docs
     - Swagger API documentation
-- **GLOSSARY.md** - It is key that this is reviewed regulary and applied consistently. These form the terms of reference for users and ensure that discussion and design are based on consistent terms of reference.
+- **GLOSSARY.md** - It is key that this is reviewed regulary and applied consistently. These form the terms of reference for users and ensure that discussion and design are based on consistent terms of reference. This file will be similar to [Cosmos Network Glossary](https://v1.cosmos.network/glossary) and can reference this.
 - **MODULES.md** - A markdown document that has references to module relevant documentation
 
 ##### docs/Reference/use-cases

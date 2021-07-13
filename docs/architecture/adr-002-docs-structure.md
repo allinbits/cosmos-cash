@@ -1,4 +1,4 @@
-# ADR 001: Documentation Structure
+# ADR 002: Documentation Structure
 
 ## Status
 

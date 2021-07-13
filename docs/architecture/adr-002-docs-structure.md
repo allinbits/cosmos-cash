@@ -46,7 +46,7 @@ Additional Documentation non-functional use cases include:
 - It SHOULD BE generated from code as much as possible
 - It SHOULD USE a consistent format 
 - It SHOULD BE useable from within the repository
-- It COULD HAVE an automatic process that converts teh content to a website based on [Read The Docs](https://readthedocs.com/), [Gitbook](https://www.gitbook.com/) or other suitable hosting system.
+- It COULD HAVE an automatic process that converts the content to a website based on [Read The Docs](https://readthedocs.com/), [Gitbook](https://www.gitbook.com/) or other suitable hosting systems.
 
 ## Decision
 
@@ -268,4 +268,3 @@ Later, this section can optionally list ideas or improvements the author or revi
 - [Google Style Guide for Markdown](https://github.com/google/styleguide/blob/gh-pages/docguide/style.md)
 - [Write the Docs global community](https://www.writethedocs.org/)
 - [Write the Docs Code of Conduct](https://www.writethedocs.org/code-of-conduct/#the-principles)
-

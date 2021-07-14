@@ -8,7 +8,7 @@
 
 {DRAFT | PROPOSED} Not Implemented
 
-> Please have a look at the [PROCESS](./PROCESS.md#adr-status) page.
+> For details on ADR workflow, see the [PROCESS](./PROCESS.md#adr-status) page.
 > Use DRAFT if the ADR is in a draft stage (draft PR) or PROPOSED if it's in review.
 
 ## Abstract
@@ -18,7 +18,7 @@
 
 ## Context
 
-> This section describes the forces at play, including technological, political, social, and project local. These forces are probably in tension, and should be called out as such. The language in this section is value-neutral. It is simply describing facts. It should clearly explain the problem and motivation that the proposal aims to resolve.
+> This section describes the forces at play, including technological, political, social, and project local. These forces are probably in tension describe them as such. The language in this section is value-neutral and just describes facts. The context should clearly explain the problem and motivation that the proposal aims to resolve.
 > {context body}
 
 ## Decision
@@ -28,7 +28,7 @@
 
 ## Consequences
 
-> This section describes the resulting context, after applying the decision. All consequences should be listed here, not just the "positive" ones. A particular decision may have positive, negative, and neutral consequences, but all of them affect the team and project in the future.
+> This section describes the resulting context after applying the decision. List all consequences here, taking care not to list only the "positive" consequences. A particular decision may have positive, negative, and neutral consequences, but all of the consesquences affect the team and project in the future.
 
 ### Backwards Compatibility
 
@@ -48,7 +48,7 @@
 
 ## Further Discussions
 
-While an ADR is in the DRAFT or PROPOSED stage, this section should contain a summary of issues to be solved in future iterations (usually referencing comments from a pull-request discussion).
+While an ADR is in the DRAFT or PROPOSED stage, this section contains a summary of issues to be solved in future iterations. The issues summarized here can reference comments from a pull request discussion.
 Later, this section can optionally list ideas or improvements the author or reviewers found during the analysis of this ADR.
 
 ## Test Cases [optional]
@@ -58,4 +58,3 @@ Test cases for an implementation are mandatory for ADRs that are affecting conse
 ## References
 
 - {reference link}
-

@@ -12,17 +12,17 @@
 
 ## ADR life cycle
 
-ADR creation is an **iterative** process. Instead of trying to solve all decisions in a single ADR pull request, we MUST firstly understand the problem and collect feedback through a GitHub Issue.
+ADR creation is an **iterative** process. Instead of trying to solve all decisions in a single ADR pull request, we MUST initially understand the problem and collect feedback by having conversations in a GitHub Issue.
 
 1. Every ADR proposal SHOULD start with a [new GitHub issue](https://github.com/tendermint/starport/issues/new/choose) or be a result of existing Issues. The Issue must contain a brief proposal summary.
 
-2. Once the motivation is validated, a GitHub Pull Request (PR) is created with a new document based on the `adr-template.md`.
+2. After the motivation is validated, create a new document that is on the `adr-template.md`.
 
-3. An ADR doesn't have to arrive to `master` with an _accepted_ status in a single PR. If the motivation is clear and the solution is sound, we SHOULD be able to merge it and keep a _proposed_ status. It's preferable to have an iterative approach rather than long, not merged Pull Requests.
+3. An ADR solution doesn't have to arrive to the `master` branch with an _accepted_ status in a single PR. If the motivation is clear and the solution is sound, we SHOULD be able to merge PRs iteratively and keep a _proposed_ status. It's preferable to have an iterative approach rather than long, not merged Pull Requests.
 
-4. If a _proposed_ ADR is merged, then it should clearly document outstanding issues either in ADR document notes or in a GitHub Issue.
+4. If a _proposed_ ADR is merged, then the outstanding changes must be clearly documented in outstanding issues in ADR document notes or in a GitHub Issue.
 
-5. The PR SHOULD always be merged. In the case of a faulty ADR, we still prefer to  merge it with a _rejected_ status. The only time the ADR SHOULD NOT be merged is if the author abandons it.
+5. The PR SHOULD always be merged. In the case of a faulty ADR, we still prefer to merge it with a _rejected_ status. The only time the ADR SHOULD NOT be merged is if the author abandons it.
 
 6. Merged ADRs SHOULD NOT be pruned.
 
@@ -50,7 +50,7 @@ DRAFT -> PROPOSED -> LAST CALL yyyy-mm-dd -> ACCEPTED | REJECTED -> SUPERSEEDED 
 
 + `PROPOSED`: an ADR covering a full solution architecture and still in the review - project stakeholders haven't reached an agreed yet.
 
-+ `LAST CALL <date for the last call>`: [optional] clear notify that we are close to accept updates. Changing a status to `LAST CALL` means that social consensus (of Cosmos SDK maintainers) has been reached and we still want to give it a time to let the community react or analyze.
++ `LAST CALL <date for the last call>`: [optional] clear notify that we are close to accept updates. Changing a status to `LAST CALL` means that social consensus (of Cosmos Cash maintainers) has been reached and we still want to give it a time to let the community react or analyze.
 
 + `ACCEPTED`: ADR which will represent a currently implemented or to be implemented architecture design.
 
@@ -62,6 +62,6 @@ DRAFT -> PROPOSED -> LAST CALL yyyy-mm-dd -> ACCEPTED | REJECTED -> SUPERSEEDED 
 
 ## Language used in ADR
 
-+ The context/background should be written in the present tense.
++ Write the context/background in the present tense.
 
 + Avoid using a first, personal form.

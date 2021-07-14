@@ -8,13 +8,13 @@ DRAFT
 
 This ADR proposes a documentation strategy based on the *Grand Unified Theory of Documentation* (David Laing) as described by [Divio](https://documentation.divio.com/).
 
-It outlines four specific use cases for documentation. Based on these use cases and other non-functional requirements, a structure is proposed that will address these concerns using GitHub as the Content Management System. 
+The documentation strategy outlines four specific use cases for documentation. Based on these use cases and other non-functional requirements, a structure is proposed that will address these concerns using GitHub as the Content Management System. 
 
-In addition it also proposes 
+The documentation strategy also proposes:
 
-- the use - and re-use - of document and format templates
-- specific codeowners for documentation 
-- comment and commit templates combined with githook checks
+- The use and re-use of document and format templates
+- Specific [code owners](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-on-github/about-code-owners#about-code-owners) for documentation 
+- Comment and commit templates combined with [githook](https://git-scm.com/docs/githooks) checks
 
 The outcome shall be focused, consistent, high quality documentation. 
 
@@ -28,38 +28,38 @@ The documentation use cases, as outlined by Divio are:
 
 - Allow a new user to get started
 - Show a user how to solve a specific problem
-- Describe the machinery i.e. classes, functions, interfaces, parameters etc.
-- Explanation/context for design, scope etc
+- Describe the machinery, for example, classes, functions, interfaces, parameters, and so on
+- Explanation and context for design, scope, and so on
 
 ![Documentation Quadrants](https://documentation.divio.com/_images/overview.png) 
 
-It is key that the documentation is structured and written such that:
+The goals of well-structured and well-written documentation include:
 
-- Depending on use case the documentation can be found easily
-- The documenation is written in an appropriate style for the use case
-- Each type of documentation is written consistent style
-- Documentation is scoped to a specific use cases i.e. a tutorial doesn't describe (beyond a relevant link) why the software works, it just teaches
+- Findability: depending on the use case, the technical content can be discovered and accessed
+- The documentation is written in an appropriate style for the use case
+- Each type of documentation is written in a consistent style
+- Documentation is scoped to a specific use case; for example, a tutorial can provide links but does not include technical content that describes why the software works, a tutorial just teaches how to use it
 
 Additional Documentation non-functional use cases include:
 
-- It SHOULD BE as close to the code as reasonably practicable
-- It SHOULD BE generated from code as much as possible
-- It SHOULD USE a consistent format 
-- It SHOULD BE useable from within the repository
-- It COULD HAVE an automatic process that converts the content to a website based on [Read The Docs](https://readthedocs.com/), [Gitbook](https://www.gitbook.com/) or other suitable hosting systems.
+- Technical content SHOULD BE as close to the code as reasonably practicable and strive to use the docs as code workflow
+- Technical content SHOULD BE generated from code as much as possible
+- Technical content SHOULD USE a consistent format 
+- Technical content SHOULD BE useable from within the repository
+- Technical content COULD HAVE an automatic process that converts the content to a website based on [Read The Docs](https://readthedocs.com/), [Gitbook](https://www.gitbook.com/), or other suitable hosting systems
 
 ## Decision
 
 To address the use cases outlined in the context, this ADR proposes the following decisions:
 
 - Use GitHub as primary content management [https://github.com/allinbits/cosmos-cash](https://github.com/allinbits/cosmos-cash)
-- Markdown and LaTeX to deliver research publications
+- Use Markdown and LaTeX to deliver research publications
 
 Given GitHub will form the content management system, we propose the following structure:
 
 ### Structure
 
-The documentation structure shall use as much as possible a structure similar to the [Divio user cases](https://documentation.divio.com/introduction/).
+The documentation structure shall use as much as possible a content structure similar to the [Divio user cases](https://documentation.divio.com/introduction/).
 
 |                 | Tutorials | How-to guides | Reference   | Explanation   |
 |-----------------|-----------|---------------|-------------|-------------- |
@@ -117,50 +117,50 @@ The specific implementation for Cosmos Cash SHOULD BE as per the following tree 
 
 #### Root level documents
 
-Root level of the repo SHALL HAVE the following files:
+The following files are required at the repo root level:
 
-- **README.md** - use this for introduction and orientating the user. All README's SHOULD FOLLOW guidelines - see [GitHub guide](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-on-github/about-readmes)
-- **TECHNICAL-SETUP.md** - how to get started with the repo (could be a link to a tutorial or How-To)
-    - Links to specific tooling set-up - development tools, linters etc
-    - Dependencies such as [pre-commit](https://pre-commit.com/), 
+- **README.md** - General repo overview to introduce the product and orientate the user. All README files must follow the best practices as outlined in the [GitHub README](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-on-github/about-readmes) guidelines.
+- **TECHNICAL-SETUP.md** - Specific steps on getting started with the repo, can be a link to a tutorial or include the specific action-oriented steps
+    - Links to specific tooling setup requirements for development tools, linters, and so on
+    - Dependencies such as [pre-commit](https://pre-commit.com/) package manager
     - Building the code
     - Running tests
-- **CONTRIBUTING.md** - This details how to new users can contribute to the project. In specific,
+- **CONTRIBUTING.md** - Details on how new users can contribute to the project. In specific:
     - Committing changes
-    - Commit message formats (see below)
-    - Raising PR's
+    - Commit message formats (see [Commit Comments](#commit-comments)
+    - Raising PRs
     - Code of Conduct
-- **CODEOWNERS** - although not part of documentation it will define the code maintainers who responsible for quality assurance on comments, PR's and issues.
+- **CODEOWNERS** - Although not part of the documentation itself, a [CODEOWNERS file](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-on-github/about-code-owners) defines the code maintainers who are responsible for code in a repository and perform quality assurance on comments, PRs, and issues.
 
 #### Modules
 
 In line with Cosmos SDK convention (TODO: needs reference) each module contains its own relevant documentation:
 
-- **Module specifications** - these are document that outline state transitions x/module-name/docs/
+- **Module specifications** - A document that outlines state transitions `x/module-name/docs/`
 - **Module-level README.md** e.g. x/module-name/README.md
 
-This will be classed as reference documentation. It SHOULD BE descriptive, but explanatory. Explanations should be part of issues, Pull Requests and/or docs/explanation/architecture.
+README files are classed as reference documentation. Content in module-level README files is descriptive, but explanatory. Explanations should be part of issues, Pull Requests, and docs/explanation/architecture.
 
 #### docs/
 
-At docs level, this folder shall include the following files and folders:
+The `docs` folder shall include the following files and folders:
 
 - **README.md** - SHALL USE this for introduction and orientating the user, based on the content of this ADR and other materials.
-- **CODEOWNERS** - This [CodeOwners file](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-on-github/about-code-owners) details the reviewers for documentation folder. This SHALL INCLUDE the code maintainers in the root CODEOWNERS file plus a member of the Tendermint Technical Writing Team.
+- **CODEOWNERS** - This [CODEOWNERS file](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-on-github/about-code-owners) details the reviewers for documentation folder. The listed code owners SHALL INCLUDE the code maintainers in the root CODEOWNERS file plus a member of the Tendermint Technical Writing Team.
 
 #### docs/Reference
 
 Reference documentation includes a number of different forms:
 
-- **README.md** - This document would outline the purpose of the reference documentation as per the methodology above. In addition it will also links to documentation created from the code itself, specifically
+- **README.md** - This document outlines the purpose of the reference documentation as per the use-case documentation strategy and methodology. In addition, the README also links to documentation that is created from the code itself, specifically:
     - Code Documentation in form of Go Docs
     - Swagger API documentation
-- **GLOSSARY.md** - It is key that this is reviewed regulary and applied consistently. These form the terms of reference for users and ensure that discussion and design are based on consistent terms of reference. This file will be similar to [Cosmos Network Glossary](https://v1.cosmos.network/glossary) and can reference this.
-- **MODULES.md** - A markdown document that has references to module relevant documentation
+- **GLOSSARY.md** - Review and maintenance must be regularly and consistently applied. These form the terms of reference for users and ensure that discussion and design are based on consistent terms of reference. This file will be similar to [Cosmos Network Glossary](https://v1.cosmos.network/glossary) and can reference this.
+- **MODULES.md** - A markdown document that has references to module-relevant documentation
 
 ##### docs/Reference/use-cases
 
-This will be a folder that describe Cosmos Cash use cases. Ideally these will be in BDD format. As perscribed above, this information should be dry in nature and avoid explanation the should be cover in the explanation documentation
+This will be a folder that describe Cosmos Cash use cases. Ideally, use cases are written in behavior-driven development (BDD) format. Use case content should be dry in nature and avoid explanation that should be covered in the explanation documentation.
 
 ##### docs/Reference/architecture
 
@@ -174,7 +174,7 @@ This folder will provide context for readers and are discursive in nature. Pleas
 
 ##### docs/Explanation/ADR
 
-This is a folder that will track decisions regrading design and architecture (such as this). It will contain the following:
+This is a folder that will track decisions regarding design and architecture (such as this). It will contain the following:
 
 - **docs/explanation/adr/README** - introduction to ADR
 - **docs/explanation/adr/PROCESS.md** which details how to raise ADRs

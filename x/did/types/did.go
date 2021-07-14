@@ -60,6 +60,10 @@ func DID(didMethodSpecificDidDocument string) string {
 	return fmt.Sprint(DidPrefix, didMethodSpecificDidDocument)
 }
 
+func DIDKey(didMethodSpecificDidDocument string) string {
+	return fmt.Sprint(DidKeyPrefix, didMethodSpecificDidDocument)
+}
+
 // BlockchainAccountID return the account of the user with the chain id postfixed
 // https://w3c.github.io/did-spec-registries/#blockchainAccountId
 func BlockchainAccountID(account string) string {

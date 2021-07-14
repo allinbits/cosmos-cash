@@ -56,7 +56,10 @@ func (k msgServer) CreateDidDocument(
 }
 
 // UpdateDidDocument update an existing DID document
-func (k msgServer) UpdateDidDocument(goCtx context.Context, msg *types.MsgUpdateDidDocument) (*types.MsgUpdateDidDocumentResponse, error) {
+func (k msgServer) UpdateDidDocument(
+	goCtx context.Context,
+	msg *types.MsgUpdateDidDocument,
+) (*types.MsgUpdateDidDocumentResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// get the did document
@@ -254,7 +257,10 @@ func (k msgServer) DeleteService(
 }
 
 // SetVerificationRelationships set the verification relationships for an existing DID document
-func (k msgServer) SetVerificationRelationships(goCtx context.Context, msg *types.MsgSetVerificationRelationships) (*types.MsgSetVerificationRelationshipsResponse, error) {
+func (k msgServer) SetVerificationRelationships(
+	goCtx context.Context,
+	msg *types.MsgSetVerificationRelationships,
+) (*types.MsgSetVerificationRelationshipsResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// retrieve the did document

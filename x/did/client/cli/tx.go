@@ -32,6 +32,8 @@ func GetTxCmd() *cobra.Command {
 		NewAddServiceCmd(),
 		NewRevokeVerificationCmd(),
 		NewDeleteServiceCmd(),
+		NewUpdateDidDocumentCmd(),
+		NewAddVerificationRelationshipCmd(),
 	)
 
 	return cmd
@@ -113,6 +115,7 @@ func NewAddVerificationCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
+			account, _ := sdk.AccAddressFromHex(pubKey.Address().String())
 			// document did
 			did := types.DID(args[0])
 			// verification method id
@@ -123,8 +126,7 @@ func NewAddVerificationCmd() *cobra.Command {
 					vmID,
 					pubKey.Type(),
 					did,
-					types.BlockchainAccountID(pubKey.Address().String()), // FIXME: this needs to be the address of args[1]
-				),
+					types.BlockchainAccountID(account.String())),
 				[]string{types.RelationshipAuthentication},
 				nil,
 			)
@@ -211,7 +213,7 @@ func NewRevokeVerificationCmd() *cobra.Command {
 			// signer
 			signer := clientCtx.GetFromAddress()
 			// verification method id
-			vmID := args[1]
+			vmID := types.DID(args[1])
 			// build the message
 			msg := types.NewMsgRevokeVerification(
 				did,
@@ -232,6 +234,7 @@ func NewRevokeVerificationCmd() *cobra.Command {
 	return cmd
 }
 
+// NewDeleteServiceCmd deletes a service from a DID Document
 func NewDeleteServiceCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "delete-service [id] [service-id]",
@@ -253,6 +256,94 @@ func NewDeleteServiceCmd() *cobra.Command {
 			msg := types.NewMsgDeleteService(
 				did,
 				sID,
+				signer.String(),
+			)
+
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// NewUpdateDidDocumentCmd adds a controller to a did document
+func NewUpdateDidDocumentCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "update-did-document [id] [id-key]",
+		Short:   "updates a decentralized identifier (did) document to contain a controller",
+		Example: "update-did-document vasp cosmos1kslgpxklq75aj96cz3qwsczr95vdtrd3p0fslp",
+		Args:    cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			// document did
+			did := types.DID(args[0])
+
+			// did key to use as the controller
+			didKey := types.DIDKey(args[1])
+
+			// signer
+			signer := clientCtx.GetFromAddress()
+
+			msg := types.NewMsgUpdateDidDocument(
+				did,
+				[]string{
+					didKey,
+				},
+				signer.String(),
+			)
+
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// NewUpdateDidDocumentCmd adds a controller to a did document
+func NewAddVerificationRelationshipCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "add-verification-relationship [id] [method-id] [relationship]",
+		Short:   "adds a verification relationship to a key on a decentralized identifier (did) document",
+		Example: "add-verification-relationship vasp vasp#6f1e0700-6c86-41b6-9e05-ae3cf839cdd0 ",
+		Args:    cobra.ExactArgs(3),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			// document did
+			did := types.DID(args[0])
+
+			// method id
+			methodID := types.DID(args[1])
+
+			// relationship types
+			relationship := args[2]
+
+			// signer
+			signer := clientCtx.GetFromAddress()
+
+			msg := types.NewMsgSetVerificationRelationships(
+				did,
+				methodID,
+				[]string{
+					relationship,
+				},
 				signer.String(),
 			)
 

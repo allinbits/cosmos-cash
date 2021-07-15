@@ -2,7 +2,7 @@
 
 ## Status
 
-DRAFT
+PROPOSED
 
 ## Abstract
 

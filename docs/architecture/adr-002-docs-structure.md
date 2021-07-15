@@ -2,7 +2,7 @@
 
 ## Status
 
-PROPOSED
+ACCEPTED
 
 ## Abstract
 
@@ -36,9 +36,9 @@ The documentation use cases, as outlined by Divio are:
 The goals of well-structured and well-written documentation include:
 
 - Findability: depending on the use case, the technical content can be discovered and accessed
-- The documentation is written in an appropriate style for the use case
-- Each type of documentation is written in a consistent style
-- Documentation is scoped to a specific use case; for example, a tutorial can provide links but does not include technical content that describes why the software works, a tutorial just teaches how to use it
+- Style: The documentation is written in an appropriate style for the use case
+- Consistency: Each type of documentation is written in a consistent style
+- Scoped: Documentation is scoped to a specific use case; for example, a tutorial can provide links but does not include technical content that describes why the software works, a tutorial just teaches how to use it
 
 Additional Documentation non-functional use cases include:
 
@@ -160,55 +160,55 @@ Reference documentation includes a number of different forms:
 
 ##### docs/Reference/use-cases
 
-This will be a folder that describe Cosmos Cash use cases. Ideally, use cases are written in behavior-driven development (BDD) format. Use case content should be dry in nature and avoid explanation that should be covered in the explanation documentation.
+The `use-cases` folder describes Cosmos Cash use cases. Ideally, use cases are written in behavior-driven development (BDD) format. Use case content should be dry in nature and avoid explanations that should be covered in the explanation documentation.
 
 ##### docs/Reference/architecture
 
-This will be a folder containing architecture diagrams such as component, activity and sequence diagrams as relevant. Specifically these should be in a format suitable for version management and esay to update. Therefore these should be in SVG or DOT format and not image formats (JPEG, PNG etc.)
+The `architecture` folder contains architecture diagrams such as component, activity, and sequence diagrams as relevant. Specifically, these assets should be in a format suitable for version management and easy to update. Therefore, these diagrams should be in SVG or DOT format and not image formats (JPEG, PNG, and so on).
 
 #### docs/Explanation
 
-This folder will provide context for readers and are discursive in nature. Please see the [Divio Explanation page](https://documentation.divio.com/explanation/#) for more detail.
+The `Explanation` folder contains content that provides context for readers and is discursive in nature. See the [Divio Explanation page](https://documentation.divio.com/explanation/#) for more detail.
 
-- **docs/explanation/README.md** - This will orient the reader and explain the content. 
+- **docs/explanation/README.md** - This file orients the reader and explains the content. 
 
 ##### docs/Explanation/ADR
 
-This is a folder that will track decisions regarding design and architecture (such as this). It will contain the following:
+The `ADR` folder tracks decisions regarding design and architecture (such as this documentation strategy). ADR content includes the following:
 
 - **docs/explanation/adr/README** - introduction to ADR
-- **docs/explanation/adr/PROCESS.md** which details how to raise ADRs
+- **docs/explanation/adr/PROCESS.md** - describes how to raise ADRs
 - **docs/explanation/adr/adr-template.md** - template for raising ADR
 - **docs/explanation/adr/adr-{number}-{desc}.md** - an ADR document
 
 ##### docs/Explanation/articles
 
-This SHALL BE a folder that contains a sub-folder for each published article. By published this COULD REFER to blog posts. The folder should be name such that it describes the article purpose. Each sub-folder SHALL CONTAIN all the content relevant to the article (e.g. images, bibliographies etc). These articles can be converted into pdf using pandoc. 
+The `articles` folder contains a sub-folder for each published article. Published articles this COULD REFER to blog posts. The folder should be named such that it describes the article's purpose. Each sub-folder SHALL CONTAIN all the content relevant to the article (for example, images, bibliographies, and so on). These articles can be converted into PDF format using Pandoc. 
 
-In order to do this
+To convert articles to PDF using Pandoc:
 
-- There SHOULD BE a makefile with targets for calling pandoc - Note: the process for building pdf are not part of the commit or release processes, but ad-hoc
-- There SHOULD BE a latex template file that can create pdf files with consistent look and feel. This COULD BE the [Eisvogel template](https://github.com/Wandmalfarbe/pandoc-latex-template) with suitable modifications
+- There SHOULD BE a makefile with targets for calling Pandoc. Note: the process for building PDF files is not part of the commit or release processes, but ad-hoc
+- There SHOULD BE a LaTeX template file that can create PDF files that have a consistent look and feel. This COULD BE the [Eisvogel template](https://github.com/Wandmalfarbe/pandoc-latex-template) with suitable modifications.
 - The makefile and template should be independent of the article
-- THere SHOULD BE a README.md that describes how to use and build articles
+- There SHOULD BE a README.md that describes how to use the makefile and template and build articles
 
 > **Note:** Explanations can come in other forms, particularly issue discussion and Pull Requests.
 
 #### docs/Tutorials
 
-As indicated in the overview, these SHALL BE documents that target beginners and will take a user step-by-step through a process with the aim of achieving some goal. Please see the [Divio tutorial page](https://documentation.divio.com/tutorials/) for detail.
+As indicated in the overview, tutorials SHALL BE documents that target beginners and guide a user step-by-step through a process with the aim of achieving some goal. Please see the [Divio tutorial page](https://documentation.divio.com/tutorials/) for details.
 
-- There SHALL BE a folder for each tutorial - see the [Cosmos SDK tutorials](https://github.com/cosmos/sdk-tutorials) as an example
-- The folder SHALL CONTAIN all the content relevant for that tutorial. 
-- The content SHOULD BE consistent in format with [SDK tutorials](https://tutorials.cosmos.network/). 
+- There SHALL BE a folder for each tutorial. See the [Cosmos SDK tutorials](https://github.com/cosmos/sdk-tutorials) as an example.
+- The folder SHALL CONTAIN all of the content that is relevant for that tutorial. 
+- The content SHOULD BE consistent in format with [Cosmos SDK tutorials](https://tutorials.cosmos.network/). 
 
 #### docs/How-To
 
-Compared to tutorials, [How-Tos](https://documentation.divio.com/how-to-guides/) are help an experienced reader solve a specific problem. These SHALL USE templates similar to the tutorials - see above.
+In contrast to tutorials, [how-to guides](https://documentation.divio.com/how-to-guides/) are a series of actionable steps to help an experienced reader solve a specific problem. These how-to guides SHALL USE templates similar to the tutorials - see above.
 
 ### Templates
 
-Documentation SHOULD USE templates for documentation such as module messages etc. 
+The documentation SHOULD USE Markdown templates to develop structured technical content, like module messages follow templates in the Cosmos SDK. 
 
 - [The good docs project](https://github.com/thegooddocsproject)
 - [Readme editor](https://readme.so/editor)
@@ -216,7 +216,7 @@ Documentation SHOULD USE templates for documentation such as module messages etc
 
 #### Code Comments
 
-These are included as comments also form part of documentation. Comments SHALL FOLLOW recommendation as per [Conventional Comments](https://conventionalcomments.org/)
+PR review comments also form part of the documentation. Comments SHALL FOLLOW recommendation as per [Conventional Comments](https://conventionalcomments.org/)
 
 ```
 <label> [decoration]: <subject>
@@ -228,7 +228,7 @@ where `label = (praise|nitpick|suggestion|issue|question|thought|chore)`
 
 #### Commit Comments
 
-Commits comments will also follow a similar format as laid out following standard defined by [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#summary). This SHOULD BE enforced as part of [pre-commit](https://pre-commit.com/) checks
+Commits comments will also follow a similar format as laid out following the standard defined by [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#summary). This commit convention SHOULD BE enforced as part of [pre-commit](https://pre-commit.com/) checks.
 
 ## Consequences
 
@@ -236,7 +236,7 @@ This section describes the resulting context, after applying the decision.
 
 ### Backwards Compatibility
 
-Once this ADR is implemented existing documentation will be migrated from existing sources that include:
+After this ADR is implemented, existing documentation will be migrated from existing sources that include:
 
 - Notion
 - Other Git repos
@@ -245,11 +245,11 @@ Once this ADR is implemented existing documentation will be migrated from existi
 
 ### Positive
 
-As a result of this
+As a result of this documentation strategy:
 
-- Content will follow best practice that will be easy to navigate and read
+- Content development and maintenance will follow best practices that ensure content is easy to navigate and read
 - Content will be in a consistent format
-- Commits, Issues and Pull Requests will follow best practice
+- Commits, Issues, and Pull Requests in the repo will follow best practices
 - CHANGELOG and release documentation will benefit from better commit messages, reducing developer effort
 
 ### Negative

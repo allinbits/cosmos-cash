@@ -22,5 +22,5 @@ const (
 	DidPrefix = "did:cash:"
 
 	// MemStoreKey defines the in-memory store key
-	MemStoreKey = "mem_capability"
+	MemStoreKey = "mem_capability_identifier"
 )

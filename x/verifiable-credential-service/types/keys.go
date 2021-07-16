@@ -19,7 +19,7 @@ const (
 	QuerierRoute = ModuleName
 
 	// MemStoreKey defines the in-memory store key
-	MemStoreKey = "mem_capability"
+	MemStoreKey = "mem_capability_vcs"
 )
 
 func KeyPrefix(p string) []byte {

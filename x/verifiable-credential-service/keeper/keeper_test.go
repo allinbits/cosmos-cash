@@ -27,13 +27,13 @@ type KeeperTestSuite struct {
 
 // SetupTest creates a test suite to test the identifier
 func (suite *KeeperTestSuite) SetupTest() {
-	keyIdentifier := sdk.NewKVStoreKey(types.StoreKey)
-	memKeyIdentifier := sdk.NewKVStoreKey(types.MemStoreKey)
+	keyVcs := sdk.NewKVStoreKey(types.StoreKey)
+	memKeyVcs := sdk.NewKVStoreKey(types.MemStoreKey)
 
 	db := dbm.NewMemDB()
 	ms := store.NewCommitMultiStore(db)
-	ms.MountStoreWithDB(keyIdentifier, sdk.StoreTypeIAVL, db)
-	ms.MountStoreWithDB(memKeyIdentifier, sdk.StoreTypeIAVL, db)
+	ms.MountStoreWithDB(keyVcs, sdk.StoreTypeIAVL, db)
+	ms.MountStoreWithDB(memKeyVcs, sdk.StoreTypeIAVL, db)
 	_ = ms.LoadLatestVersion()
 
 	ctx := sdk.NewContext(ms, tmproto.Header{ChainID: "foochainid"}, true, nil)
@@ -43,8 +43,8 @@ func (suite *KeeperTestSuite) SetupTest() {
 
 	k := NewKeeper(
 		marshaler,
-		keyIdentifier,
-		memKeyIdentifier,
+		keyVcs,
+		memKeyVcs,
 	)
 
 	queryHelper := baseapp.NewQueryServerTestHelper(ctx, interfaceRegistry)

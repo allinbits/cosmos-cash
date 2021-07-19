@@ -4,11 +4,13 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/suite"
 
 	"github.com/allinbits/cosmos-cash/x/did/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	ct "github.com/cosmos/cosmos-sdk/codec/types"
+	server "github.com/cosmos/cosmos-sdk/server"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
@@ -37,7 +39,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	ms.MountStoreWithDB(memKeyDidDocument, sdk.StoreTypeIAVL, db)
 	_ = ms.LoadLatestVersion()
 
-	ctx := sdk.NewContext(ms, tmproto.Header{ChainID: "foochainid"}, true, nil)
+	ctx := sdk.NewContext(ms, tmproto.Header{ChainID: "foochainid"}, true, server.ZeroLogWrapper{log.Logger})
 
 	interfaceRegistry := ct.NewInterfaceRegistry()
 	marshaler := codec.NewProtoCodec(interfaceRegistry)

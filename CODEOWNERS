@@ -1,0 +1,7 @@
+# default owners
+*	@allinbits/cosmoscash
+
+# add member of the technical writing team for docs
+# here pattern matches on any docs folder in the repo
+docs/	@allinbits/cosmoscash @barriebyron
+

@@ -1,0 +1,8 @@
+# For further details check https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-on-github/about-code-owners
+# default owners
+*	@allinbits/cosmoscashteam
+
+# add member of the technical writing team for docs
+# here pattern matches on any docs folder in the repo
+docs/	@allinbits/cosmoscash @barriebyron
+

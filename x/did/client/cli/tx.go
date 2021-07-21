@@ -314,7 +314,7 @@ func NewUpdateDidDocumentCmd() *cobra.Command {
 	return cmd
 }
 
-// NewUpdateDidDocumentCmd adds a controller to a did document
+// NewAddVerificationRelationshipCmd adds a verification relationship to a verification method
 func NewAddVerificationRelationshipCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "add-verification-relationship [id] [method-id] [relationship]",

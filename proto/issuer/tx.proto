@@ -13,7 +13,7 @@ service Msg {
   rpc MintToken(MsgMintToken) returns (MsgMintTokenResponse);
 }
 
-// MsgCreateIssuer defines a SDK message for creating a new identifier.
+// MsgCreateIssuer defines a SDK message for creating a new emoney token issuer.
 message MsgCreateIssuer {
   option (gogoproto.equal)           = false;
   option (gogoproto.goproto_getters) = false;

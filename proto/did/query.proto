@@ -13,10 +13,11 @@ option go_package = "github.com/allinbits/cosmos-cash/x/did/types";
 
 // Query defines the gRPC querier service.
 service Query {
-  	// DidDocuments queries all validators that match the given status.
+  // DidDocuments queries all did documents that match the given status.
   rpc DidDocuments(QueryDidDocumentsRequest) returns (QueryDidDocumentsResponse) {
     option (google.api.http).get = "/allinbits/did/dids";
   }
+  // DidDocument queries a did documents with an id.
   rpc DidDocument(QueryDidDocumentRequest) returns (QueryDidDocumentResponse) {
     option (google.api.http).get = "/allinbits/did/dids/{id}";
   }

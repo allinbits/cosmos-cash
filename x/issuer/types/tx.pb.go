@@ -28,7 +28,7 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// MsgCreateIssuer defines a SDK message for creating a new did.
+// MsgCreateIssuer defines a SDK message for creating a new identifier.
 type MsgCreateIssuer struct {
 	Token string `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
 	Fee   int32  `protobuf:"varint,2,opt,name=fee,proto3" json:"fee,omitempty"`

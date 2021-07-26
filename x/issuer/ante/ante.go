@@ -59,7 +59,7 @@ func (cicd CheckIssuerCredentialsDecorator) AnteHandle(
 			}
 
 			// verification authorization
-			if !did.HasRelationship(signerDID, didtypes.RelationshipAuthentication) {
+			if !did.HasRelationship(signerDID, didtypes.Authentication) {
 				return ctx, sdkerrors.Wrapf(
 					types.ErrIncorrectControllerOfDidDocument,
 					"msg sender not in auth array in did document",
@@ -187,7 +187,7 @@ func (cicd CheckUserCredentialsDecorator) validateKYCCredential(
 		)
 	}
 
-	if !did.HasRelationship(issuerDID, didtypes.RelationshipAuthentication) {
+	if !did.HasRelationship(issuerDID, didtypes.Authentication) {
 		return sdkerrors.Wrapf(
 			types.ErrIncorrectControllerOfDidDocument,
 			"msg sender not in auth slice in did document when validating the KYC credential",

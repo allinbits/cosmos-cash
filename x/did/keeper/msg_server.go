@@ -69,7 +69,7 @@ func (k msgServer) UpdateDidDocument(
 	}
 
 	// Any verification method in the authentication relationship can update the DID document
-	if !didDoc.HasRelationship(msg.Signer, types.RelationshipAuthentication) {
+	if !didDoc.HasRelationship(msg.Signer, types.Authentication) {
 		return nil, sdkerrors.Wrapf(
 			types.ErrUnauthorized,
 			"signer %s not authorized to update the target did document at %s",
@@ -107,7 +107,7 @@ func (k msgServer) AddVerification(
 	}
 
 	// Any verification method in the authentication relationship can update the DID document
-	if !didDoc.HasRelationship(msg.Signer, types.RelationshipAuthentication) {
+	if !didDoc.HasRelationship(msg.Signer, types.Authentication) {
 		return nil, sdkerrors.Wrapf(
 			types.ErrUnauthorized,
 			"signer account %s not authorized to add verification methods to the target did document at %s",
@@ -155,7 +155,7 @@ func (k msgServer) AddService(
 		)
 	}
 	// Any verification method in the authentication relationship can update the DID document
-	if !didDoc.HasRelationship(msg.Signer, types.RelationshipAuthentication) {
+	if !didDoc.HasRelationship(msg.Signer, types.Authentication) {
 		return nil, sdkerrors.Wrapf(
 			types.ErrUnauthorized,
 			"signer %s not authorized to add services to the target did document at %s",
@@ -191,7 +191,7 @@ func (k msgServer) RevokeVerification(
 		return nil, sdkerrors.Wrapf(types.ErrDidDocumentNotFound, "did document at %s not found", msg.Id)
 	}
 	// any verification method in the authentication relationship can update the DID document
-	if !didDoc.HasRelationship(msg.Signer, types.RelationshipAuthentication) {
+	if !didDoc.HasRelationship(msg.Signer, types.Authentication) {
 		return nil, sdkerrors.Wrapf(
 			types.ErrUnauthorized,
 			"signer %s not authorized to revoke verification methods from the target did document at %s",
@@ -229,7 +229,7 @@ func (k msgServer) DeleteService(
 		return nil, sdkerrors.Wrapf(types.ErrDidDocumentNotFound, "did document at %s not found", msg.Id)
 	}
 	// any verification method in the authentication relationship can update the DID document
-	if !didDoc.HasRelationship(msg.Signer, types.RelationshipAuthentication) {
+	if !didDoc.HasRelationship(msg.Signer, types.Authentication) {
 		return nil, sdkerrors.Wrapf(
 			types.ErrUnauthorized,
 			"signer %s not authorized to delete services from the target did document at %s",
@@ -269,7 +269,7 @@ func (k msgServer) SetVerificationRelationships(
 		return nil, sdkerrors.Wrapf(types.ErrDidDocumentNotFound, "did document at %s not found", msg.Id)
 	}
 	// any verification method in the authentication relationship can update the DID document
-	if !didDoc.HasRelationship(msg.Signer, types.RelationshipAuthentication) {
+	if !didDoc.HasRelationship(msg.Signer, types.Authentication) {
 		return nil, sdkerrors.Wrapf(
 			types.ErrUnauthorized,
 			"signer %s not authorized to set verification relationships on the target did document at %s",

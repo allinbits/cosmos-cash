@@ -72,7 +72,7 @@ func NewCreateDidDocumentCmd() *cobra.Command {
 					did,
 					types.BlockchainAccountID(signer.String()),
 				),
-				[]string{types.RelationshipAuthentication},
+				[]string{types.Authentication},
 				nil,
 			)
 			// create the message
@@ -127,7 +127,7 @@ func NewAddVerificationCmd() *cobra.Command {
 					pubKey.Type(),
 					did,
 					types.BlockchainAccountID(account.String())),
-				[]string{types.RelationshipAuthentication},
+				[]string{types.Authentication},
 				nil,
 			)
 			// add verification

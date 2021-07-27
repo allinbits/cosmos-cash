@@ -1,6 +1,6 @@
 module github.com/allinbits/cosmos-cash
 
-go 1.15
+go 1.16
 
 require (
 	github.com/cosmos/cosmos-sdk v0.42.6

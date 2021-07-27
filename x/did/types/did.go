@@ -10,16 +10,70 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
+type VerificationRelationship int
+
 // A verification relationship expresses the relationship between the DID subject and a verification method.
 // This enum is used to
 // cfr. https://www.w3.org/TR/did-core/#verification-relationships
 const (
-	RelationshipAuthentication       = "authentication"       // https://www.w3.org/TR/did-core/#authentication
-	RelationshipAssertionMethod      = "assertionMethod"      // https://www.w3.org/TR/did-core/#assertion
-	RelationshipKeyAgreement         = "keyAgreement"         // https://www.w3.org/TR/did-core/#key-agreement
-	RelationshipCapabilityInvocation = "capabilityInvocation" // https://www.w3.org/TR/did-core/#capability-invocation
-	RelationshipCapabilityDelegation = "capabilityDelegation" // https://www.w3.org/TR/did-core/#capability-delegation
+	Authentication       = "authentication"       // https://www.w3.org/TR/did-core/#authentication
+	AssertionMethod      = "assertionMethod"      // https://www.w3.org/TR/did-core/#assertion
+	KeyAgreement         = "keyAgreement"         // https://www.w3.org/TR/did-core/#key-agreement
+	CapabilityInvocation = "capabilityInvocation" // https://www.w3.org/TR/did-core/#capability-invocation
+	CapabilityDelegation = "capabilityDelegation" // https://www.w3.org/TR/did-core/#capability-delegation
 )
+
+const (
+	authentication VerificationRelationship = iota
+	assertionMethod
+	keyAgreement
+	capabilityInvocation
+	capabilityDelegation
+)
+
+// VerificationRelationships are the supported list of verification relationships
+var VerificationRelationships = map[string]VerificationRelationship{
+	"authentication":       authentication,
+	"assertionMethod":      assertionMethod,
+	"keyAgreement":         keyAgreement,
+	"capabilityInvocation": capabilityInvocation,
+	"capabilityDelegation": capabilityDelegation,
+}
+
+// verificationRelationships retrieve the pointer to the verification relationship
+// if it exists, otherwise returns nil
+func (didDoc *DidDocument) getRelationships(rel VerificationRelationship) *[]string {
+	switch rel {
+	case authentication:
+		return &didDoc.Authentication
+	case assertionMethod:
+		return &didDoc.AssertionMethod
+	case keyAgreement:
+		return &didDoc.KeyAgreement
+	case capabilityInvocation:
+		return &didDoc.CapabilityInvocation
+	case capabilityDelegation:
+		return &didDoc.CapabilityDelegation
+	default:
+		return nil
+	}
+}
+
+// parseRelationshipLabels parse relationships labels to a slice of VerificationRelationship
+// making sure that the relationsips are not repeated
+func parseRelationshipLabels(relNames ...string) (vrs []VerificationRelationship, err error) {
+	names := distinct(relNames)
+	vrs = make([]VerificationRelationship, len(names))
+	for i, vrn := range distinct(relNames) {
+		vr, validName := VerificationRelationships[vrn]
+		if !validName {
+			err = sdkerrors.Wrapf(ErrInvalidInput, "unsupported verification relationship %s", vrn)
+			return
+		}
+		vrs[i] = vr
+	}
+	return
+}
 
 /**
 Regexp generated using this ABNF specs and using https://abnf.msweet.org/index.php
@@ -260,7 +314,11 @@ func (didDoc *DidDocument) AddVerifications(verifications ...*Verification) (err
 		didDoc.VerificationMethods = append(didDoc.VerificationMethods, v.GetMethod())
 
 		// now add the relationships
-		didDoc.setRelationships(v.Method.Id, v.Relationships...)
+		vrs, err := parseRelationshipLabels(v.Relationships...)
+		if err != nil {
+			return err
+		}
+		didDoc.setRelationships(v.Method.Id, vrs...)
 
 		// update context
 		didDoc.Context = union(didDoc.Context, v.Context)
@@ -309,53 +367,42 @@ func (didDoc *DidDocument) SetVerificationRelationships(methodID string, relatio
 	if len(relationships) == 0 {
 		return sdkerrors.Wrap(ErrEmptyRelationships, "at least a verification relationship is required")
 	}
+	// check that the provided relationships are valid
+	vrs, err := parseRelationshipLabels(relationships...)
+	if err != nil {
+		return err
+	}
 	// update the relationships
-	didDoc.setRelationships(methodID, relationships...)
+	didDoc.setRelationships(methodID, vrs...)
 	return nil
 }
 
 // setRelationships overwrite relationships for a did document
-func (didDoc *DidDocument) setRelationships(methodID string, relationships ...string) {
-
-	del := func(relName string, x int) {
-		relationships := didDoc.VerificationRelationships[relName]
-		lastIdx := len(relationships.Labels) - 1
-		switch lastIdx {
-		case 0: // remove the relationships since there is no elements left
-			delete(didDoc.VerificationRelationships, relName)
-		case x: // if it's at the last position, just drop the last position
-			relationships.Labels = relationships.Labels[:lastIdx]
-		default: // swap and drop last position
-			relationships.Labels[x] = relationships.Labels[lastIdx]
-			relationships.Labels = relationships.Labels[:lastIdx]
-		}
-
-	}
+func (didDoc *DidDocument) setRelationships(methodID string, relationships ...VerificationRelationship) {
 
 	// first remove existing relationships
-	for vr, methods := range didDoc.VerificationRelationships {
-		for i, mID := range methods.GetLabels() {
-			if mID == methodID {
-				del(vr, i)
+	for _, vr := range VerificationRelationships {
+		vrs := didDoc.getRelationships(vr)
+		for i, vmID := range *vrs {
+			if vmID == methodID {
+				lastIdx := len(*vrs) - 1 // get the last index of the current relationship list
+				switch lastIdx {
+				case 0: // remove the relationships since there is no elements left
+					*vrs = nil
+				case i: // if it's at the last position, just drop the last position
+					*vrs = (*vrs)[:lastIdx]
+				default: // swap and drop last position
+					(*vrs)[i] = (*vrs)[lastIdx]
+					(*vrs) = (*vrs)[:lastIdx]
+				}
 			}
 		}
-	}
-
-	// make sure that the relationships are initialized
-	if didDoc.VerificationRelationships == nil {
-		didDoc.VerificationRelationships = make(map[string]*DidDocument_VerificationRelationships)
 	}
 
 	// then assign the new ones
-	for _, r := range distinct(relationships) {
-		if mIDs, exists := didDoc.VerificationRelationships[r]; !exists {
-			mIDs = &DidDocument_VerificationRelationships{
-				Labels: []string{methodID},
-			}
-			didDoc.VerificationRelationships[r] = mIDs
-		} else {
-			mIDs.Labels = append(mIDs.Labels, methodID)
-		}
+	for _, vr := range relationships {
+		vrs := didDoc.getRelationships(vr)
+		*vrs = append(*vrs, methodID)
 	}
 }
 
@@ -363,10 +410,10 @@ func (didDoc *DidDocument) setRelationships(methodID string, relationships ...st
 // verification method id.
 func (didDoc DidDocument) GetVerificationRelationships(methodID string) []string {
 	relationships := []string{}
-	for vr, methods := range didDoc.VerificationRelationships {
-		for _, mID := range methods.GetLabels() {
-			if mID == methodID {
-				relationships = append(relationships, vr)
+	for vrn, vr := range VerificationRelationships {
+		for _, vmID := range *didDoc.getRelationships(vr) {
+			if vmID == methodID {
+				relationships = append(relationships, vrn)
 			}
 		}
 	}

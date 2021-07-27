@@ -18,7 +18,7 @@ func TestMsgCreateDidDocument(t *testing.T) {
 			"did:auth:whatever",
 			Verifications{
 				&Verification{
-					[]string{RelationshipAuthentication},
+					[]string{string(Authentication)},
 					&VerificationMethod{
 						"did:auth:whatever#1",
 						"EcdsaSecp256k1VerificationKey2019",
@@ -36,7 +36,7 @@ func TestMsgCreateDidDocument(t *testing.T) {
 			"did:auth:whatever",
 			Verifications{
 				&Verification{
-					[]string{RelationshipAuthentication},
+					[]string{string(Authentication)},
 					&VerificationMethod{
 						"did:auth:whatever#1",
 						"EcdsaSecp256k1VerificationKey2019",
@@ -54,7 +54,7 @@ func TestMsgCreateDidDocument(t *testing.T) {
 			"did:auth:whatever",
 			Verifications{
 				&Verification{
-					[]string{RelationshipAuthentication},
+					[]string{string(Authentication)},
 					&VerificationMethod{
 						"did:auth:whatever#1",
 						"",
@@ -90,7 +90,7 @@ func TestMsgCreateDidDocument(t *testing.T) {
 			"did:auth:whatever",
 			Verifications{
 				&Verification{
-					[]string{RelationshipAuthentication},
+					[]string{string(Authentication)},
 					&VerificationMethod{
 						"did:auth:whatever#/asd 123",
 						"EcdsaSecp256k1VerificationKey2019",
@@ -108,7 +108,7 @@ func TestMsgCreateDidDocument(t *testing.T) {
 			"did:auth:whatever",
 			Verifications{
 				&Verification{
-					[]string{RelationshipAuthentication},
+					[]string{string(Authentication)},
 					&VerificationMethod{
 						"did:auth:whatever#1",
 						"EcdsaSecp256k1VerificationKey2019",
@@ -126,7 +126,7 @@ func TestMsgCreateDidDocument(t *testing.T) {
 			"did:auth:whatever",
 			Verifications{
 				&Verification{
-					[]string{RelationshipAuthentication},
+					[]string{string(Authentication)},
 					&VerificationMethod{
 						"did:auth:whatever#1",
 						"",
@@ -144,7 +144,7 @@ func TestMsgCreateDidDocument(t *testing.T) {
 			"did:auth:whatever",
 			Verifications{
 				&Verification{
-					[]string{RelationshipAuthentication},
+					[]string{string(Authentication)},
 					&VerificationMethod{
 						"did:auth:whatever#1",
 						"EcdsaSecp256k1VerificationKey2019",
@@ -170,7 +170,7 @@ func TestMsgCreateDidDocument(t *testing.T) {
 			"invalid did",
 			Verifications{
 				&Verification{
-					[]string{RelationshipAuthentication},
+					[]string{string(Authentication)},
 					&VerificationMethod{
 						"did:auth:whatever#1",
 						"EcdsaSecp256k1VerificationKey2019",
@@ -188,7 +188,7 @@ func TestMsgCreateDidDocument(t *testing.T) {
 			"did:auth:whatever",
 			Verifications{
 				&Verification{
-					[]string{RelationshipAuthentication},
+					[]string{string(Authentication)},
 					&VerificationMethod{
 						"did:auth:whatever#1",
 						"EcdsaSecp256k1VerificationKey2019",
@@ -212,7 +212,7 @@ func TestMsgCreateDidDocument(t *testing.T) {
 			"did:auth:whatever",
 			Verifications{
 				&Verification{
-					[]string{RelationshipAuthentication},
+					[]string{string(Authentication)},
 					&VerificationMethod{
 						"did:auth:whatever#1",
 						"EcdsaSecp256k1VerificationKey2019",
@@ -236,7 +236,7 @@ func TestMsgCreateDidDocument(t *testing.T) {
 			"did:auth:whatever",
 			Verifications{
 				&Verification{
-					[]string{RelationshipAuthentication},
+					[]string{string(Authentication)},
 					&VerificationMethod{
 						"did:auth:whatever#1",
 						"EcdsaSecp256k1VerificationKey2019",
@@ -260,7 +260,7 @@ func TestMsgCreateDidDocument(t *testing.T) {
 			"did:auth:whatever",
 			Verifications{
 				&Verification{
-					[]string{RelationshipAuthentication},
+					[]string{string(Authentication)},
 					&VerificationMethod{
 						"did:auth:whatever#1",
 						"EcdsaSecp256k1VerificationKey2019",
@@ -369,7 +369,7 @@ func TestMsgAddVerification(t *testing.T) {
 		{
 			"did:cash:subject",
 			Verification{
-				[]string{RelationshipAuthentication},
+				[]string{string(Authentication)},
 				&VerificationMethod{
 					"did:cash:subject#1",
 					"EcdsaSecp256k1RecoveryMethod2020",
@@ -384,7 +384,7 @@ func TestMsgAddVerification(t *testing.T) {
 		{
 			"something not right",
 			Verification{
-				[]string{RelationshipAuthentication},
+				[]string{string(Authentication)},
 				&VerificationMethod{
 					"did:cash:subject#1",
 					"EcdsaSecp256k1RecoveryMethod2020",

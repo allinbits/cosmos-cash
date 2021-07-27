@@ -11,8 +11,8 @@ import (
 func TestDID(t *testing.T) {
 
 	tests := []struct {
-		did string
-		want       string
+		did  string
+		want string
 	}{
 		{
 			"subject",
@@ -136,7 +136,7 @@ func TestValidateVerification(t *testing.T) {
 					"did:cash:subject",
 					"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
 				),
-				[]string{RelationshipAssertionMethod},
+				[]string{string(AssertionMethod)},
 				nil,
 			),
 			wantErr: false,
@@ -210,38 +210,38 @@ func TestNewDidDocument(t *testing.T) {
 				"did:cash:subject",
 				[]DidDocumentOption{
 					WithVerifications(
-						&Verification{
-							[]string{
-								RelationshipAuthentication,
-								RelationshipKeyAgreement,
-								RelationshipKeyAgreement, // test duplicated relationship
-							},
-							&VerificationMethod{
+						NewVerification(
+							NewVerificationMethod(
 								"did:cash:subject#key-1",
 								"EcdsaSecp256k1VerificationKey2019",
 								"did:cash:subject",
 								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+							),
+							[]string{
+								string(Authentication),
+								string(KeyAgreement),
+								string(KeyAgreement), // test duplicated relationship
 							},
 							[]string{
 								"https://gpg.jsld.org/contexts/lds-gpg2020-v0.0.jsonld",
 							},
-						},
+						),
 					),
 					WithVerifications( // multiple verifications in separate entity
-						&Verification{
-							[]string{
-								RelationshipAuthentication,
-							},
-							&VerificationMethod{
+						NewVerification(
+							NewVerificationMethod(
 								"did:cash:subject#key-2",
 								"EcdsaSecp256k1VerificationKey2019",
 								"did:cash:subject",
 								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+							),
+							[]string{
+								string(Authentication),
 							},
 							[]string{
 								"https://gpg.jsld.org/contexts/lds-gpg2020-v0.0.jsonld",
 							},
-						},
+						),
 					),
 					WithServices(&Service{
 						"agent:xyz",
@@ -252,13 +252,13 @@ func TestNewDidDocument(t *testing.T) {
 				},
 			},
 			wantDid: DidDocument{
-				[]string{
+				Context: []string{
 					"https://gpg.jsld.org/contexts/lds-gpg2020-v0.0.jsonld",
 					contextDIDBase,
 				},
-				"did:cash:subject",
-				[]string{"did:cash:controller-1"},
-				[]*VerificationMethod{
+				Id:         "did:cash:subject",
+				Controller: []string{"did:cash:controller-1"},
+				VerificationMethods: []*VerificationMethod{
 					{
 						"did:cash:subject#key-1",
 						"EcdsaSecp256k1VerificationKey2019",
@@ -272,21 +272,15 @@ func TestNewDidDocument(t *testing.T) {
 						"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
 					},
 				},
-				[]*Service{
+				Services: []*Service{
 					{
 						"agent:xyz",
 						"DIDCommMessaging",
 						"https://agent.xyz/1234",
 					},
 				},
-				map[string]*DidDocument_VerificationRelationships{
-					RelationshipAuthentication: {
-						Labels: []string{"did:cash:subject#key-1", "did:cash:subject#key-2"},
-					},
-					RelationshipKeyAgreement: {
-						Labels: []string{"did:cash:subject#key-1"},
-					},
-				},
+				Authentication: []string{"did:cash:subject#key-1", "did:cash:subject#key-2"},
+				KeyAgreement:   []string{"did:cash:subject#key-1"},
 			},
 			wantErr: false,
 		},
@@ -295,34 +289,34 @@ func TestNewDidDocument(t *testing.T) {
 				"did:cash:subject",
 				[]DidDocumentOption{
 					WithVerifications(
-						&Verification{
-							[]string{
-								RelationshipAuthentication,
-								RelationshipKeyAgreement,
-							},
-							&VerificationMethod{
+						NewVerification(
+							NewVerificationMethod(
 								"did:cash:subject#key-1",
 								"EcdsaSecp256k1VerificationKey2019",
 								"did:cash:subject",
 								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+							),
+							[]string{
+								Authentication,
+								KeyAgreement,
 							},
 							[]string{
 								"https://gpg.jsld.org/contexts/lds-gpg2020-v0.0.jsonld",
 							},
-						},
-						&Verification{
-							[]string{
-								RelationshipAuthentication,
-								RelationshipKeyAgreement,
-							},
-							&VerificationMethod{
+						),
+						NewVerification(
+							NewVerificationMethod(
 								"did:cash:subject#key-1", // duplicate key
 								"EcdsaSecp256k1VerificationKey2019",
 								"did:cash:subject",
 								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+							),
+							[]string{
+								Authentication,
+								KeyAgreement,
 							},
 							[]string{},
-						},
+						),
 					),
 					WithServices(&Service{
 						"agent:xyz",
@@ -339,21 +333,21 @@ func TestNewDidDocument(t *testing.T) {
 				"did:cash:subject",
 				[]DidDocumentOption{
 					WithVerifications(
-						&Verification{
-							[]string{
-								RelationshipAuthentication,
-								RelationshipKeyAgreement,
-							},
-							&VerificationMethod{
+						NewVerification(
+							NewVerificationMethod(
 								"did:cash:subject#key-1",
 								"EcdsaSecp256k1VerificationKey2019",
 								"did:cash:subject",
 								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+							),
+							[]string{
+								Authentication,
+								KeyAgreement,
 							},
 							[]string{
 								"https://gpg.jsld.org/contexts/lds-gpg2020-v0.0.jsonld",
 							},
-						},
+						),
 					),
 					WithServices(
 						&Service{
@@ -501,8 +495,8 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 							"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
 						),
 						[]string{
-							RelationshipAuthentication,
-							RelationshipKeyAgreement,
+							Authentication,
+							KeyAgreement,
 						},
 						nil,
 					),
@@ -514,8 +508,8 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 							"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
 						),
 						[]string{
-							RelationshipAuthentication,
-							RelationshipCapabilityInvocation,
+							Authentication,
+							CapabilityInvocation,
 						},
 						[]string{
 							"https://gpg.jsld.org/contexts/lds-gpg2020-v0.0.jsonld",
@@ -524,13 +518,13 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 				},
 			},
 			wantDid: DidDocument{
-				[]string{
+				Context: []string{
 					"https://gpg.jsld.org/contexts/lds-gpg2020-v0.0.jsonld",
 					contextDIDBase,
 				},
-				"did:cash:subject",
-				nil,
-				[]*VerificationMethod{
+				Id:         "did:cash:subject",
+				Controller: nil,
+				VerificationMethods: []*VerificationMethod{
 					{
 						"did:cash:subject#key-1",
 						"EcdsaSecp256k1VerificationKey2019",
@@ -544,18 +538,10 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 						"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
 					},
 				},
-				nil,
-				map[string]*DidDocument_VerificationRelationships{
-					RelationshipAuthentication: {
-						Labels: []string{"did:cash:subject#key-1", "did:cash:subject#key-2"},
-					},
-					RelationshipKeyAgreement: {
-						Labels: []string{"did:cash:subject#key-1"},
-					},
-					RelationshipCapabilityInvocation: {
-						Labels: []string{"did:cash:subject#key-2"},
-					},
-				},
+				Services:             nil,
+				Authentication:       []string{"did:cash:subject#key-1", "did:cash:subject#key-2"},
+				KeyAgreement:         []string{"did:cash:subject#key-1"},
+				CapabilityInvocation: []string{"did:cash:subject#key-2"},
 			},
 		},
 		{
@@ -571,9 +557,9 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
 							),
 							[]string{
-								RelationshipAuthentication,
-								RelationshipKeyAgreement,
-								RelationshipKeyAgreement, // test duplicated relationship
+								Authentication,
+								KeyAgreement,
+								KeyAgreement, // test duplicated relationship
 							},
 							[]string{
 								"https://gpg.jsld.org/contexts/lds-gpg2020-v0.0.jsonld",
@@ -591,7 +577,7 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 							"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
 						),
 						[]string{
-							RelationshipCapabilityDelegation,
+							string(CapabilityDelegation),
 						},
 						[]string{
 							"https://gpg.jsld.org/contexts/lds-gpg2020-v0.0.jsonld",
@@ -614,9 +600,9 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
 							),
 							[]string{
-								RelationshipAuthentication,
-								RelationshipKeyAgreement,
-								RelationshipKeyAgreement, // test duplicated relationship
+								Authentication,
+								KeyAgreement,
+								KeyAgreement, // test duplicated relationship
 							},
 							[]string{
 								"https://gpg.jsld.org/contexts/lds-gpg2020-v0.0.jsonld",
@@ -634,7 +620,7 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 							"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
 						),
 						[]string{
-							RelationshipKeyAgreement,
+							KeyAgreement,
 						},
 						[]string{
 							"https://gpg.jsld.org/contexts/lds-gpg2020-v0.0.jsonld",
@@ -648,7 +634,7 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 							"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
 						),
 						[]string{
-							RelationshipAuthentication,
+							Authentication,
 						},
 						[]string{
 							"https://gpg.jsld.org/contexts/lds-gpg2020-v0.0.jsonld",
@@ -671,9 +657,9 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
 							),
 							[]string{
-								RelationshipAuthentication,
-								RelationshipKeyAgreement,
-								RelationshipKeyAgreement, // test duplicated relationship
+								Authentication,
+								KeyAgreement,
+								KeyAgreement, // test duplicated relationship
 							},
 							[]string{
 								"https://gpg.jsld.org/contexts/lds-gpg2020-v0.0.jsonld",
@@ -685,12 +671,40 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 				[]*Verification{
 					{
 						[]string{
-							RelationshipAuthentication,
-							RelationshipKeyAgreement,
-							RelationshipKeyAgreement, // test duplicated relationship
+							string(Authentication),
+							string(KeyAgreement),
+							string(KeyAgreement), // test duplicated relationship
 						},
 						&VerificationMethod{
 							"invalid method url",
+							"EcdsaSecp256k1VerificationKey2019",
+							"did:cash:subject",
+							"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+						},
+						[]string{
+							"https://gpg.jsld.org/contexts/lds-gpg2020-v0.0.jsonld",
+						},
+					},
+				},
+			},
+			wantDid: DidDocument{},
+		},
+		{
+			wantErr: true, // verification relationship does not exists
+			params: params{
+				func() DidDocument {
+					d, _ := NewDidDocument("did:cash:subject")
+					return d
+				},
+				[]*Verification{
+					{
+						[]string{
+							Authentication,
+							"UNSUPPORTED RELATIONSHIP",
+							KeyAgreement,
+						},
+						&VerificationMethod{
+							"did:cash:subject#key1",
 							"EcdsaSecp256k1VerificationKey2019",
 							"did:cash:subject",
 							"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
@@ -737,33 +751,34 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 				func() DidDocument {
 					d, _ := NewDidDocument("did:cash:subject",
 						WithVerifications(
-							&Verification{
-								[]string{
-									RelationshipAuthentication,
-									RelationshipKeyAgreement,
-								},
-								&VerificationMethod{
+							NewVerification(
+								NewVerificationMethod(
 									"did:cash:subject#key-1",
 									"EcdsaSecp256k1VerificationKey2019",
 									"did:cash:subject",
 									"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+								),
+								[]string{
+									Authentication,
+									KeyAgreement,
 								},
 								nil,
-							}, &Verification{
-								[]string{
-									RelationshipAuthentication,
-									RelationshipCapabilityInvocation,
-								},
-								&VerificationMethod{
+							),
+							NewVerification(
+								NewVerificationMethod(
 									"did:cash:subject#key-2",
 									"EcdsaSecp256k1VerificationKey2019",
 									"did:cash:subject",
 									"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+								),
+								[]string{
+									Authentication,
+									CapabilityInvocation,
 								},
 								[]string{
 									"https://gpg.jsld.org/contexts/lds-gpg2020-v0.0.jsonld",
 								},
-							},
+							),
 						),
 					)
 					return d
@@ -771,13 +786,13 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 				"did:cash:subject#key-2",
 			},
 			wantDid: DidDocument{
-				[]string{
+				Context: []string{
 					"https://gpg.jsld.org/contexts/lds-gpg2020-v0.0.jsonld",
 					contextDIDBase,
 				},
-				"did:cash:subject",
-				nil,
-				[]*VerificationMethod{
+				Id:         "did:cash:subject",
+				Controller: nil,
+				VerificationMethods: []*VerificationMethod{
 					{
 						"did:cash:subject#key-1",
 						"EcdsaSecp256k1VerificationKey2019",
@@ -785,15 +800,9 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 						"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
 					},
 				},
-				nil,
-				map[string]*DidDocument_VerificationRelationships{
-					RelationshipAuthentication: {
-						Labels: []string{"did:cash:subject#key-1"},
-					},
-					RelationshipKeyAgreement: {
-						Labels: []string{"did:cash:subject#key-1"},
-					},
-				},
+				Services:       nil,
+				Authentication: []string{"did:cash:subject#key-1"},
+				KeyAgreement:   []string{"did:cash:subject#key-1"},
 			},
 		},
 		{
@@ -802,19 +811,19 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 				func() DidDocument {
 					d, _ := NewDidDocument("did:cash:subject",
 						WithVerifications(
-							&Verification{
-								[]string{
-									RelationshipAuthentication,
-									RelationshipKeyAgreement,
-								},
-								&VerificationMethod{
+							NewVerification(
+								VerificationMethod{
 									"did:cash:subject#key-1",
 									"EcdsaSecp256k1VerificationKey2019",
 									"did:cash:subject",
 									"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
 								},
+								[]string{
+									Authentication,
+									KeyAgreement,
+								},
 								nil,
-							},
+							),
 						),
 					)
 					return d
@@ -822,14 +831,10 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 				"did:cash:subject#key-1",
 			},
 			wantDid: DidDocument{
-				[]string{
+				Context: []string{
 					contextDIDBase,
 				},
-				"did:cash:subject",
-				nil,
-				nil,
-				nil,
-				map[string]*DidDocument_VerificationRelationships{},
+				Id: "did:cash:subject",
 			},
 		},
 		{
@@ -838,45 +843,46 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 				func() DidDocument {
 					d, _ := NewDidDocument("did:cash:subject",
 						WithVerifications(
-							&Verification{
-								[]string{
-									RelationshipAuthentication,
-									RelationshipKeyAgreement,
-								},
-								&VerificationMethod{
+							NewVerification(
+								VerificationMethod{
 									"did:cash:subject#key-1",
 									"EcdsaSecp256k1VerificationKey2019",
 									"did:cash:subject",
 									"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
 								},
-								nil,
-							}, &Verification{
 								[]string{
-									RelationshipAuthentication,
-									RelationshipCapabilityInvocation,
+									Authentication,
+									KeyAgreement,
 								},
-								&VerificationMethod{
+								nil,
+							),
+							NewVerification(
+								VerificationMethod{
 									"did:cash:subject#key-2",
 									"EcdsaSecp256k1VerificationKey2019",
 									"did:cash:subject",
 									"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
 								},
-								nil,
-							},
-							&Verification{
 								[]string{
-									RelationshipAuthentication,
-									RelationshipKeyAgreement,
-									RelationshipAssertionMethod,
+									Authentication,
+									CapabilityInvocation,
 								},
-								&VerificationMethod{
+								nil,
+							),
+							NewVerification(
+								VerificationMethod{
 									"did:cash:subject#key-3",
 									"EcdsaSecp256k1VerificationKey2019",
 									"did:cash:subject",
 									"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
 								},
+								[]string{
+									Authentication,
+									KeyAgreement,
+									AssertionMethod,
+								},
 								nil,
-							},
+							),
 						),
 					)
 					return d
@@ -884,12 +890,12 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 				"did:cash:subject#key-2",
 			},
 			wantDid: DidDocument{
-				[]string{
+				Context: []string{
 					contextDIDBase,
 				},
-				"did:cash:subject",
-				nil,
-				[]*VerificationMethod{
+				Id:         "did:cash:subject",
+				Controller: nil,
+				VerificationMethods: []*VerificationMethod{
 					{
 						"did:cash:subject#key-1",
 						"EcdsaSecp256k1VerificationKey2019",
@@ -903,18 +909,10 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 						"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
 					},
 				},
-				nil,
-				map[string]*DidDocument_VerificationRelationships{
-					RelationshipAuthentication: {
-						Labels: []string{"did:cash:subject#key-1", "did:cash:subject#key-3"},
-					},
-					RelationshipKeyAgreement: {
-						Labels: []string{"did:cash:subject#key-1", "did:cash:subject#key-3"},
-					},
-					RelationshipAssertionMethod: {
-						Labels: []string{"did:cash:subject#key-3"},
-					},
-				},
+				Services:        nil,
+				Authentication:  []string{"did:cash:subject#key-1", "did:cash:subject#key-3"},
+				KeyAgreement:    []string{"did:cash:subject#key-1", "did:cash:subject#key-3"},
+				AssertionMethod: []string{"did:cash:subject#key-3"},
 			},
 		},
 		{
@@ -931,8 +929,8 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 									"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
 								),
 								[]string{
-									RelationshipAuthentication,
-									RelationshipKeyAgreement,
+									Authentication,
+									KeyAgreement,
 								},
 								nil,
 							),
@@ -944,8 +942,8 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 									"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
 								),
 								[]string{
-									RelationshipAuthentication,
-									RelationshipCapabilityInvocation,
+									Authentication,
+									CapabilityInvocation,
 								},
 								[]string{
 									"https://gpg.jsld.org/contexts/lds-gpg2020-v0.0.jsonld",
@@ -1000,12 +998,8 @@ func TestDidDocument_SetVerificationRelationships(t *testing.T) {
 				relationships: []string{},
 			},
 			wantDid: DidDocument{
-				[]string{contextDIDBase},
-				"did:cash:subject",
-				nil,
-				nil,
-				nil,
-				map[string]*DidDocument_VerificationRelationships{},
+				Context: []string{contextDIDBase},
+				Id:      "did:cash:subject",
 			},
 		},
 		{
@@ -1025,36 +1019,35 @@ func TestDidDocument_SetVerificationRelationships(t *testing.T) {
 			params: params{
 				malleate: func() DidDocument {
 					dd, _ := NewDidDocument("did:cash:subject", WithVerifications(
-						&Verification{
-							[]string{
-								RelationshipAuthentication,
-								RelationshipKeyAgreement,
-							},
-							&VerificationMethod{
+						NewVerification(
+							VerificationMethod{
 								"did:cash:subject#key-1",
 								"EcdsaSecp256k1VerificationKey2019",
 								"did:cash:subject",
 								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
 							},
+							[]string{
+								Authentication,
+								KeyAgreement,
+							},
 							[]string{},
-						},
+						),
 					))
 					return dd
 				},
 				methodID: "did:cash:subject#key-1",
 				relationships: []string{
-					RelationshipAssertionMethod,
-					RelationshipAssertionMethod, // test duplicated relationship
-					RelationshipAssertionMethod, // test duplicated relationship
-					RelationshipAssertionMethod, // test duplicated relationship
+					string(AssertionMethod),
+					string(AssertionMethod), // test duplicated relationship
+					string(AssertionMethod), // test duplicated relationship
+					string(AssertionMethod), // test duplicated relationship
 				},
 			},
 
 			wantDid: DidDocument{
-				[]string{contextDIDBase},
-				"did:cash:subject",
-				nil,
-				[]*VerificationMethod{
+				Context: []string{contextDIDBase},
+				Id:      "did:cash:subject",
+				VerificationMethods: []*VerificationMethod{
 					{
 						"did:cash:subject#key-1",
 						"EcdsaSecp256k1VerificationKey2019",
@@ -1062,12 +1055,7 @@ func TestDidDocument_SetVerificationRelationships(t *testing.T) {
 						"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
 					},
 				},
-				nil,
-				map[string]*DidDocument_VerificationRelationships{
-					RelationshipAssertionMethod: {
-						Labels: []string{"did:cash:subject#key-1"},
-					},
-				},
+				AssertionMethod: []string{"did:cash:subject#key-1"},
 			},
 		},
 		{
@@ -1075,42 +1063,41 @@ func TestDidDocument_SetVerificationRelationships(t *testing.T) {
 			params: params{
 				malleate: func() DidDocument {
 					dd, _ := NewDidDocument("did:cash:subject", WithVerifications(
-						&Verification{
-							[]string{
-								RelationshipAuthentication,
-								RelationshipKeyAgreement,
-							},
-							&VerificationMethod{
+						NewVerification(
+							VerificationMethod{
 								"did:cash:subject#key-1",
 								"EcdsaSecp256k1VerificationKey2019",
 								"did:cash:subject",
 								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
 							},
-							[]string{},
-						},
-						&Verification{
 							[]string{
-								RelationshipAuthentication,
+								Authentication,
+								KeyAgreement,
 							},
-							&VerificationMethod{
+							[]string{},
+						),
+						NewVerification(
+							VerificationMethod{
 								"did:cash:subject#key-2",
 								"EcdsaSecp256k1VerificationKey2019",
 								"did:cash:subject",
 								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
 							},
+							[]string{
+								Authentication,
+							},
 							[]string{},
-						},
+						),
 					))
 					return dd
 				},
 				methodID:      "did:cash:subject#key-1",
-				relationships: []string{RelationshipAssertionMethod},
+				relationships: []string{string(AssertionMethod)},
 			},
 			wantDid: DidDocument{
-				[]string{contextDIDBase},
-				"did:cash:subject",
-				nil,
-				[]*VerificationMethod{
+				Context: []string{contextDIDBase},
+				Id:      "did:cash:subject",
+				VerificationMethods: []*VerificationMethod{
 					{
 						"did:cash:subject#key-1",
 						"EcdsaSecp256k1VerificationKey2019",
@@ -1124,15 +1111,8 @@ func TestDidDocument_SetVerificationRelationships(t *testing.T) {
 						"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
 					},
 				},
-				nil,
-				map[string]*DidDocument_VerificationRelationships{
-					RelationshipAuthentication: {
-						Labels: []string{"did:cash:subject#key-2"},
-					},
-					RelationshipAssertionMethod: {
-						Labels: []string{"did:cash:subject#key-1"},
-					},
-				},
+				Authentication:  []string{"did:cash:subject#key-2"},
+				AssertionMethod: []string{"did:cash:subject#key-1"},
 			},
 		},
 		{
@@ -1140,54 +1120,53 @@ func TestDidDocument_SetVerificationRelationships(t *testing.T) {
 			params: params{
 				malleate: func() DidDocument {
 					dd, _ := NewDidDocument("did:cash:subject", WithVerifications(
-						&Verification{
-							[]string{
-								RelationshipAuthentication,
-							},
-							&VerificationMethod{
+						NewVerification(
+							VerificationMethod{
 								"did:cash:subject#key-2",
 								"EcdsaSecp256k1VerificationKey2019",
 								"did:cash:subject",
 								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
 							},
-							[]string{},
-						},
-						&Verification{
 							[]string{
-								RelationshipAuthentication,
+								Authentication,
 							},
-							&VerificationMethod{
+							[]string{},
+						),
+						NewVerification(
+							VerificationMethod{
 								"did:cash:subject#key-3",
 								"EcdsaSecp256k1VerificationKey2019",
 								"did:cash:subject",
 								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
 							},
-							[]string{},
-						},
-						&Verification{
 							[]string{
-								RelationshipAuthentication,
-								RelationshipKeyAgreement,
+								Authentication,
 							},
-							&VerificationMethod{
+							[]string{},
+						),
+						NewVerification(
+							VerificationMethod{
 								"did:cash:subject#key-1",
 								"EcdsaSecp256k1VerificationKey2019",
 								"did:cash:subject",
 								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
 							},
+							[]string{
+								Authentication,
+								KeyAgreement,
+							},
 							[]string{},
-						},
+						),
 					))
 					return dd
 				},
 				methodID:      "did:cash:subject#key-1",
-				relationships: []string{RelationshipAssertionMethod},
+				relationships: []string{string(AssertionMethod)},
 			},
 			wantDid: DidDocument{
-				[]string{contextDIDBase},
-				"did:cash:subject",
-				nil,
-				[]*VerificationMethod{
+				Context: []string{contextDIDBase},
+				Id:      "did:cash:subject",
+				VerificationMethods: []*VerificationMethod{
 					{
 						"did:cash:subject#key-2",
 						"EcdsaSecp256k1VerificationKey2019",
@@ -1207,15 +1186,9 @@ func TestDidDocument_SetVerificationRelationships(t *testing.T) {
 						"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
 					},
 				},
-				nil,
-				map[string]*DidDocument_VerificationRelationships{
-					RelationshipAuthentication: {
-						Labels: []string{"did:cash:subject#key-2", "did:cash:subject#key-3"},
-					},
-					RelationshipAssertionMethod: {
-						Labels: []string{"did:cash:subject#key-1"},
-					},
-				},
+
+				Authentication:  []string{"did:cash:subject#key-2", "did:cash:subject#key-3"},
+				AssertionMethod: []string{"did:cash:subject#key-1"},
 			},
 		},
 	}
@@ -1260,8 +1233,8 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 								"signer",
 							),
 							[]string{
-								RelationshipAuthentication,
-								RelationshipKeyAgreement,
+								string(Authentication),
+								string(KeyAgreement),
 							},
 							nil,
 						),
@@ -1270,8 +1243,8 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 				},
 				signer: "signer",
 				relationships: []string{
-					RelationshipAssertionMethod,
-					RelationshipAuthentication,
+					string(AssertionMethod),
+					string(Authentication),
 				},
 			},
 		},
@@ -1288,8 +1261,8 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
 							),
 							[]string{
-								RelationshipAuthentication,
-								RelationshipKeyAgreement,
+								Authentication,
+								KeyAgreement,
 							},
 							nil,
 						),
@@ -1301,7 +1274,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
 							),
 							[]string{
-								RelationshipCapabilityDelegation,
+								CapabilityDelegation,
 							},
 							nil,
 						),
@@ -1310,7 +1283,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 				},
 				signer: "did:cash:subject",
 				relationships: []string{
-					RelationshipCapabilityDelegation,
+					string(CapabilityDelegation),
 				},
 			},
 		},
@@ -1323,7 +1296,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 				},
 				signer: "did:cash:subject",
 				relationships: []string{
-					RelationshipCapabilityDelegation,
+					string(CapabilityDelegation),
 				},
 			},
 		},
@@ -1340,8 +1313,8 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 								"signer",
 							),
 							[]string{
-								RelationshipAuthentication,
-								RelationshipKeyAgreement,
+								Authentication,
+								KeyAgreement,
 							},
 							nil,
 						),
@@ -1365,7 +1338,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 								"signer",
 							),
 							[]string{
-								RelationshipAuthentication,
+								Authentication,
 							},
 							nil,
 						),
@@ -1377,7 +1350,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 								"signer",
 							),
 							[]string{
-								RelationshipKeyAgreement,
+								KeyAgreement,
 							},
 							nil,
 						),
@@ -1386,7 +1359,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 				},
 				signer: "signer",
 				relationships: []string{
-					RelationshipKeyAgreement,
+					string(KeyAgreement),
 				},
 			},
 		},
@@ -1431,11 +1404,9 @@ func TestDidDocument_AddServices(t *testing.T) {
 				},
 			},
 			wantDid: DidDocument{
-				[]string{contextDIDBase},
-				"did:cash:subject",
-				nil,
-				nil,
-				[]*Service{
+				Context: []string{contextDIDBase},
+				Id:      "did:cash:subject",
+				Services: []*Service{
 					NewService(
 						"agent:abc",
 						"DIDCommMessaging",
@@ -1447,7 +1418,6 @@ func TestDidDocument_AddServices(t *testing.T) {
 						"https://agent.xyz/1234",
 					),
 				},
-				nil,
 			},
 		},
 		{
@@ -1568,12 +1538,8 @@ func TestDidDocument_DeleteService(t *testing.T) {
 				"agent:abc",
 			},
 			wantDid: DidDocument{
-				[]string{contextDIDBase},
-				"did:cash:subject",
-				nil,
-				nil,
-				nil,
-				nil,
+				Context: []string{contextDIDBase},
+				Id:      "did:cash:subject",
 			},
 		},
 		{
@@ -1599,18 +1565,15 @@ func TestDidDocument_DeleteService(t *testing.T) {
 				"agent:abc",
 			},
 			wantDid: DidDocument{
-				[]string{contextDIDBase},
-				"did:cash:subject",
-				nil,
-				nil,
-				[]*Service{
+				Context: []string{contextDIDBase},
+				Id:      "did:cash:subject",
+				Services: []*Service{
 					{
 						"agent:zyz",
 						"DIDCommMessaging",
 						"https://agent.abc/1234",
 					},
 				},
-				nil,
 			},
 		},
 		{
@@ -1641,11 +1604,9 @@ func TestDidDocument_DeleteService(t *testing.T) {
 				"agent:abc",
 			},
 			wantDid: DidDocument{
-				[]string{contextDIDBase},
-				"did:cash:subject",
-				nil,
-				nil,
-				[]*Service{
+				Context: []string{contextDIDBase},
+				Id:      "did:cash:subject",
+				Services: []*Service{
 					{
 						"agent:zyz",
 						"DIDCommMessaging",
@@ -1656,7 +1617,6 @@ func TestDidDocument_DeleteService(t *testing.T) {
 						"https://agent.abc/007",
 					},
 				},
-				nil,
 			},
 		},
 	}

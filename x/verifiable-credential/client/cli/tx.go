@@ -12,7 +12,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/wealdtech/go-merkletree"
 
-	"github.com/allinbits/cosmos-cash/x/verifiable-credential-service/types"
+	"github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 )
 
 // GetTxCmd returns the transaction commands for this module

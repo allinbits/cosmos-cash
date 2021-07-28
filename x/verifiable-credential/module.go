@@ -1,4 +1,4 @@
-package verifiablecredentialservice
+package verifiablecredential
 
 import ( // this line is used by starport scaffolding # 1
 	"encoding/json"
@@ -13,9 +13,9 @@ import ( // this line is used by starport scaffolding # 1
 	"github.com/spf13/cobra"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/allinbits/cosmos-cash/x/verifiable-credential-service/client/cli"
-	"github.com/allinbits/cosmos-cash/x/verifiable-credential-service/keeper"
-	"github.com/allinbits/cosmos-cash/x/verifiable-credential-service/types"
+	"github.com/allinbits/cosmos-cash/x/verifiable-credential/client/cli"
+	"github.com/allinbits/cosmos-cash/x/verifiable-credential/keeper"
+	"github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 )
 
 var (

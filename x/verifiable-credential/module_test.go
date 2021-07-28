@@ -1,4 +1,4 @@
-package verifiablecredentialservice_test
+package verifiablecredential_test
 
 import (
 	"testing"

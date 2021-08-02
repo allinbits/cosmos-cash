@@ -5,7 +5,7 @@ import (
 	"github.com/stretchr/testify/suite"
 	"testing"
 
-	"github.com/allinbits/cosmos-cash/x/verifiable-credential-service/types"
+	"github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	ct "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/store"

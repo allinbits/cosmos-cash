@@ -3,7 +3,7 @@ package keeper
 import (
 	"fmt"
 
-	"github.com/allinbits/cosmos-cash/x/verifiable-credential-service/types"
+	"github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 

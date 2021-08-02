@@ -8,8 +8,8 @@ import (
 	"github.com/stretchr/testify/suite"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
 
-	"github.com/allinbits/cosmos-cash/x/verifiable-credential-service/client/cli"
-	"github.com/allinbits/cosmos-cash/x/verifiable-credential-service/types"
+	"github.com/allinbits/cosmos-cash/x/verifiable-credential/client/cli"
+	"github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	"github.com/cosmos/cosmos-sdk/testutil/network"

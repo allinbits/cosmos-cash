@@ -8,12 +8,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
 
-	"github.com/allinbits/cosmos-cash/x/verifiable-credential-service/types"
+	"github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module
 func GetQueryCmd(queryRoute string) *cobra.Command {
-	// Group verifiable-credential-service queries under a subcommand
+	// Group verifiable-credential queries under a subcommand
 	cmd := &cobra.Command{
 		Use:                        types.ModuleName,
 		Short:                      fmt.Sprintf("Querying commands for the %s module", types.ModuleName),

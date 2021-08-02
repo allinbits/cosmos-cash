@@ -88,9 +88,9 @@ import ( // this line is used by starport scaffolding # stargate/app/moduleImpor
 	"github.com/allinbits/cosmos-cash/x/issuer"
 	issuerkeeper "github.com/allinbits/cosmos-cash/x/issuer/keeper"
 	issuertypes "github.com/allinbits/cosmos-cash/x/issuer/types"
-	vcs "github.com/allinbits/cosmos-cash/x/verifiable-credential-service"
-	vcskeeper "github.com/allinbits/cosmos-cash/x/verifiable-credential-service/keeper"
-	vcstypes "github.com/allinbits/cosmos-cash/x/verifiable-credential-service/types"
+	vcs "github.com/allinbits/cosmos-cash/x/verifiable-credential"
+	vcskeeper "github.com/allinbits/cosmos-cash/x/verifiable-credential/keeper"
+	vcstypes "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 )
 
 var (

@@ -3,7 +3,7 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/allinbits/cosmos-cash/x/verifiable-credential-service/types"
+	"github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 )
 
 func (q Keeper) SetVerifiableCredential(ctx sdk.Context, key []byte, vc types.VerifiableCredential) {

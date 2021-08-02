@@ -17,7 +17,7 @@ cosmos-cashd tx did create-did --from user1 --chain-id cash -y
 
 echo
 echo "Creating identity verifiable credential for user :validator"
-cosmos-cashd tx verifiablecredentialservice create-verifiable-credential did:cash:$(cosmos-cashd keys show user1 -a) $IDENTITY_CRED secret alice dublin 1-1-1970 1234 3531234  --from validator --chain-id cash -y
+cosmos-cashd tx verifiablecredential create-verifiable-credential did:cash:$(cosmos-cashd keys show user1 -a) $IDENTITY_CRED secret alice dublin 1-1-1970 1234 3531234  --from validator --chain-id cash -y
 
 echo
 echo "Adding identity service to decentralized did for users"
@@ -25,7 +25,7 @@ cosmos-cashd tx did add-service did:cash:$(cosmos-cashd keys show user1 -a) $IDE
 
 echo
 echo "Creating verifiable credential for user :user1 with issuer :validator"
-cosmos-cashd tx verifiablecredentialservice create-kyc-verifiable-credential \
+cosmos-cashd tx verifiablecredential create-kyc-verifiable-credential \
 	did:cash:$(cosmos-cashd keys show user1 -a) $KYC_CRED secret 1000 1000 1000  \
 	--from validator --chain-id cash -y
 
@@ -35,7 +35,7 @@ cosmos-cashd tx did add-service did:cash:$(cosmos-cashd keys show user1 -a) $KYC
 
 echo
 echo "Creating verifiable credential for user :validator with issuer :validator"
-cosmos-cashd tx verifiablecredentialservice create-kyc-verifiable-credential \
+cosmos-cashd tx verifiablecredential create-kyc-verifiable-credential \
 	did:cash:$(cosmos-cashd keys show validator -a) $ISSUER_KYC_CRED secret 1000 1000 1000  \
 	--from validator --chain-id cash -y
 
@@ -45,7 +45,7 @@ cosmos-cashd tx did add-service did:cash:$(cosmos-cashd keys show validator -a) 
 
 echo
 echo "Querying verifiable credentials"
-cosmos-cashd query verifiablecredentialservice verifiable-credential $KYC_CRED --output json | jq
+cosmos-cashd query verifiablecredential verifiable-credential $KYC_CRED --output json | jq
 
 echo
 echo "Sending issuer tokens to user from validator"

@@ -12,8 +12,8 @@ import (
 	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
 	"github.com/allinbits/cosmos-cash/x/issuer/keeper"
 	"github.com/allinbits/cosmos-cash/x/issuer/types"
-	vcskeeper "github.com/allinbits/cosmos-cash/x/verifiable-credential-service/keeper"
-	vcstypes "github.com/allinbits/cosmos-cash/x/verifiable-credential-service/types"
+	vcskeeper "github.com/allinbits/cosmos-cash/x/verifiable-credential/keeper"
+	vcstypes "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 )
 
 // CheckIssuerCredentialsDecorator checks the issuer has a EMILicense in a preprocessing hook

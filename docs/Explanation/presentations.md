@@ -1,6 +1,5 @@
 # Presentations
 
-## Introduction
 
 Links to Cosmos Cash related slides, interviews, presentations.
 
@@ -12,8 +11,7 @@ Links to Cosmos Cash related slides, interviews, presentations.
 
 ## Interviews
 
-* [Paddy Mchale interview with Jack Zampolin - July 2021](https://www.youtube.com/watch?v=ljUEuXxuSrs)
-* [Alessio interview Cryptocito on CBDCs](https://www.youtube.com/watch?v=VmyO2U5qS_Y)
+* [Paddy Mchale interview with Jack Zampolin - July 2021](https://www.youtube.com/watch?v=ljUEuXxuSrs) 34 minutes
+* [Alessio interview Cryptocito on CBDCs](https://www.youtube.com/watch?v=VmyO2U5qS_Y) 55 minutes
 
 ## Demos
-

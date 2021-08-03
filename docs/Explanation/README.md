@@ -1,4 +1,4 @@
-# Explanation Docmentsation
+# Explanation Documentation
 
 How to use the Cosmos Cash Explanation Documentation.
 
@@ -19,18 +19,18 @@ This approach outlines four specific use cases for documentation:
 
 This section addresses the third of these: **Explanation documentation**. 
 
-For further background please see [the ADR relating to the documentation structure](./ADR/adr-002-docs-structure.md). 
+For further background, see [the ADR relating to the documentation structure](./ADR/adr-002-docs-structure.md). 
 
 ## Approach
 
 This content is intended to help readers with their **understanding of Cosmos Cash and related topics**. 
 
-* If you are looking for information about an API call or a Module specification or Archiecture diagrams then please go to [Reference](../Reference) section
-* If you are looking how to achieve a specific task then please go to [How-To](../How-To)
+* See the [Reference](../Reference) section for information about an API call, Module specification, or Architecture diagrams 
+* See the [How-To](../How-To) section for steps to achieve a specific task
 
-This documentation is intended to be discursive, thoughtful, interesting and occaisionally educational. It will include analysis and alternatives. 
+This documentation is intended to be discursive, thoughtful, interesting, and occasionally educational. The content includes analysis and alternatives. 
 
-Not all explanations can be in this folder so please see [Discussions](#Discussions) section for further sources.
+For more explanations, see the [Discussions](#Discussions) section.
 
 ## Layout
 ### Topics
@@ -41,30 +41,30 @@ To contribute, create a folder in [topics](./topics) with a self-descriptive nam
 
 ### Presentations
 
-[Presentations](PRESENTATIONS.md) will have link to presentations about Cosmos Cash at various events. This will also include YouTube links, podcasts as needed.
+The [Presentations](PRESENTATIONS.md) file describes and links to presentations about Cosmos Cash at various events. Presentations also include YouTube videos,  podcasts, interviews, and so on. 
 
 
 ### Architecture Decisions Records (ADRs)
 
- ADRs are the mechanism for conributers to raise design proposals. In turn they explain for subsequent contributers the rationale behind Cosmos Cash design and implementation. An example would be why this [documentation structure](./ADR/adr-002-docs-structure.md) was chosen. 
+ ADRs are the mechanism for contributors to raise design proposals. In turn, the ADRs explain for subsequent contributors the rationale behind Cosmos Cash design and implementation. For example, [ADR 002: Documentation Structure](./ADR/adr-002-docs-structure.md) explains why the Cosmos Cash documentation structure was chosen. 
 
-See the [ADR README](./ADR/README.md) Further details about how to raise and propose an ADR.
+See the Architecture Decision Records (ADR) [README](./ADR/README.md) file for more details about how to raise and propose an ADR.
 
 ### Articles
 
-This folder contains all articles relating to Cosmos Cash. This includes papers, blog posts etc. See [Articles README](articles/README.md) for further details.
+This folder contains all articles relating to Cosmos Cash, includes papers, blog posts, and so on. For details, see [Articles README](articles/README.md).
 
 
 ## Discussions
 
-Explanation is not only limited to articles, topics etc. It also includes discussion on relevant channels. This includes [Pull Requests](https://github.com/allinbits/cosmos-cash/pulls) and [Issues](https://github.com/allinbits/cosmos-cash/issues). Important Pull Requests will be listed in this document.
+The explanation content includes articles, topics, and so on, and also includes discussion on relevant channels, including [Pull Requests](https://github.com/allinbits/cosmos-cash/pulls) and [Issues](https://github.com/allinbits/cosmos-cash/issues). Important Pull Requests are listed in this document.
 
-Cosmos Cash currently doesn't have a Discord or Telegram Channel. When we do the links will be added here as well
+Future: Cosmos Cash currently doesn't have a Discord or Telegram Channel. When we do, the links will be added here as well
 ## Contributing
 
-* The content should be dry, clear and terse in style.
-* All documentation should be written following [Google Documentation Best Practice](https://google.github.io/styleguide/docguide/best_practices.html)
-* Generate as much documentation as possible from the code.
+* The Explanation content should be dry, clear, and terse in style.
+* All documentation is written following [Google Documentation Best Practice](https://google.github.io/styleguide/docguide/best_practices.html)
+* Autogenerate documentation from the code whenever possible.
 * Raise a PR for all documentation changes
 * Follow our [Code of Conduct](../CONTRIBUTING.md)
 

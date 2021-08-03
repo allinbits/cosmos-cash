@@ -5,9 +5,14 @@ email, or any other method with the owners of this repository before making a ch
 
 Please note we have a code of conduct, please follow it in all your interactions with the project.
 
+## Commits messages
+
+This project follows [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#summary) format for commit messages and implements it through the [pre-commit](https://pre-commit.com/) framework. Please install this as directed and enable it by running `pre-commit install`. 
+
+
 ## Pull Request Process
 
-1. Install [pre-commit](https://pre-commit.com/) framework and enable it running `pre-commit install`
+1. Install [pre-commit](https://pre-commit.com/) framework and enable it by running `pre-commit install`
 1. Ensure any install or build dependencies are removed before the end of the layer when doing a
    build.
 2. Update the README.md with details of changes to the interface, this includes new environment
@@ -16,6 +21,8 @@ Please note we have a code of conduct, please follow it in all your interactions
    Pull Request would represent. The versioning scheme we use is [SemVer](http://semver.org/).
 4. You may merge the Pull Request in once you have the sign-off of two other developers, or if you
    do not have permission to do that, you may request the second reviewer to merge it for you.
+
+When making comments against a PR please follow recommendation as per [Conventional Comments](https://conventionalcomments.org/).
 
 ## Code of Conduct
 

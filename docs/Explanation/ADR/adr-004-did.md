@@ -16,14 +16,12 @@ The ADR describes an implementation of the [W3C DID specification](https://www.w
 
 ## Context
 
-The W3C DID specification are a building block to realize a SSI platform for tendermint based chains. 
+The W3C DID specifications are the building blocks to realize a Self Sovereign Identity (SSI) platform for Tendermint based chains. 
 
-In the context of cosmos-cash project the SSI approach is a viable path to provide a technical solution for issues around identity, privacy and security that is compliant with regulations such as GDPR.
+In the context of the Cosmos Cash project, the SSI approach is a viable path to provide a technical solution for issues around identity, privacy and security that is compliant with regulations such as GDPR and AML.
 
 ## Decision
 
-> This section describes our response to these forces. It is stated in full sentences, with active voice. "We will ..."
-> {decision body}
 
 The DID W3C specification are designed using the "open world assumption" approach for data modelling. 
 For the cosmos-cash implementation we will be following the did-core specification: custom properties will require a fork and a different implementation of the cosmos-cash did module.
@@ -34,7 +32,7 @@ The schema for the cosmos-cash DID implementation is the following
 
 `did`:`cash`:`{CHAIN_NAME}`:`{ACCOUNT_ADDRESS (without chain prefix)}`
 
-i.e. `did:cash:cosmos:ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj`
+An example DID would be: `did:cash:cosmos:ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj`
 
 where the `CHAIN_NAME` is used by a resolver as routing and the `ACCOUNT_ADDRESS` as the unique identifier for the DID
 

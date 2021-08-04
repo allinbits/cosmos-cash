@@ -7,165 +7,484 @@
 ## Status
 
 DRAFT
-
-
 ## Abstract
 
-The ADR describes an implementation of the [W3C DID specification](https://www.w3.org/TR/did-core) 
+[Decentralized identifiers](https://www.w3.org/TR/did-core) (DIDs) are a new type of identifier that enables verifiable, decentralized digital identity. A DID refers to any subject (e.g., a person, organization, thing, data model, abstract entity, etc.) as determined by the controller of the DID.
 
+This document specifies the DID method for a cosmos based implementation of the W3C recommendation, its properties, operations and an explanation of the process of resolving DIDs to the resources that they represent. 
 
 ## Context
 
-The W3C DID specifications are the building blocks to realize a Self Sovereign Identity (SSI) platform for Tendermint based chains. 
+The aim of the Cosmos Cash project is to provide a state of the art collateralised stable-coin implementation compliant with the EU regulations such as GDPR and MICA and international recommendations such as the FATF "Travel Rule" and local AML regulations.
 
-In the context of the Cosmos Cash project, the SSI approach is a viable path to provide a technical solution for issues around identity, privacy and security that is compliant with regulations such as GDPR and AML.
+A state of the art implementation includes
+
+- A public financial infrastructure (public goods) 
+- Auditing and identification of bad actors (AML regulations)
+- A strictly privacy respecting approach (GDPR)
+
+An approach to tackle the identity and privacy challenge that has been gaining momentum in the recent years is the SSI approach, that, coupled with DLT technology, has been capturing the attention of both the private and public sector. 
+
+The Self-Sovereign Identity (SSI) relays on two building blocks: decentralized identifiers (DIDs) and verifiable credentials (VC). This ADR is about describing the DID implementation in a cosmos-sdk based blockchain.
 
 ## Decision
 
 
 The DID W3C specification are designed using the "open world assumption" approach for data modelling. 
-For the cosmos-cash implementation we will be following the did-core specification: custom properties will require a fork and a different implementation of the cosmos-cash did module.
+For the Cosmos Cash implementation we will be following the did-core specification: custom properties will require a fork and a different implementation of the cosmos-cash did module.
 
-### Method schema
+The following is an example of a DID Document:
 
-The schema for the cosmos-cash DID implementation is the following
+```json
+{
+    "@context": [
+        "https://www.w3.org/ns/did/v1"
+    ],
+    "id": "did:cosmos:cosmos:ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj",
+    "verificationMethods" : [
+        {
+            "id": "did:cosmos:cosmos:ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj#key-1",
+            "type": "EcdsaSecp256k1RecoveryMethod2020",
+            "controller": "did:cosmos:cosmos:ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj",
+            "blockchainAccountID": "cosmos1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj"
+        }
+    ],
+    "authentication": [
+        "did:cosmos:cosmos:ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj#key-1"
+    ],
+    "services": [
+        {
+            "id":"agent:ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj",
+			"type":"DIDCommMessaging",
+			"serviceEndpoint":"https://agent.xyz/ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj",
+        }
+    ]
+}
+```
 
-`did`:`cash`:`{CHAIN_NAME}`:`{ACCOUNT_ADDRESS (without chain prefix)}`
+### DID Method name
 
-An example DID would be: `did:cash:cosmos:ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj`
+The namestring that shall identify this DID method is: `cosmos`.
 
-where the `CHAIN_NAME` is used by a resolver as routing and the `ACCOUNT_ADDRESS` as the unique identifier for the DID
+A DID that uses this method MUST begin with the following prefix: `did:cosmos`. Per this [DID specification](https://www.w3.org/TR/did-core), this string MUST be in lowercase. The remainder of the DID, after the prefix, is specified below.
 
-> TODO: this is a placeholder, a decision must be taken in this regards, the method name could be more generically indicate the module like i.e. `tendermint`
+#### Method Specific Identifier
 
 
-### DID Document
+The namespace specific identifier is defined by the following ABNF:
 
-The DID document will support the following attributes:
+```
+cosmos-did                = "did:cosmos:" cosmos-specific-id-string
+cosmos-specific-id-string = cosmos-chain-name ":" unique-identifier
+cosmos-chain-name         = 1*255id-char
+unique-identifier         = 38*256id-char
+id-char                   = ALPHA / DIGIT / (ALPHA "-") / (DIGIT "-")
+```
 
-- `context` - for json-ld specification
-- `id` - indicating the DID of the document
-- `controller` - a list of DID controllers for the DID document
-- `verificationMethods` - a list of verification method objects
-- `services` - a list of services
+For the `unique-identifier` it is RECOMMENDED to use a cosmos account address (without chain prefix and separator) or a UUID 
 
-We will support the following verification relationships:
+Examples using a cosmos address: 
+- `did:cosmos:cash:ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj`
+- `did:cosmos:cosmos:ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj`
 
-- `authentication`
-- `assertionMethod`
-- `keyExchange`
-- `invocationMethod`
-- `delegationMethod`
-
+Examples using a UUID:
+- `did:cosmos:cash:806e557e-ecdb-4e80-ab0d-a82ad35c9ceb`
+  
 
 ##### [DID Operations](https://www.w3.org/TR/did-core/#method-operations)
 
-
+DID and associated DID documents are managed by a cosmos-sdk module using gRPC as communication protocol. In this section the CRUD operations for a cosmos DID are defined.
 ###### Create
 
-The publication on chain of a DID document is allowed only when the submitted DID document contains at least one verification method that is listed in the verification relationship `authentication` and whose `blockchainAccountID` matches the transaction signer for the address part (ignoring the chain prefix).
+To create and publish a DID document use the message 
+
+```
+MsgCreateDidDocument(id string, signerAccount string)
+```
+
+The parameter for the message are the DID to be created and the key that will be used as the initial verification method in the authentication relationship in the DID document. 
+
+If the input did is not a valid did for the cosmos method or the DID already exists on chain, the message will return an error. 
+
+Example message and resulting DID Document on a Cosmos Cash chain:
+```javascript
+/* gRPC message */
+MsgCreateDidDocument(
+    "806e557e-ecdb-4e80-ab0d-a82ad35c9ceb", 
+    "cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj"
+)
+
+/* DID document */
+{
+    "@context": [
+        "https://www.w3.org/ns/did/v1"
+    ],
+    "id": "did:cosmos:cash:806e557e-ecdb-4e80-ab0d-a82ad35c9ceb",
+    "verificationMethods" : [
+        {
+            "id": "did:key:cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj#cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj",
+            "type": "EcdsaSecp256k1RecoveryMethod2020",
+            "controller": "did:key:cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj",
+            "blockchainAccountID": "cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj"
+        }
+    ],
+    "authentication": [
+        "did:key:cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj"
+    ]
+}
+
+/* DID metadata */
+{
+  "created": "2021-03-23T06:35:22Z",
+  "updated": "2021-03-23T06:35:22Z", 
+  "versionId": "ae11692325525e82337167fcfab34d45d1904ff786e2d4bf4be2d1c4878cd34c" /* hex(blake2b(tx)) */
+}
+
+```
+
+The [`did:key`](https://w3c-ccg.github.io/did-method-key/) method is supported by the module and resolves automatically blockchain addresses. 
+
+It is RECOMMENDED to use an id that is not equals to the blockchain account address for privacy concerns and to isolate the verification methods to the did subject (for example during key rotation)
+
+
+> NOTE a more fine grained way of creating a DID is by using the `MsgCreateDidDocumentWitOptions`, refer to the module documentation for more details (?)
+
 
 ###### Resolve/Verify
 
 The integrity of the DID documents stored on the ledger are guaranteed by the underlying blockchain protocol. 
 
+
+
+
 > TODO: anything to add about resolution? see [169#issuecomment-891189527](https://github.com/allinbits/cosmos-cash/issues/169#issuecomment-891189527)
 
 ###### Update
 
-Amends to a DID document are allowed only to:
+There are two ways of updating a DID document:
 
-- controllers of one of the verification method listed in the `authentication` verification relationship
-- controllers of one of the verification method listed in the `authentication` verification relationship of the DID document identified in the the controller of the current DID document 
+- manage DID controllers
+- manipulate verification methods and relationships 
 
-```
-example: 
+In both cases the target DID MUST exists on chain and the `signerAccount` MUST exists as a verification method (property `blockchainAccountID`) in a verification relationship of type `authentication` or being listed as a DID controller.
 
-giving did did:cash:abc:1111 described by document
 
+**DID controllers** 
+
+The DID controllers can be set using the gRPC message:
+
+`MsgUpdateDidDocument(did string, controllers []string, signerAccount string)` 
+
+The parameter `did` identifies the did document, the `controllers` are a list of DIDs that will replace the DID document controllers list and the `signerAccount` is the account address signing the transaction.
+
+Controllers will be added using the `did:keys` method.
+
+
+Example:
+
+```javascript
+/* gRPC message */
+MsgUpdateDidDocument(
+    "did:cosmos:cash:806e557e-ecdb-4e80-ab0d-a82ad35c9ceb", 
+    ["cosmos195rlq2hjnn2tmagskys4xtsnsey6gjljg8zxrn"],
+    "cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj"
+)
+
+/* DID document */
 {
-    "@context": ...
-    "id": "did:cash:abc:1111",           <--- DID 111 subject
+    "@context": [
+        "https://www.w3.org/ns/did/v1"
+    ],
+    "id": "did:cosmos:cash:806e557e-ecdb-4e80-ab0d-a82ad35c9ceb",
     "controller": [
-        "did:cash:abc:2222"              <--- Controller for the document describing did:cash:abc:1111 
-    ]
+        "did:key:cosmos195rlq2hjnn2tmagskys4xtsnsey6gjljg8zxrn"  // <-- new controller added
+    ],
     "verificationMethods" : [
-        "id": "did:cash:abc:1111#key-1",
-        "type": "EcdsaSecp256k1VerificationKey2019",
-        "controller": "did:cash:abc:1111",   <--- Controller for the verification method identified by did:cash:abc:1111#key-1
-        "blockchainAccountID": "cosmos1g4fdrtxjjvzxvazkmj7zgz634a4hn93nry0p9u"
+        {
+            "id": "did:key:cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj#cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj",
+            "type": "EcdsaSecp256k1RecoveryMethod2020",
+            "controller": "did:key:cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj",
+            "blockchainAccountID": "cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj"
+        }
     ],
     "authentication": [
-        "id": "did:cash:abc:1111#key-1"      <--- Authentication relationships for key did:cash:abc:1111#key-1
+        "did:key:cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj#cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj"
     ]
 }
 
-and did:cash:abc:2222
-
+/* DID metadata */
 {
-    "@context": ...
-    "id": "did:cash:abc:2222",         <--- DID subject 
-    "verificationMethods" : [
-        "id": "did:cash:abc:2222#key-1",
-        "type": "EcdsaSecp256k1VerificationKey2019",
-        "controller": "did:cash:abc:2222", <--- Controller for the verification method identified by did:cash:abc:1111#key-1
-        "blockchainAccountID": "cosmos1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj",
-    ],
-    "authentication": [
-        "id": "did:cash:abc:2222#key-1"    <--- Authentication relationships for key did:cash:abc:2222#key-1
-    ] 
+  "created": "2021-03-23T06:35:22Z",
+  "updated": "2021-04-23T06:35:22Z",  // <--  update field modified
+  "versionId": "96b3504be7e37a6aa55faff3cd41266bf4db3b0654263e1d9b779d3b30174dd1", /* hex(blake2b(tx)) */  //<-- new hash computed
+  "deactivated": false
 }
 
-according to the rules the DID did:cash:abc:2222 is authorized to amend the DID document for did:cash:abc:1111  
 ```
 
 
-The transaction signer address MUST match the verification method `blockchainAccountID` for the address part (ignoring the chain prefix).
+**Verification methods and relationships**
 
-> XXX: the consequences of that is that a controller has the same powers of the creator of the did document
+A new verification method can be added using the gRPC message
+
+```
+MsgAddVerification(did string, accountId string, relationships []string, signerAccount string)
+```
+
+The parameter `did` identifies the did document, the `accountId` is the account to be added to the verification method, the `relationships` are the list of relationships that the `accountId` shall be registered into.  The `signerAccount` is the account address signing the transaction.
+
+The list of relationships should contains only valid [relationships names](#DID_document)
+
+Example:
+
+```javascript
+/* gRPC message */
+MsgAddVerification(
+    "did:cosmos:cash:806e557e-ecdb-4e80-ab0d-a82ad35c9ceb", 
+    "cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2",
+    ["authentication", "keyExchange"],
+    "cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj" // <-- the signer has authorization relationship
+)
+
+/* DID document */
+{
+    "@context": [
+        "https://www.w3.org/ns/did/v1"
+    ],
+    "id": "did:cosmos:cash:806e557e-ecdb-4e80-ab0d-a82ad35c9ceb",
+    "controller": [
+        "did:key:cosmos195rlq2hjnn2tmagskys4xtsnsey6gjljg8zxrn" 
+    ],
+    "verificationMethods" : [
+        {
+            "id": "did:key:cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj#cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj",
+            "type": "EcdsaSecp256k1RecoveryMethod2020",
+            "controller": "did:key:cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj",
+            "blockchainAccountID": "cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj"
+        },
+        {   // <--  a new verification method is added 
+            "id": "did:key:cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2#cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2",
+            "type": "EcdsaSecp256k1RecoveryMethod2020",
+            "controller": "did:key:cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2",
+            "blockchainAccountID": "cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2"
+        }
+    ],
+    "authentication": [
+        "did:key:cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj#cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj",
+        "did:key:cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2#cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2"  //<-- new verification method added to authentication relationship
+    ],
+    "keyExchange": {
+         "did:key:cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2#cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2" //<-- new verification method added to keyExchange relationship
+    }
+}
+
+/* DID metadata */
+{
+  "created": "2021-03-23T06:35:22Z",
+  "updated": "2021-05-23T06:35:22Z",  // <--  update field modified
+  "versionId": "262495b1159c1cd7faf0da56deb6521bb2980d04435818906e417aae47604027", /* hex(blake2b(tx)) */ // <-- new hash computed
+  "deactivated": false
+}
+
+```
+
+The relationships of a verification method can be set using the gRPC message:
+
+```
+MsgSetVerificationRelationships(did string, accountId string, relationships []string, signerAccount string)
+```
+
+The list of relationships should contains only valid [relationships names](#DID_document)
+
+
+Example:
+
+
+```javascript
+/* gRPC message */
+MsgAddVerification(
+    "did:cosmos:cash:806e557e-ecdb-4e80-ab0d-a82ad35c9ceb", 
+    "cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2",
+    ["authentication"],
+    "cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2"
+)
+
+/* DID document */
+{
+    "@context": [
+        "https://www.w3.org/ns/did/v1"
+    ],
+    "id": "did:cosmos:cash:806e557e-ecdb-4e80-ab0d-a82ad35c9ceb",
+    "controller": [
+        "did:key:cosmos195rlq2hjnn2tmagskys4xtsnsey6gjljg8zxrn" 
+    ],
+    "verificationMethods" : [
+        {
+            "id": "did:key:cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj#cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj",
+            "type": "EcdsaSecp256k1RecoveryMethod2020",
+            "controller": "did:key:cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj",
+            "blockchainAccountID": "cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj"
+        },
+        { 
+            "id": "did:key:cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2#cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2",
+            "type": "EcdsaSecp256k1RecoveryMethod2020",
+            "controller": "did:key:cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2",
+            "blockchainAccountID": "cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2"
+        }
+    ],
+    "authentication": [
+        "did:key:cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj#cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj",
+        "did:key:cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2#cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2"  
+    ]
+    // <-- keyExchange has been removed 
+}
+
+/* DID metadata */
+{
+  "created": "2021-03-23T06:35:22Z",
+  "updated": "2021-06-23T06:35:22Z",  // <--  update field modified
+  "versionId": "9066f968940392f3b36a580737f8e1c0bb4bc5ea6757f4d981cb7252c58710e5", /* hex(blake2b(tx)) */ //<-- new hash computed
+  "deactivated": false
+}
+```
+
+To remove a verification method we'll use the same gRPC message leaving the `relationships` fields empty. 
+
+The `signerAccount` MUST exists as a verification method (property `blockchainAccountID`) in a verification relationship of type `authentication` or being listed as a DID controller.
+
+Example:
+
+
+```javascript
+/* gRPC message */
+MsgAddVerification(
+    "did:cosmos:cash:806e557e-ecdb-4e80-ab0d-a82ad35c9ceb", 
+    "cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj",
+    [],
+    "cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2"
+)
+
+/* DID document */
+{
+    "@context": [
+        "https://www.w3.org/ns/did/v1"
+    ],
+    "id": "did:cosmos:cash:806e557e-ecdb-4e80-ab0d-a82ad35c9ceb",
+    "controller": [
+        "did:key:cosmos195rlq2hjnn2tmagskys4xtsnsey6gjljg8zxrn" 
+    ],
+    "verificationMethods" : [
+        // <-- original verification method removed ==> keys have been rotated
+        { 
+            "id": "did:key:cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2#cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2",
+            "type": "EcdsaSecp256k1RecoveryMethod2020",
+            "controller": "did:key:cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2",
+            "blockchainAccountID": "cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2"
+        }
+    ],
+    "authentication": [
+        "did:key:cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2#cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2"  
+    ]
+}
+
+/* DID metadata */
+{
+  "created": "2021-03-23T06:35:22Z",
+  "updated": "2021-06-23T06:35:22Z",  // <--  update field modified
+  "versionId": "9066f968940392f3b36a580737f8e1c0bb4bc5ea6757f4d981cb7252c58710e5", /* hex(blake2b(tx)) */ // <-- new hash computed
+  "deactivated": false
+}
+```
 
 ###### Deactivate
 
-The deactivation of a DID is obtained by removing all the values for the properties:
+A DID can be deactivated using the gRPC message:
 
-- `controller`
-- `verificationMethods` 
+```
+MsgDeactivateDid(did string, signerAccount string)
+```
 
-the deactivation is allowed following the same rules af for the [update operation](#update) 
+The DID identified by the parameter `did` MUST exists on chain and the `signerAccount` MUST exists as a verification method (property `blockchainAccountID`) in a verification relationship of type `authentication` or being listed as a DID controller.
 
-> 
+This operation MUST remove all the verification methods and controllers and set the metadata property `deactivated` to true. This operation is not reversible.
 
-#### Metadata
+Example:
 
+```javascript
+/* gRPC message */
+MsgAddDeactivateDid(
+    "did:cosmos:cash:806e557e-ecdb-4e80-ab0d-a82ad35c9ceb", 
+    "cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2"
+)
+
+/* DID document */
+{
+    "@context": [
+        "https://www.w3.org/ns/did/v1"
+    ],
+    "id": "did:cosmos:cash:806e557e-ecdb-4e80-ab0d-a82ad35c9ceb",
+    "controller": [], // <-- controllers are removed 
+    "verificationMethods" : [] // <-- verification methods are removed
+}
+
+/* DID metadata */
+{
+  "created": "2021-03-23T06:35:22Z",
+  "updated": "2021-07-23T06:35:22Z",  // <--  update field modified
+  "versionId": "3aceb01ce8a0a6fc27fa4091352154dfd60e26d080ecc052d214c58fda4a4d3c", /* hex(blake2b(tx)) */ // <-- new hash computed
+  "deactivated": true  // <-- field deactivated set to true
+}
+```
+
+### Method specific properties 
+
+#### Verification Material 
+
+The verification material type SHOULD be `EcdsaSecp256k1RecoveryMethod2020`
+
+The content of the verification material SHOULD be `blockchainAccountID`, but for interoperability reason the verification material should support also `publicKeyHex`. 
+
+Support for other verification materials MAY be introduced. 
+
+### Verification relationships
+
+The DID document MUST  support the following verification relationships:
+
+- `authentication` - authorizes amends to the DID document
+- `assertionMethod`
+- `keyExchange`
+- `invocationMethod`
+- `delegationMethod`
 
 ##### [DID Document Metadata](https://www.w3.org/TR/did-core/#did-document-metadata)
 
 The implementation for metadata MUST report the following properties for a DID document
 
 - `created`: a [datetime](https://www.w3.org/TR/xmlschema11-2/#dateTime) string of the creation date, that is the utc date associated to the block height when the DID document was submitted the first time
-- `deactivated`: whenever the DID document is [deactivated](#Deactivate) 
-- `versionId`: for the version id we use the hash of the transaction that created/updated the DID
-
+- `updated`: a [datetime](https://www.w3.org/TR/xmlschema11-2/#dateTime) string of the last update date, that is the utc date associated to the block height when the DID document was submitted the last time
+- `deactivated`: a boolean field that indicates whenever the DID document is [deactivated](#Deactivate) 
+- `versionId`: for the version id we use the hex encoded blake2b hash of the transaction that created/updated the DID
 
 ##### [DID Resolution Metadata](https://www.w3.org/TR/did-core/#did-resolution-metadata)
 
-This part of the W3C DID specification is not covered by this ADR
-
+The resolution metadata are outside the scope of the gRPC interface and are not covered in this ADR
 
 #### [DID URL Syntax](https://www.w3.org/TR/did-core/#did-url-syntax)
 
-No `paths` or `fragments` are defined for this DID method. 
+The DID URL is outside the scope of the gRPC interface and are not covered in this ADR
 ##### [Query parameters](https://www.w3.org/TR/did-core/#did-parameters)
+
+The query parameters URL is outside the scope of the gRPC interface and are not covered in this ADR
+
+<!-- 
 
 The implementation MUST support the following query parameters:
 
 - `versionId` - to retrieve a DID document with a specific version 
 - `versionTime` - to retrieve the version of the DID document valid at a specific time, the parameter MUST be a valid [datetime](https://www.w3.org/TR/xmlschema11-2/#dateTime).   
 
-
 The format for the queries is:
-
-
+-->
 ## Consequences
 
 > This section describes the resulting context after applying the decision. List all consequences here, taking care not to list only the "positive" consequences. A particular decision may have positive, negative, and neutral consequences, but all of the consesquences affect the team and project in the future.
@@ -194,7 +513,8 @@ N/A
 While an ADR is in the DRAFT or PROPOSED stage, this section contains a summary of issues to be solved in future iterations. The issues summarized here can reference comments from a pull request discussion.
 Later, this section can optionally list ideas or improvements the author or reviewers found during the analysis of this ADR.
 
-- 
+- The `did:key` method specifies a key format that is not the one used in this ADR. The ADR needs to be amended or to follow a different approach
+- The approach proposed is somewhat locked in to the current implementation, that is a big NO-NO
 
 ## Test Cases [optional]
 
@@ -204,3 +524,8 @@ N/A
 
 - [DID Core](https://www.w3.org/TR/did-core)
 - [DID Specification Registries](https://w3c.github.io/did-spec-registries)
+
+
+
+
+

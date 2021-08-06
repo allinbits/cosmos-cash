@@ -13,13 +13,11 @@ This project follows [Conventional Commits](https://www.conventionalcommits.org/
 ## Pull Request Process
 
 1. To install and enable the [pre-commit](https://pre-commit.com/) framework, run the `pre-commit install` command.
-1. Ensure that you remove any dependencies before the end of the layer before you do a build.
 2. Update the project README.md with details of interface changes, including new or changed environment 
    variables, exposed ports, useful file locations, and container parameters.
-   variables, exposed ports, useful file locations and container parameters.
 3. Increase the version numbers in any examples files and the README.md to the new version that this
    Pull Request would represent. The versioning scheme we use is [SemVer](http://semver.org/).
-4. Pull Requests can be merged after they have approvals of two other developers. 
+4. Pull Requests can be merged after they have approvals of one other developer. 
    If you do not have merge permissions, request the second reviewer to merge the PR for you.
 
 When making comments against a PR, be sure to follow the recommendations in [Conventional Comments](https://conventionalcomments.org/).

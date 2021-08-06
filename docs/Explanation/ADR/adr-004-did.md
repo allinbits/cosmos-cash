@@ -27,6 +27,8 @@ An approach to tackle the identity and privacy challenge that has been gaining m
 
 The Self-Sovereign Identity (SSI) relays on two building blocks: decentralized identifiers (DIDs) and verifiable credentials (VC). This ADR is about describing the DID implementation in a cosmos-sdk based blockchain.
 
+The goal of this ADR is to define a foundation for the necessary components to realize the Cosmos Cash objectives and on the same time to keep the implementation of the DID fully compliant with the W3C specifications. **Successive iterations will address API ergonomics and standard compatibility issues.** 
+
 ## Decision
 
 
@@ -37,7 +39,7 @@ The following is an example of a DID Document:
 
 ```json
 {
-    "@context": [
+    "context": [
         "https://www.w3.org/ns/did/v1"
     ],
     "id": "did:cosmos:cosmos:ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj",
@@ -116,7 +118,7 @@ MsgCreateDidDocument(
 
 /* DID document */
 {
-    "@context": [
+    "context": [
         "https://www.w3.org/ns/did/v1"
     ],
     "id": "did:cosmos:cash:806e557e-ecdb-4e80-ab0d-a82ad35c9ceb",
@@ -147,17 +149,52 @@ The [`did:key`](https://w3c-ccg.github.io/did-method-key/) method is supported b
 It is RECOMMENDED to use an id that is not equals to the blockchain account address for privacy concerns and to isolate the verification methods to the did subject (for example during key rotation)
 
 
-> NOTE a more fine grained way of creating a DID is by using the `MsgCreateDidDocumentWitOptions`, refer to the module documentation for more details (?)
+> NOTE: a more fine grained way of creating a DID MAY be implemented with a `MsgCreateDidDocumentWitOptions` with the goal of saving in gas by executing a single transactions in a complex DID scenario.
 
 
 ###### Resolve/Verify
 
 The integrity of the DID documents stored on the ledger are guaranteed by the underlying blockchain protocol. 
 
+A DID MAY be resolved using the gRPC message:
 
+```
+QueryDidDocumentRequest(did string)
+```
 
+Example
+```javascript
+/* gRPC message */
+QueryDidDocumentRequest("did:cosmos:cash:806e557e-ecdb-4e80-ab0d-a82ad35c9ceb")
 
-> TODO: anything to add about resolution? see [169#issuecomment-891189527](https://github.com/allinbits/cosmos-cash/issues/169#issuecomment-891189527)
+/* DID document */
+{
+    "context": [
+        "https://www.w3.org/ns/did/v1"
+    ],
+    "id": "did:cosmos:cash:806e557e-ecdb-4e80-ab0d-a82ad35c9ceb",
+    "verificationMethods" : [
+        {
+            "id": "did:key:cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj#cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj",
+            "type": "EcdsaSecp256k1RecoveryMethod2020",
+            "controller": "did:key:cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj",
+            "blockchainAccountID": "cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj"
+        }
+    ],
+    "authentication": [
+        "did:key:cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj"
+    ]
+}
+
+/* DID metadata */
+{
+  "created": "2021-03-23T06:35:22Z",
+  "updated": "2021-03-23T06:35:22Z", 
+  "versionId": "ae11692325525e82337167fcfab34d45d1904ff786e2d4bf4be2d1c4878cd34c" /* hex(blake2b(tx)) */
+}
+```
+
+Note that the representation is not compatible with the JSON-LD standard due to some specificity of the Protobuf message format.
 
 ###### Update
 
@@ -171,7 +208,7 @@ In both cases the target DID MUST exists on chain and the `signerAccount` MUST e
 
 **DID controllers** 
 
-The DID controllers can be set using the gRPC message:
+The DID controllers MAY be set using the gRPC message:
 
 `MsgUpdateDidDocument(did string, controllers []string, signerAccount string)` 
 
@@ -192,7 +229,7 @@ MsgUpdateDidDocument(
 
 /* DID document */
 {
-    "@context": [
+    "context": [
         "https://www.w3.org/ns/did/v1"
     ],
     "id": "did:cosmos:cash:806e557e-ecdb-4e80-ab0d-a82ad35c9ceb",
@@ -225,7 +262,7 @@ MsgUpdateDidDocument(
 
 **Verification methods and relationships**
 
-A new verification method can be added using the gRPC message
+A new verification method MAY be added using the gRPC message
 
 ```
 MsgAddVerification(did string, accountId string, relationships []string, signerAccount string)
@@ -233,7 +270,7 @@ MsgAddVerification(did string, accountId string, relationships []string, signerA
 
 The parameter `did` identifies the did document, the `accountId` is the account to be added to the verification method, the `relationships` are the list of relationships that the `accountId` shall be registered into.  The `signerAccount` is the account address signing the transaction.
 
-The list of relationships should contains only valid [relationships names](#DID_document)
+The list of relationships MUST contains only valid [relationships names](#DID_document)
 
 Example:
 
@@ -242,13 +279,13 @@ Example:
 MsgAddVerification(
     "did:cosmos:cash:806e557e-ecdb-4e80-ab0d-a82ad35c9ceb", 
     "cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2",
-    ["authentication", "keyExchange"],
+    ["authentication", "keyAgreement"],
     "cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj" // <-- the signer has authorization relationship
 )
 
 /* DID document */
 {
-    "@context": [
+    "context": [
         "https://www.w3.org/ns/did/v1"
     ],
     "id": "did:cosmos:cash:806e557e-ecdb-4e80-ab0d-a82ad35c9ceb",
@@ -273,8 +310,8 @@ MsgAddVerification(
         "did:key:cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj#cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj",
         "did:key:cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2#cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2"  //<-- new verification method added to authentication relationship
     ],
-    "keyExchange": {
-         "did:key:cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2#cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2" //<-- new verification method added to keyExchange relationship
+    "keyAgreement": {
+         "did:key:cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2#cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2" //<-- new verification method added to keyAgreement relationship
     }
 }
 
@@ -288,13 +325,13 @@ MsgAddVerification(
 
 ```
 
-The relationships of a verification method can be set using the gRPC message:
+The relationships of a verification method MAY be set using the gRPC message:
 
 ```
 MsgSetVerificationRelationships(did string, accountId string, relationships []string, signerAccount string)
 ```
 
-The list of relationships should contains only valid [relationships names](#DID_document)
+The list of relationships MUST contains only valid [relationships names](#DID_document)
 
 
 Example:
@@ -311,7 +348,7 @@ MsgAddVerification(
 
 /* DID document */
 {
-    "@context": [
+    "context": [
         "https://www.w3.org/ns/did/v1"
     ],
     "id": "did:cosmos:cash:806e557e-ecdb-4e80-ab0d-a82ad35c9ceb",
@@ -336,7 +373,7 @@ MsgAddVerification(
         "did:key:cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj#cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj",
         "did:key:cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2#cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2"  
     ]
-    // <-- keyExchange has been removed 
+    // <-- keyAgreement has been removed 
 }
 
 /* DID metadata */
@@ -348,7 +385,7 @@ MsgAddVerification(
 }
 ```
 
-To remove a verification method we'll use the same gRPC message leaving the `relationships` fields empty. 
+A verification method MAY be removed using the same gRPC message leaving the `relationships` fields empty. 
 
 The `signerAccount` MUST exists as a verification method (property `blockchainAccountID`) in a verification relationship of type `authentication` or being listed as a DID controller.
 
@@ -366,7 +403,7 @@ MsgAddVerification(
 
 /* DID document */
 {
-    "@context": [
+    "context": [
         "https://www.w3.org/ns/did/v1"
     ],
     "id": "did:cosmos:cash:806e557e-ecdb-4e80-ab0d-a82ad35c9ceb",
@@ -396,6 +433,125 @@ MsgAddVerification(
 }
 ```
 
+**Services**
+
+A service MUST be an entity with the following properties:
+  
+- `id`: a valid RFC3986 URI string. 
+- `type`: a non empty string.
+- `serviceEndpoint`: a valid RFC3986 URI string.  
+
+A service MAY be added using the gRPC method:
+
+```
+MsgAddService(did string, service_data Service, signerAccount string)
+```
+
+The `id` of a service MUST be unique within the DID document
+
+Example:
+
+
+```javascript
+/* gRPC message */
+MsgAddService(
+    "did:cosmos:cash:806e557e-ecdb-4e80-ab0d-a82ad35c9ceb", 
+    {
+        "id": "did:example:123#edv",
+        "type": "EncryptedDataVault",
+        "serviceEndpoint": "https://edv.example.com/"
+    },
+    "cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2"
+)
+
+/* DID document */
+{
+    "context": [
+        "https://www.w3.org/ns/did/v1"
+    ],
+    "id": "did:cosmos:cash:806e557e-ecdb-4e80-ab0d-a82ad35c9ceb",
+    "controller": [
+        "did:key:cosmos195rlq2hjnn2tmagskys4xtsnsey6gjljg8zxrn" 
+    ],
+    "verificationMethods" : [
+        // <-- original verification method removed ==> keys have been rotated
+        { 
+            "id": "did:key:cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2#cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2",
+            "type": "EcdsaSecp256k1RecoveryMethod2020",
+            "controller": "did:key:cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2",
+            "blockchainAccountID": "cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2"
+        }
+    ],
+    "authentication": [
+        "did:key:cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2#cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2"  
+    ],
+    "services": [  // <-- the service is added to the DID document
+        {
+            "id": "did:example:123#edv",
+            "type": "EncryptedDataVault",
+            "serviceEndpoint": "https://edv.example.com/"
+        }
+    ]
+}
+
+/* DID metadata */
+{
+  "created": "2021-03-23T06:35:22Z",
+  "updated": "2021-07-23T06:35:22Z",  // <--  update field modified
+  "versionId": "d41260e87b4124ece80641207e44ea339ff06865fd5ce204e943e608d4b22268", /* hex(blake2b(tx)) */ // <-- new hash computed
+  "deactivated": false
+}
+```
+
+A service MAY be deleted using the gRPC message:
+
+```
+MsgDeleteService(did string, service_id string, signerAccount string)
+```
+
+Example:
+
+```javascript
+/* gRPC message */
+MsgDeleteService(
+    "did:cosmos:cash:806e557e-ecdb-4e80-ab0d-a82ad35c9ceb", 
+    "did:example:123#edv",
+    "cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2"
+)
+
+/* DID document */
+{
+    "context": [
+        "https://www.w3.org/ns/did/v1"
+    ],
+    "id": "did:cosmos:cash:806e557e-ecdb-4e80-ab0d-a82ad35c9ceb",
+    "controller": [
+        "did:key:cosmos195rlq2hjnn2tmagskys4xtsnsey6gjljg8zxrn" 
+    ],
+    "verificationMethods" : [
+        // <-- original verification method removed ==> keys have been rotated
+        { 
+            "id": "did:key:cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2#cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2",
+            "type": "EcdsaSecp256k1RecoveryMethod2020",
+            "controller": "did:key:cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2",
+            "blockchainAccountID": "cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2"
+        }
+    ],
+    "authentication": [
+        "did:key:cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2#cash1n90e4s33ljxn00lhucvnmnfjng773efma38dc2"  
+    ],
+    "services": []  // <-- the service list is now empty
+}
+
+/* DID metadata */
+{
+  "created": "2021-03-23T06:35:22Z",
+  "updated": "2021-08-23T06:35:22Z",  // <--  update field modified
+  "versionId": "35ba49b94b20ac0a1805aa5283035ea71b003f56e3aeda6a4e9027779fe4aef5", /* hex(blake2b(tx)) */ // <-- new hash computed
+  "deactivated": false
+}
+```
+
 ###### Deactivate
 
 A DID can be deactivated using the gRPC message:
@@ -419,7 +575,7 @@ MsgAddDeactivateDid(
 
 /* DID document */
 {
-    "@context": [
+    "context": [
         "https://www.w3.org/ns/did/v1"
     ],
     "id": "did:cosmos:cash:806e557e-ecdb-4e80-ab0d-a82ad35c9ceb",
@@ -430,15 +586,15 @@ MsgAddDeactivateDid(
 /* DID metadata */
 {
   "created": "2021-03-23T06:35:22Z",
-  "updated": "2021-07-23T06:35:22Z",  // <--  update field modified
-  "versionId": "3aceb01ce8a0a6fc27fa4091352154dfd60e26d080ecc052d214c58fda4a4d3c", /* hex(blake2b(tx)) */ // <-- new hash computed
+  "updated": "2021-09-23T06:35:22Z",  // <--  update field modified
+  "versionId": "e5ca728b93d19daa54180e20eec76d0d5614656c2ee3509df5a21a3abc1249ea", /* hex(blake2b(tx)) */ // <-- new hash computed
   "deactivated": true  // <-- field deactivated set to true
 }
 ```
 
 ### Method specific properties 
 
-#### Verification Material 
+#### [Verification material](https://www.w3.org/TR/did-core/#verification-material)
 
 The verification material type SHOULD be `EcdsaSecp256k1RecoveryMethod2020`
 
@@ -446,15 +602,16 @@ The content of the verification material SHOULD be `blockchainAccountID`, but fo
 
 Support for other verification materials MAY be introduced. 
 
-### Verification relationships
+### [Verification relationships]((https://www.w3.org/TR/did-core/#verification-relationships))
 
-The DID document MUST  support the following verification relationships:
+The DID document MUST support the following verification relationships:
 
-- `authentication` - authorizes amends to the DID document
-- `assertionMethod`
-- `keyExchange`
-- `invocationMethod`
-- `delegationMethod`
+- [`authentication`](https://www.w3.org/TR/did-core/#authentication) - authorizes amends to the DID document
+- [`assertionMethod`](https://www.w3.org/TR/did-core/#assertion)
+- [`keyAgreement`](https://www.w3.org/TR/did-core/#key-agreement)
+- [`capabilityInvocation`](https://www.w3.org/TR/did-core/#capability-invocation)
+- [`capabilityDelegation`](https://www.w3.org/TR/did-core/#capability-delegation)
+
 
 ##### [DID Document Metadata](https://www.w3.org/TR/did-core/#did-document-metadata)
 
@@ -487,18 +644,16 @@ The format for the queries is:
 -->
 ## Consequences
 
-> This section describes the resulting context after applying the decision. List all consequences here, taking care not to list only the "positive" consequences. A particular decision may have positive, negative, and neutral consequences, but all of the consesquences affect the team and project in the future.
-
-
+The cosmos ecosystem will have at its disposition a DID module compatible with the W3C standard and with a high chance of compatibility with 3rd party components such as cloud and edge agents, resolvers and so on.
 
 ### Backwards Compatibility
 
-N/A
+This is a new module so backward compatibility is not a concern.
 
 ### Positive
 
 - The implementation of the ADR provides the foundation for interoperability with the DID standard and more in general with SSI identity approach
-- Closely following the W3C standard gives the best chances of successful interoperability with 3rd party components  
+- Closely following the W3C standard gives the best chances of successful interoperability with 3rd party components.
 
 ### Negative
 
@@ -514,8 +669,7 @@ While an ADR is in the DRAFT or PROPOSED stage, this section contains a summary 
 Later, this section can optionally list ideas or improvements the author or reviewers found during the analysis of this ADR.
 
 - The `did:key` method specifies a key format that is not the one used in this ADR. The ADR needs to be amended or to follow a different approach
-- The approach proposed is somewhat locked in to the current implementation, that is a big NO-NO
-
+- The approach proposed is somewhat locked in to the current implementation, it will have to be revised in successive iterations. 
 ## Test Cases [optional]
 
 N/A

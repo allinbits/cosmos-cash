@@ -37,7 +37,7 @@ For the Cosmos Cash implementation we will be following the did-core specificati
 
 The following is an example of a DID Document:
 
-```json
+```javascript
 {
     "context": [
         "https://www.w3.org/ns/did/v1"
@@ -57,8 +57,8 @@ The following is an example of a DID Document:
     "services": [
         {
             "id":"agent:ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj",
-			"type":"DIDCommMessaging",
-			"serviceEndpoint":"https://agent.xyz/ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj",
+            "type":"DIDCommMessaging",
+            "serviceEndpoint":"https://agent.xyz/ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj",
         }
     ]
 }
@@ -83,13 +83,15 @@ unique-identifier         = 38*256id-char
 id-char                   = ALPHA / DIGIT / (ALPHA "-") / (DIGIT "-")
 ```
 
-For the `unique-identifier` it is RECOMMENDED to use a cosmos account address (without chain prefix and separator) or a UUID 
+For the `unique-identifier` it is RECOMMENDED to use a cosmos account address (without chain prefix and separator) or an UUID 
 
 Examples using a cosmos address: 
-- `did:cosmos:cash:ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj`
-- `did:cosmos:cosmos:ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj`
 
-Examples using a UUID:
+- `did:cosmos:cash:ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj`  from address `cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj`
+- `did:cosmos:cosmoshub:ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj`  from address `cosmos1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj`
+
+Examples using an UUID:
+
 - `did:cosmos:cash:806e557e-ecdb-4e80-ab0d-a82ad35c9ceb`
   
 

@@ -20,6 +20,12 @@ For git pre-commit hooks
 - [pre-commit](https://pre-commit.com/#install) - git pre-commit hooks framework 
 - [golangci-lint](https://github.com/golangci/golangci-lint) - linter for Go 
 
+### Swagger 
+
+To generate the swagger UI the following dependencies must be installed
+
+- [`swagger-combine`](https://www.npmjs.com/package/swagger-combine)
+
 
 ## Development environment setup (only for contributing)
 

@@ -166,7 +166,7 @@ type App struct {
 
 	appName string
 
-	cdc               *codec.LegacyAmino
+	cdc               *codec.LegacyAmino //nolint
 	appCodec          codec.Marshaler
 	interfaceRegistry types.InterfaceRegistry
 
@@ -669,6 +669,7 @@ func (app *App) ModuleAccountAddrs() map[string]bool {
 	return modAccAddrs
 }
 
+//nolint
 // LegacyAmino returns SimApp's amino codec.
 func (app *App) LegacyAmino() *codec.LegacyAmino {
 	return app.cdc
@@ -730,6 +731,7 @@ func (app *App) RegisterTendermintService(clientCtx client.Context) {
 	tmservice.RegisterTendermintService(app.BaseApp.GRPCQueryRouter(), clientCtx, app.interfaceRegistry)
 }
 
+//nolint
 // initParamsKeeper init params keeper and its subspaces
 func initParamsKeeper(appCodec codec.BinaryMarshaler, legacyAmino *codec.LegacyAmino, key, tkey sdk.StoreKey) paramskeeper.Keeper {
 	paramsKeeper := paramskeeper.NewKeeper(appCodec, legacyAmino, key, tkey)

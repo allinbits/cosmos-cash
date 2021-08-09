@@ -9,6 +9,7 @@ import ( // this line is used by starport scaffolding # 1
 	"github.com/allinbits/cosmos-cash/x/issuer/types"
 )
 
+//nolint
 func NewQuerier(k Keeper, legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {
 	return func(ctx sdk.Context, path []string, req abci.RequestQuery) ([]byte, error) {
 		var (

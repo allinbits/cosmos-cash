@@ -8,6 +8,8 @@
 
 DRAFT - Not Implemented
 
+---
+
 ## Abstract
 
 In order to issue a payment token a regulatory compliant issuer module is required. This must be able to 
@@ -20,9 +22,9 @@ In order to issue a payment token a regulatory compliant issuer module is requir
 
 This functionality will use Role Based Access based on Verifiable Credentials with blocklists maintained through the use of revocation lists.
 
-## Context
+---
 
-> This section describes the forces at play, including technological, political, social, and project local. These forces are probably in tension describe them as such. The language in this section is value-neutral and just describes facts. The context should clearly explain the problem and motivation that the proposal aims to resolve.
+## Context
 
 ### Ethereum based Stablecoin issuers
 
@@ -49,6 +51,11 @@ These contracts then have role based access to perform certain actions such as m
 * `mintToken(amount, owner)`
 * `burnToken(amount, owner)`
 
+### Licenses
+
+Regulators and issuers are issued licenses through a regulator or other government body. The licenses then permit the holder to perform certain activities such as hold client money etc. In the UK the [FCA register](https://register.fca.org.uk/s/) acts as public record of licensed entities and the services they can provide. For example, this the record for [UBS AG](https://register.fca.org.uk/s/firm?id=001b000000MfHZiAAN)
+
+---
 
 ## Decision
 
@@ -71,23 +78,23 @@ There SHALL BE the following actors with permissions actions:
 * **Issuer** - this actor SHALL HAVE permissions to
     * Mint/Burn tokens
     * Pause/Unpause tokens in circulation
-    * Redeem tokens for block listed address 
+    * Redeem tokens from block listed address 
+
+### DID
+
+The Regulator and the Issuer Decentralized Identity Document (DID) SHALL HAVE multiple DID controllers. For an Issuer these represent the different functions within a financial insitutions - Operations, Compliance etc. This SHALL support multiple signing such that `Pause/Unpause` requires two parties to make the change. This would mimic a case where Operations would request the pause and Compliance or a Senior Manager would approve the action.
+
+Likewise, the Regulator DID will also have multiple controllers with multi-signatories required for creating/removing an issuer and setting circulation bounds
 
 ### Verifiable Credentials
 
-The functionality SHALL USE Verifiable Credentials to establish Role Based Access to functions. 
-
-The Regulator and the Issuer Decentralized Identity Document (DID) SHALL HAVE multiple DID controllers. For Issuer these represent various functions within a financial insitutions. For example, Operations, Compliance etc. This SHALL support multiple signing such that `Pause/Unpause` requires two parties to make the change. This would mimic a case where Operations would request the pause and Compliance or a Senior Manager would approve the action.
-
-Likewise, the Regulator DID will also have multiple controllers with multi-sigantories required for creating/removing an issuer and setting circulation bounds
-
-> What is involved in revocation of an issuer? Does this burning all tokens in circulation?
+The functionality SHALL USE Verifiable Credentials to establish Role Based Access to functions. See [ADR-OO5 License Credential](https://github.com/allinbits/cosmos-cash/blob/main/docs/Explanation/ADR/adr-005-license-credential.md) for further details regarding issuance, revocation etc.
 
 
 ### Setting up an issuer
 
 * A Regulator actor WILL BE defined. 
-* This Regulator WILL ISSUE signed verifiable credentials to an Issuer.
+* This Regulator WILL ISSUE signed license verifiable credentials to an Issuer.
 * The Regulator address SHALL BE defined in Genesis
 
 > Does the Regulator also do this from Verifiable Credential?
@@ -112,6 +119,7 @@ As propsoed by this ADR, the Issuer module WILL NOT have functionality to mainta
 User transaction limits will also be handled in verifiable credentials. When a user performs a transaction they will present a credential. The credential will prove if the transaction is within the limit for that user.
 
 
+---
 
 ## Consequences
 
@@ -132,6 +140,7 @@ This is a new module so backward compatibility is not a concern.
 
 * This won't be compatible with USDC or USDT issuers module, but it separates permission model from the actual functionality.
 
+---
 
 ## Further Discussions
 
@@ -141,4 +150,5 @@ Later, this section can optionally list ideas or improvements the author or revi
 
 ## References
 
-- {reference link}
+- [OpenVASP Core Data types](https://github.com/OpenVASP/ovips/blob/master/ovip-0013.md)
+- [OpenVASP Credential](https://github.com/OpenVASP/ovips/blob/master/ovip-0015.md)

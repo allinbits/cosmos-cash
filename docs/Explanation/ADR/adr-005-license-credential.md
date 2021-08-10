@@ -43,11 +43,15 @@ DRAFT - Not Implemented
 
 ## Abstract
 
-Financial services regulation is based on licenses issued by a publicly appointed authority for a given jurisdiction. Typically these are maintained centrally by the same authority in a public registry, for example the [FCA registry]. 
+Financial services regulation is based on licenses issued by a publicly appointed authority for a given jurisdiction. Licenses allow legal entities to perform activities such holding client money, offer financial advice etc. Typically a record of all issued licensees is maintained centrally in a public registry such as the [FCA register](https://register.fca.org.uk/s/). 
 
-This ADR describes the structure of a financial services license based on Self-Sovereign Identity where the  verifiable credential as per [W3C Recommendation](https://www.w3.org/TR/vc-data-model/) forms . This credential will be signed by a authority
+This ADR describes the structure of a Financial Services License based on the [W3C specification](https://www.w3.org/TR/vc-data-model/) for verifiable credential. This credential will be signed by the relevant authority and can be used as proof of identity (for example, when establishing relationships with new clients) and proof that holder can perform claimed services.
 
-Through this mechanism any legal person with suitable licensing can use services on the Cosmos Cash network, enabling Cosmos Cash as a PaaS (Platform as a Service)
+With respect to Cosmos Cash, any legal person with a suitable license can present this evidence of authority and perform network services, such as: 
+
+* Mint or burn e-money tokens
+* Operate a Decentralized Exchange 
+* etc. 
 
 ---
 
@@ -65,10 +69,10 @@ In the case of the EU, regulation can extend across multiple jurisdiction, speci
 
 ### Terminology
 
-* `Legal Person`:
-* `Virtual Asset Service Provider`:
-* `Authority`: 
-* `DID`:
+* `Legal Person`: any person or entity that is able to perform legal activties, such as enter into contracts, own property, and so on
+* `Virtual Asset Service Provider`: FATF defines a VASP as the following: *“Any natural/legal person who ...  as a business conducts one or more of the following activities or operations for or on behalf of another natural or legal person: i. exchange between virtual assets and fiat currencies; ii. exchange between one or more forms of virtual assets; iii. transfer of virtual assets; iv. safekeeping and/or administration of virtual assets or instruments enabling control over virtual assets; and v. participation in and provision of financial services related to an issuer’s offer and/or sale of a virtual asset.”*
+* `Regulator`: entities established by governments or other organizations to oversee the functioning and fairness of financial markets and the firms that engage in financial activity.
+* `DID`: Decentralised Identifier. W3C defines a DID as *"A portable URL-based identifier ... associated with an entity ... An example of a DID is did:example:123456abcdef"*
 
 > **DISCUSSION NOTES:** 
 > * Need to decide between 'legal person' and `legal entity`. `legal person` has a legal meaning, but `legal entity` is closer to W3C documentation where it refers to "entities"
@@ -98,20 +102,21 @@ Overall structure is based on standard verifiable credentials.
 
 | Level 1             | Level 2        | Type          					| Mult. | Notes                                         |
 | :------------------ | :------------- | :----------------------------- | :---- | :-------------------------------------------- |
-| `@context`          |                |               					| 1..1  | See [Contexts](https://www.w3.org/TR/vc-data-model/#contexts)      |
-| `id`                |                | DID          					| 1..1  | See [Identifiers](https://www.w3.org/TR/vc-data-model/#identifiers)                   |
-| `type`              |                | List[String]  					| 1..1  | See [Types](https://www.w3.org/TR/vc-data-model/#types)|
+| `@context`          |                |               					| 1..1  | See [W3C Contexts Data Model](https://www.w3.org/TR/vc-data-model/#contexts)      |
+| `id`                |                | DID          					| 1..1  | See [W3C Identifiers Data Model](https://www.w3.org/TR/vc-data-model/#identifiers)                   |
+| `type`              |                | List[String]  					| 1..1  | See [W3C Types Data Model](https://www.w3.org/TR/vc-data-model/#types)|
 | `issuer`            |                | DID           					| 1..1  |                     |
 | `issuanceDate`      |                | String        					| 1..1  | Date format SHALL BE [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339) standard |
 | `credentialSubject` |                |             					| 1..1  |                                               |
 |                     | `vasp`         | [VASP](#vasp)					| 1..1  |                                               |
 |                     | `license`      | List[[License](#license)]		| 0..*  |                                    			|
 |                     | `agreement`    | List[[Agreement](#agreement)]	| 0..*  |                                               |
-| `proof`			  |				   | 								| 1..*  | As per [W3C specification](https://www.w3.org/TR/vc-data-model/) |
+| `proof`			  |				   | 								| 1..*  | As per [W3C Proofs Data Model](https://www.w3.org/TR/vc-data-model/#proofs-signatures) |
 
 **Notes:**
 
-* Contexts CAN TAKE this value as an example: `[
+* Contexts CAN TAKE this value as an example: 
+`[
     "https://www.w3.org/2018/credentials/v1",
     "https://www.cosmos.cash/2021/credentials/license/v1"
   ]`. 
@@ -147,7 +152,7 @@ A **Virtual Asset Service Provider (VASP)** SHALL BE the legal person that can p
 
 ### Legal Person
 
-A legal person CAN HAVE multiple names representing a legal name, trading and short name. For example, All in Bits is a legal name, Tendermint is a trading name. 
+A legal person CAN HAVE multiple names representing a legal name, trading and short name. A relevant example would be where *All in Bits GmBH* is a LEGAL name, but *Tendermint* is a TRADING name. 
 
 Within this specification, a Legal Person MUST HAVE at least one name AND this must be a LEGAL name (see [Name Type](#name-type))
 
@@ -156,8 +161,8 @@ This defintion follows OpenVASP proposal of local and phonetic names. These SHAL
 | Level 2         		| Name            | Type                  | Mult.  | Notes                    |
 | :-------------------- | :-------------- | :-------------------- | :----- | :----------------------- |
 | Name            		| `name`          | List[[Name](#name)]	  | 1..*   |                          |
-| Name local      		| `nameLocal`     | List[[Name](#name)]	  | 0..*   |                          |
-| Name phonetic   		| `namePhonetic`  | List[[Name](#name)]	  | 0..*   |                          |
+| Local Name      		| `nameLocal`     | List[[Name](#name)]	  | 0..*   |                          |
+| Phonetic Name   		| `namePhonetic`  | List[[Name](#name)]	  | 0..*   |                          |
 | Registration Country 	| `regCtry`		  | String(2)			  | 1..1   | `regCtry` MUST BE formatted as per [ISO 3166-1](https://www.iso.org/obp/ui/#iso:std:iso:3166:-1:ed-4:v1:en) |
 
 
@@ -230,9 +235,9 @@ Address currently WILL NOT permit geographical coordinates.
 
 | Level 2             		| Name          | Type                          | Mult. | Notes         						|
 | :------------------------ | :------------ | :---------------------------- | :---- | :------------------------------------ |
-| Address type        		| `adr_type`    | [Address Type](#address-type) | 1..1  |               						|
-| Sub-Premise         		| `subPremise   | String						| 0..1  | Equivalent of Floor, sub-unit etc.	|
-| Premise		      		| `premise      | String						| 0..1  | Equivalent of , Box Number etc.		|
+| Address type        		| `adrType`     | [Address Type](#address-type) | 1..1  |               						|
+| Sub-Premise         		| `subPremise`  | String						| 0..1  | Equivalent of Floor, sub-unit etc.	|
+| Premise		      		| `premise`     | String						| 0..1  | Equivalent of , Box Number etc.		|
 | thoroughfare        		| `thfare`      | String						| 0..1  | Equivalent Street Address or Road		|
 | Post code           		| `postcode`    | String						| 0..1  | Equivalent of zip code				|
 | Locality            		| `town`        | String						| 1..1  | Equivalent of Town or City			|
@@ -278,11 +283,14 @@ Example credential in `json-ld` format is as follows:
 ```json
 {
 	"@context": [
-    	"https://www.w3.org/2018/credentials/v1",
-    	"https://www.cosmos.cash/2021/credentials/license/v1"
+		"https://www.w3.org/2018/credentials/v1",
+		"https://www.cosmos.cash/2021/credentials/license/v1"
 	],
 	"id": "did:cosmos:cash:1000bb528777",
-	"type": ["VerifiableCredential", "LicenseCredential"],
+	"type": [
+		"VerifiableCredential", 
+		"LicenseCredential"
+	],
 	"issuer": "did:sov:12345",
 	"issuanceDate": "2021-08-01T15:23:24Z",
 	"credentialSubject": {
@@ -319,12 +327,12 @@ Example credential in `json-ld` format is as follows:
 			"country": "CH",
 			"authority": "Financial Services Standards Association (VQF)" # should authority be a DID?
 		}, {
-			"licenseType": "MICAEMI", # here is a 
+			"licenseType": "MICAEMI", # here is a MiCA EMI license, for example
 			"country": "CH",
 			"authority": "Another Financial Services Body (AFFB)",
-			"permissions": {
-				"": ,
-				"":  
+			"attributes": {
+				"denom": "sEUR",
+				"circulationLimit": 100.0,  
 			}
 		}],
 		"agreement": {
@@ -337,10 +345,7 @@ Example credential in `json-ld` format is as follows:
 		"created": "2021-08-01T15:23:24Z",
 		"proofPurpose": "assertionMethod",
 		"verificationMethod": "https://example.edu/issuers/keys/1",
-		"jws": "eyJhbGciOiJSUzI1NiIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..TCYt5X
-			sITJX1CxPCT8yAV-TVkIEq_PbChOMqsLfRoPsnsgw5WEuts01mq-pQy7UJiN5mgRxD-WUc
-      			X16dUEMGlv50aqzpqh4Qktb3rk-BuQy72IFLOqV0G_zS245-kronKb78cPN25DGlcTwLtj
-      			PAYuNzVBAh4vGHSrQyHUdBBPM"
+		"jws": "eyJhbGciOiJSUzI1NiIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..." # truncated for readability
   	}
 }
 ```

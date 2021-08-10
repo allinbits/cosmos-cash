@@ -36,11 +36,11 @@ const (
 
 // VerificationRelationships are the supported list of verification relationships
 var VerificationRelationships = map[string]VerificationRelationship{
-	"authentication":       authentication,
-	"assertionMethod":      assertionMethod,
-	"keyAgreement":         keyAgreement,
-	"capabilityInvocation": capabilityInvocation,
-	"capabilityDelegation": capabilityDelegation,
+	Authentication:       authentication,
+	AssertionMethod:      assertionMethod,
+	KeyAgreement:         keyAgreement,
+	CapabilityInvocation: capabilityInvocation,
+	CapabilityDelegation: capabilityDelegation,
 }
 
 // verificationRelationships retrieve the pointer to the verification relationship
@@ -113,8 +113,8 @@ var (
 
 // DID format a DID from a method specific did
 // cfr.https://www.w3.org/TR/did-core/#did
-func DID(didMethodSpecificDidDocument string) string {
-	return fmt.Sprint(DidPrefix, didMethodSpecificDidDocument)
+func DID(chainName, didID string) string {
+	return fmt.Sprint(DidPrefix, chainName, ":", didID)
 }
 
 func DIDKey(didMethodSpecificDidDocument string) string {

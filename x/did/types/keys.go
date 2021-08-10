@@ -21,7 +21,7 @@ const (
 	QuerierRoute = ModuleName
 
 	// DidPrefix defines the did prefix for this chain
-	DidPrefix = "did:cash:"
+	DidPrefix = "did:cosmos:"
 
 	// DidKeyPrefix defines the did key prefix
 	DidKeyPrefix = "did:key:"

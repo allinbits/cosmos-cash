@@ -11,25 +11,29 @@ import (
 func TestDID(t *testing.T) {
 
 	tests := []struct {
-		did  string
-		want string
+		did   string
+		chain string
+		want  string
 	}{
 		{
 			"subject",
-			"did:cash:subject",
+			"cash",
+			"did:cosmos:cash:subject",
 		},
 		{
 			"",
-			"did:cash:",
+			"cash",
+			"did:cosmos:cash:",
 		},
 		{
 			"cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75",
-			"did:cash:cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75",
+			"cosmoshub",
+			"did:cosmos:cosmoshub:cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75",
 		},
 	}
 	for i, tt := range tests {
 		t.Run(fmt.Sprint("TestDID#", i), func(t *testing.T) {
-			if got := DID(tt.did); got != tt.want {
+			if got := DID(tt.chain, tt.did); got != tt.want {
 				t.Errorf("DID() = %v, want %v", got, tt.want)
 			}
 		})

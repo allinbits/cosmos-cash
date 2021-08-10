@@ -52,7 +52,8 @@ func NewCreateDidDocumentCmd() *cobra.Command {
 				return err
 			}
 			// did
-			did := types.DID(args[0])
+
+			did := types.DID(clientCtx.ChainID, args[0])
 
 			// verification
 			signer := clientCtx.GetFromAddress()
@@ -117,7 +118,7 @@ func NewAddVerificationCmd() *cobra.Command {
 			}
 			account, _ := sdk.AccAddressFromHex(pubKey.Address().String())
 			// document did
-			did := types.DID(args[0])
+			did := types.DID(clientCtx.ChainID, args[0])
 			// verification method id
 			vmID := fmt.Sprint(did, "#", uuid.NewV4().String())
 
@@ -170,7 +171,7 @@ func NewAddServiceCmd() *cobra.Command {
 			// service parameters
 			serviceID, serviceType, endpoint := args[1], args[2], args[3]
 			// document did
-			did := types.DID(args[0])
+			did := types.DID(clientCtx.ChainID, args[0])
 
 			service := types.NewService(
 				serviceID,
@@ -209,11 +210,11 @@ func NewRevokeVerificationCmd() *cobra.Command {
 				return err
 			}
 			// document did
-			did := types.DID(args[0])
+			did := types.DID(clientCtx.ChainID, args[0])
 			// signer
 			signer := clientCtx.GetFromAddress()
 			// verification method id
-			vmID := types.DID(args[1])
+			vmID := types.DID(clientCtx.ChainID, args[1])
 			// build the message
 			msg := types.NewMsgRevokeVerification(
 				did,
@@ -247,7 +248,7 @@ func NewDeleteServiceCmd() *cobra.Command {
 				return err
 			}
 			// document did
-			did := types.DID(args[0])
+			did := types.DID(clientCtx.ChainID, args[0])
 			// signer
 			signer := clientCtx.GetFromAddress()
 			// service id
@@ -285,7 +286,7 @@ func NewUpdateDidDocumentCmd() *cobra.Command {
 				return err
 			}
 			// document did
-			did := types.DID(args[0])
+			did := types.DID(clientCtx.ChainID, args[0])
 
 			// did key to use as the controller
 			didKey := types.DIDKey(args[1])
@@ -327,10 +328,10 @@ func NewAddVerificationRelationshipCmd() *cobra.Command {
 				return err
 			}
 			// document did
-			did := types.DID(args[0])
+			did := types.DID(clientCtx.ChainID, args[0])
 
 			// method id
-			methodID := types.DID(args[1])
+			methodID := types.DID(clientCtx.ChainID, args[1])
 
 			// relationship types
 			relationship := args[2]

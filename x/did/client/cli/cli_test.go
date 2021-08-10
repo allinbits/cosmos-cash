@@ -121,9 +121,9 @@ func (s *IntegrationTestSuite) TestGetCmdQueryDidDocument() {
 		expected  proto.Message
 	}{
 		{
-			"json output",
+			"DID Document not found",
 			[]string{
-				"not found",
+				"not-existing-did",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			true,

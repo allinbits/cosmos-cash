@@ -3,6 +3,8 @@ package types
 var (
 	// DidDocumentKey prefix for each key to a DidDocument
 	DidDocumentKey = []byte{0x61}
+	// DidMetadataKey prefix for each key of a DidMetadata
+	DidMetadataKey = []byte{0x62}
 )
 
 const (

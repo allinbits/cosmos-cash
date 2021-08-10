@@ -106,7 +106,7 @@ func (m *MsgCreateDidDocument) Reset()         { *m = MsgCreateDidDocument{} }
 func (m *MsgCreateDidDocument) String() string { return proto.CompactTextString(m) }
 func (*MsgCreateDidDocument) ProtoMessage()    {}
 func (*MsgCreateDidDocument) Descriptor() ([]byte, []int) {
-	return fileDescriptor_75f788725073a497, []int{1}
+	return fileDescriptor_75f788725073a497, []int{2}
 }
 func (m *MsgCreateDidDocument) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -142,7 +142,7 @@ func (m *MsgCreateDidDocumentResponse) Reset()         { *m = MsgCreateDidDocume
 func (m *MsgCreateDidDocumentResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgCreateDidDocumentResponse) ProtoMessage()    {}
 func (*MsgCreateDidDocumentResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_75f788725073a497, []int{2}
+	return fileDescriptor_75f788725073a497, []int{3}
 }
 func (m *MsgCreateDidDocumentResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -181,7 +181,7 @@ func (m *MsgUpdateDidDocument) Reset()         { *m = MsgUpdateDidDocument{} }
 func (m *MsgUpdateDidDocument) String() string { return proto.CompactTextString(m) }
 func (*MsgUpdateDidDocument) ProtoMessage()    {}
 func (*MsgUpdateDidDocument) Descriptor() ([]byte, []int) {
-	return fileDescriptor_75f788725073a497, []int{3}
+	return fileDescriptor_75f788725073a497, []int{4}
 }
 func (m *MsgUpdateDidDocument) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -217,7 +217,7 @@ func (m *MsgUpdateDidDocumentResponse) Reset()         { *m = MsgUpdateDidDocume
 func (m *MsgUpdateDidDocumentResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgUpdateDidDocumentResponse) ProtoMessage()    {}
 func (*MsgUpdateDidDocumentResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_75f788725073a497, []int{4}
+	return fileDescriptor_75f788725073a497, []int{5}
 }
 func (m *MsgUpdateDidDocumentResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -256,7 +256,7 @@ func (m *MsgAddVerification) Reset()         { *m = MsgAddVerification{} }
 func (m *MsgAddVerification) String() string { return proto.CompactTextString(m) }
 func (*MsgAddVerification) ProtoMessage()    {}
 func (*MsgAddVerification) Descriptor() ([]byte, []int) {
-	return fileDescriptor_75f788725073a497, []int{5}
+	return fileDescriptor_75f788725073a497, []int{6}
 }
 func (m *MsgAddVerification) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -292,7 +292,7 @@ func (m *MsgAddVerificationResponse) Reset()         { *m = MsgAddVerificationRe
 func (m *MsgAddVerificationResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgAddVerificationResponse) ProtoMessage()    {}
 func (*MsgAddVerificationResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_75f788725073a497, []int{6}
+	return fileDescriptor_75f788725073a497, []int{7}
 }
 func (m *MsgAddVerificationResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -332,7 +332,7 @@ func (m *MsgSetVerificationRelationships) Reset()         { *m = MsgSetVerificat
 func (m *MsgSetVerificationRelationships) String() string { return proto.CompactTextString(m) }
 func (*MsgSetVerificationRelationships) ProtoMessage()    {}
 func (*MsgSetVerificationRelationships) Descriptor() ([]byte, []int) {
-	return fileDescriptor_75f788725073a497, []int{7}
+	return fileDescriptor_75f788725073a497, []int{8}
 }
 func (m *MsgSetVerificationRelationships) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -370,7 +370,7 @@ func (m *MsgSetVerificationRelationshipsResponse) Reset() {
 func (m *MsgSetVerificationRelationshipsResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgSetVerificationRelationshipsResponse) ProtoMessage()    {}
 func (*MsgSetVerificationRelationshipsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_75f788725073a497, []int{8}
+	return fileDescriptor_75f788725073a497, []int{9}
 }
 func (m *MsgSetVerificationRelationshipsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -409,7 +409,7 @@ func (m *MsgRevokeVerification) Reset()         { *m = MsgRevokeVerification{} }
 func (m *MsgRevokeVerification) String() string { return proto.CompactTextString(m) }
 func (*MsgRevokeVerification) ProtoMessage()    {}
 func (*MsgRevokeVerification) Descriptor() ([]byte, []int) {
-	return fileDescriptor_75f788725073a497, []int{9}
+	return fileDescriptor_75f788725073a497, []int{10}
 }
 func (m *MsgRevokeVerification) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -445,7 +445,7 @@ func (m *MsgRevokeVerificationResponse) Reset()         { *m = MsgRevokeVerifica
 func (m *MsgRevokeVerificationResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgRevokeVerificationResponse) ProtoMessage()    {}
 func (*MsgRevokeVerificationResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_75f788725073a497, []int{10}
+	return fileDescriptor_75f788725073a497, []int{11}
 }
 func (m *MsgRevokeVerificationResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -484,7 +484,7 @@ func (m *MsgAddService) Reset()         { *m = MsgAddService{} }
 func (m *MsgAddService) String() string { return proto.CompactTextString(m) }
 func (*MsgAddService) ProtoMessage()    {}
 func (*MsgAddService) Descriptor() ([]byte, []int) {
-	return fileDescriptor_75f788725073a497, []int{11}
+	return fileDescriptor_75f788725073a497, []int{12}
 }
 func (m *MsgAddService) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -520,7 +520,7 @@ func (m *MsgAddServiceResponse) Reset()         { *m = MsgAddServiceResponse{} }
 func (m *MsgAddServiceResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgAddServiceResponse) ProtoMessage()    {}
 func (*MsgAddServiceResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_75f788725073a497, []int{12}
+	return fileDescriptor_75f788725073a497, []int{13}
 }
 func (m *MsgAddServiceResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -559,7 +559,7 @@ func (m *MsgDeleteService) Reset()         { *m = MsgDeleteService{} }
 func (m *MsgDeleteService) String() string { return proto.CompactTextString(m) }
 func (*MsgDeleteService) ProtoMessage()    {}
 func (*MsgDeleteService) Descriptor() ([]byte, []int) {
-	return fileDescriptor_75f788725073a497, []int{13}
+	return fileDescriptor_75f788725073a497, []int{14}
 }
 func (m *MsgDeleteService) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -595,7 +595,7 @@ func (m *MsgDeleteServiceResponse) Reset()         { *m = MsgDeleteServiceRespon
 func (m *MsgDeleteServiceResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgDeleteServiceResponse) ProtoMessage()    {}
 func (*MsgDeleteServiceResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_75f788725073a497, []int{14}
+	return fileDescriptor_75f788725073a497, []int{15}
 }
 func (m *MsgDeleteServiceResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)

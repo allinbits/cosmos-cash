@@ -27,6 +27,8 @@ require (
 	golang.org/x/term v0.0.0-20201210144234-2321bbc49cbf // indirect
 	google.golang.org/genproto v0.0.0-20210223151946-22b48be4551b
 	google.golang.org/grpc v1.36.0
+	google.golang.org/protobuf v1.25.0 // indirect
+
 )
 
 replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.2-alpha.regen.4

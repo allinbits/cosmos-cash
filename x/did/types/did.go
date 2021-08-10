@@ -1,13 +1,16 @@
 package types
 
 import (
+	"encoding/hex"
 	"fmt"
 	"regexp"
 	"sort"
 	"strings"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"golang.org/x/crypto/blake2b"
 )
 
 type VerificationRelationship int
@@ -140,6 +143,20 @@ func IsValidDIDURL(input string) bool {
 // (cfr https://datatracker.ietf.org/doc/html/rfc3986#page-50)
 func IsValidRFC3986Uri(input string) bool {
 	return rfc3986Regexp.MatchString(input)
+}
+
+// IsValidDIDDocument tells if a DID document is valid,
+// that is if it has the default context and a valid subject
+func IsValidDIDDocument(didDoc *DidDocument) bool {
+	if !IsValidDID(didDoc.Id) {
+		return false
+	}
+	for _, c := range didDoc.Context {
+		if c == contextDIDBase {
+			return true
+		}
+	}
+	return false
 }
 
 // ValidateVerification perform basic validation on a verification struct
@@ -542,6 +559,19 @@ func NewService(id string, serviceType string, serviceEndpoint string) *Service 
 		Id:              id,
 		Type:            serviceType,
 		ServiceEndpoint: serviceEndpoint,
+	}
+}
+
+// NewDidMetadata returns a DidMetadata strcut that has equals created and updated date,
+// and with deactivated field set to false
+func NewDidMetadata(versionData []byte, created time.Time) DidMetadata {
+	// compute the hash from the version data
+	txH := blake2b.Sum256(versionData)
+	return DidMetadata{
+		VersionId:   hex.EncodeToString(txH[:]),
+		Created:     &created,
+		Updated:     &created,
+		Deactivated: false,
 	}
 }
 

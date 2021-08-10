@@ -40,7 +40,10 @@ func (k Keeper) DidDocument(
 		return nil, status.Error(codes.NotFound, "did not found: QueryDidDocument")
 	}
 
+	didM, _ := k.GetDidMetadata(ctx, []byte(req.Id))
+
 	return &types.QueryDidDocumentResponse{
 		DidDocument: did,
+		DidMetadata: didM,
 	}, nil
 }

@@ -35,7 +35,8 @@ func (k Keeper) GetDidMetadata(ctx sdk.Context, key []byte) (types.DidMetadata, 
 
 func (k Keeper) UnmarshalDidMetadata(value []byte) (interface{}, bool) {
 	data := types.DidMetadata{}
-	return data, k.Unmarshal(value, &data)
+	k.Unmarshal(value, &data)
+	return data, types.IsValidDIDMetadata(&data)
 }
 
 func (k Keeper) Marshal(value interface{}) (bytes []byte) {

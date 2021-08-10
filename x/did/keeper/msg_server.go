@@ -47,11 +47,12 @@ func (k msgServer) CreateDidDocument(
 
 	// persist the did document
 	k.Keeper.SetDidDocument(ctx, []byte(msg.Id), did)
-	k.Logger(ctx).Info("Created a DidDocument for", "did", msg.Id, "controller", msg.Signer)
 
 	// now create and persist the metadata
 	didM := types.NewDidMetadata(ctx.TxBytes(), ctx.BlockTime())
-	k.SetDidMetadata(ctx, []byte(msg.Id), didM)
+	k.Keeper.SetDidMetadata(ctx, []byte(msg.Id), didM)
+
+	k.Logger(ctx).Info("Created a DidDocument for", "did", msg.Id, "controller", msg.Signer)
 
 	// emit the event
 	ctx.EventManager().EmitEvent(

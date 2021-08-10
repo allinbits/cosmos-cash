@@ -159,6 +159,18 @@ func IsValidDIDDocument(didDoc *DidDocument) bool {
 	return false
 }
 
+// IsValidDIDMetadata tells if a DID metadata is valid,
+// that is if it has a non empty versionId and a non-zero create date
+func IsValidDIDMetadata(didMeta *DidMetadata) bool {
+	if IsEmpty(didMeta.VersionId) {
+		return false
+	}
+	if didMeta.Created == nil || didMeta.Created.IsZero() {
+		return false
+	}
+	return true
+}
+
 // ValidateVerification perform basic validation on a verification struct
 // optionally validating the validation method controller against a list
 // of allowed controllers.

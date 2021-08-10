@@ -3,6 +3,7 @@ package types
 import (
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -105,6 +106,109 @@ func TestIsValidRFC3986Uri(t *testing.T) {
 		t.Run(fmt.Sprint("TestIsValidRFC3986Uri#", i), func(t *testing.T) {
 			if got := IsValidRFC3986Uri(tt.input); got != tt.want {
 				t.Errorf("IsValidRFC3986Uri() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestIsValidDIDDocument(t *testing.T) {
+	tests := []struct {
+		didFn func() *DidDocument
+		want  bool
+	}{
+		{
+			func() *DidDocument {
+				return &DidDocument{
+					Context: []string{contextDIDBase},
+					Id:      "did:cosmos:cash:1",
+				}
+			},
+			true, // all good
+		},
+		{
+			func() *DidDocument {
+				return &DidDocument{
+					Context: []string{},
+					Id:      "did:cosmos:cash:1",
+				}
+			},
+			false, // missing context
+		},
+		{
+			func() *DidDocument {
+				dd, _ := NewDidDocument("did:cosmos:cash:1")
+				return &dd
+			},
+			true, // all good
+		},
+		{
+			func() *DidDocument {
+				dd, _ := NewDidDocument("")
+				return &dd
+			},
+			false, // empty id
+		},
+	}
+	for i, tt := range tests {
+		t.Run(fmt.Sprint("TestIsValidDIDDocument#", i), func(t *testing.T) {
+			if got := IsValidDIDDocument(tt.didFn()); got != tt.want {
+				t.Errorf("TestIsValidDIDDocument() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestIsValidDIDMetadata(t *testing.T) {
+
+	tests := []struct {
+		didMetaFn func() *DidMetadata
+		want      bool
+	}{
+		{
+			func() *DidMetadata {
+				now := time.Now()
+				return &DidMetadata{
+					VersionId: "d95daac05a36f93d1494208d02d1522d758466c62ea6b64c50b78999d2021f51",
+					Created:   &now,
+				}
+			},
+			true, // all good
+		},
+		{
+			func() *DidMetadata {
+				now := time.Now()
+				return &DidMetadata{
+					VersionId: "",
+					Created:   &now,
+				}
+			},
+			false, // missing version
+		},
+		{
+			func() *DidMetadata {
+				now := time.Now()
+				return &DidMetadata{
+					VersionId: "d95daac05a36f93d1494208d02d1522d758466c62ea6b64c50b78999d2021f51",
+					Updated:   &now,
+				}
+			},
+			false, // null created
+		},
+		{
+			func() *DidMetadata {
+				var now time.Time
+				return &DidMetadata{
+					VersionId: "d95daac05a36f93d1494208d02d1522d758466c62ea6b64c50b78999d2021f51",
+					Created:   &now,
+				}
+			},
+			false, // zero created
+		},
+	}
+	for i, tt := range tests {
+		t.Run(fmt.Sprint("TestIsValidDIDMetadata#", i), func(t *testing.T) {
+			if got := IsValidDIDMetadata(tt.didMetaFn()); got != tt.want {
+				t.Errorf("TestIsValidDIDMetadata() = %v, want %v", got, tt.want)
 			}
 		})
 	}

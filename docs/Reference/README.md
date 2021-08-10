@@ -2,22 +2,16 @@
 
 How to use the Cosmos Cash Reference Documentation.
 
-[TOC]
-
-
+* [Reference Documentation](#reference-documentation)
+   * [Context](#context)
+   * [Approach](#approach)
+   * [Contributing](#contributing)
+   * [Layout](#layout)
+   * [Reference](#reference)
 
 ## Context
 
-In Cosmos Cash we use the  *Grand Unified Theory of Documentation* (David Laing) as described by [Divio](https://documentation.divio.com/) as a basis for our documentation strategy.
-
-This approach outlines four specific use cases for documentation:
-
-* [Tutorials](../Tutorials/README.md)
-* [How-Tos](../How-To/README.md)
-* [Explanation](./Explanation/README.md)
-* [Reference](./README.md)
-
-This section addresses the last of these: **Reference documentation**. 
+In Cosmos Cash we use the  *Grand Unified Theory of Documentation* (David Laing) as described by [Divio](https://documentation.divio.com/) as a basis for our documentation strategy. This section contains **Reference documentation**. 
 
 For further background please see [the ADR relating to the documentation structure](./ADR/adr-002-docs-structure.md). 
 

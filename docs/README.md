@@ -2,8 +2,10 @@
 
 How to use the Cosmos Cash Documentation.
 
-[TOC]
-
+* [Documentation](#documentation)
+   * [Overview](#overview)
+   * [Contributing](#contributing)
+   * [Reference](#reference)
 
 ## Overview
 

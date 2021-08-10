@@ -2,22 +2,23 @@
 
 How to use the Cosmos Cash Explanation Documentation.
 
-[TOC]
+* [Explanation Documentation](#explanation-documentation)
+   * [Context](#context)
+   * [Approach](#approach)
+   * [Layout](#layout)
+      * [Topics](#topics)
+      * [Presentations](#presentations)
+      * [Architecture Decisions Records (ADRs)](#architecture-decisions-records-adrs)
+      * [Articles](#articles)
+   * [Discussions](#discussions)
+   * [Contributing](#contributing)
+   * [Reference](#reference)
+
 
 
 ## Context
 
-In Cosmos Cash we use the  *Grand Unified Theory of Documentation* (David Laing) as described by [Divio](https://documentation.divio.com/) as a basis for our documentation strategy.
-
-This approach outlines four specific use cases for documentation:
-
-* [Tutorials](../Tutorials/README.md)
-* [How-Tos](../How-To/README.md)
-* [Explanation](./README.md)
-* [Reference](./Reference/README.md)
-
-
-This section addresses the third of these: **Explanation documentation**. 
+In Cosmos Cash we use the  *Grand Unified Theory of Documentation* (David Laing) as described by [Divio](https://documentation.divio.com/) as a basis for our documentation strategy. This section contains the **Explanation documentation**. 
 
 For further background, see [the ADR relating to the documentation structure](./ADR/adr-002-docs-structure.md). 
 

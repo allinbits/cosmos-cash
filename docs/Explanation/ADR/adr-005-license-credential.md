@@ -51,13 +51,12 @@ With respect to Cosmos Cash, any legal person with a suitable license can presen
 
 * Mint or burn e-money tokens
 * Operate a Decentralized Exchange 
-* etc. 
 
 ---
 
 ## Context
 
-[ADR-003 defines an issuer module](https://github.com/allinbits/cosmos-cash/blob/main/docs/Explanation/ADR/adr-003-issuer.md). One of the actors defined in that ADR was an issuer. This issuer would hold a license that gives permissions to perform certain activities. The license is issued by a authority actor.
+[ADR-003 defines an issuer module](https://github.com/allinbits/cosmos-cash/blob/main/docs/Explanation/ADR/adr-003-issuer.md). One of the actors defined in that ADR was an issuer. This issuer would hold a license that gives permissions to perform certain activities. The license is issued by an authority actor: the regulator.
 
 The use cases of Role-based permissions on-chain extends to other services or protocols. For example, exchange and custody services. A definition that can extend to these cases would be vital.
 
@@ -280,7 +279,7 @@ Identifies the nature of the address
 
 Example credential in `json-ld` format is as follows:
 
-```json
+```javascript
 {
 	"@context": [
 		"https://www.w3.org/2018/credentials/v1",
@@ -325,9 +324,9 @@ Example credential in `json-ld` format is as follows:
 		"licenses": [{
 			"licenseType": "VQFSRO",
 			"country": "CH",
-			"authority": "Financial Services Standards Association (VQF)" # should authority be a DID?
+			"authority": "Financial Services Standards Association (VQF)" // should authority be a DID?
 		}, {
-			"licenseType": "MICAEMI", # here is a MiCA EMI license, for example
+			"licenseType": "MICAEMI", // here is a MiCA EMI license, for example
 			"country": "CH",
 			"authority": "Another Financial Services Body (AFFB)",
 			"attributes": {
@@ -345,7 +344,7 @@ Example credential in `json-ld` format is as follows:
 		"created": "2021-08-01T15:23:24Z",
 		"proofPurpose": "assertionMethod",
 		"verificationMethod": "https://example.edu/issuers/keys/1",
-		"jws": "eyJhbGciOiJSUzI1NiIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..." # truncated for readability
+		"jws": "eyJhbGciOiJSUzI1NiIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..." // truncated for readability
   	}
 }
 ```

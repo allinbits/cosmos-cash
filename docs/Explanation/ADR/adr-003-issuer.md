@@ -82,7 +82,7 @@ There SHALL BE the following actors with permissions actions:
 
 ### DID
 
-The Regulator and the Issuer Decentralized Identity Document (DID) SHALL HAVE multiple DID controllers. For an Issuer these represent the different functions within a financial insitutions - Operations, Compliance etc. This SHALL support multiple signing such that `Pause/Unpause` requires two parties to make the change. This would mimic a case where Operations would request the pause and Compliance or a Senior Manager would approve the action.
+The Regulator and the Issuer Decentralized Identifier Document (DID) SHALL HAVE multiple DID controllers. For an Issuer these represent the different functions within a financial insitutions - Operations, Compliance etc. This SHALL support multiple signing such that `Pause/Unpause` requires two parties to make the change. This would mimic a case where Operations would request the pause and Compliance or a Senior Manager would approve the action.
 
 Likewise, the Regulator DID will also have multiple controllers with multi-signatories required for creating/removing an issuer and setting circulation bounds
 
@@ -95,7 +95,7 @@ The functionality SHALL USE Verifiable Credentials to establish Role Based Acces
 
 * A Regulator actor WILL BE defined. 
 * This Regulator WILL ISSUE signed license verifiable credentials to an Issuer.
-* The Regulator address SHALL BE defined in Genesis
+* The Regulator address and DID document SHALL BE defined in Genesis
 
 > Does the Regulator also do this from Verifiable Credential?
 

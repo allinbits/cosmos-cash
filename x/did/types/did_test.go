@@ -148,6 +148,12 @@ func TestIsValidDIDDocument(t *testing.T) {
 			},
 			false, // empty id
 		},
+		{
+			func() *DidDocument {
+				return nil
+			},
+			false, // nil pointer
+		},
 	}
 	for i, tt := range tests {
 		t.Run(fmt.Sprint("TestIsValidDIDDocument#", i), func(t *testing.T) {
@@ -203,6 +209,12 @@ func TestIsValidDIDMetadata(t *testing.T) {
 				}
 			},
 			false, // zero created
+		},
+		{
+			func() *DidMetadata {
+				return nil
+			},
+			false, // nil pointer
 		},
 	}
 	for i, tt := range tests {

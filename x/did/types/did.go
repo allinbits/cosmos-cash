@@ -148,6 +148,9 @@ func IsValidRFC3986Uri(input string) bool {
 // IsValidDIDDocument tells if a DID document is valid,
 // that is if it has the default context and a valid subject
 func IsValidDIDDocument(didDoc *DidDocument) bool {
+	if didDoc == nil {
+		return false
+	}
 	if !IsValidDID(didDoc.Id) {
 		return false
 	}
@@ -162,6 +165,9 @@ func IsValidDIDDocument(didDoc *DidDocument) bool {
 // IsValidDIDMetadata tells if a DID metadata is valid,
 // that is if it has a non empty versionId and a non-zero create date
 func IsValidDIDMetadata(didMeta *DidMetadata) bool {
+	if didMeta == nil {
+		return false
+	}
 	if IsEmpty(didMeta.VersionId) {
 		return false
 	}

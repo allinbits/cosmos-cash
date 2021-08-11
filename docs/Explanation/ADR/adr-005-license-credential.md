@@ -92,12 +92,11 @@ Within Cosmos Cash, licenses will be based upon Verifiable Credentials, as per [
 * Licenses CAN NOT expire, but CAN BE revoked.
 * Licenses SHALL BE revoked through the removal of one or more licenses by the authority.
 
-### Credential Defintion
-
-
-### Overall Structure
+### Credential Structure
 
 Overall structure is based on standard verifiable credentials.
+
+![Diagram](../../Reference/architecture/out/LicenseCredential.svg)
 
 | Level 1             | Level 2        | Type          					| Mult. | Notes                                         |
 | :------------------ | :------------- | :----------------------------- | :---- | :-------------------------------------------- |
@@ -111,6 +110,7 @@ Overall structure is based on standard verifiable credentials.
 |                     | `license`      | List[[License](#license)]		| 0..*  |                                    			|
 |                     | `agreement`    | List[[Agreement](#agreement)]	| 0..*  |                                               |
 | `proof`			  |				   | 								| 1..*  | As per [W3C Proofs Data Model](https://www.w3.org/TR/vc-data-model/#proofs-signatures) |
+
 
 **Notes:**
 

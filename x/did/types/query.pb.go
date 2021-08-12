@@ -285,8 +285,9 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type QueryClient interface {
-	// DidDocuments queries all validators that match the given status.
+	// DidDocuments queries all did documents that match the given status.
 	DidDocuments(ctx context.Context, in *QueryDidDocumentsRequest, opts ...grpc.CallOption) (*QueryDidDocumentsResponse, error)
+	// DidDocument queries a did documents with an id.
 	DidDocument(ctx context.Context, in *QueryDidDocumentRequest, opts ...grpc.CallOption) (*QueryDidDocumentResponse, error)
 }
 
@@ -318,8 +319,9 @@ func (c *queryClient) DidDocument(ctx context.Context, in *QueryDidDocumentReque
 
 // QueryServer is the server API for Query service.
 type QueryServer interface {
-	// DidDocuments queries all validators that match the given status.
+	// DidDocuments queries all did documents that match the given status.
 	DidDocuments(context.Context, *QueryDidDocumentsRequest) (*QueryDidDocumentsResponse, error)
+	// DidDocument queries a did documents with an id.
 	DidDocument(context.Context, *QueryDidDocumentRequest) (*QueryDidDocumentResponse, error)
 }
 

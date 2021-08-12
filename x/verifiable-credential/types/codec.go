@@ -7,6 +7,7 @@ import ( // this line is used by starport scaffolding # 1
 	"github.com/cosmos/cosmos-sdk/types/msgservice"
 )
 
+//nolint
 func RegisterCodec(cdc *codec.LegacyAmino) {
 	// this line is used by starport scaffolding # 2
 }

@@ -42,10 +42,12 @@ func (AppModuleBasic) Name() string {
 	return types.ModuleName
 }
 
+//nolint
 func (AppModuleBasic) RegisterCodec(cdc *codec.LegacyAmino) {
 	types.RegisterCodec(cdc)
 }
 
+//nolint
 func (AppModuleBasic) RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	types.RegisterCodec(cdc)
 }
@@ -119,6 +121,7 @@ func (am AppModule) Route() sdk.Route {
 // QuerierRoute returns the capability module's query routing key.
 func (AppModule) QuerierRoute() string { return types.QuerierRoute }
 
+//nolint
 // LegacyQuerierHandler returns the capability module's Querier.
 func (am AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {
 	return keeper.NewQuerier(am.keeper, legacyQuerierCdc)

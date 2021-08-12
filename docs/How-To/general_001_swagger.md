@@ -1,20 +1,20 @@
 # Swagger
 
-This how-tos are dedicated to the swagger documentation bundled with the project.
+This how-to section is dedicated to the Swagger documentation that is bundled with the project.
 
-:warning: the Swagger API are provided as an handy method to query the note data but they cannot be used to submit transactions to the node.
+**Note:** The Swagger API is supported only as a useful method to query the node data. The Swagger API cannot be used to submit transactions to the node.
 
 ## Generate the Swagger UI  
 
 The Swagger UI is generated from the `protobuf` files in the `proto` folder in the root of the project
 
-To generate or refresh the swagger UI run the following command from the project's root:
+To generate or refresh the swagger UI, run the following command from the project's root folder:
 
 ```
 ./scripts/protoc-swagger-gen.sh
 ```
 
-Bundle the generate swagger UI as go package 
+Bundle the generate swagger UI as go package:
 
 ```
 cd ./docs/Reference/swagger
@@ -24,14 +24,13 @@ statik -f -src=./swagger-ui
 
 ## Enable Swagger UI
 
-Swagger UI is disabled by default. To enable Swagger support edit the `app.toml` file, 
-stored by default in the current user home directory:
+Swagger UI is disabled by default. Use the `app.toml` file to enable Swagger support. The default location of the `app.toml` file is the current user home directory:
 
 ```bash
 ~/.cosmos-cash/config/app.toml
 ```
 
-got to the *API Configuration* section and make sure the variables are set to `true` like in the example below
+In the *API Configuration* section, make sure the variables are set to `true` as shown in the following example:
 
 ```toml
 ###############################################################################

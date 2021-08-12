@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	"github.com/allinbits/cosmos-cash/x/did/resolver"
 	"github.com/allinbits/cosmos-cash/x/did/types"
 )
 
@@ -37,6 +38,20 @@ func (k Keeper) DidDocument(
 	ctx := sdk.UnwrapSDKContext(c)
 	did, found := k.GetDidDocument(ctx, []byte(req.Id))
 	if !found {
+		// if it was not found, then check if it is an address
+
+		if _, err := sdk.AccAddressFromBech32(req.Id); err != nil {
+			doc, meta, err := resolver.ResolveAccountDID(req.Id)
+			if err != nil {
+				return nil, status.Error(codes.NotFound, "did not found: QueryDidDocument")
+			}
+			return &types.QueryDidDocumentResponse{
+				DidDocument: doc,
+				DidMetadata: meta,
+			}, nil
+
+		}
+
 		return nil, status.Error(codes.NotFound, "did not found: QueryDidDocument")
 	}
 

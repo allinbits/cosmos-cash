@@ -24,7 +24,7 @@ const (
 	DidPrefix = "did:cosmos:"
 
 	// DidKeyPrefix defines the did key prefix
-	DidKeyPrefix = "did:key:"
+	DidKeyPrefix = "did:cosmos:key:"
 
 	// MemStoreKey defines the in-memory store key
 	MemStoreKey = "mem_capability"

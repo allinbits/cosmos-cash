@@ -3,6 +3,7 @@ package did
 import ( // this line is used by starport scaffolding # 1
 	"context"
 	"encoding/json"
+	"net/http"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -16,6 +17,7 @@ import ( // this line is used by starport scaffolding # 1
 
 	"github.com/allinbits/cosmos-cash/x/did/client/cli"
 	"github.com/allinbits/cosmos-cash/x/did/keeper"
+	"github.com/allinbits/cosmos-cash/x/did/resolver"
 	"github.com/allinbits/cosmos-cash/x/did/types"
 )
 
@@ -162,6 +164,25 @@ func (AppModule) ConsensusVersion() uint64 { return 1 }
 
 // RegisterRESTRoutes registers the capability module's REST service handlers.
 func (AppModuleBasic) RegisterRESTRoutes(clientCtx client.Context, rtr *mux.Router) {
+
+	// identifierHandler
+	didH := func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		did := vars["did"]
+		opt := resolver.ResolutionOption{Accept: r.Header.Get("accept")}
+
+		rr := resolver.ResolveRepresentation(clientCtx, did, opt)
+
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+		err := json.NewEncoder(w).Encode(rr)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
+	}
+
+	rtr.PathPrefix("/identifier/{did}").HandlerFunc(didH)
+
 }
 
 //nolint

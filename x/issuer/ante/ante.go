@@ -46,7 +46,7 @@ func (cicd CheckIssuerCredentialsDecorator) AnteHandle(
 		if msg.Type() == "create-issuer" {
 			imsg := msg.(*types.MsgCreateIssuer)
 
-			signerDID := didtypes.DID(imsg.Owner)
+			signerDID := didtypes.DID(ctx.ChainID(), imsg.Owner)
 
 			// TODO: pass in the did URI as an arg {msg.Id}
 			// TODO: ensure this keeper can only read from store
@@ -175,7 +175,7 @@ func (cicd CheckUserCredentialsDecorator) validateKYCCredential(
 	address string,
 	issuerAddress string,
 ) error {
-	issuerDID := didtypes.DID(address)
+	issuerDID := didtypes.DID(ctx.ChainID(), address)
 
 	// TODO: tidy this functionality into the keeper,
 	// GetDidDocumentWithCondition, GetDidDocumentWithService, GetDidDocumentWithAuth

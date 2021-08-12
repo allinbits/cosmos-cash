@@ -1,13 +1,16 @@
 package types
 
 import (
+	"encoding/hex"
 	"fmt"
 	"regexp"
 	"sort"
 	"strings"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"golang.org/x/crypto/blake2b"
 )
 
 type VerificationRelationship int
@@ -33,11 +36,11 @@ const (
 
 // VerificationRelationships are the supported list of verification relationships
 var VerificationRelationships = map[string]VerificationRelationship{
-	"authentication":       authentication,
-	"assertionMethod":      assertionMethod,
-	"keyAgreement":         keyAgreement,
-	"capabilityInvocation": capabilityInvocation,
-	"capabilityDelegation": capabilityDelegation,
+	Authentication:       authentication,
+	AssertionMethod:      assertionMethod,
+	KeyAgreement:         keyAgreement,
+	CapabilityInvocation: capabilityInvocation,
+	CapabilityDelegation: capabilityDelegation,
 }
 
 // verificationRelationships retrieve the pointer to the verification relationship
@@ -110,8 +113,8 @@ var (
 
 // DID format a DID from a method specific did
 // cfr.https://www.w3.org/TR/did-core/#did
-func DID(didMethodSpecificDidDocument string) string {
-	return fmt.Sprint(DidPrefix, didMethodSpecificDidDocument)
+func DID(chainName, didID string) string {
+	return fmt.Sprint(DidPrefix, chainName, ":", didID)
 }
 
 func DIDKey(didMethodSpecificDidDocument string) string {
@@ -140,6 +143,38 @@ func IsValidDIDURL(input string) bool {
 // (cfr https://datatracker.ietf.org/doc/html/rfc3986#page-50)
 func IsValidRFC3986Uri(input string) bool {
 	return rfc3986Regexp.MatchString(input)
+}
+
+// IsValidDIDDocument tells if a DID document is valid,
+// that is if it has the default context and a valid subject
+func IsValidDIDDocument(didDoc *DidDocument) bool {
+	if didDoc == nil {
+		return false
+	}
+	if !IsValidDID(didDoc.Id) {
+		return false
+	}
+	for _, c := range didDoc.Context {
+		if c == contextDIDBase {
+			return true
+		}
+	}
+	return false
+}
+
+// IsValidDIDMetadata tells if a DID metadata is valid,
+// that is if it has a non empty versionId and a non-zero create date
+func IsValidDIDMetadata(didMeta *DidMetadata) bool {
+	if didMeta == nil {
+		return false
+	}
+	if IsEmpty(didMeta.VersionId) {
+		return false
+	}
+	if didMeta.Created == nil || didMeta.Created.IsZero() {
+		return false
+	}
+	return true
 }
 
 // ValidateVerification perform basic validation on a verification struct
@@ -542,6 +577,19 @@ func NewService(id string, serviceType string, serviceEndpoint string) *Service 
 		Id:              id,
 		Type:            serviceType,
 		ServiceEndpoint: serviceEndpoint,
+	}
+}
+
+// NewDidMetadata returns a DidMetadata strcut that has equals created and updated date,
+// and with deactivated field set to false
+func NewDidMetadata(versionData []byte, created time.Time) DidMetadata {
+	// compute the hash from the version data
+	txH := blake2b.Sum256(versionData)
+	return DidMetadata{
+		VersionId:   hex.EncodeToString(txH[:]),
+		Created:     &created,
+		Updated:     &created,
+		Deactivated: false,
 	}
 }
 

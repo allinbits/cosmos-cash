@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"encoding/hex"
 	"errors"
 	"fmt"
 
@@ -8,7 +9,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	uuid "github.com/satori/go.uuid"
 	"github.com/spf13/cobra"
 
 	"github.com/allinbits/cosmos-cash/x/did/types"
@@ -64,14 +64,14 @@ func NewCreateDidDocumentCmd() *cobra.Command {
 			}
 			pubKey := info.GetPubKey()
 			// verification method id
-			vmID := fmt.Sprint(did, "#", uuid.NewV4().String())
+			vmID := fmt.Sprint(did, "#", sdk.MustBech32ifyAddressBytes(sdk.GetConfig().GetBech32AccountAddrPrefix(), pubKey.Address().Bytes()))
 
 			auth := types.NewVerification(
 				types.NewVerificationMethod(
 					vmID,
-					pubKey.Type(),
 					did,
-					types.BlockchainAccountID(signer.String()),
+					hex.EncodeToString(pubKey.Bytes()),
+					types.DIDVerificationMaterialPublicKeyHex,
 				),
 				[]string{types.Authentication},
 				nil,
@@ -116,18 +116,18 @@ func NewAddVerificationCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			account, _ := sdk.AccAddressFromHex(pubKey.Address().String())
 			// document did
 			did := types.DID(clientCtx.ChainID, args[0])
 			// verification method id
-			vmID := fmt.Sprint(did, "#", uuid.NewV4().String())
+			vmID := fmt.Sprint(did, "#", sdk.MustBech32ifyAddressBytes(sdk.GetConfig().GetBech32AccountAddrPrefix(), pubKey.Address().Bytes()))
 
 			verification := types.NewVerification(
 				types.NewVerificationMethod(
 					vmID,
-					pubKey.Type(),
 					did,
-					types.BlockchainAccountID(account.String())),
+					hex.EncodeToString(pubKey.Bytes()),
+					types.DIDVerificationMaterialPublicKeyHex,
+				),
 				[]string{types.Authentication},
 				nil,
 			)

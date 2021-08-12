@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/cosmos/cosmos-sdk/codec/legacy"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"golang.org/x/crypto/blake2b"
@@ -77,6 +78,21 @@ func parseRelationshipLabels(relNames ...string) (vrs []VerificationRelationship
 	}
 	return
 }
+
+// VerificationMaterialType encode the verification material type
+type VerificationMaterialType int
+
+// List of supported verification material types
+const (
+	DIDVerificationMaterialBlockchainAccountID VerificationMaterialType = iota
+	DIDVerificationMaterialPublicKeyHex
+)
+
+// Verification method types
+const (
+	DIDVerificationMethodTypeSecp256k1_2020 = "EcdsaSecp256k1RecoveryMethod2020"
+	DIDVerificationMethodTypeCosmosAddress  = "CosmosAccountAddress"
+)
 
 /**
 Regexp generated using this ABNF specs and using https://abnf.msweet.org/index.php
@@ -205,9 +221,26 @@ func ValidateVerification(v *Verification, allowedControllers ...string) (err er
 		return
 	}
 
+	// check the verification material
+	switch x := v.Method.VerificationMaterial.(type) {
+	case *VerificationMethod_BlockchainAccountID:
+		if IsEmpty(x.BlockchainAccountID) {
+			err = sdkerrors.Wrapf(ErrInvalidInput, "verification material blockchain account id invalid for verification method %s", v.Method.Id)
+			return
+		}
+	case *VerificationMethod_PublicKeyHex:
+		if IsEmpty(x.PublicKeyHex) {
+			err = sdkerrors.Wrapf(ErrInvalidInput, "verification material pubkey invalid for verification method %s", v.Method.Id)
+			return
+		}
+	default:
+		err = sdkerrors.Wrapf(ErrInvalidInput, "verification material not set for verification method %s", v.Method.Id)
+		return
+	}
+
 	// check for empty publickey
-	if IsEmpty(v.Method.BlockchainAccountID) {
-		err = sdkerrors.Wrapf(ErrInvalidInput, "public key not set for verification method %s", v.Method.Id)
+	if v.Method.VerificationMaterial.Size() == 0 {
+		err = sdkerrors.Wrapf(ErrInvalidInput, "verification material not set for verification method %s", v.Method.Id)
 		return
 	}
 
@@ -463,8 +496,37 @@ func (didDoc DidDocument) HasRelationship(
 ) bool {
 	// first check if the controller exists
 	for _, vm := range didDoc.VerificationMethods {
-		if vm.BlockchainAccountID != BlockchainAccountID(signer) {
-			continue
+
+		switch k := vm.VerificationMaterial.(type) {
+		case *VerificationMethod_BlockchainAccountID:
+			if k.BlockchainAccountID != BlockchainAccountID(signer) {
+				continue
+			}
+		case *VerificationMethod_PublicKeyHex:
+			// decode the pub key
+			pkb, err := hex.DecodeString(k.PublicKeyHex)
+			if err != nil {
+				continue
+			}
+			// deal with the amino prefix
+			pka, err := hex.DecodeString(fmt.Sprintf("eb5ae987%x", len(pkb)))
+			if err != nil {
+				continue
+			}
+			pka = append(pka, pkb...)
+			// load the pubkey
+			pk, err := legacy.PubKeyFromBytes(pka)
+			if err != nil {
+				continue
+			}
+			// generate the address
+			addr, err := sdk.Bech32ifyAddressBytes(sdk.GetConfig().GetBech32AccountAddrPrefix(), pk.Address())
+			if err != nil {
+				continue
+			}
+			if addr != BlockchainAccountID(signer) {
+				continue
+			}
 		}
 
 		vrs := didDoc.GetVerificationRelationships(vm.Id)
@@ -553,14 +615,21 @@ func NewVerification(
 }
 
 // NewVerificationMethod build a new verification method
-// TODO: this only uses BlockchainAccountID
-func NewVerificationMethod(id, keyType, controller, key string) VerificationMethod {
-	return VerificationMethod{
-		Id:                  id,
-		Type:                keyType,
-		Controller:          controller,
-		BlockchainAccountID: key,
+func NewVerificationMethod(id, controller, key string, vmt VerificationMaterialType) VerificationMethod {
+	vm := VerificationMethod{
+		Id:         id,
+		Controller: controller,
 	}
+	switch vmt {
+	case DIDVerificationMaterialPublicKeyHex:
+		vm.VerificationMaterial = &VerificationMethod_PublicKeyHex{key}
+		vm.Type = DIDVerificationMethodTypeSecp256k1_2020
+	case DIDVerificationMaterialBlockchainAccountID:
+		vm.VerificationMaterial = &VerificationMethod_BlockchainAccountID{key}
+		vm.Type = DIDVerificationMethodTypeCosmosAddress
+	}
+	return vm
+
 }
 
 // GetBytes is a helper for serializing

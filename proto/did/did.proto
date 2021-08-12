@@ -77,7 +77,10 @@ message VerificationMethod {
   string id                    = 1;
   string type                  = 2;
   string controller            = 3;
-  string blockchainAccountID   = 4; // by default we support only blockchainAccountID
+  oneof verificationMaterial { 
+    string blockchainAccountID = 4;
+    string publicKeyHex        = 5;
+  }
 }
 
 // Service defines how to find data associated with a identifer

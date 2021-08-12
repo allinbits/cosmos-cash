@@ -43,6 +43,11 @@ var VerificationRelationships = map[string]VerificationRelationship{
 	CapabilityDelegation: capabilityDelegation,
 }
 
+// Verification material
+const (
+	MaterialEcdsaSecp256k1 = "EcdsaSecp256k1RecoveryMethod2020"
+)
+
 // verificationRelationships retrieve the pointer to the verification relationship
 // if it exists, otherwise returns nil
 func (didDoc *DidDocument) getRelationships(rel VerificationRelationship) *[]string {

@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"google.golang.org/grpc/codes"
@@ -38,21 +39,19 @@ func (k Keeper) DidDocument(
 	ctx := sdk.UnwrapSDKContext(c)
 	did, found := k.GetDidDocument(ctx, []byte(req.Id))
 	if !found {
-		// if it was not found, then check if it is an address
-
-		if _, err := sdk.AccAddressFromBech32(req.Id); err != nil {
-			doc, meta, err := resolver.ResolveAccountDID(req.Id)
-			if err != nil {
-				return nil, status.Error(codes.NotFound, "did not found: QueryDidDocument")
-			}
-			return &types.QueryDidDocumentResponse{
-				DidDocument: doc,
-				DidMetadata: meta,
-			}, nil
-
+		// it it isn't a key did, return error
+		if !strings.HasPrefix(req.Id, types.DidKeyPrefix) {
+			return nil, status.Error(codes.NotFound, "did not found: QueryDidDocument")
 		}
-
-		return nil, status.Error(codes.NotFound, "did not found: QueryDidDocument")
+		// autoresolve the address
+		doc, meta, err := resolver.ResolveAccountDID(req.Id)
+		if err != nil {
+			return nil, status.Error(codes.NotFound, "did not found: QueryDidDocument")
+		}
+		return &types.QueryDidDocumentResponse{
+			DidDocument: doc,
+			DidMetadata: meta,
+		}, nil
 	}
 
 	didM, _ := k.GetDidMetadata(ctx, []byte(req.Id))

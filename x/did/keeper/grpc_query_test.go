@@ -57,7 +57,7 @@ func (suite *KeeperTestSuite) TestGRPCQueryDidDocument() {
 			"Fail: will fail because no did is found",
 			func() {
 				req = &types.QueryDidDocumentRequest{
-					Id: "did:cash:1234",
+					Id: "did:cosmos:cash:1234",
 				}
 			},
 			false,
@@ -66,7 +66,7 @@ func (suite *KeeperTestSuite) TestGRPCQueryDidDocument() {
 			"Pass: will pass because a did is found",
 			func() {
 
-				dd, _ := types.NewDidDocument("did:cash:1234")
+				dd, _ := types.NewDidDocument("did:cosmos:cash:1234")
 
 				suite.keeper.SetDidDocument(
 					suite.ctx,
@@ -74,10 +74,28 @@ func (suite *KeeperTestSuite) TestGRPCQueryDidDocument() {
 					dd,
 				)
 				req = &types.QueryDidDocumentRequest{
-					Id: "did:cash:1234",
+					Id: "did:cosmos:cash:1234",
 				}
 			},
 			true,
+		},
+		{
+			"Pass: will pass because a address did is autoresolved",
+			func() {
+				req = &types.QueryDidDocumentRequest{
+					Id: "did:cosmos:key:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+				}
+			},
+			true,
+		},
+		{
+			"Fail: will fail because the only cosmos based address are supported",
+			func() {
+				req = &types.QueryDidDocumentRequest{
+					Id: "did:cosmos:key:0xB88F61E6FbdA83fbfffAbE364112137480398018",
+				}
+			},
+			false,
 		},
 	}
 	for _, tc := range testCases {

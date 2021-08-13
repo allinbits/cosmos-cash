@@ -52,6 +52,11 @@ func ResolveRepresentation(ctx client.Context, did string, opts ResolutionOption
 
 // ResolveAccountDID generates a DID document from an address
 func ResolveAccountDID(did string) (didDoc types.DidDocument, didMeta types.DidMetadata, err error) {
+	if !types.IsValidDIDKeyFormat(did) {
+		err = types.ErrInvalidDidMethodFormat
+		return
+	}
+
 	account := strings.TrimPrefix(did, types.DidKeyPrefix)
 	// compose the metadata
 	didMeta = types.NewDidMetadata([]byte(account), time.Now())

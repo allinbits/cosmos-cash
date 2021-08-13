@@ -18,4 +18,5 @@ var (
 	ErrInvalidState               = sdkerrors.Register(ModuleName, 1107, "the requested action is not applicable on the resource")
 	ErrInvalidInput               = sdkerrors.Register(ModuleName, 1108, "input is invalid")
 	ErrVerificationMethodNotFound = sdkerrors.Register(ModuleName, 1109, "verification method not found")
+	ErrInvalidDidMethodFormat     = sdkerrors.Register(ModuleName, 1110, "invalid did method format")
 )

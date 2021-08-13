@@ -2,6 +2,7 @@ package types
 
 import (
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"sort"
@@ -176,6 +177,15 @@ func IsValidDIDDocument(didDoc *DidDocument) bool {
 		}
 	}
 	return false
+}
+
+// IsValidDIDKeyFormat verify that a did is compliant with the did:cosmos:key format
+// that is the ID must be a bech32 address no longer than 255 bytes
+func IsValidDIDKeyFormat(did string) bool {
+	if _, err := sdk.AccAddressFromBech32(strings.TrimPrefix(did, DidKeyPrefix)); err != nil {
+		return false
+	}
+	return true
 }
 
 // IsValidDIDMetadata tells if a DID metadata is valid,
@@ -630,6 +640,21 @@ func NewVerificationMethod(id, controller, key string, vmt VerificationMaterialT
 	}
 	return vm
 
+}
+
+// MarshalJSON implements a custom marshaller for rendergin verification material
+func (vm VerificationMethod) MarshalJSON() ([]byte, error) {
+	vmd := make(map[string]string, 4)
+	vmd["id"] = vm.Id
+	vmd["controller"] = vm.Controller
+	vmd["type"] = vm.Type
+	switch m := vm.VerificationMaterial.(type) {
+	case *VerificationMethod_BlockchainAccountID:
+		vmd["blockchainAccountID"] = m.BlockchainAccountID
+	case *VerificationMethod_PublicKeyHex:
+		vmd["publicKeyHex"] = m.PublicKeyHex
+	}
+	return json.Marshal(vmd)
 }
 
 // GetBytes is a helper for serializing

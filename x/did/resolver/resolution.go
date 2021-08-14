@@ -55,6 +55,6 @@ func ResolutionErr(err string) ResolutionMetadata {
 // DidResolutionReply contains the answer to a identifier endpoint
 type DidResolutionReply struct {
 	Document           types.DidDocument  `json:"didDocument,omitempty"`
-	Metadata           types.DidMetadata  `json:"didMetadata,omitempty"`
+	Metadata           types.DidMetadata  `json:"didDocumentMetadata,omitempty"`
 	ResolutionMetadata ResolutionMetadata `json:"didResolutionMetadata,omitempty"`
 }

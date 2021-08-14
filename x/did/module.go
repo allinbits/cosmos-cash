@@ -169,9 +169,16 @@ func (AppModuleBasic) RegisterRESTRoutes(clientCtx client.Context, rtr *mux.Rout
 	didH := func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		did := vars["did"]
+
+		// TODO better handling of the accept header
 		opt := resolver.ResolutionOption{Accept: r.Header.Get("accept")}
 
 		rr := resolver.ResolveRepresentation(clientCtx, did, opt)
+
+		w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("origin"))
+		w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "content-type,accept")
+		w.Header().Set("Access-Control-Expose-Headers", "Authorization")
 
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
@@ -181,7 +188,7 @@ func (AppModuleBasic) RegisterRESTRoutes(clientCtx client.Context, rtr *mux.Rout
 		}
 	}
 
-	rtr.PathPrefix("/identifier/{did}").HandlerFunc(didH)
+	rtr.PathPrefix("/identifier/{did}").HandlerFunc(didH).Methods(http.MethodGet, http.MethodOptions)
 
 }
 

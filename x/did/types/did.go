@@ -1,6 +1,7 @@
 package types
 
 import (
+	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
@@ -12,7 +13,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec/legacy"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"golang.org/x/crypto/blake2b"
 )
 
 type VerificationRelationship int
@@ -677,14 +677,19 @@ func NewService(id string, serviceType string, serviceEndpoint string) *Service 
 // NewDidMetadata returns a DidMetadata strcut that has equals created and updated date,
 // and with deactivated field set to false
 func NewDidMetadata(versionData []byte, created time.Time) DidMetadata {
-	// compute the hash from the version data
-	txH := blake2b.Sum256(versionData)
-	return DidMetadata{
-		VersionId:   hex.EncodeToString(txH[:]),
+	m := DidMetadata{
 		Created:     &created,
-		Updated:     &created,
 		Deactivated: false,
 	}
+	UpdateDidMetadata(&m, versionData, created)
+	return m
+}
+
+// UpdateDidMetadata updates a DID metadata time and version id
+func UpdateDidMetadata(meta *DidMetadata, versionData []byte, updated time.Time) {
+	txH := sha256.Sum256(versionData)
+	meta.VersionId = hex.EncodeToString(txH[:])
+	meta.Updated = &updated
 }
 
 // union perform union, distinct amd sort operation between two slices

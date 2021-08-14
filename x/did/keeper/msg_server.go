@@ -331,8 +331,7 @@ func (k msgServer) SetVerificationRelationships(
 func updateDidMetadata(keeper *Keeper, ctx sdk.Context, did string) (err error) {
 	didMeta, found := keeper.GetDidMetadata(ctx, []byte(did))
 	if found {
-		bt := ctx.BlockTime()
-		didMeta.Updated = &bt
+		types.UpdateDidMetadata(&didMeta, ctx.TxBytes(), ctx.BlockTime())
 		keeper.SetDidMetadata(ctx, []byte(did), didMeta)
 	} else {
 		err = fmt.Errorf("(warning) did metadata not found")

@@ -9,33 +9,36 @@
 DRAFT
 ## Abstract
 
-[Decentralized identifiers](https://www.w3.org/TR/did-core) (DIDs) are a new type of identifier that enables verifiable, decentralized digital identity. A DID refers to any subject (e.g., a person, organization, thing, data model, abstract entity, etc.) as determined by the controller of the DID.
+[Decentralized identifiers](https://www.w3.org/TR/did-core) (DIDs) are a type of identifier that enables verifiable, decentralized digital identity. A DID refers to any subject (for example, a person, organization, thing, data model, abstract entity, and so on) as determined by the controller of the DID.
 
-This document specifies the DID method for a cosmos based implementation of the W3C recommendation, its properties, operations and an explanation of the process of resolving DIDs to the resources that they represent. 
+This document specifies the DID method for a Cosmos SDK-based implementation of the W3C recommendation, its properties, operations, and an explanation of the process to resolve DIDs to the resources that they represent. 
 
 ## Context
 
-The aim of the Cosmos Cash project is to provide a state of the art collateralised stable-coin implementation compliant with the EU regulations such as GDPR and MICA and international recommendations such as the FATF "Travel Rule" and local AML regulations.
+The aim of the Cosmos Cash project is to provide a state-of-the-art collateralized stable coin implementation that is compliant with:
 
-A state of the art implementation includes
+ - EU regulations such as General Data Protection Regulation (GDPR) and Markets in Crypto-Assets (MiCA)
+ - International recommendations such as the Financial Action Task Force (FATF) "Travel Rule"
+ - Local anti-money laundering (AML) regulations
+
+The Cosmos Cash state-of-the-art collateralized stable coin implementation includes:
 
 - A public financial infrastructure (public goods) 
 - Auditing and identification of bad actors (AML regulations)
-- A strictly privacy respecting approach (GDPR)
+- A strict privacy-respecting approach (GDPR)
 
-An approach to tackle the identity and privacy challenge that has been gaining momentum in the recent years is the SSI approach, that, coupled with DLT technology, has been capturing the attention of both the private and public sector. 
+The self-sovereign identity (SSI) approach to tackling the identity and privacy challenge has been gaining momentum in recent years. Coupled with distributed ledger technology (DLT) technology, the SSI approach has been capturing the attention of both the private and public sectors. 
 
-The Self-Sovereign Identity (SSI) relays on two building blocks: decentralized identifiers (DIDs) and verifiable credentials (VC). This ADR is about describing the DID implementation in a cosmos-sdk based blockchain.
+The SSI approach relies on two building blocks: decentralized identifiers (DID) and verifiable credentials (VC). This architecture decision record (ADR) describes the DID implementation in a Cosmos SDK-based blockchain.
 
-The goal of this ADR is to define a foundation for the necessary components to realize the Cosmos Cash objectives and on the same time to keep the implementation of the DID fully compliant with the W3C specifications. **Successive iterations will address API ergonomics and standard compatibility issues.** 
+The goal of this ADR is to define a foundation for the necessary components to realize the Cosmos Cash objectives while ensuring the implementation of the DID is fully compliant with the W3C specifications. **Successive iterations will address API ergonomics and standard compatibility issues.** 
 
 ## Decision
 
 
-The DID W3C specification are designed using the "open world assumption" approach for data modelling. 
-For the Cosmos Cash implementation we will be following the did-core specification: custom properties will require a fork and a different implementation of the cosmos-cash did module.
+The Cosmos Cash implementation for DIDs will follow the [DID W3C core recommendations](https://github.com/w3c/did-core) with the goal of maximizing compatibility with 3rd party tools and projects.
 
-The following is an example of a DID Document:
+The following example of a DID document:
 
 ```javascript
 {
@@ -64,18 +67,18 @@ The following is an example of a DID Document:
 }
 ```
 
-### DID Method name
+### DID Method Name
 
-The namestring that shall identify this DID method is: `cosmos`.
+The namestring that shall identify the Cosmos Cash DID method is: `cosmos`.
 
-A DID that uses this method MUST begin with the following prefix: `did:cosmos`. Per this [DID specification](https://www.w3.org/TR/did-core), this string MUST be in lowercase. The remainder of the DID, after the prefix, is specified below.
+A DID that uses the Cosmos Cash method MUST begin with the following prefix: `did:cosmos`. Per the [W3C DID specification](https://www.w3.org/TR/did-core), this prefix string MUST be in lowercase. The remainder of the DID, after the prefix, is as follows:
 
 #### Method Specific Identifier
 
 
 The namespace specific identifier is defined by the following ABNF:
 
-```
+```ABNF
 cosmos-did                = "did:cosmos:" cosmos-specific-id-string
 cosmos-specific-id-string = cosmos-chain-name ":" unique-identifier
 cosmos-chain-name         = 1*255id-char
@@ -83,21 +86,22 @@ unique-identifier         = 38*256id-char
 id-char                   = ALPHA / DIGIT / (ALPHA "-") / (DIGIT "-")
 ```
 
-For the `unique-identifier` it is RECOMMENDED to use a cosmos account address (without chain prefix and separator) or an UUID 
+For the `unique-identifier` it is RECOMMENDED to use a UUID.
 
 Examples using a cosmos address: 
 
 - `did:cosmos:cash:ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj`  from address `cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj`
 - `did:cosmos:cosmoshub:ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj`  from address `cosmos1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj`
 
-Examples using an UUID:
+Examples using a UUID:
 
 - `did:cosmos:cash:806e557e-ecdb-4e80-ab0d-a82ad35c9ceb`
   
 
 ##### [DID Operations](https://www.w3.org/TR/did-core/#method-operations)
 
-DID and associated DID documents are managed by a cosmos-sdk module using gRPC as communication protocol. In this section the CRUD operations for a cosmos DID are defined.
+DID and associated DID documents are managed by a Cosmos SDK module that uses the gRPC communication protocol. This section defines the CRUD operations for a Cosmos DID. 
+
 ###### Create
 
 To create and publish a DID document use the message 
@@ -106,9 +110,9 @@ To create and publish a DID document use the message
 MsgCreateDidDocument(id string, signerAccount string)
 ```
 
-The parameter for the message are the DID to be created and the key that will be used as the initial verification method in the authentication relationship in the DID document. 
+The message parameters are the DID to be created and the key is used as the initial verification method in the authentication relationship in the DID document. 
 
-If the input did is not a valid did for the cosmos method or the DID already exists on chain, the message will return an error. 
+If the input DID is not a valid DID for the Cosmos method, or if the DID already exists on-chain, the message returns an error. 
 
 Example message and resulting DID Document on a Cosmos Cash chain:
 ```javascript
@@ -148,17 +152,21 @@ MsgCreateDidDocument(
 
 The [`did:key`](https://w3c-ccg.github.io/did-method-key/) method is supported by the module and resolves automatically blockchain addresses. 
 
-It is RECOMMENDED to use an id that is not equals to the blockchain account address for privacy concerns and to isolate the verification methods to the did subject (for example during key rotation)
+To address privacy concerns:
+
+- Do not use an id that is the same as the blockchain account address
+- Isolate the verification methods to the DID subject (for example, during key rotation)
 
 
-> NOTE: a more fine grained way of creating a DID MAY be implemented with a `MsgCreateDidDocumentWitOptions` with the goal of saving in gas by executing a single transactions in a complex DID scenario.
+> **Note:** A more fine-grained DID creation method MAY be implemented with the `MsgCreateDidDocumentWitOptions` message with the goal of saving in gas by executing a single transaction in a complex DID scenario.
 
 
-###### Resolve/Verify
+###### Resolve and Verify
 
-The integrity of the DID documents stored on the ledger are guaranteed by the underlying blockchain protocol. 
+The integrity of the DID documents stored on the ledger is guaranteed by the underlying blockchain protocol. 
 
-A DID MAY be resolved using the gRPC message:
+A DID can be resolved using the gRPC message:
+
 
 ```
 QueryDidDocumentRequest(did string)
@@ -202,19 +210,23 @@ Note that the representation is not compatible with the JSON-LD standard due to 
 
 There are two ways of updating a DID document:
 
-- manage DID controllers
-- manipulate verification methods and relationships 
+- Manage DID controllers
+- Manipulate verification methods and relationships 
 
-In both cases the target DID MUST exists on chain and the `signerAccount` MUST exists as a verification method (property `blockchainAccountID`) in a verification relationship of type `authentication` or being listed as a DID controller.
+In both cases, the target DID must exist on-chain and the `signerAccount` must exist as a verification method (property `blockchainAccountID`) in a verification relationship of type `authentication` or be listed as a DID controller.
 
 
-**DID controllers** 
+**Manage DID Controllers** 
 
-The DID controllers MAY be set using the gRPC message:
+Set the DID controllers using the gRPC message:
 
 `MsgUpdateDidDocument(did string, controllers []string, signerAccount string)` 
 
-The parameter `did` identifies the did document, the `controllers` are a list of DIDs that will replace the DID document controllers list and the `signerAccount` is the account address signing the transaction.
+The parameters are as follows:
+
+ - `did` identifies the did document
+ - `controllers` are a list of DIDs that will replace the DID document controllers list 
+ - `signerAccount` is the account address that is signing the transaction
 
 Controllers will be added using the `did:keys` method.
 
@@ -264,15 +276,20 @@ MsgUpdateDidDocument(
 
 **Verification methods and relationships**
 
-A new verification method MAY be added using the gRPC message
+Add a new verification method using the gRPC message:
 
 ```
 MsgAddVerification(did string, accountId string, relationships []string, signerAccount string)
 ```
 
-The parameter `did` identifies the did document, the `accountId` is the account to be added to the verification method, the `relationships` are the list of relationships that the `accountId` shall be registered into.  The `signerAccount` is the account address signing the transaction.
+The parameters are as follows:
 
-The list of relationships MUST contains only valid [relationships names](#DID_document)
+ - `did` identifies the did document
+ - `accountId` is the account to be added to the verification method
+ - `relationships` is the list of relationships that the `accountId` will be registered into
+ - `signerAccount` is the account address that is signing the transaction
+
+The list of relationships must contain only valid [relationships names](#DID_document) as defined in the DID document:
 
 Example:
 
@@ -327,7 +344,7 @@ MsgAddVerification(
 
 ```
 
-The relationships of a verification method MAY be set using the gRPC message:
+Set the relationships of a verification method using the gRPC message:
 
 ```
 MsgSetVerificationRelationships(did string, accountId string, relationships []string, signerAccount string)
@@ -389,7 +406,7 @@ MsgAddVerification(
 
 A verification method MAY be removed using the same gRPC message leaving the `relationships` fields empty. 
 
-The `signerAccount` MUST exists as a verification method (property `blockchainAccountID`) in a verification relationship of type `authentication` or being listed as a DID controller.
+The `signerAccount` MUST exist as a verification method (property `blockchainAccountID`) in a verification relationship of type `authentication` or being listed as a DID controller.
 
 Example:
 
@@ -449,7 +466,7 @@ A service MAY be added using the gRPC method:
 MsgAddService(did string, service_data Service, signerAccount string)
 ```
 
-The `id` of a service MUST be unique within the DID document
+The `id` of a service MUST be unique within the DID document.
 
 Example:
 
@@ -562,7 +579,7 @@ A DID can be deactivated using the gRPC message:
 MsgDeactivateDid(did string, signerAccount string)
 ```
 
-The DID identified by the parameter `did` MUST exists on chain and the `signerAccount` MUST exists as a verification method (property `blockchainAccountID`) in a verification relationship of type `authentication` or being listed as a DID controller.
+The DID identified by the parameter `did` MUST exist on-chain and the `signerAccount` MUST exist as a verification method (property `blockchainAccountID`) in a verification relationship of type `authentication` or being listed as a DID controller.
 
 This operation MUST remove all the verification methods and controllers and set the metadata property `deactivated` to true. This operation is not reversible.
 
@@ -594,15 +611,15 @@ MsgAddDeactivateDid(
 }
 ```
 
-### Method specific properties 
+### Method-specific Properties 
 
-#### [Verification material](https://www.w3.org/TR/did-core/#verification-material)
+#### [DID-core Verification Material](https://www.w3.org/TR/did-core/#verification-material)
 
-The verification material type SHOULD be `EcdsaSecp256k1RecoveryMethod2020`
+The verification material type must be `EcdsaSecp256k1RecoveryMethod2020`.
 
-The content of the verification material SHOULD be `blockchainAccountID`, but for interoperability reason the verification material should support also `publicKeyHex`. 
+The content of the verification material can be `blockchainAccountID`, but for interoperability reasons, the verification material should support also `publicKeyHex`. 
 
-Support for other verification materials MAY be introduced. 
+Support for other verification materials might be introduced. 
 
 ### [Verification relationships]((https://www.w3.org/TR/did-core/#verification-relationships))
 
@@ -619,21 +636,21 @@ The DID document MUST support the following verification relationships:
 
 The implementation for metadata MUST report the following properties for a DID document
 
-- `created`: a [datetime](https://www.w3.org/TR/xmlschema11-2/#dateTime) string of the creation date, that is the utc date associated to the block height when the DID document was submitted the first time
-- `updated`: a [datetime](https://www.w3.org/TR/xmlschema11-2/#dateTime) string of the last update date, that is the utc date associated to the block height when the DID document was submitted the last time
-- `deactivated`: a boolean field that indicates whenever the DID document is [deactivated](#Deactivate) 
-- `versionId`: for the version id we use the hex encoded blake2b hash of the transaction that created/updated the DID
+- `created`: a [datetime](https://www.w3.org/TR/xmlschema11-2/#dateTime) string of the creation date that is the UTC date associated with the block height when the DID document was submitted the first time
+- `updated`: a [datetime](https://www.w3.org/TR/xmlschema11-2/#dateTime) string of the last update date that is the UTC date associated with the block height when the DID document was submitted the last time
+- `deactivated`: a boolean field that indicates if the DID document is [deactivated](#Deactivate) 
+- `versionId`: a hex-encoded BLAKE2b hash of the transaction that created or updated the DID
 
 ##### [DID Resolution Metadata](https://www.w3.org/TR/did-core/#did-resolution-metadata)
 
-The resolution metadata are outside the scope of the gRPC interface and are not covered in this ADR
+The resolution metadata are outside the scope of the gRPC interface and are not covered in this ADR.
 
 #### [DID URL Syntax](https://www.w3.org/TR/did-core/#did-url-syntax)
 
-The DID URL is outside the scope of the gRPC interface and are not covered in this ADR
+The DID URL is outside the scope of the gRPC interface and is not covered in this ADR.
 ##### [Query parameters](https://www.w3.org/TR/did-core/#did-parameters)
 
-The query parameters URL is outside the scope of the gRPC interface and are not covered in this ADR
+The query parameters URL is outside the scope of the gRPC interface and is not covered in this ADR.
 
 <!-- 
 
@@ -646,7 +663,7 @@ The format for the queries is:
 -->
 ## Consequences
 
-The cosmos ecosystem will have at its disposition a DID module compatible with the W3C standard and with a high chance of compatibility with 3rd party components such as cloud and edge agents, resolvers and so on.
+The Cosmos ecosystem will provide a DID module that is compatible with the W3C standard and offers a high chance of compatibility with third-party components such as cloud and edge agents, resolvers, and so on.
 
 ### Backwards Compatibility
 
@@ -654,12 +671,12 @@ This is a new module so backward compatibility is not a concern.
 
 ### Positive
 
-- The implementation of the ADR provides the foundation for interoperability with the DID standard and more in general with SSI identity approach
-- Closely following the W3C standard gives the best chances of successful interoperability with 3rd party components.
+- The implementation of the ADR provides the foundation for interoperability with the DID standard and the SSI identity approach.
+- Closely following the W3C standard gives the best chances of successful interoperability with third-party components.
 
 ### Negative
 
-- The implementation follows rigidly the W3C specification leaving little room for extensibility, that might became an issue for a wider adoption 
+- The implementation rigidly follows the W3C specification which leaves little room for extensibility. This approach might become an issue for wider adoption.
 
 ### Neutral
 
@@ -670,8 +687,8 @@ N/A
 While an ADR is in the DRAFT or PROPOSED stage, this section contains a summary of issues to be solved in future iterations. The issues summarized here can reference comments from a pull request discussion.
 Later, this section can optionally list ideas or improvements the author or reviewers found during the analysis of this ADR.
 
-- The `did:key` method specifies a key format that is not the one used in this ADR. The ADR needs to be amended or to follow a different approach
-- The approach proposed is somewhat locked in to the current implementation, it will have to be revised in successive iterations. 
+- The `did:key` method specifies a key format that is different from the one used in this ADR. This ADR needs to be amended or follow a different approach.
+- The approach proposed is somewhat locked into the current implementation and will have to be revised in successive iterations. 
 ## Test Cases [optional]
 
 N/A

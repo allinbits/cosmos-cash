@@ -141,7 +141,9 @@ func DIDKey(didMethodSpecificDidDocument string) string {
 // BlockchainAccountID return the account of the user with the chain id postfixed
 // https://w3c.github.io/did-spec-registries/#blockchainAccountId
 func BlockchainAccountID(account string) string {
-	return fmt.Sprint(account, "")
+	//TODO: at the moment the app doesn't do anything but we
+	// might use the format suggested by the the specification
+	return account
 }
 
 // IsValidDID validate the input string according to the
@@ -509,7 +511,7 @@ func (didDoc DidDocument) HasRelationship(
 
 		switch k := vm.VerificationMaterial.(type) {
 		case *VerificationMethod_BlockchainAccountID:
-			if k.BlockchainAccountID != BlockchainAccountID(signer) {
+			if BlockchainAccountID(k.BlockchainAccountID) != BlockchainAccountID(signer) {
 				continue
 			}
 		case *VerificationMethod_PublicKeyHex:
@@ -534,7 +536,7 @@ func (didDoc DidDocument) HasRelationship(
 			if err != nil {
 				continue
 			}
-			if addr != BlockchainAccountID(signer) {
+			if BlockchainAccountID(addr) != BlockchainAccountID(signer) {
 				continue
 			}
 		}

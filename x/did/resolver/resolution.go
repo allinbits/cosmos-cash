@@ -34,8 +34,9 @@ type ResolutionOption struct {
 // ResolutionMetadata are info about the resolution
 // https://www.w3.org/TR/did-core/#did-resolution-metadata
 type ResolutionMetadata struct {
-	ContentType     string `json:"contentType,omitempty"`
-	ResolutionError string `json:"error,omitempty"`
+	ContentType     string            `json:"contentType,omitempty"`
+	ResolutionError string            `json:"error,omitempty"`
+	DidProperties   map[string]string `json:"did,omitempty"`
 }
 
 // ResolutionOk helper to get a resolution metadata for a successful resolution

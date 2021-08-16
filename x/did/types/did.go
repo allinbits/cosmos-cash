@@ -368,9 +368,9 @@ func (didDoc *DidDocument) SetControllers(controllers ...string) error {
 // AddVerifications add one or more verification method and relations to a did document
 func (didDoc *DidDocument) AddVerifications(verifications ...*Verification) (err error) {
 	// verify that there are no duplicates in method ids
-	index := make(map[string]struct{}, len(didDoc.VerificationMethods))
+	index := make(map[string]struct{}, len(didDoc.VerificationMethod))
 	// load existing verifications if any
-	for _, v := range didDoc.VerificationMethods {
+	for _, v := range didDoc.VerificationMethod {
 		index[v.Id] = struct{}{}
 	}
 
@@ -389,7 +389,7 @@ func (didDoc *DidDocument) AddVerifications(verifications ...*Verification) (err
 		index[v.Method.Id] = struct{}{}
 
 		// first add the method to the list of methods
-		didDoc.VerificationMethods = append(didDoc.VerificationMethods, v.GetMethod())
+		didDoc.VerificationMethod = append(didDoc.VerificationMethod, v.GetMethod())
 
 		// now add the relationships
 		vrs, err := parseRelationshipLabels(v.Relationships...)
@@ -410,15 +410,15 @@ func (didDoc *DidDocument) AddVerifications(verifications ...*Verification) (err
 func (didDoc *DidDocument) RevokeVerification(methodID string) error {
 
 	del := func(x int) {
-		lastIdx := len(didDoc.VerificationMethods) - 1
+		lastIdx := len(didDoc.VerificationMethod) - 1
 		switch lastIdx {
 		case 0:
-			didDoc.VerificationMethods = nil
+			didDoc.VerificationMethod = nil
 		case x:
-			didDoc.VerificationMethods = didDoc.VerificationMethods[:lastIdx]
+			didDoc.VerificationMethod = didDoc.VerificationMethod[:lastIdx]
 		default:
-			didDoc.VerificationMethods[x] = didDoc.VerificationMethods[lastIdx]
-			didDoc.VerificationMethods = didDoc.VerificationMethods[:lastIdx]
+			didDoc.VerificationMethod[x] = didDoc.VerificationMethod[lastIdx]
+			didDoc.VerificationMethod = didDoc.VerificationMethod[:lastIdx]
 		}
 	}
 
@@ -426,7 +426,7 @@ func (didDoc *DidDocument) RevokeVerification(methodID string) error {
 	didDoc.setRelationships(methodID)
 
 	// now remove the method
-	for i, vm := range didDoc.VerificationMethods {
+	for i, vm := range didDoc.VerificationMethod {
 		if vm.Id == methodID {
 			del(i)
 			return nil
@@ -505,7 +505,7 @@ func (didDoc DidDocument) HasRelationship(
 	relationships ...string,
 ) bool {
 	// first check if the controller exists
-	for _, vm := range didDoc.VerificationMethods {
+	for _, vm := range didDoc.VerificationMethod {
 
 		switch k := vm.VerificationMaterial.(type) {
 		case *VerificationMethod_BlockchainAccountID:
@@ -549,15 +549,15 @@ func (didDoc DidDocument) HasRelationship(
 
 // AddServices add services to a did document
 func (didDoc *DidDocument) AddServices(services ...*Service) (err error) {
-	if didDoc.Services == nil {
-		didDoc.Services = []*Service{}
+	if didDoc.Service == nil {
+		didDoc.Service = []*Service{}
 	}
 
 	// used to check duplicates
-	index := make(map[string]struct{}, len(didDoc.Services))
+	index := make(map[string]struct{}, len(didDoc.Service))
 
 	// load existing services
-	for _, s := range didDoc.Services {
+	for _, s := range didDoc.Service {
 		index[s.Id] = struct{}{}
 	}
 
@@ -574,7 +574,7 @@ func (didDoc *DidDocument) AddServices(services ...*Service) (err error) {
 		}
 		index[s.Id] = struct{}{}
 
-		didDoc.Services = append(didDoc.Services, s)
+		didDoc.Service = append(didDoc.Service, s)
 	}
 	return
 }
@@ -582,19 +582,19 @@ func (didDoc *DidDocument) AddServices(services ...*Service) (err error) {
 // DeleteService delete an existing service from a did document
 func (didDoc *DidDocument) DeleteService(serviceID string) {
 	del := func(x int) {
-		lastIdx := len(didDoc.Services) - 1
+		lastIdx := len(didDoc.Service) - 1
 		switch lastIdx {
 		case 0: // remove the relationships since there is no elements left
-			didDoc.Services = nil
+			didDoc.Service = nil
 		case x: // if it's at the last position, just drop the last position
-			didDoc.Services = didDoc.Services[:lastIdx]
+			didDoc.Service = didDoc.Service[:lastIdx]
 		default: // swap and drop last position
-			didDoc.Services[x] = didDoc.Services[lastIdx]
-			didDoc.Services = didDoc.Services[:lastIdx]
+			didDoc.Service[x] = didDoc.Service[lastIdx]
+			didDoc.Service = didDoc.Service[:lastIdx]
 		}
 	}
 
-	for i, s := range didDoc.Services {
+	for i, s := range didDoc.Service {
 		if s.Id == serviceID {
 			del(i)
 			break
@@ -650,7 +650,7 @@ func (vm VerificationMethod) MarshalJSON() ([]byte, error) {
 	vmd["type"] = vm.Type
 	switch m := vm.VerificationMaterial.(type) {
 	case *VerificationMethod_BlockchainAccountID:
-		vmd["blockchainAccountID"] = m.BlockchainAccountID
+		vmd["blockchainAccountId"] = m.BlockchainAccountID
 	case *VerificationMethod_PublicKeyHex:
 		vmd["publicKeyHex"] = m.PublicKeyHex
 	}

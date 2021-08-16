@@ -30,12 +30,12 @@ message DidDocument {
   // such as cryptographic public keys, which can be used 
   // to authenticate or authorize interactions with the DID subject or associated parties.
   // https://www.w3.org/TR/did-core/#verification-methods
-  repeated VerificationMethod verificationMethods  = 4;
+  repeated VerificationMethod verificationMethod  = 4;
 
   // Services are used in DID documents to express ways of communicating 
   // with the DID subject or associated entities.
   // https://www.w3.org/TR/did-core/#services
-  repeated Service services                        = 5;
+  repeated Service service                        = 5;
 
   // NOTE: below this line there are the relationships
 

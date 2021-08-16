@@ -68,7 +68,7 @@ func (cicd CheckIssuerCredentialsDecorator) AnteHandle(
 
 			// check if the did document has the issuer credential
 			hasIssuerCredential := false
-			for _, service := range did.Services {
+			for _, service := range did.Service {
 				// TODO use enum here
 				if service.Type == "IssuerCredential" {
 					// TODO: ensure this keeper can only read from store
@@ -196,7 +196,7 @@ func (cicd CheckUserCredentialsDecorator) validateKYCCredential(
 
 	// check if the did document has the issuer credential
 	hasUserCredential := false
-	for _, service := range did.Services {
+	for _, service := range did.Service {
 		// TODO use enum here
 		if service.Type != "KYCCredential" {
 			continue

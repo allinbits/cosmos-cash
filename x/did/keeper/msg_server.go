@@ -260,7 +260,7 @@ func (k msgServer) DeleteService(
 		)
 	}
 	// Only try to remove service if there are services
-	if len(didDoc.Services) == 0 {
+	if len(didDoc.Service) == 0 {
 		return nil, sdkerrors.Wrapf(types.ErrInvalidState, "the did document doesn't have services associated")
 	}
 	// delete the service

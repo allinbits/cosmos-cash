@@ -378,7 +378,7 @@ func TestNewDidDocument(t *testing.T) {
 				},
 				Id:         "did:cash:subject",
 				Controller: []string{"did:cash:controller-1"},
-				VerificationMethods: []*VerificationMethod{
+				VerificationMethod: []*VerificationMethod{
 					{
 						"did:cash:subject#key-1",
 						DIDVerificationMethodTypeSecp256k1_2020,
@@ -392,7 +392,7 @@ func TestNewDidDocument(t *testing.T) {
 						&VerificationMethod_BlockchainAccountID{"cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2"},
 					},
 				},
-				Services: []*Service{
+				Service: []*Service{
 					{
 						"agent:xyz",
 						"DIDCommMessaging",
@@ -644,7 +644,7 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 				},
 				Id:         "did:cash:subject",
 				Controller: nil,
-				VerificationMethods: []*VerificationMethod{
+				VerificationMethod: []*VerificationMethod{
 					{
 						"did:cash:subject#key-1",
 						DIDVerificationMethodTypeSecp256k1_2020,
@@ -658,7 +658,7 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 						&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
 					},
 				},
-				Services:             nil,
+				Service:              nil,
 				Authentication:       []string{"did:cash:subject#key-1", "did:cash:subject#key-2"},
 				KeyAgreement:         []string{"did:cash:subject#key-1"},
 				CapabilityInvocation: []string{"did:cash:subject#key-2"},
@@ -912,7 +912,7 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 				},
 				Id:         "did:cash:subject",
 				Controller: nil,
-				VerificationMethods: []*VerificationMethod{
+				VerificationMethod: []*VerificationMethod{
 					{
 						"did:cash:subject#key-1",
 						DIDVerificationMethodTypeSecp256k1_2020,
@@ -920,7 +920,7 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 						&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
 					},
 				},
-				Services:       nil,
+				Service:        nil,
 				Authentication: []string{"did:cash:subject#key-1"},
 				KeyAgreement:   []string{"did:cash:subject#key-1"},
 			},
@@ -1015,7 +1015,7 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 				},
 				Id:         "did:cash:subject",
 				Controller: nil,
-				VerificationMethods: []*VerificationMethod{
+				VerificationMethod: []*VerificationMethod{
 					{
 						"did:cash:subject#key-1",
 						DIDVerificationMethodTypeSecp256k1_2020,
@@ -1029,7 +1029,7 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 						&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
 					},
 				},
-				Services:        nil,
+				Service:         nil,
 				Authentication:  []string{"did:cash:subject#key-1", "did:cash:subject#key-3"},
 				KeyAgreement:    []string{"did:cash:subject#key-1", "did:cash:subject#key-3"},
 				AssertionMethod: []string{"did:cash:subject#key-3"},
@@ -1167,7 +1167,7 @@ func TestDidDocument_SetVerificationRelationships(t *testing.T) {
 			wantDid: DidDocument{
 				Context: []string{contextDIDBase},
 				Id:      "did:cash:subject",
-				VerificationMethods: []*VerificationMethod{
+				VerificationMethod: []*VerificationMethod{
 					{
 						"did:cash:subject#key-1",
 						DIDVerificationMethodTypeSecp256k1_2020,
@@ -1217,7 +1217,7 @@ func TestDidDocument_SetVerificationRelationships(t *testing.T) {
 			wantDid: DidDocument{
 				Context: []string{contextDIDBase},
 				Id:      "did:cash:subject",
-				VerificationMethods: []*VerificationMethod{
+				VerificationMethod: []*VerificationMethod{
 					{
 						"did:cash:subject#key-1",
 						DIDVerificationMethodTypeSecp256k1_2020,
@@ -1286,7 +1286,7 @@ func TestDidDocument_SetVerificationRelationships(t *testing.T) {
 			wantDid: DidDocument{
 				Context: []string{contextDIDBase},
 				Id:      "did:cash:subject",
-				VerificationMethods: []*VerificationMethod{
+				VerificationMethod: []*VerificationMethod{
 					{
 						"did:cash:subject#key-2",
 						DIDVerificationMethodTypeSecp256k1_2020,
@@ -1526,7 +1526,7 @@ func TestDidDocument_AddServices(t *testing.T) {
 			wantDid: DidDocument{
 				Context: []string{contextDIDBase},
 				Id:      "did:cash:subject",
-				Services: []*Service{
+				Service: []*Service{
 					NewService(
 						"agent:abc",
 						"DIDCommMessaging",
@@ -1687,7 +1687,7 @@ func TestDidDocument_DeleteService(t *testing.T) {
 			wantDid: DidDocument{
 				Context: []string{contextDIDBase},
 				Id:      "did:cash:subject",
-				Services: []*Service{
+				Service: []*Service{
 					{
 						"agent:zyz",
 						"DIDCommMessaging",
@@ -1726,7 +1726,7 @@ func TestDidDocument_DeleteService(t *testing.T) {
 			wantDid: DidDocument{
 				Context: []string{contextDIDBase},
 				Id:      "did:cash:subject",
-				Services: []*Service{
+				Service: []*Service{
 					{
 						"agent:zyz",
 						"DIDCommMessaging",

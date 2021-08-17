@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="2227px" preserveAspectRatio="none" style="width:1153px;height:2227px;background:#FFFFFF;" version="1.1" viewBox="0 0 1153 2227" width="1153px" zoomAndPan="magnify"><defs><filter height="300%" id="fbrgg31v7338l" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="2.0"/><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0"/><feOffset dx="4.0" dy="4.0" in="blurOut2" result="blurOut3"/><feBlend in="SourceGraphic" in2="blurOut3" mode="normal"/></filter></defs><g><!--MD5=[ef94af669801e1237a0ebf1db9dc0be4]
+cluster iss_ctrlr--><rect fill="#FFFFFF" filter="url(#fbrgg31v7338l)" height="521" style="stroke:#000000;stroke-width:1.5;" width="289" x="679" y="7"/><path d="M811,7 L811,16.4883 L801,26.4883 L679,26.4883 " fill="none" style="stroke:#000000;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="122" x="682" y="21.5352">Issuer Controller</text><!--MD5=[baa5d9661bc1f0a40dc5b198ad0da5d4]
+cluster ctrlr_pubsub--><rect fill="#FFFFFF" filter="url(#fbrgg31v7338l)" height="97" style="stroke:#000000;stroke-width:1.5;" width="241" x="703" y="113"/><path d="M771,113 L771,122.4883 L761,132.4883 L703,132.4883 " fill="none" style="stroke:#000000;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="58" x="706" y="127.5352">Pub Sub</text><!--MD5=[482bfcf28e5ef02437eb2c047739378f]
+cluster ctrlr_storage--><rect fill="#FFFFFF" filter="url(#fbrgg31v7338l)" height="96" style="stroke:#000000;stroke-width:1.5;" width="112" x="836" y="560"/><path d="M900,560 L900,569.4883 L890,579.4883 L836,579.4883 " fill="none" style="stroke:#000000;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="54" x="839" y="574.5352">Storage</text><!--MD5=[6000d5d6a046a53fdd0baf12fc70cc6e]
+cluster iss_agent--><rect fill="#FFFFFF" filter="url(#fbrgg31v7338l)" height="542" style="stroke:#000000;stroke-width:1.5;" width="413" x="391" y="560"/><path d="M492,560 L492,569.4883 L482,579.4883 L391,579.4883 " fill="none" style="stroke:#000000;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="91" x="394" y="574.5352">Issuer Agent</text><!--MD5=[e26b2f6daabc7c5533734b8993bfd034]
+cluster didcomm--><rect fill="#FFFFFF" filter="url(#fbrgg31v7338l)" height="113" style="stroke:#000000;stroke-width:1.5;" width="325" x="439" y="770"/><path d="M601,770 L601,779.4883 L591,789.4883 L439,789.4883 " fill="none" style="stroke:#000000;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="152" x="442" y="784.5352">DIDComm  Protocols</text><!--MD5=[23ab9ab2c186c626bb8956ee60ad8dd6]
+cluster iss_storage--><rect fill="#FFFFFF" filter="url(#fbrgg31v7338l)" height="96" style="stroke:#000000;stroke-width:1.5;" width="112" x="666" y="1142"/><path d="M696,1142 L696,1151.4883 L686,1161.4883 L666,1161.4883 " fill="none" style="stroke:#000000;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="20" x="669" y="1156.5352">DB</text><!--MD5=[c59a16d3fcadadefd9f8a8868b25a4e7]
+cluster net--><path d="M859.2778,999.4676 C863.7572,989.6179 869.0748,988.4019 876.8071,996.2447 C883.0121,987.6667 888.5962,987.9215 894.1155,996.9199 C896.8926,987.9216 903.5666,986.8896 909.8478,993.3552 C914.6128,986.4155 922.7626,985.8695 927.1132,993.8352 C932.3212,985.5559 938.2154,984.2662 945.564,991.2469 C951.1417,982.2424 957.2231,982.2122 962.4485,991.5708 C966.567,983.2335 972.31,980.8727 978.9462,989.0566 C983.9741,982.3268 988.9417,981.4677 993.8025,989.2279 C1000.1443,981.7017 1008.4511,982.2738 1012.3301,991.8898 C1017.9312,985.4859 1024.6945,985.2225 1028.2587,994.0236 C1033.8067,984.6675 1038.8649,984.5093 1045.021,993.467 C1052.1671,986.1695 1058.6973,985.2729 1063.2543,996.0751 C1068.9021,989.8628 1075.8545,988.8473 1079.3394,998.2965 C1088.8073,989.5262 1097.2394,991.0951 1101,1004 C1102.553,1003.0062 1103.6132,1003.8695 1103.6754,1005.5126 C1113.1241,1009.4232 1115.01,1017.6274 1107.3326,1024.7874 C1120.9495,1028.0693 1122.0123,1037.7793 1113.6001,1047.2168 C1121.4247,1056.0534 1121.2887,1062.5551 1109.3881,1067.2429 C1117.3051,1083.8503 1111.4591,1091.9864 1094,1094 C1095.9467,1093.5897 1096.9506,1094.913 1096.398,1096.7123 C1090.8824,1104.924 1084.5031,1105.3241 1079.7484,1095.9903 C1076.7158,1104.8714 1070.0124,1108.2817 1062.5159,1100.6484 C1056.94,1107.6678 1051.5501,1107.4217 1046.0829,1100.5201 C1043.2255,1110.4494 1035.0015,1110.8203 1029.2534,1103.3096 C1024.8715,1113.3851 1018.8693,1113.3151 1012.17,1105.5256 C1006.201,1112.8403 999.1753,1113.1533 993.5801,1105.0742 C989.5953,1113.5099 982.4569,1114.4975 976.5525,1107.1445 C972.791,1114.2292 966.2376,1113.4499 962.977,1106.6546 C954.5098,1115.4406 948.896,1113.4252 944.0752,1103.0564 C939.9743,1110.2464 932.0029,1111.6964 927.2193,1103.8202 C921.0686,1109.1382 914.782,1106.5219 912.5717,1099.2397 C907.244,1108.3749 899.303,1109.3576 892.8718,1100.4442 C887.6883,1107.3078 881.8192,1104.7508 879.0732,1097.9778 C865.5835,1109.4087 854.9695,1101.5135 852,1087 C853.6947,1087.2 854.2866,1088.6044 853.4589,1090.022 C842.8934,1083.8034 844.4438,1076.1386 852.7527,1069.2773 C840.722,1064.7914 837.9578,1054.7288 848.2286,1045.9228 C841.6235,1037.6585 843.3886,1031.815 852.7432,1027.4516 C839.6184,1015.7174 841.9375,1002.5316 859,997 C860.1295,997.503 860.426,998.7082 859.2778,999.4676 " fill="#FFFFFF" filter="url(#fbrgg31v7338l)" style="stroke:#000000;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="57" x="948" y="1015.5352">Internet</text><!--MD5=[4f22653c91e03573900db9e81f235721]
+cluster unires--><rect fill="#FFFFFF" filter="url(#fbrgg31v7338l)" height="96" style="stroke:#000000;stroke-width:1.5;" width="150" x="484" y="1142"/><path d="M628,1142 L628,1151.4883 L618,1161.4883 L484,1161.4883 " fill="none" style="stroke:#000000;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="134" x="487" y="1156.5352">Universal Resolver</text><!--MD5=[66a1f6b1de8073971210fc83d9c9a7eb]
+cluster cash--><rect fill="#FFFFFF" filter="url(#fbrgg31v7338l)" height="375" style="stroke:#000000;stroke-width:1.5;" width="625" x="27" y="1270"/><path d="M135,1270 L135,1279.4883 L125,1289.4883 L27,1289.4883 " fill="none" style="stroke:#000000;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="98" x="30" y="1284.5352">Cosmos Cash</text><!--MD5=[970386d48d4d20fc600fd98505107417]
+cluster cash_resolver--><rect fill="#FFFFFF" filter="url(#fbrgg31v7338l)" height="113" style="stroke:#000000;stroke-width:1.5;" width="133" x="487" y="1321"/><path d="M555,1321 L555,1330.4883 L545,1340.4883 L487,1340.4883 " fill="none" style="stroke:#000000;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="58" x="490" y="1335.5352">resolver</text><!--MD5=[6c0cefe3b5af360217ae5eb83a68cd3c]
+cluster cash_node--><rect fill="#FFFFFF" filter="url(#fbrgg31v7338l)" height="292" style="stroke:#000000;stroke-width:1.5;" width="404" x="51" y="1329"/><path d="M96,1329 L96,1338.4883 L86,1348.4883 L51,1348.4883 " fill="none" style="stroke:#000000;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="35" x="54" y="1343.5352">node</text><!--MD5=[3188bda5f19ab2ffa3ffbdcf5c0c4315]
+cluster chains--><rect fill="#FFFFFF" filter="url(#fbrgg31v7338l)" height="546" style="stroke:#000000;stroke-width:1.5;" width="395" x="7" y="1669"/><path d="M63,1669 L63,1678.4883 L53,1688.4883 L7,1688.4883 " fill="none" style="stroke:#000000;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="46" x="10" y="1683.5352">chains</text><!--MD5=[c1658959ae7efea6f1f166ee65b2b4aa]
+cluster security--><rect fill="#FFFFFF" filter="url(#fbrgg31v7338l)" height="479" style="stroke:#000000;stroke-width:1.5;" width="347" x="31" y="1712"/><path d="M151,1712 L151,1721.4883 L141,1731.4883 L31,1731.4883 " fill="none" style="stroke:#000000;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="110" x="34" y="1726.5352">Shared Security</text><!--MD5=[a8f65a6e5e11eae6a0fef45c97e8e800]
+entity ctrlr_logic--><rect fill="#FEFECE" filter="url(#fbrgg31v7338l)" height="46.4883" style="stroke:#A80036;stroke-width:1.5;" width="139" x="744.5" y="360"/><rect fill="#FEFECE" height="10" style="stroke:#A80036;stroke-width:1.5;" width="15" x="863.5" y="365"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="861.5" y="367"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="861.5" y="371"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="99" x="759.5" y="393.5352">Business Logic</text><!--MD5=[69d634fd493d5ba33dc1d11a7a3f4272]
+entity ctrlr_handler--><rect fill="#FEFECE" filter="url(#fbrgg31v7338l)" height="46.4883" style="stroke:#A80036;stroke-width:1.5;" width="134" x="700" y="466"/><rect fill="#FEFECE" height="10" style="stroke:#A80036;stroke-width:1.5;" width="15" x="814" y="471"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="812" y="473"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="812" y="477"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="94" x="715" y="499.5352">HTTP Handler</text><!--MD5=[915a0f83693a0c546880b01ec3d17d4b]
+entity listena--><rect fill="#FEFECE" filter="url(#fbrgg31v7338l)" height="46.4883" style="stroke:#A80036;stroke-width:1.5;" width="94" x="709" y="254"/><rect fill="#FEFECE" height="10" style="stroke:#A80036;stroke-width:1.5;" width="15" x="783" y="259"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="781" y="261"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="781" y="265"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="54" x="724" y="287.5352">Listener</text><!--MD5=[5ef94d82d4aa2e812b482827037e2474]
+entity listenb--><rect fill="#FEFECE" filter="url(#fbrgg31v7338l)" height="46.4883" style="stroke:#A80036;stroke-width:1.5;" width="94" x="838" y="254"/><rect fill="#FEFECE" height="10" style="stroke:#A80036;stroke-width:1.5;" width="15" x="912" y="259"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="910" y="261"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="910" y="265"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="54" x="853" y="287.5352">Listener</text><!--MD5=[fff5e4adb72ed0c0e7f91ea45f5d2d07]
+entity ctrlr_webhook--><rect fill="#FEFECE" filter="url(#fbrgg31v7338l)" height="46.4883" style="stroke:#A80036;stroke-width:1.5;" width="161" x="790.5" y="42"/><rect fill="#FEFECE" height="10" style="stroke:#A80036;stroke-width:1.5;" width="15" x="931.5" y="47"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="929.5" y="49"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="929.5" y="53"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="121" x="805.5" y="75.5352">Webhook handler</text><!--MD5=[adc248c6cb5d4b6039d46d36aa18bef2]
+entity tpca--><rect fill="#FEFECE" filter="url(#fbrgg31v7338l)" height="46.4883" style="stroke:#A80036;stroke-width:1.5;" width="88" x="719" y="148"/><rect fill="#FEFECE" height="10" style="stroke:#A80036;stroke-width:1.5;" width="15" x="787" y="153"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="785" y="155"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="785" y="159"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="48" x="734" y="181.5352">TopicA</text><!--MD5=[73c3feaf0c2accb8943f94919e1ecc22]
+entity tpcb--><rect fill="#FEFECE" filter="url(#fbrgg31v7338l)" height="46.4883" style="stroke:#A80036;stroke-width:1.5;" width="86" x="842" y="148"/><rect fill="#FEFECE" height="10" style="stroke:#A80036;stroke-width:1.5;" width="15" x="908" y="153"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="906" y="155"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="906" y="159"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="46" x="857" y="181.5352">TopicB</text><!--MD5=[67e3d871dc4cbc3f11dac7f67180b58b]
+entity ctrlr_postgres--><path d="M852.5,605 C852.5,595 892,595 892,595 C892,595 931.5,595 931.5,605 L931.5,630.4883 C931.5,640.4883 892,640.4883 892,640.4883 C892,640.4883 852.5,640.4883 852.5,630.4883 L852.5,605 " fill="#FEFECE" filter="url(#fbrgg31v7338l)" style="stroke:#000000;stroke-width:1.5;"/><path d="M852.5,605 C852.5,615 892,615 892,615 C892,615 931.5,615 931.5,605 " fill="none" style="stroke:#000000;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="59" x="862.5" y="632.5352">Postgres</text><!--MD5=[39eb032a196693a39b0e0ac88f136d6e]
+entity agent_wh--><rect fill="#FEFECE" filter="url(#fbrgg31v7338l)" height="46.4883" style="stroke:#A80036;stroke-width:1.5;" width="111" x="640.5" y="700"/><rect fill="#FEFECE" height="10" style="stroke:#A80036;stroke-width:1.5;" width="15" x="731.5" y="705"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="729.5" y="707"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="729.5" y="711"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="71" x="655.5" y="733.5352">Webhooks</text><ellipse cx="627.2201" cy="617.7296" fill="#FEFECE" filter="url(#fbrgg31v7338l)" rx="54.2201" ry="14.7296" style="stroke:#A80036;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="60" x="594.2201" y="621.7472">REST API</text><!--MD5=[014aa0cc6e6a134e8f0e818919544259]
+entity handlers--><rect fill="#FEFECE" filter="url(#fbrgg31v7338l)" height="46.4883" style="stroke:#A80036;stroke-width:1.5;" width="101" x="477.5" y="700"/><rect fill="#FEFECE" height="10" style="stroke:#A80036;stroke-width:1.5;" width="15" x="558.5" y="705"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="556.5" y="707"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="556.5" y="711"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="61" x="492.5" y="733.5352">Handlers</text><!--MD5=[4b6424c363fbaa5bc44b11df067a6c33]
+entity orch--><rect fill="#FEFECE" filter="url(#fbrgg31v7338l)" height="46.4883" style="stroke:#A80036;stroke-width:1.5;" width="127" x="508.5" y="919"/><rect fill="#FEFECE" height="10" style="stroke:#A80036;stroke-width:1.5;" width="15" x="615.5" y="924"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="613.5" y="926"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="613.5" y="930"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="87" x="523.5" y="952.5352">Orchestrator</text><!--MD5=[4c408189f9a115ee00648c506d120f1d]
+entity resv--><rect fill="#FEFECE" filter="url(#fbrgg31v7338l)" height="46.4883" style="stroke:#A80036;stroke-width:1.5;" width="105" x="467.5" y="1032"/><rect fill="#FEFECE" height="10" style="stroke:#A80036;stroke-width:1.5;" width="15" x="552.5" y="1037"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="550.5" y="1039"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="550.5" y="1043"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="65" x="482.5" y="1065.5352">Resolvers</text><!--MD5=[d80926c91208070f1daa3c471ba18e8e]
+entity wallet--><rect fill="#FEFECE" filter="url(#fbrgg31v7338l)" height="46.4883" style="stroke:#A80036;stroke-width:1.5;" width="80" x="657" y="1032"/><rect fill="#FEFECE" height="10" style="stroke:#A80036;stroke-width:1.5;" width="15" x="717" y="1037"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="715" y="1039"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="715" y="1043"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="40" x="672" y="1065.5352">wallet</text><!--MD5=[c3dd7293d4e74cc67bec6d68663a773e]
+entity p1--><rect fill="#FEFECE" filter="url(#fbrgg31v7338l)" height="46.4883" style="stroke:#A80036;stroke-width:1.5;" width="111" x="628.5" y="813"/><rect fill="#FEFECE" height="10" style="stroke:#A80036;stroke-width:1.5;" width="15" x="719.5" y="818"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="717.5" y="820"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="717.5" y="824"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="71" x="643.5" y="846.5352">protocol 1</text><!--MD5=[f3929e065b321440b4eee273bd9781ea]
+entity p2--><rect fill="#FEFECE" filter="url(#fbrgg31v7338l)" height="46.4883" style="stroke:#A80036;stroke-width:1.5;" width="111" x="482.5" y="813"/><rect fill="#FEFECE" height="10" style="stroke:#A80036;stroke-width:1.5;" width="15" x="573.5" y="818"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="571.5" y="820"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="571.5" y="824"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="71" x="497.5" y="846.5352">protocol 2</text><!--MD5=[597cfe6b2f807a1e46b21fda36acdba0]
+entity tails_server--><rect fill="#FFFFFF" filter="url(#fbrgg31v7338l)" height="46.4883" style="stroke:#000000;stroke-width:1.5;" width="119" x="247.5" y="700"/><path d="M287.1667,700 L287.1667,705 L280.1667,712 L247.5,712 " fill="none" style="stroke:#000000;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="79" x="262.5" y="733.5352">Tails Server</text><!--MD5=[7a261f00f78f12ccae2838c831ee2410]
+entity wallet_postgres--><path d="M682.5,1187 C682.5,1177 722,1177 722,1177 C722,1177 761.5,1177 761.5,1187 L761.5,1212.4883 C761.5,1222.4883 722,1222.4883 722,1222.4883 C722,1222.4883 682.5,1222.4883 682.5,1212.4883 L682.5,1187 " fill="#FEFECE" filter="url(#fbrgg31v7338l)" style="stroke:#000000;stroke-width:1.5;"/><path d="M682.5,1187 C682.5,1197 722,1197 722,1197 C722,1197 761.5,1197 761.5,1187 " fill="none" style="stroke:#000000;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="59" x="692.5" y="1214.5352">Postgres</text><!--MD5=[cc41fa525999dcc1e3df08b58ea70746]
+entity other_agent_1--><rect fill="#FEFECE" filter="url(#fbrgg31v7338l)" height="46.4883" style="stroke:#A80036;stroke-width:1.5;" width="81" x="1003.5" y="1032"/><rect fill="#FEFECE" height="10" style="stroke:#A80036;stroke-width:1.5;" width="15" x="1064.5" y="1037"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="1062.5" y="1039"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="1062.5" y="1043"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="41" x="1018.5" y="1065.5352">Agent</text><!--MD5=[b07691a2ed3f6f242cb9dd1e68f0fb72]
+entity other_agent_2--><rect fill="#FEFECE" filter="url(#fbrgg31v7338l)" height="46.4883" style="stroke:#A80036;stroke-width:1.5;" width="81" x="887.5" y="1032"/><rect fill="#FEFECE" height="10" style="stroke:#A80036;stroke-width:1.5;" width="15" x="948.5" y="1037"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="946.5" y="1039"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="946.5" y="1043"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="41" x="902.5" y="1065.5352">Agent</text><ellipse cx="569.7696" cy="1199.659" fill="#FEFECE" filter="url(#fbrgg31v7338l)" rx="39.7696" ry="14.659" style="stroke:#A80036;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="40" x="549.7696" y="1202.95">driver</text><!--MD5=[d3dac679b1e8583df0e4104897d7ce0a]
+entity test--><rect fill="#FEFECE" filter="url(#fbrgg31v7338l)" height="46.4883" style="stroke:#A80036;stroke-width:1.5;" width="65" x="530.5" y="1364"/><rect fill="#FEFECE" height="10" style="stroke:#A80036;stroke-width:1.5;" width="15" x="575.5" y="1369"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="573.5" y="1371"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="573.5" y="1375"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="25" x="545.5" y="1397.5352">test</text><!--MD5=[af55000afb1580bc64365707e4e88ecc]
+entity did_module--><rect fill="#FEFECE" filter="url(#fbrgg31v7338l)" height="46.4883" style="stroke:#A80036;stroke-width:1.5;" width="64" x="67" y="1364"/><rect fill="#FEFECE" height="10" style="stroke:#A80036;stroke-width:1.5;" width="15" x="111" y="1369"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="109" y="1371"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="109" y="1375"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="24" x="82" y="1397.5352">DID</text><!--MD5=[565410263fd926388f21809c73672f5e]
+entity vc_module--><rect fill="#FEFECE" filter="url(#fbrgg31v7338l)" height="46.4883" style="stroke:#A80036;stroke-width:1.5;" width="59" x="282.5" y="1364"/><rect fill="#FEFECE" height="10" style="stroke:#A80036;stroke-width:1.5;" width="15" x="321.5" y="1369"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="319.5" y="1371"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="319.5" y="1375"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="19" x="297.5" y="1397.5352">VC</text><!--MD5=[02feb785d97226341dd073c28200876c]
+entity issuer_module--><rect fill="#FEFECE" filter="url(#fbrgg31v7338l)" height="46.4883" style="stroke:#A80036;stroke-width:1.5;" width="81" x="166.5" y="1364"/><rect fill="#FEFECE" height="10" style="stroke:#A80036;stroke-width:1.5;" width="15" x="227.5" y="1369"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="225.5" y="1371"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="225.5" y="1375"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="41" x="181.5" y="1397.5352">Issuer</text><!--MD5=[aea44cebc959f995cbc39644b168e644]
+entity ibc_module--><rect fill="#FEFECE" filter="url(#fbrgg31v7338l)" height="46.4883" style="stroke:#A80036;stroke-width:1.5;" width="62" x="377" y="1364"/><rect fill="#FEFECE" height="10" style="stroke:#A80036;stroke-width:1.5;" width="15" x="419" y="1369"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="417" y="1371"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="417" y="1375"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="22" x="392" y="1397.5352">IBC</text><ellipse cx="207.1127" cy="1484.659" fill="#FEFECE" filter="url(#fbrgg31v7338l)" rx="34.1127" ry="14.659" style="stroke:#A80036;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="32" x="191.1127" y="1487.95">ABCI</text><!--MD5=[0d482ad21d5c7c11aa976e45da5ecfe6]
+entity core--><rect fill="#FEFECE" filter="url(#fbrgg31v7338l)" height="46.4883" style="stroke:#A80036;stroke-width:1.5;" width="157" x="128.5" y="1559"/><rect fill="#FEFECE" height="10" style="stroke:#A80036;stroke-width:1.5;" width="15" x="265.5" y="1564"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="263.5" y="1566"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="263.5" y="1570"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="117" x="143.5" y="1592.5352">Tendermint Core</text><ellipse cx="116.8192" cy="1763.3638" fill="#FEFECE" filter="url(#fbrgg31v7338l)" rx="69.8192" ry="16.3638" style="stroke:#A80036;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="93" x="68.4253" y="1767.1373">Cosmos Cash</text><ellipse cx="187.9404" cy="1962.9881" fill="#FEFECE" filter="url(#fbrgg31v7338l)" rx="72.9404" ry="16.9881" style="stroke:#A80036;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="101" x="137.1341" y="1966.3631">stablecoin hub</text><ellipse cx="291.9425" cy="1763.2885" fill="#FEFECE" filter="url(#fbrgg31v7338l)" rx="69.4425" ry="16.2885" style="stroke:#A80036;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="92" x="243.8398" y="1767.11">identity chain</text><ellipse cx="279.8553" cy="2160.659" fill="#FEFECE" filter="url(#fbrgg31v7338l)" rx="38.3553" ry="14.659" style="stroke:#A80036;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="38" x="260.8553" y="2163.95">USDC</text><ellipse cx="129.1482" cy="2160.659" fill="#FEFECE" filter="url(#fbrgg31v7338l)" rx="37.6482" ry="14.659" style="stroke:#A80036;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="37" x="110.6482" y="2163.95">USDT</text><!--MD5=[28cbcb512da243b98e54f35be4003160]
+entity ibc_hub_usdt--><rect fill="#FEFECE" filter="url(#fbrgg31v7338l)" height="46.4883" style="stroke:#A80036;stroke-width:1.5;" width="116" x="71" y="2040"/><rect fill="#FEFECE" height="10" style="stroke:#A80036;stroke-width:1.5;" width="15" x="167" y="2045"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="165" y="2047"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="165" y="2051"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="76" x="86" y="2073.5352">IBC Relayer</text><!--MD5=[a1e8f4d81735ae6a1a1e8feddc1e64a9]
+entity ibc_hub_usdc--><rect fill="#FEFECE" filter="url(#fbrgg31v7338l)" height="46.4883" style="stroke:#A80036;stroke-width:1.5;" width="116" x="222" y="2040"/><rect fill="#FEFECE" height="10" style="stroke:#A80036;stroke-width:1.5;" width="15" x="318" y="2045"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="316" y="2047"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="316" y="2051"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="76" x="237" y="2073.5352">IBC Relayer</text><!--MD5=[364e51197fd833d2f59678f93f77e4ec]
+entity ibc_cash_hub--><rect fill="#FEFECE" filter="url(#fbrgg31v7338l)" height="46.4883" style="stroke:#A80036;stroke-width:1.5;" width="116" x="130" y="1840"/><rect fill="#FEFECE" height="10" style="stroke:#A80036;stroke-width:1.5;" width="15" x="226" y="1845"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="224" y="1847"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="224" y="1851"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="76" x="145" y="1873.5352">IBC Relayer</text><!--MD5=[1f8f5b59f5f4c8c06c383017e567d6a7]
+entity reg_agent--><rect fill="#FEFECE" filter="url(#fbrgg31v7338l)" height="46.4883" style="stroke:#A80036;stroke-width:1.5;" width="152" x="987" y="42"/><rect fill="#FEFECE" height="10" style="stroke:#A80036;stroke-width:1.5;" width="15" x="1119" y="47"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="1117" y="49"/><rect fill="#FEFECE" height="2" style="stroke:#A80036;stroke-width:1.5;" width="4" x="1117" y="53"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="112" x="1002" y="75.5352">Regulator Agent</text><!--MD5=[b86d0ae94b44d6be7ca2852ea348eef7]
+link ctrlr_webhook to tpca--><path d="M843.83,88.22 C837.53,93.59 830.94,99.4 825,105 C810.48,118.7 794.98,134.95 783.11,147.77 " fill="none" id="ctrlr_webhook-tpca" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[b6622141c3139d63c47d1591059b8f42]
+link ctrlr_webhook to tpcb--><path d="M873.97,88.06 C876.34,105.7 879.66,130.34 882.04,147.98 " fill="none" id="ctrlr_webhook-tpcb" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[6b903123ebe2f74cb27906be54701b5c]
+link tpca to listena--><path d="M761.52,194.06 C760.33,211.7 758.67,236.34 757.48,253.98 " fill="none" id="tpca-listena" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[6b0de4a338d53f2927e191d9f6182196]
+link tpcb to listenb--><path d="M885,194.06 C885,211.7 885,236.34 885,253.98 " fill="none" id="tpcb-listenb" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[edd0e3865f83746674a30b4c91631afa]
+link listena to ctrlr_logic--><path d="M768.3,300.06 C778.14,317.7 791.88,342.34 801.72,359.98 " fill="none" id="listena-ctrlr_logic" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[22a68de566f5eaf567bbabf8172c82ea]
+link listenb to ctrlr_logic--><path d="M869.94,300.06 C857.89,317.7 841.08,342.34 829.04,359.98 " fill="none" id="listenb-ctrlr_logic" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[1cec20d97a7cffb41c3ff4c9ffd2ce87]
+link ctrlr_logic to ctrlr_handler--><path d="M804.03,406.06 C796.06,423.7 784.93,448.34 776.95,465.98 " fill="none" id="ctrlr_logic-ctrlr_handler" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[55c5d50f50e32a1578ce80ce371a9d95]
+link ctrlr_logic to ctrlr_postgres--><path d="M825.56,406.18 C833.72,422.43 844.48,445.19 852,466 C868.18,510.75 881.02,565.1 887.46,594.7 " fill="none" id="ctrlr_logic-ctrlr_postgres" style="stroke:#A80036;stroke-width:1.0;stroke-dasharray:7.0,7.0;"/><!--MD5=[206be5293cd963cd25587ebb6e2ee2d7]
+link ctrlr_handler to restapi--><path d="M742.61,512.03 C713.47,538.37 665.64,581.58 641.67,603.25 " fill="none" id="ctrlr_handler-restapi" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[2f64992eef1e9c3ae2184f170273ca51]
+link ctrlr_webhook to agent_wh--><path d="M925.31,88.07 C932.37,92.8 938.91,98.4 944,105 C991.78,166.85 985,197.85 985,276 C985,276 985,276 985,490 C985,569.06 1003.44,607.63 948,664 C921.05,691.41 817.39,708.1 751.71,716.15 " fill="none" id="ctrlr_webhook-agent_wh" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[dbe3bc9e90336b57ac5dc17be2866024]
+link iss_agent to tails_server--><path d="M390.7972,627.7284 C390.7234,627.8115 390.6491,627.895 390.5744,627.9791 C385.7938,633.3569 379.325,640.6338 372.09,648.7725 C357.62,665.05 340.085,684.775 326.86,699.65 " fill="none" id="iss_agent-tails_server" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[b8b0a6e744540806c04d65919fa1a3a6]
+link agent_wh to didcomm--><path d="M640.48,737.82 C626.07,740.96 610.52,743.97 596,746 C581.67,748.01 477.06,744.67 466,754 C462.5775,756.8875 459.7053,760.2634 457.3003,763.9672 C456.0978,765.8191 455.0122,767.7529 454.0329,769.7486 " fill="none" id="agent_wh-didcomm" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[3c386096efeedbdc0957448316fb129e]
+link restapi to handlers--><path d="M614.46,631.61 C598.02,648.8 568.94,679.2 549.08,699.96 " fill="none" id="restapi-handlers" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[f550897b55e504f1048b515ed65b7624]
+link handlers to didcomm--><path d="M477.34,743.41 C473.1,746.48 469.21,749.99 466,754 C463.2013,757.495 460.8017,761.3313 458.7458,765.3749 C458.2318,766.3858 457.7393,767.4096 457.2673,768.4444 C457.1494,768.703 457.0327,768.9624 456.9173,769.2224 C456.8596,769.3524 456.8022,769.4826 456.7451,769.6129 " fill="none" id="handlers-didcomm" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[f5347b7f01efbb22c22f89a4172693a5]
+link didcomm to orch--><path d="M455.9477,883.1631 C455.9925,883.2646 456.0376,883.3661 456.0828,883.4674 C456.4448,884.2784 456.8212,885.0831 457.2126,885.8798 C457.9954,887.4732 458.8381,889.0349 459.7453,890.5513 C461.5598,893.5842 463.6325,896.4363 466,899 C477.35,911.29 492.75,920.04 508.3,926.25 " fill="none" id="didcomm-orch" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[8e1206c0279a69068db9d6c591397e0f]
+link orch to resv--><path d="M561.6,965.2 C552.53,984.56 539.44,1012.49 530.38,1031.84 " fill="none" id="orch-resv" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[a7149e4437d24a18a5315fb3c9857e10]
+link orch to wallet--><path d="M597,965.2 C618.8,984.56 650.26,1012.49 672.05,1031.84 " fill="none" id="orch-wallet" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[89c7b950ab95a3e94d1aaad31d10605b]
+link wallet to wallet_postgres--><path d="M700.91,1078.27 C705.63,1105.19 713.53,1150.21 718.2,1176.86 " fill="none" id="wallet-wallet_postgres" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[d37a80ef24228cdec13c4f893a8f46b2]
+link orch to net--><path d="M635.62,945.82 C692.18,949.35 769.86,956.99 796,973 C814.08,984.07 827.7825,1003.42 837.1075,1020.4313 C839.4387,1024.6841 841.4964,1028.7907 843.2805,1032.5853 C843.5035,1033.0596 843.7222,1033.529 843.9367,1033.9933 " fill="none" id="orch-net" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[308ff19ddec6b9bf7dc4d171a8746e00]
+link did_module to abci--><path d="M113.7,1410.07 C122.86,1422.75 135.45,1438.4 149,1450 C159.87,1459.3 173.68,1467.4 185.1,1473.3 " fill="none" id="did_module-abci" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[1c10a0399060cb90c85a175e94b4f384]
+link vc_module to abci--><path d="M298.42,1410.13 C289.9,1422.82 278.07,1438.47 265,1450 C254.27,1459.46 240.47,1467.57 229.01,1473.43 " fill="none" id="vc_module-abci" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[329aa9e52ff17c7367020ef7f08e57f4]
+link issuer_module to abci--><path d="M207,1410.15 C207,1428.55 207,1454.16 207,1469.74 " fill="none" id="issuer_module-abci" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[e019330910c99c3de2911088b6bda896]
+link abci to core--><path d="M207,1499.18 C207,1514.76 207,1540.43 207,1558.86 " fill="none" id="abci-core" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[757a606a8995d3d6394f72751d989ced]
+link resv to unires--><path d="M516.09,1078.27 C514.36,1088.1325 512.2044,1100.4219 509.9373,1113.3464 C508.8038,1119.8087 507.6425,1126.4297 506.4925,1132.9856 C506.205,1134.6246 505.9183,1136.2595 505.6328,1137.8868 C505.4901,1138.7005 505.3477,1139.5122 505.2057,1140.3217 C505.1347,1140.7264 505.0638,1141.1305 504.9931,1141.534 " fill="none" id="resv-unires" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[c6740c7006f7cb6b3bc88a70bf1f738f]
+link unires to cash_resolver--><path d="M495,1238.6962 C495,1238.9865 495,1239.2779 495,1239.5704 C495,1240.1554 495,1240.7447 495,1241.3382 C495,1242.5252 495,1243.7289 495,1244.9481 C495,1249.8248 495,1254.9485 495,1260.2369 C495,1270.8137 495,1282.0491 495,1293.2838 C495,1298.9011 495,1304.5183 495,1310.0528 C495,1312.8201 495,1315.5668 495,1318.2825 C495,1318.9614 495,1319.6384 495,1320.3133 C495,1320.482 495,1320.6506 495,1320.819 " fill="none" id="unires-cash_resolver" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[1e98169bb518c9be00ad314bcdfd779a]
+link core to ident_chain--><path d="M217.42,1605.01 C234.8,1641.71 269.28,1714.53 284.49,1746.65 " fill="none" id="core-ident_chain" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[08d1321070fa421b377f698c39d4c8ff]
+link core to cash_1--><path d="M195.96,1605.01 C177.56,1641.71 141.05,1714.53 124.95,1746.65 " fill="none" id="core-cash_1" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[a4e495194383c6794a5889cc11c9a9f0]
+link cash_1 to ibc_cash_hub--><path d="M128.41,1780.17 C140.17,1796.31 158.61,1821.63 171.86,1839.83 " fill="none" id="cash_1-ibc_cash_hub" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[afce713efa5c1250302bc6d187cf9e17]
+link ibc_module to ibc_cash_hub--><path d="M413.59,1410.12 C428.42,1474.29 462.22,1663.33 379,1780 C348.3,1823.04 290.19,1843.67 246.09,1853.45 " fill="none" id="ibc_module-ibc_cash_hub" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[59f092dd43ee995bef4b2a555c4c9743]
+link ibc_cash_hub to hub--><path d="M188,1886.24 C188,1904.42 188,1929.7 188,1945.96 " fill="none" id="ibc_cash_hub-hub" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[e802781a0b3069c91ec696b7f66fc9ed]
+link hub to ibc_hub_usdc--><path d="M202.78,1979.75 C218.02,1995.98 241.91,2021.43 259.08,2039.72 " fill="none" id="hub-ibc_hub_usdc" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[ca2829f79702a9e0621cc83b50c99355]
+link ibc_hub_usdc to usdc_chain--><path d="M280,2086.15 C280,2104.55 280,2130.16 280,2145.74 " fill="none" id="ibc_hub_usdc-usdc_chain" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[d5a0a03035f698746e4e1587e3b03e71]
+link hub to ibc_hub_usdt--><path d="M178.26,1980.18 C168.44,1996.49 153.21,2021.78 142.29,2039.92 " fill="none" id="hub-ibc_hub_usdt" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[6c7bd0008eb8b5e9fcba3387f3f66cb2]
+link ibc_hub_usdt to usdt_chain--><path d="M129,2086.15 C129,2104.55 129,2130.16 129,2145.74 " fill="none" id="ibc_hub_usdt-usdt_chain" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[3ba819220fde5d34995f47a8846bb337]
+link cash_resolver to ident_chain--><path d="M498.8067,1434.7063 C498.8199,1435.0311 498.8329,1435.3573 498.8456,1435.6848 C498.8967,1436.9946 498.9444,1438.3251 498.9885,1439.6754 C499.0766,1442.3759 499.1499,1445.1555 499.2052,1448.0076 C499.4263,1459.4161 499.3591,1471.9844 498.7963,1485.2875 C496.545,1538.5 486.365,1603.47 455,1653 C424.72,1700.81 365.17,1732.66 327.05,1749.14 " fill="none" id="cash_resolver-ident_chain" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[80b1c8ab9194592bb1f7ff19d773fd1b]
+@startuml Architecture
+' !theme tendermint from ../themes/
+
+frame "Issuer Controller" as iss_ctrlr {
+    [Business Logic] as ctrlr_logic
+    [HTTP Handler] as ctrlr_handler
+    frame "Pub Sub" as ctrlr_pubsub {
+        [TopicA] as tpca
+        [TopicB] as tpcb
+    }
+    [Listener] as listena
+    [Listener] as listenb
+    [Webhook handler] as ctrlr_webhook
+}
+
+frame "Storage" as ctrlr_storage {
+    database "Postgres" as ctrlr_postgres
+}
+
+
+frame "Issuer Agent" as iss_agent{
+    [Webhooks] as agent_wh
+    (REST API) as restapi
+    frame "DIDComm  Protocols" as didcomm {
+        [protocol 1] as p1
+        [protocol 2] as p2
+    }
+    [Handlers] as handlers
+    [Orchestrator] as orch
+    [Resolvers] as resv
+    [wallet] as wallet
+}
+
+[Regulator Agent] as reg_agent
+
+frame "Tails Server" as tails_server {
+
+}
+
+frame "DB" as iss_storage {
+    database "Postgres" as wallet_postgres
+}
+
+cloud "Internet" as net {
+    [Agent] as other_agent_1
+    [Agent] as other_agent_2
+}
+
+frame "Universal Resolver"  as unires {
+    (driver) as cash_driver
+}
+
+frame "Cosmos Cash" as cash{
+    frame "resolver" as cash_resolver {
+        [test]
+    }
+    frame "node" as cash_node {
+        [DID] as did_module
+        [VC] as vc_module
+        [Issuer] as issuer_module
+        [IBC] as ibc_module
+        (ABCI) as abci
+        [Tendermint Core] as core
+    }
+}
+
+frame "chains" as chains {
+    frame "Shared Security" as security {
+        (Cosmos Cash) as cash_1
+        (stablecoin hub) as hub
+        (identity chain) as ident_chain
+        (USDC) as usdc_chain
+        (USDT) as usdt_chain
+
+        [IBC Relayer] as ibc_hub_usdt
+        [IBC Relayer] as ibc_hub_usdc
+        [IBC Relayer] as ibc_cash_hub
+    }
+}
+ctrlr_webhook - - tpca
+ctrlr_webhook - - tpcb
+tpca - - listena
+tpcb - - listenb
+listena - - ctrlr_logic
+listenb - - ctrlr_logic
+ctrlr_logic - - ctrlr_handler
+ctrlr_logic ... ctrlr_postgres
+ctrlr_handler - - restapi
+ctrlr_webhook - - agent_wh
+
+
+iss_agent - - tails_server
+
+agent_wh - - didcomm
+restapi - - handlers
+handlers - - didcomm
+didcomm - - orch
+orch - - resv
+orch - - wallet
+wallet - - wallet_postgres
+orch - - net
+
+did_module - - abci
+vc_module - - abci
+issuer_module - - abci
+abci - - core
+
+resv - - unires
+unires - - cash_resolver
+
+
+core - - ident_chain
+core - - cash_1
+cash_1 - - ibc_cash_hub
+ibc_module - - ibc_cash_hub
+ibc_cash_hub - - hub
+hub - - ibc_hub_usdc
+ibc_hub_usdc - - usdc_chain
+hub - - ibc_hub_usdt
+ibc_hub_usdt - - usdt_chain
+
+cash_resolver - - ident_chain
+
+@enduml
+
+@startuml Architecture
+
+frame "Issuer Controller" as iss_ctrlr {
+    [Business Logic] as ctrlr_logic
+    [HTTP Handler] as ctrlr_handler
+    frame "Pub Sub" as ctrlr_pubsub {
+        [TopicA] as tpca
+        [TopicB] as tpcb
+    }
+    [Listener] as listena
+    [Listener] as listenb
+    [Webhook handler] as ctrlr_webhook
+}
+
+frame "Storage" as ctrlr_storage {
+    database "Postgres" as ctrlr_postgres
+}
+
+
+frame "Issuer Agent" as iss_agent{
+    [Webhooks] as agent_wh
+    (REST API) as restapi
+    frame "DIDComm  Protocols" as didcomm {
+        [protocol 1] as p1
+        [protocol 2] as p2
+    }
+    [Handlers] as handlers
+    [Orchestrator] as orch
+    [Resolvers] as resv
+    [wallet] as wallet
+}
+
+[Regulator Agent] as reg_agent
+
+frame "Tails Server" as tails_server {
+
+}
+
+frame "DB" as iss_storage {
+    database "Postgres" as wallet_postgres
+}
+
+cloud "Internet" as net {
+    [Agent] as other_agent_1
+    [Agent] as other_agent_2
+}
+
+frame "Universal Resolver"  as unires {
+    (driver) as cash_driver
+}
+
+frame "Cosmos Cash" as cash{
+    frame "resolver" as cash_resolver {
+        [test]
+    }
+    frame "node" as cash_node {
+        [DID] as did_module
+        [VC] as vc_module
+        [Issuer] as issuer_module
+        [IBC] as ibc_module
+        (ABCI) as abci
+        [Tendermint Core] as core
+    }
+}
+
+frame "chains" as chains {
+    frame "Shared Security" as security {
+        (Cosmos Cash) as cash_1
+        (stablecoin hub) as hub
+        (identity chain) as ident_chain
+        (USDC) as usdc_chain
+        (USDT) as usdt_chain
+
+        [IBC Relayer] as ibc_hub_usdt
+        [IBC Relayer] as ibc_hub_usdc
+        [IBC Relayer] as ibc_cash_hub
+    }
+}
+ctrlr_webhook - - tpca
+ctrlr_webhook - - tpcb
+tpca - - listena
+tpcb - - listenb
+listena - - ctrlr_logic
+listenb - - ctrlr_logic
+ctrlr_logic - - ctrlr_handler
+ctrlr_logic ... ctrlr_postgres
+ctrlr_handler - - restapi
+ctrlr_webhook - - agent_wh
+
+
+iss_agent - - tails_server
+
+agent_wh - - didcomm
+restapi - - handlers
+handlers - - didcomm
+didcomm - - orch
+orch - - resv
+orch - - wallet
+wallet - - wallet_postgres
+orch - - net
+
+did_module - - abci
+vc_module - - abci
+issuer_module - - abci
+abci - - core
+
+resv - - unires
+unires - - cash_resolver
+
+
+core - - ident_chain
+core - - cash_1
+cash_1 - - ibc_cash_hub
+ibc_module - - ibc_cash_hub
+ibc_cash_hub - - hub
+hub - - ibc_hub_usdc
+ibc_hub_usdc - - usdc_chain
+hub - - ibc_hub_usdt
+ibc_hub_usdt - - usdt_chain
+
+cash_resolver - - ident_chain
+
+@enduml
+
+PlantUML version 1.2021.9(Sun Jul 25 11:13:56 BST 2021)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Default Encoding: UTF-8
+Language: en
+Country: GB
+--></g></svg>

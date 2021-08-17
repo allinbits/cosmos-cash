@@ -1,4 +1,6 @@
 PACKAGES=$(shell go list ./...)
+# build paramters 
+BUILD_FOLDER = build
 
 ###############################################################################
 ###                           Basic Golang Commands                         ###
@@ -11,6 +13,20 @@ install: go.sum
 
 install-debug: go.sum
 	go build -gcflags="all=-N -l" ./cmd/cosmos-cashd
+
+build: clean
+	@echo build binary to $(BUILD_FOLDER)
+	CGO_ENABLED=0 go build -ldflags "-w -s" -o $(BUILD_FOLDER)/ ./cmd/cosmos-cashd
+	@echo computing checksum
+	sha256sum $(BUILD_FOLDER)/* --tag > $(BUILD_FOLDER)/checksum.txt
+	@echo copy resources
+	cp -r README.md LICENSE $(BUILD_FOLDER)
+	@echo done
+
+clean:
+	@echo clean build folder $(BUILD_FOLDER)
+	rm -rf $(BUILD_FOLDER)
+	@echo done
 
 go.sum: go.mod
 	@echo "--> Ensure dependencies have not been modified"

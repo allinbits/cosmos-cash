@@ -26,7 +26,7 @@ func (k Keeper) GetIssuerByToken(ctx sdk.Context, key []byte) (types.Issuer, boo
 func (k Keeper) UnmarshalIssuer(value []byte) (interface{}, bool) {
 	issuer := types.Issuer{}
 
-	err := k.cdc.UnmarshalBinaryBare(value, &issuer)
+	err := k.cdc.Unmarshal(value, &issuer)
 	if err != nil {
 		return types.Issuer{}, false
 	}
@@ -45,7 +45,7 @@ func (k Keeper) UnmarshalIssuer(value []byte) (interface{}, bool) {
 func (k Keeper) MarshalIssuer(value interface{}) []byte {
 	issuer := value.(types.Issuer)
 
-	bytes, _ := k.cdc.MarshalBinaryBare(&issuer)
+	bytes, _ := k.cdc.Marshal(&issuer)
 
 	return bytes
 }

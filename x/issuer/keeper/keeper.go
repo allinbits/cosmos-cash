@@ -18,7 +18,7 @@ type UnmarshalFn func(value []byte) (interface{}, bool)
 type MarshalFn func(value interface{}) []byte
 
 type Keeper struct {
-	cdc      codec.Marshaler
+	cdc      codec.Codec
 	storeKey sdk.StoreKey
 	memKey   sdk.StoreKey
 
@@ -26,7 +26,7 @@ type Keeper struct {
 }
 
 func NewKeeper(
-	cdc codec.Marshaler,
+	cdc codec.Codec,
 	storeKey,
 	memKey sdk.StoreKey,
 	bk bank.Keeper,

@@ -43,7 +43,7 @@ func (cicd CheckIssuerCredentialsDecorator) AnteHandle(
 ) (newCtx sdk.Context, err error) {
 	// TODO: improve logic here
 	for _, msg := range tx.GetMsgs() {
-		if msg.Type() == "create-issuer" {
+		if msg.String() == "create-issuer" {
 			imsg := msg.(*types.MsgCreateIssuer)
 
 			signerDID := didtypes.DID(ctx.ChainID(), imsg.Owner)
@@ -146,7 +146,7 @@ func (cicd CheckUserCredentialsDecorator) AnteHandle(
 	for _, msg := range tx.GetMsgs() {
 		// FIXME: this will fail with the next cosmos-sdk update as Type() gone from interface
 		// use protoMessage type e.g bank/v1beta1/send
-		if msg.Type() == "send" {
+		if msg.String() == "send" {
 			imsg := msg.(*bank.MsgSend)
 			// FIXME: iterate over tokens and check the multi-send
 			issuer, found := cicd.issuerk.GetIssuerByToken(ctx, []byte(imsg.Amount[0].Denom))

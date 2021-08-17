@@ -8,6 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
 
@@ -112,20 +113,26 @@ func NewAddVerificationCmd() *cobra.Command {
 			// signer address
 			signer := clientCtx.GetFromAddress()
 			// public key
-			pubKey, err := sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeAccPub, args[1])
+			pubKeyRaw, err := sdk.GetFromBech32(args[1], sdk.GetConfig().GetBech32AccountPubPrefix())
 			if err != nil {
 				return err
 			}
 			// document did
 			did := types.DID(clientCtx.ChainID, args[0])
 			// verification method id
-			vmID := fmt.Sprint(did, "#", sdk.MustBech32ifyAddressBytes(sdk.GetConfig().GetBech32AccountAddrPrefix(), pubKey.Address().Bytes()))
+			pubKey := secp256k1.PubKey{Key: pubKeyRaw}
+			vmID := fmt.Sprint(did, "#",
+				sdk.MustBech32ifyAddressBytes(
+					sdk.GetConfig().GetBech32AccountAddrPrefix(),
+					pubKey.Address().Bytes(),
+				),
+			)
 
 			verification := types.NewVerification(
 				types.NewVerificationMethod(
 					vmID,
 					did,
-					hex.EncodeToString(pubKey.Bytes()),
+					hex.EncodeToString(pubKeyRaw),
 					types.DIDVerificationMaterialPublicKeyHex,
 				),
 				[]string{types.Authentication},

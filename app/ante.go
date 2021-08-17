@@ -22,6 +22,7 @@ func NewAnteHandler(
 	vcsk vcskeeper.Keeper,
 	sigGasConsumer authante.SignatureVerificationGasConsumer,
 	signModeHandler signing.SignModeHandler,
+	fgk authante.FeegrantKeeper,
 ) sdk.AnteHandler {
 	return sdk.ChainAnteDecorators(
 		authante.NewSetUpContextDecorator(), // outermost AnteDecorator. SetUpContext must be called first
@@ -31,10 +32,10 @@ func NewAnteHandler(
 		authante.TxTimeoutHeightDecorator{},
 		authante.NewValidateMemoDecorator(ak),
 		authante.NewConsumeGasForTxSizeDecorator(ak),
-		authante.NewRejectFeeGranterDecorator(),
+		authante.NewRejectExtensionOptionsDecorator(),
 		authante.NewSetPubKeyDecorator(ak), // SetPubKeyDecorator must be called before all signature verification decorators
 		authante.NewValidateSigCountDecorator(ak),
-		authante.NewDeductFeeDecorator(ak, bankKeeper),
+		authante.NewDeductFeeDecorator(ak, bankKeeper, fgk),
 		authante.NewSigGasConsumeDecorator(ak, sigGasConsumer),
 		authante.NewSigVerificationDecorator(ak, signModeHandler),
 		issuerante.NewCheckIssuerCredentialsDecorator(ik, dk, vcsk),

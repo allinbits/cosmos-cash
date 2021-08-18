@@ -274,7 +274,7 @@ MsgUpdateDidDocument(
 ```
 
 
-**Verification methods and relationships**
+**Manipulate Verification Methods and Relationships**
 
 Add a new verification method using the gRPC message:
 
@@ -350,7 +350,7 @@ Set the relationships of a verification method using the gRPC message:
 MsgSetVerificationRelationships(did string, accountId string, relationships []string, signerAccount string)
 ```
 
-The list of relationships MUST contains only valid [relationships names](#DID_document)
+The list of relationships MUST contain only valid [relationships names](#DID_document)
 
 
 Example:
@@ -613,17 +613,17 @@ MsgAddDeactivateDid(
 
 ### Method-specific Properties 
 
-#### [DID-core Verification Material](https://www.w3.org/TR/did-core/#verification-material)
+#### DID-core Verification Material
 
-The verification material type must be `EcdsaSecp256k1RecoveryMethod2020`.
+The [Verification Material](https://www.w3.org/TR/did-core/#verification-material) type must be `EcdsaSecp256k1RecoveryMethod2020`.
 
 The content of the verification material can be `blockchainAccountID`, but for interoperability reasons, the verification material should support also `publicKeyHex`. 
 
 Support for other verification materials might be introduced. 
 
-### [Verification relationships]((https://www.w3.org/TR/did-core/#verification-relationships))
+### Verification Relationships
 
-The DID document MUST support the following verification relationships:
+The DID document MUST support the following [verification relationships](https://www.w3.org/TR/did-core/#verification-relationships):
 
 - [`authentication`](https://www.w3.org/TR/did-core/#authentication) - authorizes amends to the DID document
 - [`assertionMethod`](https://www.w3.org/TR/did-core/#assertion)
@@ -632,25 +632,26 @@ The DID document MUST support the following verification relationships:
 - [`capabilityDelegation`](https://www.w3.org/TR/did-core/#capability-delegation)
 
 
-##### [DID Document Metadata](https://www.w3.org/TR/did-core/#did-document-metadata)
+##### DID Document Metadata
 
-The implementation for metadata MUST report the following properties for a DID document
+The implementation for [DID document metadata](https://www.w3.org/TR/did-core/#did-document-metadata) MUST report the following properties for a DID document:
 
 - `created`: a [datetime](https://www.w3.org/TR/xmlschema11-2/#dateTime) string of the creation date that is the UTC date associated with the block height when the DID document was submitted the first time
 - `updated`: a [datetime](https://www.w3.org/TR/xmlschema11-2/#dateTime) string of the last update date that is the UTC date associated with the block height when the DID document was submitted the last time
 - `deactivated`: a boolean field that indicates if the DID document is [deactivated](#Deactivate) 
 - `versionId`: a hex-encoded BLAKE2b hash of the transaction that created or updated the DID
 
-##### [DID Resolution Metadata](https://www.w3.org/TR/did-core/#did-resolution-metadata)
+##### DID Resolution Metadata
 
-The resolution metadata are outside the scope of the gRPC interface and are not covered in this ADR.
+The [DID Resolution Metadata](https://www.w3.org/TR/did-core/#did-resolution-metadata) is outside the scope of the gRPC interface and is not covered in this ADR.
 
-#### [DID URL Syntax](https://www.w3.org/TR/did-core/#did-url-syntax)
+#### DID URL Syntax
 
-The DID URL is outside the scope of the gRPC interface and is not covered in this ADR.
-##### [Query parameters](https://www.w3.org/TR/did-core/#did-parameters)
+The [DID URL Syntax](https://www.w3.org/TR/did-core/#did-url-syntax) is outside the scope of the gRPC interface and is not covered in this ADR.
 
-The query parameters URL is outside the scope of the gRPC interface and is not covered in this ADR.
+##### DID Query Parameters
+
+The [DID Query parameters](https://www.w3.org/TR/did-core/#did-parameters) URL is outside the scope of the gRPC interface and is not covered in this ADR.
 
 <!-- 
 

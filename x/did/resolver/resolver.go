@@ -66,7 +66,8 @@ func ResolveAccountDID(did string) (didDoc types.DidDocument, didMeta types.DidM
 			types.NewVerificationMethod(
 				fmt.Sprint(did, "#", account),
 				did,
-				account,
+				// FIXME: this needs to be updated as the NewVerificationMethod function expects a publicKey
+				nil,
 				types.DIDVerificationMaterialBlockchainAccountID,
 			),
 			[]string{

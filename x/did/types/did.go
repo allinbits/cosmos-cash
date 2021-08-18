@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec/legacy"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -627,17 +628,21 @@ func NewVerification(
 }
 
 // NewVerificationMethod build a new verification method
-func NewVerificationMethod(id, controller, key string, vmt VerificationMaterialType) VerificationMethod {
+func NewVerificationMethod(id, controller string, pubKey cryptotypes.PubKey, vmt VerificationMaterialType) VerificationMethod {
 	vm := VerificationMethod{
 		Id:         id,
 		Controller: controller,
 	}
 	switch vmt {
 	case DIDVerificationMaterialPublicKeyHex:
-		vm.VerificationMaterial = &VerificationMethod_PublicKeyHex{key}
+		vm.VerificationMaterial = &VerificationMethod_PublicKeyHex{
+			hex.EncodeToString(pubKey.Bytes()),
+		}
 		vm.Type = DIDVerificationMethodTypeSecp256k1_2020
 	case DIDVerificationMaterialBlockchainAccountID:
-		vm.VerificationMaterial = &VerificationMethod_BlockchainAccountID{key}
+		vm.VerificationMaterial = &VerificationMethod_BlockchainAccountID{
+			sdk.MustBech32ifyAddressBytes(sdk.GetConfig().GetBech32AccountAddrPrefix(), pubKey.Address().Bytes()),
+		}
 		vm.Type = DIDVerificationMethodTypeCosmosAddress
 	}
 	return vm

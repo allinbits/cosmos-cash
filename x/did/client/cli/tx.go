@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"encoding/hex"
 	"errors"
 	"fmt"
 
@@ -70,7 +69,7 @@ func NewCreateDidDocumentCmd() *cobra.Command {
 				types.NewVerificationMethod(
 					vmID,
 					did,
-					hex.EncodeToString(pubKey.Bytes()),
+					pubKey,
 					types.DIDVerificationMaterialPublicKeyHex,
 				),
 				[]string{types.Authentication},
@@ -125,8 +124,8 @@ func NewAddVerificationCmd() *cobra.Command {
 				types.NewVerificationMethod(
 					vmID,
 					did,
-					hex.EncodeToString(pubKey.Bytes()),
-					types.DIDVerificationMaterialPublicKeyHex,
+					pubKey,
+					types.DIDVerificationMaterialBlockchainAccountID,
 				),
 				[]string{types.Authentication},
 				nil,

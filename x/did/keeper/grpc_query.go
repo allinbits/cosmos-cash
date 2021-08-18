@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -39,21 +40,21 @@ func (k Keeper) DidDocument(
 	ctx := sdk.UnwrapSDKContext(c)
 	did, found := k.GetDidDocument(ctx, []byte(req.Id))
 	if !found {
-		// it it isn't a key did, return error
+		// if it isn't a key did, return error
 		if !strings.HasPrefix(req.Id, types.DidKeyPrefix) {
-			return nil, status.Error(codes.NotFound, "did not found: QueryDidDocument")
+			return nil, status.Error(codes.NotFound, fmt.Sprint("resolution failed for did: ", req.Id))
 		}
-		// autoresolve the address
+		// auto-resolve the address
 		doc, meta, err := resolver.ResolveAccountDID(req.Id)
 		if err != nil {
-			return nil, status.Error(codes.NotFound, "did not found: QueryDidDocument")
+			return nil, status.Error(codes.Unavailable, "cosmos address account resolution error")
 		}
 		return &types.QueryDidDocumentResponse{
 			DidDocument: doc,
 			DidMetadata: meta,
 		}, nil
 	}
-
+	// now fetch the metadata
 	didM, _ := k.GetDidMetadata(ctx, []byte(req.Id))
 
 	return &types.QueryDidDocumentResponse{

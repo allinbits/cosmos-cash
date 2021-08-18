@@ -2,11 +2,43 @@
 ## [Unreleased]
 
 
+<a name="1.0.0"></a>
+## [1.0.0] - 2021-08-18
+### Chore
+- rename verifiable-cerdential module ([#167](https://github.com/allinbits/cosmos-cash/issues/167))
+- comment formatting in cli transaction ([#161](https://github.com/allinbits/cosmos-cash/issues/161))
+- **did:** renaming identfifer module to did
+- **docs:** Add conventionalcommits checks ([#144](https://github.com/allinbits/cosmos-cash/issues/144)) ([#159](https://github.com/allinbits/cosmos-cash/issues/159))
+- **proto:** remove ibc identifier proto files ([#105](https://github.com/allinbits/cosmos-cash/issues/105))
+- **release:** add make targets and config to simplify releases ([#136](https://github.com/allinbits/cosmos-cash/issues/136))
+
+### Docs
+- expand contributing documentation ([#176](https://github.com/allinbits/cosmos-cash/issues/176))
+- **adr:** adding the adr process documentation ([#120](https://github.com/allinbits/cosmos-cash/issues/120))
+
+### Feat
+- improve support for verification material ([#184](https://github.com/allinbits/cosmos-cash/issues/184))
+- add support for DID Metadata ([#179](https://github.com/allinbits/cosmos-cash/issues/179))
+- **ADR:** Documentation Strategy ([#129](https://github.com/allinbits/cosmos-cash/issues/129)) ([#152](https://github.com/allinbits/cosmos-cash/issues/152))
+- **did:** update identifier module to version 1.0 of W3C specs
+- **did:** explicitly list the supported verification relationships ([#163](https://github.com/allinbits/cosmos-cash/issues/163))
+- **did:** adding commands for relationships and controllers
+- **did:** add logging to the msg_server
+- **did:** add blockchain account ID to verification method struct ([#135](https://github.com/allinbits/cosmos-cash/issues/135))
+- **docs:** implement docs structure ([#140](https://github.com/allinbits/cosmos-cash/issues/140)) ([#157](https://github.com/allinbits/cosmos-cash/issues/157))
+- **docs:** add CODEOWNERS file ([#158](https://github.com/allinbits/cosmos-cash/issues/158))
+- **errors:** update issuer errors ([#110](https://github.com/allinbits/cosmos-cash/issues/110))
+- **events:** add events for identifier, issuer and credenitals   ([#104](https://github.com/allinbits/cosmos-cash/issues/104))
+- **swagger:** add swagger docs and ui to repo ([#162](https://github.com/allinbits/cosmos-cash/issues/162))
+
+### Fix
+- add logger to test suite
+- **creds:** use enums for credential types ([#106](https://github.com/allinbits/cosmos-cash/issues/106))
+- **issuer:** adding check so issuers cannot create the same token
+
+
 <a name="v0.2.0"></a>
 ## [v0.2.0] - 2021-06-23
-### Build
-- add makefile targets to simplify release
-
 ### Chore
 - remove ibc-identifier module
 
@@ -94,6 +126,7 @@
 - **integration-test:** restructure app.go and fix RegisterTxService
 
 
-[Unreleased]: https://github.com/allinbits/cosmos-cash/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/allinbits/cosmos-cash/compare/1.0.0...HEAD
+[1.0.0]: https://github.com/allinbits/cosmos-cash/compare/v0.2.0...1.0.0
 [v0.2.0]: https://github.com/allinbits/cosmos-cash/compare/v0.2.0-pre...v0.2.0
 [v0.2.0-pre]: https://github.com/allinbits/cosmos-cash/compare/v21.06.03...v0.2.0-pre

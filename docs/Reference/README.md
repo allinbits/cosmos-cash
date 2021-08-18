@@ -2,26 +2,19 @@
 
 How to use the Cosmos Cash Reference Documentation.
 
-* [Reference Documentation](#reference-documentation)
-   * [Context](#context)
-   * [Approach](#approach)
-   * [Contributing](#contributing)
-   * [Layout](#layout)
-   * [Reference](#reference)
+- [Reference Documentation](#reference-documentation)
+  - [Introduction](#introduction)
+  - [Contributing](#contributing)
+  - [Layout](#layout)
+  - [Reference](#reference)
 
-## Context
+## Introduction
 
-In Cosmos Cash we use the  *Grand Unified Theory of Documentation* (David Laing) as described by [Divio](https://documentation.divio.com/) as a basis for our documentation strategy. This section contains **Reference documentation**. 
-
-For further background please see [the ADR relating to the documentation structure](./ADR/adr-002-docs-structure.md). 
-
-## Approach
-
-As outlined in the strategy [Reference Documentation](https://documentation.divio.com/reference/) is **information-oriented**. Content must allow the reader to easily navigate the content and use the content in conjunction with the code.
+This section contains **Reference documentation** for Cosmos Cash. [Reference Documentation](https://documentation.divio.com/reference/) is intended to be **information-oriented**. Content must allow the reader to easily navigate the content and use the content in conjunction with the code.
 
 This documentation describes the machinery, for example, classes, functions, interfaces, parameters, and so on.
 
-
+For further information please see [the ADR relating to the documentation structure](./ADR/adr-002-docs-structure.md). 
 ## Contributing
 
 * The content must be dry, clear, and terse in style.
@@ -38,7 +31,6 @@ Reference Documentation will come in various forms:
 * **Code-level documentation** - The text that is part of the code and is used to auto-generate the documentation from the code.
 * **API reference** - Including REST and gRPC endpoints.
 * [Glossary](,.GLOSSARY.md) - a dictionary of domain-relevant terms. This glossary can be used in conjunction with the [Cosmos Network Glossary](https://v1.cosmos.network/glossary).
-
 
 ## Reference
 

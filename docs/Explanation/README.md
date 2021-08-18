@@ -2,36 +2,23 @@
 
 How to use the Cosmos Cash Explanation Documentation.
 
-* [Explanation Documentation](#explanation-documentation)
-   * [Context](#context)
-   * [Approach](#approach)
-   * [Layout](#layout)
-      * [Topics](#topics)
-      * [Presentations](#presentations)
-      * [Architecture Decisions Records (ADRs)](#architecture-decisions-records-adrs)
-      * [Articles](#articles)
-   * [Discussions](#discussions)
-   * [Contributing](#contributing)
-   * [Reference](#reference)
+- [Explanation Documentation](#explanation-documentation)
+  - [Introduction](#introduction)
+  - [Layout](#layout)
+    - [Topics](#topics)
+    - [Presentations](#presentations)
+    - [Architecture Decisions Records (ADRs)](#architecture-decisions-records-adrs)
+    - [Articles](#articles)
+  - [Discussions](#discussions)
+  - [Contributing](#contributing)
+  - [Reference](#reference)
 
 
+## Introduction
 
-## Context
+This section contains **Explanation documentation** for Cosmos Cash. This content is intended to help readers with their **understanding of Cosmos Cash and related topics**. It is intended to be discursive, thoughtful, interesting, and occasionally educational. The content includes analysis and review of alternative approaches. 
 
-In Cosmos Cash we use the  *Grand Unified Theory of Documentation* (David Laing) as described by [Divio](https://documentation.divio.com/) as a basis for our documentation strategy. This section contains the **Explanation documentation**. 
-
-For further background, see [the ADR relating to the documentation structure](./ADR/adr-002-docs-structure.md). 
-
-## Approach
-
-This content is intended to help readers with their **understanding of Cosmos Cash and related topics**. 
-
-* See the [Reference](../Reference) section for information about an API call, Module specification, or Architecture diagrams 
-* See the [How-To](../How-To) section for steps to achieve a specific task
-
-This documentation is intended to be discursive, thoughtful, interesting, and occasionally educational. The content includes analysis and alternatives. 
-
-For more explanations, see the [Discussions](#Discussions) section.
+For further background information please see [the ADR relating to the documentation structure](./ADR/adr-002-docs-structure.md). 
 
 ## Layout
 ### Topics

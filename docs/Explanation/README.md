@@ -21,6 +21,9 @@ This section contains **Explanation documentation** for Cosmos Cash. This conten
 For further background information please see [the ADR relating to the documentation structure](./ADR/adr-002-docs-structure.md). 
 
 ## Layout
+
+The scope and structure of the Explanation documentation follows this layout.
+
 ### Topics
 
 Topics are discursive documents that explore some particular feature or theme.  For example, an article might investigate Decentralised Identity Documents or Self-Sovereign Identity.

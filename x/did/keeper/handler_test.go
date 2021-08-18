@@ -68,7 +68,7 @@ func (suite *KeeperTestSuite) TestHandleMsgUpdateDidDocument() {
 		{
 			"FAIL: not found",
 			func() {
-				req = *types.NewMsgUpdateDidDocument("did:cosmos:cash:subject", nil, "subject")
+				req = *types.NewMsgUpdateDidDocument("did:cosmos:cash:subject", nil, "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
 			},
 			true,
 		},
@@ -76,27 +76,26 @@ func (suite *KeeperTestSuite) TestHandleMsgUpdateDidDocument() {
 			"FAIL: unauthorized",
 			func() {
 
-				signer := "subject"
 				did := "did:cosmos:cash:subject"
 				didDoc, _ := types.NewDidDocument(did)
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
 
-				req = *types.NewMsgUpdateDidDocument(didDoc.Id, []string{"did:cosmos:cash:controller"}, signer)
+				req = *types.NewMsgUpdateDidDocument(didDoc.Id, []string{"did:cosmos:cash:controller"}, "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
 			},
 			true,
 		},
 		{
 			"PASS: nil controllers",
 			func() {
-				signer := "subject"
+
 				did := "did:cosmos:cash:subject"
 				didDoc, _ := types.NewDidDocument(did, types.WithVerifications(
 					types.NewVerification(
 						types.NewVerificationMethod(
 							"did:cosmos:cash:subject#key-1",
-							"EcdsaSecp256k1RecoveryMethod2020",
 							"did:cosmos:cash:subject",
-							signer,
+							"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+							types.DIDVerificationMaterialPublicKeyHex,
 						),
 						[]string{types.Authentication},
 						nil,
@@ -104,22 +103,20 @@ func (suite *KeeperTestSuite) TestHandleMsgUpdateDidDocument() {
 				))
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
 
-				req = *types.NewMsgUpdateDidDocument(did, nil, signer)
+				req = *types.NewMsgUpdateDidDocument(did, nil, "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
 			},
 			false,
 		},
 		{
 			"FAIL: invalid controllers",
 			func() {
-				signer := "subject"
-				did := "did:cosmos:cash:subject"
-				didDoc, _ := types.NewDidDocument(did, types.WithVerifications(
+				didDoc, _ := types.NewDidDocument("did:cosmos:cash:subject", types.WithVerifications(
 					types.NewVerification(
 						types.NewVerificationMethod(
 							"did:cosmos:cash:subject#key-1",
-							"EcdsaSecp256k1RecoveryMethod2020",
 							"did:cosmos:cash:subject",
-							signer,
+							"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+							types.DIDVerificationMaterialPublicKeyHex,
 						),
 						[]string{types.Authentication},
 						nil,
@@ -133,7 +130,7 @@ func (suite *KeeperTestSuite) TestHandleMsgUpdateDidDocument() {
 					"invalid",
 				}
 
-				req = *types.NewMsgUpdateDidDocument(did, controllers, signer)
+				req = *types.NewMsgUpdateDidDocument(didDoc.Id, controllers, "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
 			},
 			true,
 		},
@@ -172,16 +169,15 @@ func (suite *KeeperTestSuite) TestHandleMsgAddVerification() {
 			"FAIL: can not add verification, unauthorized",
 			func() {
 				// setup
-				signer := "subject"
 				didDoc, _ := types.NewDidDocument(
 					"did:cosmos:cash:subject",
 					types.WithVerifications(
 						types.NewVerification(
 							types.NewVerificationMethod(
 								"did:cosmos:cash:subject#key-1",
-								"EcdsaSecp256k1RecoveryMethod2020",
 								"did:cosmos:cash:subject",
-								"027560af3387d375e3342a6968179ef3c6d04f5d33b2b611cf326d4708badd7770",
+								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+								types.DIDVerificationMaterialPublicKeyHex,
 							),
 							[]string{types.CapabilityInvocation},
 							nil,
@@ -193,14 +189,49 @@ func (suite *KeeperTestSuite) TestHandleMsgAddVerification() {
 				v := types.NewVerification(
 					types.NewVerificationMethod(
 						"did:cosmos:cash:subject#key-2",
-						"EcdsaSecp256k1RecoveryMethod2020",
 						"did:cosmos:cash:subject",
-						"027560af3387d375e3342a6968179ef3c6d04f5d33b2b611cf326d4708badd7770",
+						"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+						types.DIDVerificationMaterialBlockchainAccountID,
 					),
 					[]string{types.Authentication},
 					nil,
 				)
-				req = *types.NewMsgAddVerification(didDoc.Id, v, signer)
+				req = *types.NewMsgAddVerification(didDoc.Id, v, "not a key")
+			},
+			true,
+		},
+		{
+			"FAIL: can not add verification, unauthorized, key mismatch",
+			func() {
+				// setup
+				didDoc, _ := types.NewDidDocument(
+					"did:cosmos:cash:subject",
+					types.WithVerifications(
+						types.NewVerification(
+							types.NewVerificationMethod(
+								"did:cosmos:cash:subject#key-1",
+								"did:cosmos:cash:subject",
+								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+								types.DIDVerificationMaterialPublicKeyHex,
+							),
+							[]string{types.CapabilityInvocation},
+							nil,
+						),
+					),
+				)
+				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+				// actual test
+				v := types.NewVerification(
+					types.NewVerificationMethod(
+						"did:cosmos:cash:subject#key-2",
+						"did:cosmos:cash:subject",
+						"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+						types.DIDVerificationMaterialBlockchainAccountID,
+					),
+					[]string{types.Authentication},
+					nil,
+				)
+				req = *types.NewMsgAddVerification(didDoc.Id, v, "cash1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2")
 			},
 			true,
 		},
@@ -215,9 +246,9 @@ func (suite *KeeperTestSuite) TestHandleMsgAddVerification() {
 						types.NewVerification(
 							types.NewVerificationMethod(
 								"did:cosmos:cash:subject#key-1",
-								"EcdsaSecp256k1RecoveryMethod2020",
 								"did:cosmos:cash:subject",
-								"027560af3387d375e3342a6968179ef3c6d04f5d33b2b611cf326d4708badd7770",
+								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+								types.DIDVerificationMaterialPublicKeyHex,
 							),
 							[]string{types.Authentication},
 							nil,
@@ -229,9 +260,9 @@ func (suite *KeeperTestSuite) TestHandleMsgAddVerification() {
 				v := types.NewVerification(
 					types.NewVerificationMethod(
 						"",
-						"EcdsaSecp256k1RecoveryMethod2020",
 						"did:cosmos:cash:subject",
-						"027560af3387d375e3342a6968179ef3c6d04f5d33b2b611cf326d4708badd7770",
+						"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+						types.DIDVerificationMaterialPublicKeyHex,
 					),
 					[]string{types.Authentication},
 					nil,
@@ -243,16 +274,15 @@ func (suite *KeeperTestSuite) TestHandleMsgAddVerification() {
 		{
 			"PASS: can add verification to did document",
 			func() {
-				signer := "subject"
 				didDoc, _ := types.NewDidDocument(
 					"did:cosmos:cash:subject",
 					types.WithVerifications(
 						types.NewVerification(
 							types.NewVerificationMethod(
 								"did:cosmos:cash:subject#key-1",
-								"EcdsaSecp256k1RecoveryMethod2020",
 								"did:cosmos:cash:subject",
-								signer,
+								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+								types.DIDVerificationMaterialPublicKeyHex,
 							),
 							[]string{types.Authentication},
 							nil,
@@ -263,16 +293,16 @@ func (suite *KeeperTestSuite) TestHandleMsgAddVerification() {
 				v := types.NewVerification(
 					types.NewVerificationMethod(
 						"did:cosmos:cash:subject#key-2",
-						"EcdsaSecp256k1RecoveryMethod2020",
 						"did:cosmos:cash:subject",
-						"027560af3387d375e3342a6968179ef3c6d04f5d33b2b611cf326d4708badd7770",
+						"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+						types.DIDVerificationMaterialBlockchainAccountID,
 					),
 					[]string{types.Authentication},
 					nil,
 				)
 
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
-				req = *types.NewMsgAddVerification(didDoc.Id, v, signer)
+				req = *types.NewMsgAddVerification(didDoc.Id, v, "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
 			},
 			false,
 		},
@@ -318,16 +348,15 @@ func (suite *KeeperTestSuite) TestHandleMsgSetVerificationRelationships() {
 			"FAIL: can not add verification relationship, unauthorized",
 			func() {
 				// setup
-				signer := "subject"
 				didDoc, _ := types.NewDidDocument(
 					"did:cosmos:cash:subject",
 					types.WithVerifications(
 						types.NewVerification(
 							types.NewVerificationMethod(
-								"did:cosmos:cash:subject#key-1",
-								"EcdsaSecp256k1RecoveryMethod2020",
+								"did:cosmos:cash:subject#cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 								"did:cosmos:cash:subject",
-								"027560af3387d375e3342a6968179ef3c6d04f5d33b2b611cf326d4708badd7770",
+								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+								types.DIDVerificationMaterialPublicKeyHex,
 							),
 							[]string{types.CapabilityInvocation},
 							nil,
@@ -340,7 +369,7 @@ func (suite *KeeperTestSuite) TestHandleMsgSetVerificationRelationships() {
 					"did:cosmos:cash:subject",
 					"did:cosmos:cash:subject#key-1",
 					[]string{types.Authentication},
-					signer,
+					"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 				)
 			},
 			true,
@@ -349,16 +378,15 @@ func (suite *KeeperTestSuite) TestHandleMsgSetVerificationRelationships() {
 			"FAIL: can not add verification relationship, invalid relationships",
 			func() {
 				// setup
-				signer := "subject"
 				didDoc, _ := types.NewDidDocument(
 					"did:cosmos:cash:subject",
 					types.WithVerifications(
 						types.NewVerification(
 							types.NewVerificationMethod(
-								"did:cosmos:cash:subject#key-1",
-								"EcdsaSecp256k1RecoveryMethod2020",
+								"did:cosmos:cash:subject#cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 								"did:cosmos:cash:subject",
-								"027560af3387d375e3342a6968179ef3c6d04f5d33b2b611cf326d4708badd7770",
+								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+								types.DIDVerificationMaterialPublicKeyHex,
 							),
 							[]string{types.Authentication},
 							nil,
@@ -371,7 +399,7 @@ func (suite *KeeperTestSuite) TestHandleMsgSetVerificationRelationships() {
 					"did:cosmos:cash:subject",
 					"did:cosmos:cash:subject#key-1",
 					nil,
-					signer,
+					"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 				)
 			},
 			true,
@@ -380,16 +408,15 @@ func (suite *KeeperTestSuite) TestHandleMsgSetVerificationRelationships() {
 			"PASS: add a new relationship",
 			func() {
 				// setup
-				signer := "subject"
 				didDoc, _ := types.NewDidDocument(
 					"did:cosmos:cash:subject",
 					types.WithVerifications(
 						types.NewVerification(
 							types.NewVerificationMethod(
 								"did:cosmos:cash:subject#key-1",
-								"EcdsaSecp256k1RecoveryMethod2020",
 								"did:cosmos:cash:subject",
-								signer,
+								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+								types.DIDVerificationMaterialPublicKeyHex,
 							),
 							[]string{types.Authentication},
 							nil,
@@ -401,8 +428,8 @@ func (suite *KeeperTestSuite) TestHandleMsgSetVerificationRelationships() {
 				req = *types.NewMsgSetVerificationRelationships(
 					"did:cosmos:cash:subject",
 					"did:cosmos:cash:subject#key-1",
-					[]string{types.CapabilityInvocation},
-					signer,
+					[]string{types.Authentication, types.CapabilityInvocation},
+					"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 				)
 			},
 			false,
@@ -436,7 +463,7 @@ func (suite *KeeperTestSuite) TestHandleMsgRevokeVerification() {
 		{
 			"FAIL: can not revoke verification, did does not exist",
 			func() {
-				req = *types.NewMsgRevokeVerification("did:cosmos:cash:2222", "service-id", "did:cosmos:cash:2222")
+				req = *types.NewMsgRevokeVerification("did:cosmos:cash:2222", "service-id", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
 			},
 			true,
 		},
@@ -449,9 +476,9 @@ func (suite *KeeperTestSuite) TestHandleMsgRevokeVerification() {
 						types.NewVerification(
 							types.NewVerificationMethod(
 								"did:cosmos:cash:subject#key-1",
-								"EcdsaSecp256k1RecoveryMethod2020",
 								"did:cosmos:cash:subject",
-								"027560af3387d375e3342a6968179ef3c6d04f5d33b2b611cf326d4708badd7770",
+								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+								types.DIDVerificationMaterialPublicKeyHex,
 							),
 							[]string{types.Authentication},
 							nil,
@@ -459,7 +486,7 @@ func (suite *KeeperTestSuite) TestHandleMsgRevokeVerification() {
 					),
 				)
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
-				req = *types.NewMsgRevokeVerification(didDoc.Id, "did:cosmos:cash:subject#not-existent", "subject")
+				req = *types.NewMsgRevokeVerification(didDoc.Id, "did:cosmos:cash:subject#not-existent", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
 			},
 			true,
 		},
@@ -473,9 +500,9 @@ func (suite *KeeperTestSuite) TestHandleMsgRevokeVerification() {
 						types.NewVerification(
 							types.NewVerificationMethod(
 								"did:cosmos:cash:subject#key-1",
-								"EcdsaSecp256k1RecoveryMethod2020",
 								"did:cosmos:cash:subject",
-								"027560af3387d375e3342a6968179ef3c6d04f5d33b2b611cf326d4708badd7770",
+								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+								types.DIDVerificationMaterialPublicKeyHex,
 							),
 							[]string{types.Authentication},
 							nil,
@@ -494,16 +521,15 @@ func (suite *KeeperTestSuite) TestHandleMsgRevokeVerification() {
 		{
 			"PASS: can revoke verification",
 			func() {
-				signer := "subject"
 				didDoc, _ := types.NewDidDocument(
 					"did:cosmos:cash:subject",
 					types.WithVerifications(
 						types.NewVerification(
 							types.NewVerificationMethod(
 								"did:cosmos:cash:subject#key-1",
-								"EcdsaSecp256k1RecoveryMethod2020",
 								"did:cosmos:cash:subject",
-								signer,
+								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+								types.DIDVerificationMaterialPublicKeyHex,
 							),
 							[]string{types.Authentication},
 							nil,
@@ -511,10 +537,11 @@ func (suite *KeeperTestSuite) TestHandleMsgRevokeVerification() {
 					),
 				)
 
-				vmID := "did:cosmos:cash:subject#key-1"
-
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
-				req = *types.NewMsgRevokeVerification(didDoc.Id, vmID, signer)
+				req = *types.NewMsgRevokeVerification(didDoc.Id,
+					"did:cosmos:cash:subject#key-1",
+					"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+				)
 			},
 			false,
 		},
@@ -573,9 +600,9 @@ func (suite *KeeperTestSuite) TestHandleMsgAddService() {
 						types.NewVerification(
 							types.NewVerificationMethod(
 								"did:cosmos:cash:subject#key-1",
-								"EcdsaSecp256k1RecoveryMethod2020",
 								"did:cosmos:cash:subject",
 								"027560af3387d375e3342a6968179ef3c6d04f5d33b2b611cf326d4708badd7770",
+								types.DIDVerificationMaterialPublicKeyHex,
 							),
 							[]string{types.CapabilityInvocation, types.CapabilityDelegation},
 							nil,
@@ -604,9 +631,9 @@ func (suite *KeeperTestSuite) TestHandleMsgAddService() {
 						types.NewVerification(
 							types.NewVerificationMethod(
 								"did:cosmos:cash:subject#key-1",
-								"EcdsaSecp256k1RecoveryMethod2020",
 								"did:cosmos:cash:subject",
 								"027560af3387d375e3342a6968179ef3c6d04f5d33b2b611cf326d4708badd7770",
+								types.DIDVerificationMaterialPublicKeyHex,
 							),
 							[]string{types.Authentication},
 							nil,
@@ -635,9 +662,9 @@ func (suite *KeeperTestSuite) TestHandleMsgAddService() {
 						types.NewVerification(
 							types.NewVerificationMethod(
 								"did:cosmos:cash:subject#key-1",
-								"EcdsaSecp256k1RecoveryMethod2020",
 								"did:cosmos:cash:subject",
 								"027560af3387d375e3342a6968179ef3c6d04f5d33b2b611cf326d4708badd7770",
+								types.DIDVerificationMaterialPublicKeyHex,
 							),
 							[]string{types.Authentication},
 							nil,
@@ -673,9 +700,9 @@ func (suite *KeeperTestSuite) TestHandleMsgAddService() {
 						types.NewVerification(
 							types.NewVerificationMethod(
 								"did:cosmos:cash:subject#key-1",
-								"EcdsaSecp256k1RecoveryMethod2020",
 								"did:cosmos:cash:subject",
 								signer,
+								types.DIDVerificationMaterialBlockchainAccountID,
 							),
 							[]string{types.Authentication},
 							nil,
@@ -726,23 +753,24 @@ func (suite *KeeperTestSuite) TestHandleMsgDeleteService() {
 	}{
 		{
 			"FAIL: can not delete service, did does not exist",
-			func() { req = *types.NewMsgDeleteService("did:cosmos:cash:2222", "service-id", "did:cosmos:cash:2222") },
+			func() {
+				req = *types.NewMsgDeleteService("did:cosmos:cash:2222", "service-id", "cash1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+			},
 			true,
 		},
 		{
 
 			"Pass: can delete service from did document",
 			func() {
-				signer := "subject"
 				didDoc, _ := types.NewDidDocument(
 					"did:cosmos:cash:subject",
 					types.WithVerifications(
 						types.NewVerification(
 							types.NewVerificationMethod(
-								"did:cosmos:cash:subject#key-1",
-								"EcdsaSecp256k1RecoveryMethod2020",
+								"did:cosmos:cash:subject#cash1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 								"did:cosmos:cash:subject",
-								signer,
+								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+								types.DIDVerificationMaterialPublicKeyHex,
 							),
 							[]string{types.Authentication},
 							nil,
@@ -757,26 +785,24 @@ func (suite *KeeperTestSuite) TestHandleMsgDeleteService() {
 					),
 				)
 
-				serviceID := "service-id"
-
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
-				req = *types.NewMsgDeleteService(didDoc.Id, serviceID, signer)
+				req = *types.NewMsgDeleteService(didDoc.Id, "service-id", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
 			},
 			false,
 		},
 		{
 			"FAIL: cannot remove an invalid serviceID",
 			func() {
-				signer := "subject"
+
 				didDoc, _ := types.NewDidDocument(
 					"did:cosmos:cash:subject",
 					types.WithVerifications(
 						types.NewVerification(
 							types.NewVerificationMethod(
 								"did:cosmos:cash:subject#key-1",
-								"EcdsaSecp256k1RecoveryMethod2020",
 								"did:cosmos:cash:subject",
-								"027560af3387d375e3342a6968179ef3c6d04f5d33b2b611cf326d4708badd7770",
+								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+								types.DIDVerificationMaterialPublicKeyHex,
 							),
 							[]string{types.Authentication},
 							nil,
@@ -787,23 +813,22 @@ func (suite *KeeperTestSuite) TestHandleMsgDeleteService() {
 				serviceID := ""
 
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
-				req = *types.NewMsgDeleteService(didDoc.Id, serviceID, signer)
+				req = *types.NewMsgDeleteService(didDoc.Id, serviceID, "cash1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
 			},
 			true,
 		},
 		{
 			"FAIL: unauthorized (wrong relationship)",
 			func() {
-				signer := "subject"
 				didDoc, _ := types.NewDidDocument(
 					"did:cosmos:cash:subject",
 					types.WithVerifications(
 						types.NewVerification(
 							types.NewVerificationMethod(
 								"did:cosmos:cash:subject#key-1",
-								"EcdsaSecp256k1RecoveryMethod2020",
 								"did:cosmos:cash:subject",
-								"027560af3387d375e3342a6968179ef3c6d04f5d33b2b611cf326d4708badd7770",
+								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+								types.DIDVerificationMaterialPublicKeyHex,
 							),
 							[]string{types.CapabilityInvocation},
 							nil,
@@ -814,13 +839,13 @@ func (suite *KeeperTestSuite) TestHandleMsgDeleteService() {
 				serviceID := "service-id"
 
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
-				req = *types.NewMsgDeleteService(didDoc.Id, serviceID, signer)
+				req = *types.NewMsgDeleteService(didDoc.Id, serviceID, "cash1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
 			},
 			true,
 		},
 	}
 	for _, tc := range testCases {
-		suite.Run(fmt.Sprintf("Case %s", req), func() {
+		suite.Run(fmt.Sprintf(tc.name), func() {
 			tc.malleate()
 			_, err := handleFn(suite.ctx, &req)
 			if tc.expectErr {

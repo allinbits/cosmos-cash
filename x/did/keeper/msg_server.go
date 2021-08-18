@@ -260,7 +260,7 @@ func (k msgServer) DeleteService(
 		)
 	}
 	// Only try to remove service if there are services
-	if len(didDoc.Services) == 0 {
+	if len(didDoc.Service) == 0 {
 		return nil, sdkerrors.Wrapf(types.ErrInvalidState, "the did document doesn't have services associated")
 	}
 	// delete the service
@@ -331,8 +331,7 @@ func (k msgServer) SetVerificationRelationships(
 func updateDidMetadata(keeper *Keeper, ctx sdk.Context, did string) (err error) {
 	didMeta, found := keeper.GetDidMetadata(ctx, []byte(did))
 	if found {
-		bt := ctx.BlockTime()
-		didMeta.Updated = &bt
+		types.UpdateDidMetadata(&didMeta, ctx.TxBytes(), ctx.BlockTime())
 		keeper.SetDidMetadata(ctx, []byte(did), didMeta)
 	} else {
 		err = fmt.Errorf("(warning) did metadata not found")

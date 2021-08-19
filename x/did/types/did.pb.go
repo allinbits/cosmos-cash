@@ -7,15 +7,19 @@ import (
 	fmt "fmt"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
+	github_com_gogo_protobuf_types "github.com/gogo/protobuf/types"
+	_ "google.golang.org/protobuf/types/known/timestamppb"
 	io "io"
 	math "math"
 	math_bits "math/bits"
+	time "time"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
+var _ = time.Kitchen
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the proto package it is being compiled against.
@@ -26,7 +30,7 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 // DidDocument represents a dencentralised identifer.
 type DidDocument struct {
 	// @context is spec for did document.
-	Context []string `protobuf:"bytes,1,rep,name=context,proto3" json:"context,omitempty"`
+	Context []string `protobuf:"bytes,1,rep,name=context,proto3" json:"@context,omitempty"`
 	// id represents the id for the did document.
 	Id string `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
 	// A DID controller is an entity that is authorized to make changes to a DID document.
@@ -36,11 +40,11 @@ type DidDocument struct {
 	// such as cryptographic public keys, which can be used
 	// to authenticate or authorize interactions with the DID subject or associated parties.
 	// https://www.w3.org/TR/did-core/#verification-methods
-	VerificationMethods []*VerificationMethod `protobuf:"bytes,4,rep,name=verificationMethods,proto3" json:"verificationMethods,omitempty"`
+	VerificationMethod []*VerificationMethod `protobuf:"bytes,4,rep,name=verificationMethod,proto3" json:"verificationMethod,omitempty"`
 	// Services are used in DID documents to express ways of communicating
 	// with the DID subject or associated entities.
 	// https://www.w3.org/TR/did-core/#services
-	Services []*Service `protobuf:"bytes,5,rep,name=services,proto3" json:"services,omitempty"`
+	Service []*Service `protobuf:"bytes,5,rep,name=service,proto3" json:"service,omitempty"`
 	// Authentication represents public key associated with the did document.
 	// cfr. https://www.w3.org/TR/did-core/#authentication
 	Authentication []string `protobuf:"bytes,6,rep,name=authentication,proto3" json:"authentication,omitempty"`
@@ -102,10 +106,13 @@ var xxx_messageInfo_DidDocument proto.InternalMessageInfo
 // with the DID subject or associated parties.
 // https://www.w3.org/TR/did-core/#verification-methods
 type VerificationMethod struct {
-	Id                  string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Type                string `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
-	Controller          string `protobuf:"bytes,3,opt,name=controller,proto3" json:"controller,omitempty"`
-	BlockchainAccountID string `protobuf:"bytes,4,opt,name=blockchainAccountID,proto3" json:"blockchainAccountID,omitempty"`
+	Id         string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Type       string `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
+	Controller string `protobuf:"bytes,3,opt,name=controller,proto3" json:"controller,omitempty"`
+	// Types that are valid to be assigned to VerificationMaterial:
+	//	*VerificationMethod_BlockchainAccountID
+	//	*VerificationMethod_PublicKeyHex
+	VerificationMaterial isVerificationMethod_VerificationMaterial `protobuf_oneof:"verificationMaterial"`
 }
 
 func (m *VerificationMethod) Reset()         { *m = VerificationMethod{} }
@@ -141,32 +148,50 @@ func (m *VerificationMethod) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_VerificationMethod proto.InternalMessageInfo
 
-func (m *VerificationMethod) GetId() string {
-	if m != nil {
-		return m.Id
-	}
-	return ""
+type isVerificationMethod_VerificationMaterial interface {
+	isVerificationMethod_VerificationMaterial()
+	Equal(interface{}) bool
+	MarshalTo([]byte) (int, error)
+	Size() int
 }
 
-func (m *VerificationMethod) GetType() string {
-	if m != nil {
-		return m.Type
-	}
-	return ""
+type VerificationMethod_BlockchainAccountID struct {
+	BlockchainAccountID string `protobuf:"bytes,4,opt,name=blockchainAccountID,proto3,oneof" json:"blockchainAccountID,omitempty"`
+}
+type VerificationMethod_PublicKeyHex struct {
+	PublicKeyHex string `protobuf:"bytes,5,opt,name=publicKeyHex,proto3,oneof" json:"publicKeyHex,omitempty"`
 }
 
-func (m *VerificationMethod) GetController() string {
+func (*VerificationMethod_BlockchainAccountID) isVerificationMethod_VerificationMaterial() {}
+func (*VerificationMethod_PublicKeyHex) isVerificationMethod_VerificationMaterial()        {}
+
+func (m *VerificationMethod) GetVerificationMaterial() isVerificationMethod_VerificationMaterial {
 	if m != nil {
-		return m.Controller
+		return m.VerificationMaterial
 	}
-	return ""
+	return nil
 }
 
 func (m *VerificationMethod) GetBlockchainAccountID() string {
-	if m != nil {
-		return m.BlockchainAccountID
+	if x, ok := m.GetVerificationMaterial().(*VerificationMethod_BlockchainAccountID); ok {
+		return x.BlockchainAccountID
 	}
 	return ""
+}
+
+func (m *VerificationMethod) GetPublicKeyHex() string {
+	if x, ok := m.GetVerificationMaterial().(*VerificationMethod_PublicKeyHex); ok {
+		return x.PublicKeyHex
+	}
+	return ""
+}
+
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*VerificationMethod) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
+		(*VerificationMethod_BlockchainAccountID)(nil),
+		(*VerificationMethod_PublicKeyHex)(nil),
+	}
 }
 
 // Service defines how to find data associated with a identifer
@@ -209,66 +234,97 @@ func (m *Service) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Service proto.InternalMessageInfo
 
-func (m *Service) GetId() string {
-	if m != nil {
-		return m.Id
-	}
-	return ""
+// DidMetadata defines metadata associated to a did document such as
+// the status of the DID document
+type DidMetadata struct {
+	VersionId   string     `protobuf:"bytes,1,opt,name=versionId,proto3" json:"versionId,omitempty"`
+	Created     *time.Time `protobuf:"bytes,2,opt,name=created,proto3,stdtime" json:"created,omitempty"`
+	Updated     *time.Time `protobuf:"bytes,3,opt,name=updated,proto3,stdtime" json:"updated,omitempty"`
+	Deactivated bool       `protobuf:"varint,4,opt,name=deactivated,proto3" json:"deactivated,omitempty"`
 }
 
-func (m *Service) GetType() string {
-	if m != nil {
-		return m.Type
+func (m *DidMetadata) Reset()         { *m = DidMetadata{} }
+func (m *DidMetadata) String() string { return proto.CompactTextString(m) }
+func (*DidMetadata) ProtoMessage()    {}
+func (*DidMetadata) Descriptor() ([]byte, []int) {
+	return fileDescriptor_a95066e7350e77d5, []int{3}
+}
+func (m *DidMetadata) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *DidMetadata) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_DidMetadata.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
 	}
-	return ""
+}
+func (m *DidMetadata) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DidMetadata.Merge(m, src)
+}
+func (m *DidMetadata) XXX_Size() int {
+	return m.Size()
+}
+func (m *DidMetadata) XXX_DiscardUnknown() {
+	xxx_messageInfo_DidMetadata.DiscardUnknown(m)
 }
 
-func (m *Service) GetServiceEndpoint() string {
-	if m != nil {
-		return m.ServiceEndpoint
-	}
-	return ""
-}
+var xxx_messageInfo_DidMetadata proto.InternalMessageInfo
 
 func init() {
 	proto.RegisterType((*DidDocument)(nil), "allinbits.cosmoscash.did.DidDocument")
 	proto.RegisterType((*VerificationMethod)(nil), "allinbits.cosmoscash.did.VerificationMethod")
 	proto.RegisterType((*Service)(nil), "allinbits.cosmoscash.did.Service")
+	proto.RegisterType((*DidMetadata)(nil), "allinbits.cosmoscash.did.DidMetadata")
 }
 
 func init() { proto.RegisterFile("did/did.proto", fileDescriptor_a95066e7350e77d5) }
 
 var fileDescriptor_a95066e7350e77d5 = []byte{
-	// 456 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x53, 0x31, 0x6f, 0xd3, 0x40,
-	0x14, 0xce, 0x25, 0xa1, 0x49, 0x5e, 0xa1, 0x95, 0xae, 0x1d, 0x4e, 0x0c, 0x6e, 0xc8, 0x80, 0x3c,
-	0x14, 0x1b, 0x95, 0xad, 0x12, 0x43, 0x51, 0x40, 0xea, 0xc0, 0x12, 0x24, 0x06, 0x24, 0x90, 0xec,
-	0xbb, 0xc3, 0x7e, 0xaa, 0x73, 0x17, 0xf9, 0xce, 0x51, 0xf3, 0x0f, 0x18, 0xfb, 0x13, 0xfa, 0x73,
-	0x18, 0x3b, 0x32, 0x21, 0x94, 0x2c, 0xfc, 0x0c, 0xe4, 0xb3, 0x49, 0xa9, 0x93, 0x48, 0x6c, 0xe7,
-	0xef, 0x7d, 0xdf, 0xf7, 0x9e, 0xef, 0x7b, 0x07, 0x4f, 0x04, 0x8a, 0x50, 0xa0, 0x08, 0x66, 0xb9,
-	0xb6, 0x9a, 0xb2, 0x28, 0xcb, 0x50, 0xc5, 0x68, 0x4d, 0xc0, 0xb5, 0x99, 0x6a, 0xc3, 0x23, 0x93,
-	0x06, 0x02, 0xc5, 0xd3, 0xe3, 0x44, 0x27, 0xda, 0x91, 0xc2, 0xf2, 0x54, 0xf1, 0x47, 0x3f, 0x3b,
-	0xb0, 0x3f, 0x46, 0x31, 0xd6, 0xbc, 0x98, 0x4a, 0x65, 0x29, 0x83, 0x1e, 0xd7, 0xca, 0xca, 0x6b,
-	0xcb, 0xc8, 0xb0, 0xe3, 0x0f, 0x26, 0x7f, 0x3f, 0xe9, 0x01, 0xb4, 0x51, 0xb0, 0xf6, 0x90, 0xf8,
-	0x83, 0x49, 0x1b, 0x05, 0xf5, 0x00, 0xca, 0x52, 0xae, 0xb3, 0x4c, 0xe6, 0xac, 0xe3, 0xc8, 0xff,
-	0x20, 0xf4, 0x0b, 0x1c, 0xcd, 0x65, 0x8e, 0x5f, 0x91, 0x47, 0x16, 0xb5, 0x7a, 0x2f, 0x6d, 0xaa,
-	0x85, 0x61, 0xdd, 0x61, 0xc7, 0xdf, 0x3f, 0x3b, 0x0d, 0x76, 0xcd, 0x19, 0x7c, 0xdc, 0x10, 0x4d,
-	0xb6, 0x19, 0xd1, 0xd7, 0xd0, 0x37, 0x32, 0x9f, 0x23, 0x97, 0x86, 0x3d, 0x72, 0xa6, 0xcf, 0x76,
-	0x9b, 0x7e, 0xa8, 0x98, 0x93, 0xb5, 0x84, 0x3e, 0x87, 0x83, 0xa8, 0xb0, 0xa9, 0x54, 0xb6, 0xf6,
-	0x65, 0x7b, 0xee, 0x17, 0x1a, 0x28, 0xf5, 0xe1, 0x30, 0x32, 0x46, 0xe6, 0xf7, 0xad, 0x59, 0xcf,
-	0x11, 0x9b, 0x30, 0x1d, 0xc1, 0xe3, 0x2b, 0xb9, 0xb8, 0x48, 0x72, 0x29, 0xcb, 0xab, 0x64, 0x7d,
-	0x47, 0x7b, 0x80, 0xd1, 0x33, 0x38, 0xe6, 0xd1, 0x2c, 0x8a, 0x31, 0x43, 0xbb, 0xb8, 0x54, 0x73,
-	0x5d, 0xf7, 0x1e, 0x38, 0xee, 0xd6, 0xda, 0x43, 0xcd, 0x58, 0x66, 0x32, 0xa9, 0x34, 0xd0, 0xd4,
-	0xdc, 0xd7, 0xce, 0xfb, 0xdf, 0x6e, 0x4f, 0x5a, 0xbf, 0x6f, 0x4f, 0xc8, 0xe8, 0x86, 0x00, 0xdd,
-	0xbc, 0xd2, 0x3a, 0x4d, 0xb2, 0x4e, 0x93, 0x42, 0xd7, 0x2e, 0x66, 0xb2, 0xce, 0xd7, 0x9d, 0x37,
-	0x12, 0x26, 0x8d, 0x84, 0x5f, 0xc2, 0x51, 0x9c, 0x69, 0x7e, 0xc5, 0xd3, 0x08, 0xd5, 0x05, 0xe7,
-	0xba, 0x50, 0xf6, 0x72, 0xcc, 0xba, 0x8e, 0xb8, 0xad, 0x74, 0xde, 0x75, 0x23, 0x7d, 0x86, 0x5e,
-	0x9d, 0xc7, 0x7f, 0x8d, 0xe1, 0xc3, 0x61, 0x9d, 0xda, 0x5b, 0x25, 0x66, 0x1a, 0x95, 0xad, 0x67,
-	0x69, 0xc2, 0x95, 0xfd, 0x9b, 0x77, 0xdf, 0x97, 0x1e, 0xb9, 0x5b, 0x7a, 0xe4, 0xd7, 0xd2, 0x23,
-	0x37, 0x2b, 0xaf, 0x75, 0xb7, 0xf2, 0x5a, 0x3f, 0x56, 0x5e, 0xeb, 0xd3, 0x69, 0x82, 0x36, 0x2d,
-	0xe2, 0x80, 0xeb, 0x69, 0xb8, 0x5e, 0x95, 0xb0, 0x5a, 0x95, 0x17, 0xe5, 0xae, 0x84, 0xd7, 0xe5,
-	0x53, 0x0a, 0xcb, 0xb6, 0x26, 0xde, 0x73, 0x2f, 0xe4, 0xd5, 0x9f, 0x00, 0x00, 0x00, 0xff, 0xff,
-	0xe7, 0x99, 0x19, 0x47, 0x62, 0x03, 0x00, 0x00,
+	// 605 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x54, 0xcd, 0x6e, 0xd3, 0x4c,
+	0x14, 0x8d, 0x9b, 0xb4, 0x69, 0x26, 0xfd, 0x5a, 0x69, 0xbe, 0xaa, 0xb2, 0x22, 0xe4, 0x84, 0x08,
+	0xa1, 0x2c, 0x82, 0x8d, 0xc2, 0xae, 0x6c, 0x68, 0x14, 0x50, 0x23, 0xd4, 0x8d, 0x41, 0x2c, 0x10,
+	0x9b, 0xf1, 0xcc, 0xad, 0x33, 0xaa, 0xed, 0xb1, 0xec, 0x71, 0x94, 0xbc, 0x01, 0xcb, 0x3e, 0x42,
+	0x1f, 0x87, 0x1d, 0x5d, 0xb0, 0x60, 0x05, 0x28, 0xd9, 0x20, 0x96, 0x3c, 0x01, 0xf2, 0xd8, 0x6e,
+	0x7e, 0x2b, 0x75, 0x37, 0x3e, 0xf7, 0x9c, 0x3b, 0x77, 0xee, 0xd1, 0x31, 0xfa, 0x8f, 0x71, 0x66,
+	0x31, 0xce, 0xcc, 0x30, 0x12, 0x52, 0x60, 0x9d, 0x78, 0x1e, 0x0f, 0x1c, 0x2e, 0x63, 0x93, 0x8a,
+	0xd8, 0x17, 0x31, 0x25, 0xf1, 0xc8, 0x64, 0x9c, 0x35, 0x8e, 0x5d, 0xe1, 0x0a, 0x45, 0xb2, 0xd2,
+	0x53, 0xc6, 0x6f, 0x34, 0x5d, 0x21, 0x5c, 0x0f, 0x2c, 0xf5, 0xe5, 0x24, 0x97, 0x96, 0xe4, 0x3e,
+	0xc4, 0x92, 0xf8, 0x61, 0x46, 0x68, 0xff, 0x2d, 0xa3, 0xfa, 0x80, 0xb3, 0x81, 0xa0, 0x89, 0x0f,
+	0x81, 0xc4, 0xcf, 0x51, 0x95, 0x8a, 0x40, 0xc2, 0x44, 0xea, 0x5a, 0xab, 0xdc, 0xa9, 0xf5, 0x4f,
+	0xfe, 0xfc, 0x68, 0xe2, 0x57, 0x39, 0xd6, 0x15, 0x3e, 0x97, 0xe0, 0x87, 0x72, 0x6a, 0x17, 0x34,
+	0x7c, 0x88, 0x76, 0x38, 0xd3, 0x77, 0x5a, 0x5a, 0xa7, 0x66, 0xef, 0x70, 0x86, 0x0d, 0x84, 0xd2,
+	0x52, 0x24, 0x3c, 0x0f, 0x22, 0xbd, 0x9c, 0x36, 0xb1, 0x97, 0x10, 0xfc, 0x09, 0xe1, 0x31, 0x44,
+	0xfc, 0x92, 0x53, 0x22, 0xb9, 0x08, 0x2e, 0x40, 0x8e, 0x04, 0xd3, 0x2b, 0xad, 0x72, 0xa7, 0xde,
+	0xeb, 0x9a, 0xf7, 0xbd, 0xcf, 0xfc, 0xb0, 0xa1, 0xb1, 0xb7, 0xf4, 0xc1, 0x2f, 0x51, 0x35, 0x86,
+	0x68, 0xcc, 0x29, 0xe8, 0xbb, 0xaa, 0xe5, 0xe3, 0xfb, 0x5b, 0xbe, 0xcb, 0x88, 0x76, 0xa1, 0xc0,
+	0x4f, 0xd1, 0x21, 0x49, 0xe4, 0x08, 0x02, 0x99, 0x37, 0xd5, 0xf7, 0xd4, 0xf8, 0x6b, 0x28, 0xee,
+	0xa0, 0x23, 0x12, 0xc7, 0x10, 0x2d, 0xcd, 0x5f, 0x55, 0xc4, 0x75, 0x18, 0xb7, 0xd1, 0xc1, 0x15,
+	0x4c, 0xcf, 0xdc, 0x08, 0x20, 0x5d, 0xaf, 0xbe, 0xaf, 0x68, 0x2b, 0x18, 0xee, 0xa1, 0x63, 0x4a,
+	0x42, 0xe2, 0x70, 0x8f, 0xcb, 0xe9, 0x30, 0x18, 0x8b, 0xfc, 0xee, 0x9a, 0xe2, 0x6e, 0xad, 0xad,
+	0x6a, 0x06, 0xe0, 0x81, 0x9b, 0x69, 0xd0, 0xba, 0x66, 0x51, 0x3b, 0xdd, 0xff, 0x7c, 0xd3, 0x2c,
+	0xfd, 0xbe, 0x69, 0x6a, 0xed, 0x6f, 0x1a, 0xc2, 0x9b, 0xfb, 0xcc, 0x9d, 0xd4, 0xee, 0x9c, 0xc4,
+	0xa8, 0x22, 0xa7, 0x21, 0xe4, 0xde, 0xaa, 0xf3, 0x86, 0xbb, 0xda, 0x9a, 0xbb, 0x3d, 0xf4, 0xbf,
+	0xe3, 0x09, 0x7a, 0x45, 0x47, 0x84, 0x07, 0x67, 0x94, 0x8a, 0x24, 0x90, 0xc3, 0x81, 0x5e, 0x49,
+	0x89, 0xe7, 0x25, 0x7b, 0x5b, 0x11, 0x3f, 0x41, 0x07, 0x61, 0xe2, 0x78, 0x9c, 0xbe, 0x85, 0xe9,
+	0x39, 0x4c, 0xf4, 0xdd, 0x9c, 0xbc, 0x82, 0x2e, 0xc6, 0xef, 0x9f, 0xa0, 0xe3, 0x15, 0xe7, 0x89,
+	0x84, 0x88, 0x13, 0xaf, 0x4d, 0x50, 0x35, 0xb7, 0xf4, 0x41, 0x4f, 0xe9, 0xa0, 0xa3, 0xdc, 0xf8,
+	0xd7, 0x01, 0x0b, 0x05, 0x0f, 0x64, 0xfe, 0x9e, 0x75, 0x78, 0x69, 0x73, 0x5f, 0x35, 0x15, 0x97,
+	0x0b, 0x90, 0x84, 0x11, 0x49, 0xf0, 0x23, 0x54, 0x1b, 0x43, 0x14, 0x73, 0x11, 0x0c, 0x8b, 0xeb,
+	0x16, 0x00, 0x3e, 0x45, 0x55, 0x1a, 0x01, 0x91, 0x90, 0xe5, 0xa3, 0xde, 0x6b, 0x98, 0x59, 0x1e,
+	0xcd, 0x22, 0x8f, 0xe6, 0xfb, 0x22, 0x8f, 0xfd, 0xca, 0xf5, 0xcf, 0xa6, 0x66, 0x17, 0x82, 0x54,
+	0x9b, 0x84, 0x4c, 0x69, 0xcb, 0x0f, 0xd5, 0xe6, 0x02, 0xdc, 0x42, 0x75, 0x06, 0x84, 0x4a, 0x3e,
+	0x56, 0xfa, 0x74, 0xf9, 0xfb, 0xf6, 0x32, 0xb4, 0xb4, 0xcc, 0x37, 0x5f, 0x66, 0x86, 0x76, 0x3b,
+	0x33, 0xb4, 0x5f, 0x33, 0x43, 0xbb, 0x9e, 0x1b, 0xa5, 0xdb, 0xb9, 0x51, 0xfa, 0x3e, 0x37, 0x4a,
+	0x1f, 0xbb, 0x2e, 0x97, 0xa3, 0xc4, 0x31, 0xa9, 0xf0, 0xad, 0xbb, 0x0c, 0x59, 0x59, 0x86, 0x9e,
+	0xa5, 0x21, 0xb2, 0x26, 0xe9, 0x9f, 0xc9, 0x4a, 0x97, 0x19, 0x3b, 0x7b, 0x6a, 0xac, 0x17, 0xff,
+	0x02, 0x00, 0x00, 0xff, 0xff, 0xab, 0x77, 0x44, 0x38, 0xb1, 0x04, 0x00, 0x00,
 }
 
 func (this *DidDocument) Equal(that interface{}) bool {
@@ -309,19 +365,19 @@ func (this *DidDocument) Equal(that interface{}) bool {
 			return false
 		}
 	}
-	if len(this.VerificationMethods) != len(that1.VerificationMethods) {
+	if len(this.VerificationMethod) != len(that1.VerificationMethod) {
 		return false
 	}
-	for i := range this.VerificationMethods {
-		if !this.VerificationMethods[i].Equal(that1.VerificationMethods[i]) {
+	for i := range this.VerificationMethod {
+		if !this.VerificationMethod[i].Equal(that1.VerificationMethod[i]) {
 			return false
 		}
 	}
-	if len(this.Services) != len(that1.Services) {
+	if len(this.Service) != len(that1.Service) {
 		return false
 	}
-	for i := range this.Services {
-		if !this.Services[i].Equal(that1.Services[i]) {
+	for i := range this.Service {
+		if !this.Service[i].Equal(that1.Service[i]) {
 			return false
 		}
 	}
@@ -395,7 +451,61 @@ func (this *VerificationMethod) Equal(that interface{}) bool {
 	if this.Controller != that1.Controller {
 		return false
 	}
+	if that1.VerificationMaterial == nil {
+		if this.VerificationMaterial != nil {
+			return false
+		}
+	} else if this.VerificationMaterial == nil {
+		return false
+	} else if !this.VerificationMaterial.Equal(that1.VerificationMaterial) {
+		return false
+	}
+	return true
+}
+func (this *VerificationMethod_BlockchainAccountID) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*VerificationMethod_BlockchainAccountID)
+	if !ok {
+		that2, ok := that.(VerificationMethod_BlockchainAccountID)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
 	if this.BlockchainAccountID != that1.BlockchainAccountID {
+		return false
+	}
+	return true
+}
+func (this *VerificationMethod_PublicKeyHex) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*VerificationMethod_PublicKeyHex)
+	if !ok {
+		that2, ok := that.(VerificationMethod_PublicKeyHex)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.PublicKeyHex != that1.PublicKeyHex {
 		return false
 	}
 	return true
@@ -426,6 +536,47 @@ func (this *Service) Equal(that interface{}) bool {
 		return false
 	}
 	if this.ServiceEndpoint != that1.ServiceEndpoint {
+		return false
+	}
+	return true
+}
+func (this *DidMetadata) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*DidMetadata)
+	if !ok {
+		that2, ok := that.(DidMetadata)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.VersionId != that1.VersionId {
+		return false
+	}
+	if that1.Created == nil {
+		if this.Created != nil {
+			return false
+		}
+	} else if !this.Created.Equal(*that1.Created) {
+		return false
+	}
+	if that1.Updated == nil {
+		if this.Updated != nil {
+			return false
+		}
+	} else if !this.Updated.Equal(*that1.Updated) {
+		return false
+	}
+	if this.Deactivated != that1.Deactivated {
 		return false
 	}
 	return true
@@ -495,10 +646,10 @@ func (m *DidDocument) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 			dAtA[i] = 0x32
 		}
 	}
-	if len(m.Services) > 0 {
-		for iNdEx := len(m.Services) - 1; iNdEx >= 0; iNdEx-- {
+	if len(m.Service) > 0 {
+		for iNdEx := len(m.Service) - 1; iNdEx >= 0; iNdEx-- {
 			{
-				size, err := m.Services[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				size, err := m.Service[iNdEx].MarshalToSizedBuffer(dAtA[:i])
 				if err != nil {
 					return 0, err
 				}
@@ -509,10 +660,10 @@ func (m *DidDocument) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 			dAtA[i] = 0x2a
 		}
 	}
-	if len(m.VerificationMethods) > 0 {
-		for iNdEx := len(m.VerificationMethods) - 1; iNdEx >= 0; iNdEx-- {
+	if len(m.VerificationMethod) > 0 {
+		for iNdEx := len(m.VerificationMethod) - 1; iNdEx >= 0; iNdEx-- {
 			{
-				size, err := m.VerificationMethods[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				size, err := m.VerificationMethod[iNdEx].MarshalToSizedBuffer(dAtA[:i])
 				if err != nil {
 					return 0, err
 				}
@@ -571,12 +722,14 @@ func (m *VerificationMethod) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.BlockchainAccountID) > 0 {
-		i -= len(m.BlockchainAccountID)
-		copy(dAtA[i:], m.BlockchainAccountID)
-		i = encodeVarintDid(dAtA, i, uint64(len(m.BlockchainAccountID)))
-		i--
-		dAtA[i] = 0x22
+	if m.VerificationMaterial != nil {
+		{
+			size := m.VerificationMaterial.Size()
+			i -= size
+			if _, err := m.VerificationMaterial.MarshalTo(dAtA[i:]); err != nil {
+				return 0, err
+			}
+		}
 	}
 	if len(m.Controller) > 0 {
 		i -= len(m.Controller)
@@ -602,6 +755,34 @@ func (m *VerificationMethod) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *VerificationMethod_BlockchainAccountID) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *VerificationMethod_BlockchainAccountID) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	i -= len(m.BlockchainAccountID)
+	copy(dAtA[i:], m.BlockchainAccountID)
+	i = encodeVarintDid(dAtA, i, uint64(len(m.BlockchainAccountID)))
+	i--
+	dAtA[i] = 0x22
+	return len(dAtA) - i, nil
+}
+func (m *VerificationMethod_PublicKeyHex) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *VerificationMethod_PublicKeyHex) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	i -= len(m.PublicKeyHex)
+	copy(dAtA[i:], m.PublicKeyHex)
+	i = encodeVarintDid(dAtA, i, uint64(len(m.PublicKeyHex)))
+	i--
+	dAtA[i] = 0x2a
+	return len(dAtA) - i, nil
+}
 func (m *Service) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -646,6 +827,66 @@ func (m *Service) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *DidMetadata) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *DidMetadata) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DidMetadata) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Deactivated {
+		i--
+		if m.Deactivated {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.Updated != nil {
+		n1, err1 := github_com_gogo_protobuf_types.StdTimeMarshalTo(*m.Updated, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdTime(*m.Updated):])
+		if err1 != nil {
+			return 0, err1
+		}
+		i -= n1
+		i = encodeVarintDid(dAtA, i, uint64(n1))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.Created != nil {
+		n2, err2 := github_com_gogo_protobuf_types.StdTimeMarshalTo(*m.Created, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdTime(*m.Created):])
+		if err2 != nil {
+			return 0, err2
+		}
+		i -= n2
+		i = encodeVarintDid(dAtA, i, uint64(n2))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.VersionId) > 0 {
+		i -= len(m.VersionId)
+		copy(dAtA[i:], m.VersionId)
+		i = encodeVarintDid(dAtA, i, uint64(len(m.VersionId)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintDid(dAtA []byte, offset int, v uint64) int {
 	offset -= sovDid(v)
 	base := offset
@@ -679,14 +920,14 @@ func (m *DidDocument) Size() (n int) {
 			n += 1 + l + sovDid(uint64(l))
 		}
 	}
-	if len(m.VerificationMethods) > 0 {
-		for _, e := range m.VerificationMethods {
+	if len(m.VerificationMethod) > 0 {
+		for _, e := range m.VerificationMethod {
 			l = e.Size()
 			n += 1 + l + sovDid(uint64(l))
 		}
 	}
-	if len(m.Services) > 0 {
-		for _, e := range m.Services {
+	if len(m.Service) > 0 {
+		for _, e := range m.Service {
 			l = e.Size()
 			n += 1 + l + sovDid(uint64(l))
 		}
@@ -742,13 +983,32 @@ func (m *VerificationMethod) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovDid(uint64(l))
 	}
-	l = len(m.BlockchainAccountID)
-	if l > 0 {
-		n += 1 + l + sovDid(uint64(l))
+	if m.VerificationMaterial != nil {
+		n += m.VerificationMaterial.Size()
 	}
 	return n
 }
 
+func (m *VerificationMethod_BlockchainAccountID) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.BlockchainAccountID)
+	n += 1 + l + sovDid(uint64(l))
+	return n
+}
+func (m *VerificationMethod_PublicKeyHex) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.PublicKeyHex)
+	n += 1 + l + sovDid(uint64(l))
+	return n
+}
 func (m *Service) Size() (n int) {
 	if m == nil {
 		return 0
@@ -766,6 +1026,30 @@ func (m *Service) Size() (n int) {
 	l = len(m.ServiceEndpoint)
 	if l > 0 {
 		n += 1 + l + sovDid(uint64(l))
+	}
+	return n
+}
+
+func (m *DidMetadata) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.VersionId)
+	if l > 0 {
+		n += 1 + l + sovDid(uint64(l))
+	}
+	if m.Created != nil {
+		l = github_com_gogo_protobuf_types.SizeOfStdTime(*m.Created)
+		n += 1 + l + sovDid(uint64(l))
+	}
+	if m.Updated != nil {
+		l = github_com_gogo_protobuf_types.SizeOfStdTime(*m.Updated)
+		n += 1 + l + sovDid(uint64(l))
+	}
+	if m.Deactivated {
+		n += 2
 	}
 	return n
 }
@@ -903,7 +1187,7 @@ func (m *DidDocument) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field VerificationMethods", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field VerificationMethod", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -930,14 +1214,14 @@ func (m *DidDocument) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.VerificationMethods = append(m.VerificationMethods, &VerificationMethod{})
-			if err := m.VerificationMethods[len(m.VerificationMethods)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			m.VerificationMethod = append(m.VerificationMethod, &VerificationMethod{})
+			if err := m.VerificationMethod[len(m.VerificationMethod)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
 		case 5:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Services", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Service", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -964,8 +1248,8 @@ func (m *DidDocument) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Services = append(m.Services, &Service{})
-			if err := m.Services[len(m.Services)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			m.Service = append(m.Service, &Service{})
+			if err := m.Service[len(m.Service)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -1305,7 +1589,39 @@ func (m *VerificationMethod) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.BlockchainAccountID = string(dAtA[iNdEx:postIndex])
+			m.VerificationMaterial = &VerificationMethod_BlockchainAccountID{string(dAtA[iNdEx:postIndex])}
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PublicKeyHex", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDid
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthDid
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthDid
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.VerificationMaterial = &VerificationMethod_PublicKeyHex{string(dAtA[iNdEx:postIndex])}
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -1453,6 +1769,180 @@ func (m *Service) Unmarshal(dAtA []byte) error {
 			}
 			m.ServiceEndpoint = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipDid(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthDid
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *DidMetadata) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowDid
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: DidMetadata: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: DidMetadata: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field VersionId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDid
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthDid
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthDid
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.VersionId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Created", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDid
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthDid
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDid
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Created == nil {
+				m.Created = new(time.Time)
+			}
+			if err := github_com_gogo_protobuf_types.StdTimeUnmarshal(m.Created, dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Updated", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDid
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthDid
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDid
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Updated == nil {
+				m.Updated = new(time.Time)
+			}
+			if err := github_com_gogo_protobuf_types.StdTimeUnmarshal(m.Updated, dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Deactivated", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDid
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Deactivated = bool(v != 0)
 		default:
 			iNdEx = preIndex
 			skippy, err := skipDid(dAtA[iNdEx:])

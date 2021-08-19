@@ -3,6 +3,7 @@ package allinbits.cosmoscash.did;
 
 import "gogoproto/gogo.proto";
 import "did/did.proto";
+import "google/api/annotations.proto";
 
 option go_package = "github.com/allinbits/cosmos-cash/x/did/types";
 

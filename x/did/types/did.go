@@ -1,11 +1,16 @@
 package types
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"sort"
 	"strings"
+	"time"
 
+	"github.com/cosmos/cosmos-sdk/codec/legacy"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -33,11 +38,11 @@ const (
 
 // VerificationRelationships are the supported list of verification relationships
 var VerificationRelationships = map[string]VerificationRelationship{
-	"authentication":       authentication,
-	"assertionMethod":      assertionMethod,
-	"keyAgreement":         keyAgreement,
-	"capabilityInvocation": capabilityInvocation,
-	"capabilityDelegation": capabilityDelegation,
+	Authentication:       authentication,
+	AssertionMethod:      assertionMethod,
+	KeyAgreement:         keyAgreement,
+	CapabilityInvocation: capabilityInvocation,
+	CapabilityDelegation: capabilityDelegation,
 }
 
 // verificationRelationships retrieve the pointer to the verification relationship
@@ -75,6 +80,21 @@ func parseRelationshipLabels(relNames ...string) (vrs []VerificationRelationship
 	return
 }
 
+// VerificationMaterialType encode the verification material type
+type VerificationMaterialType int
+
+// List of supported verification material types
+const (
+	DIDVerificationMaterialBlockchainAccountID VerificationMaterialType = iota
+	DIDVerificationMaterialPublicKeyHex
+)
+
+// Verification method types
+const (
+	DIDVerificationMethodTypeSecp256k1_2020 = "EcdsaSecp256k1RecoveryMethod2020"
+	DIDVerificationMethodTypeCosmosAddress  = "CosmosAccountAddress"
+)
+
 /**
 Regexp generated using this ABNF specs and using https://abnf.msweet.org/index.php
 
@@ -110,8 +130,8 @@ var (
 
 // DID format a DID from a method specific did
 // cfr.https://www.w3.org/TR/did-core/#did
-func DID(didMethodSpecificDidDocument string) string {
-	return fmt.Sprint(DidPrefix, didMethodSpecificDidDocument)
+func DID(chainName, didID string) string {
+	return fmt.Sprint(DidPrefix, chainName, ":", didID)
 }
 
 func DIDKey(didMethodSpecificDidDocument string) string {
@@ -121,7 +141,9 @@ func DIDKey(didMethodSpecificDidDocument string) string {
 // BlockchainAccountID return the account of the user with the chain id postfixed
 // https://w3c.github.io/did-spec-registries/#blockchainAccountId
 func BlockchainAccountID(account string) string {
-	return fmt.Sprint(account, "")
+	//TODO: at the moment the app doesn't do anything but we
+	// might use the format suggested by the the specification
+	return account
 }
 
 // IsValidDID validate the input string according to the
@@ -140,6 +162,47 @@ func IsValidDIDURL(input string) bool {
 // (cfr https://datatracker.ietf.org/doc/html/rfc3986#page-50)
 func IsValidRFC3986Uri(input string) bool {
 	return rfc3986Regexp.MatchString(input)
+}
+
+// IsValidDIDDocument tells if a DID document is valid,
+// that is if it has the default context and a valid subject
+func IsValidDIDDocument(didDoc *DidDocument) bool {
+	if didDoc == nil {
+		return false
+	}
+	if !IsValidDID(didDoc.Id) {
+		return false
+	}
+	for _, c := range didDoc.Context {
+		if c == contextDIDBase {
+			return true
+		}
+	}
+	return false
+}
+
+// IsValidDIDKeyFormat verify that a did is compliant with the did:cosmos:key format
+// that is the ID must be a bech32 address no longer than 255 bytes
+func IsValidDIDKeyFormat(did string) bool {
+	if _, err := sdk.AccAddressFromBech32(strings.TrimPrefix(did, DidKeyPrefix)); err != nil {
+		return false
+	}
+	return true
+}
+
+// IsValidDIDMetadata tells if a DID metadata is valid,
+// that is if it has a non empty versionId and a non-zero create date
+func IsValidDIDMetadata(didMeta *DidMetadata) bool {
+	if didMeta == nil {
+		return false
+	}
+	if IsEmpty(didMeta.VersionId) {
+		return false
+	}
+	if didMeta.Created == nil || didMeta.Created.IsZero() {
+		return false
+	}
+	return true
 }
 
 // ValidateVerification perform basic validation on a verification struct
@@ -170,9 +233,26 @@ func ValidateVerification(v *Verification, allowedControllers ...string) (err er
 		return
 	}
 
+	// check the verification material
+	switch x := v.Method.VerificationMaterial.(type) {
+	case *VerificationMethod_BlockchainAccountID:
+		if IsEmpty(x.BlockchainAccountID) {
+			err = sdkerrors.Wrapf(ErrInvalidInput, "verification material blockchain account id invalid for verification method %s", v.Method.Id)
+			return
+		}
+	case *VerificationMethod_PublicKeyHex:
+		if IsEmpty(x.PublicKeyHex) {
+			err = sdkerrors.Wrapf(ErrInvalidInput, "verification material pubkey invalid for verification method %s", v.Method.Id)
+			return
+		}
+	default:
+		err = sdkerrors.Wrapf(ErrInvalidInput, "verification material not set for verification method %s", v.Method.Id)
+		return
+	}
+
 	// check for empty publickey
-	if IsEmpty(v.Method.BlockchainAccountID) {
-		err = sdkerrors.Wrapf(ErrInvalidInput, "public key not set for verification method %s", v.Method.Id)
+	if v.Method.VerificationMaterial.Size() == 0 {
+		err = sdkerrors.Wrapf(ErrInvalidInput, "verification material not set for verification method %s", v.Method.Id)
 		return
 	}
 
@@ -290,9 +370,9 @@ func (didDoc *DidDocument) SetControllers(controllers ...string) error {
 // AddVerifications add one or more verification method and relations to a did document
 func (didDoc *DidDocument) AddVerifications(verifications ...*Verification) (err error) {
 	// verify that there are no duplicates in method ids
-	index := make(map[string]struct{}, len(didDoc.VerificationMethods))
+	index := make(map[string]struct{}, len(didDoc.VerificationMethod))
 	// load existing verifications if any
-	for _, v := range didDoc.VerificationMethods {
+	for _, v := range didDoc.VerificationMethod {
 		index[v.Id] = struct{}{}
 	}
 
@@ -311,7 +391,7 @@ func (didDoc *DidDocument) AddVerifications(verifications ...*Verification) (err
 		index[v.Method.Id] = struct{}{}
 
 		// first add the method to the list of methods
-		didDoc.VerificationMethods = append(didDoc.VerificationMethods, v.GetMethod())
+		didDoc.VerificationMethod = append(didDoc.VerificationMethod, v.GetMethod())
 
 		// now add the relationships
 		vrs, err := parseRelationshipLabels(v.Relationships...)
@@ -332,15 +412,15 @@ func (didDoc *DidDocument) AddVerifications(verifications ...*Verification) (err
 func (didDoc *DidDocument) RevokeVerification(methodID string) error {
 
 	del := func(x int) {
-		lastIdx := len(didDoc.VerificationMethods) - 1
+		lastIdx := len(didDoc.VerificationMethod) - 1
 		switch lastIdx {
 		case 0:
-			didDoc.VerificationMethods = nil
+			didDoc.VerificationMethod = nil
 		case x:
-			didDoc.VerificationMethods = didDoc.VerificationMethods[:lastIdx]
+			didDoc.VerificationMethod = didDoc.VerificationMethod[:lastIdx]
 		default:
-			didDoc.VerificationMethods[x] = didDoc.VerificationMethods[lastIdx]
-			didDoc.VerificationMethods = didDoc.VerificationMethods[:lastIdx]
+			didDoc.VerificationMethod[x] = didDoc.VerificationMethod[lastIdx]
+			didDoc.VerificationMethod = didDoc.VerificationMethod[:lastIdx]
 		}
 	}
 
@@ -348,7 +428,7 @@ func (didDoc *DidDocument) RevokeVerification(methodID string) error {
 	didDoc.setRelationships(methodID)
 
 	// now remove the method
-	for i, vm := range didDoc.VerificationMethods {
+	for i, vm := range didDoc.VerificationMethod {
 		if vm.Id == methodID {
 			del(i)
 			return nil
@@ -427,9 +507,38 @@ func (didDoc DidDocument) HasRelationship(
 	relationships ...string,
 ) bool {
 	// first check if the controller exists
-	for _, vm := range didDoc.VerificationMethods {
-		if vm.BlockchainAccountID != BlockchainAccountID(signer) {
-			continue
+	for _, vm := range didDoc.VerificationMethod {
+
+		switch k := vm.VerificationMaterial.(type) {
+		case *VerificationMethod_BlockchainAccountID:
+			if BlockchainAccountID(k.BlockchainAccountID) != BlockchainAccountID(signer) {
+				continue
+			}
+		case *VerificationMethod_PublicKeyHex:
+			// decode the pub key
+			pkb, err := hex.DecodeString(k.PublicKeyHex)
+			if err != nil {
+				continue
+			}
+			// deal with the amino prefix
+			pka, err := hex.DecodeString(fmt.Sprintf("eb5ae987%x", len(pkb)))
+			if err != nil {
+				continue
+			}
+			pka = append(pka, pkb...)
+			// load the pubkey
+			pk, err := legacy.PubKeyFromBytes(pka)
+			if err != nil {
+				continue
+			}
+			// generate the address
+			addr, err := sdk.Bech32ifyAddressBytes(sdk.GetConfig().GetBech32AccountAddrPrefix(), pk.Address())
+			if err != nil {
+				continue
+			}
+			if BlockchainAccountID(addr) != BlockchainAccountID(signer) {
+				continue
+			}
 		}
 
 		vrs := didDoc.GetVerificationRelationships(vm.Id)
@@ -442,15 +551,15 @@ func (didDoc DidDocument) HasRelationship(
 
 // AddServices add services to a did document
 func (didDoc *DidDocument) AddServices(services ...*Service) (err error) {
-	if didDoc.Services == nil {
-		didDoc.Services = []*Service{}
+	if didDoc.Service == nil {
+		didDoc.Service = []*Service{}
 	}
 
 	// used to check duplicates
-	index := make(map[string]struct{}, len(didDoc.Services))
+	index := make(map[string]struct{}, len(didDoc.Service))
 
 	// load existing services
-	for _, s := range didDoc.Services {
+	for _, s := range didDoc.Service {
 		index[s.Id] = struct{}{}
 	}
 
@@ -467,7 +576,7 @@ func (didDoc *DidDocument) AddServices(services ...*Service) (err error) {
 		}
 		index[s.Id] = struct{}{}
 
-		didDoc.Services = append(didDoc.Services, s)
+		didDoc.Service = append(didDoc.Service, s)
 	}
 	return
 }
@@ -475,19 +584,19 @@ func (didDoc *DidDocument) AddServices(services ...*Service) (err error) {
 // DeleteService delete an existing service from a did document
 func (didDoc *DidDocument) DeleteService(serviceID string) {
 	del := func(x int) {
-		lastIdx := len(didDoc.Services) - 1
+		lastIdx := len(didDoc.Service) - 1
 		switch lastIdx {
 		case 0: // remove the relationships since there is no elements left
-			didDoc.Services = nil
+			didDoc.Service = nil
 		case x: // if it's at the last position, just drop the last position
-			didDoc.Services = didDoc.Services[:lastIdx]
+			didDoc.Service = didDoc.Service[:lastIdx]
 		default: // swap and drop last position
-			didDoc.Services[x] = didDoc.Services[lastIdx]
-			didDoc.Services = didDoc.Services[:lastIdx]
+			didDoc.Service[x] = didDoc.Service[lastIdx]
+			didDoc.Service = didDoc.Service[:lastIdx]
 		}
 	}
 
-	for i, s := range didDoc.Services {
+	for i, s := range didDoc.Service {
 		if s.Id == serviceID {
 			del(i)
 			break
@@ -518,14 +627,36 @@ func NewVerification(
 }
 
 // NewVerificationMethod build a new verification method
-// TODO: this only uses BlockchainAccountID
-func NewVerificationMethod(id, keyType, controller, key string) VerificationMethod {
-	return VerificationMethod{
-		Id:                  id,
-		Type:                keyType,
-		Controller:          controller,
-		BlockchainAccountID: key,
+func NewVerificationMethod(id, controller, key string, vmt VerificationMaterialType) VerificationMethod {
+	vm := VerificationMethod{
+		Id:         id,
+		Controller: controller,
 	}
+	switch vmt {
+	case DIDVerificationMaterialPublicKeyHex:
+		vm.VerificationMaterial = &VerificationMethod_PublicKeyHex{key}
+		vm.Type = DIDVerificationMethodTypeSecp256k1_2020
+	case DIDVerificationMaterialBlockchainAccountID:
+		vm.VerificationMaterial = &VerificationMethod_BlockchainAccountID{key}
+		vm.Type = DIDVerificationMethodTypeCosmosAddress
+	}
+	return vm
+
+}
+
+// MarshalJSON implements a custom marshaller for rendergin verification material
+func (vm VerificationMethod) MarshalJSON() ([]byte, error) {
+	vmd := make(map[string]string, 4)
+	vmd["id"] = vm.Id
+	vmd["controller"] = vm.Controller
+	vmd["type"] = vm.Type
+	switch m := vm.VerificationMaterial.(type) {
+	case *VerificationMethod_BlockchainAccountID:
+		vmd["blockchainAccountId"] = m.BlockchainAccountID
+	case *VerificationMethod_PublicKeyHex:
+		vmd["publicKeyHex"] = m.PublicKeyHex
+	}
+	return json.Marshal(vmd)
 }
 
 // GetBytes is a helper for serializing
@@ -543,6 +674,24 @@ func NewService(id string, serviceType string, serviceEndpoint string) *Service 
 		Type:            serviceType,
 		ServiceEndpoint: serviceEndpoint,
 	}
+}
+
+// NewDidMetadata returns a DidMetadata strcut that has equals created and updated date,
+// and with deactivated field set to false
+func NewDidMetadata(versionData []byte, created time.Time) DidMetadata {
+	m := DidMetadata{
+		Created:     &created,
+		Deactivated: false,
+	}
+	UpdateDidMetadata(&m, versionData, created)
+	return m
+}
+
+// UpdateDidMetadata updates a DID metadata time and version id
+func UpdateDidMetadata(meta *DidMetadata, versionData []byte, updated time.Time) {
+	txH := sha256.Sum256(versionData)
+	meta.VersionId = hex.EncodeToString(txH[:])
+	meta.Updated = &updated
 }
 
 // union perform union, distinct amd sort operation between two slices

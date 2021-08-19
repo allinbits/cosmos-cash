@@ -4,26 +4,11 @@ package allinbits.cosmoscash.did;
 option go_package = "github.com/allinbits/cosmos-cash/x/did/types";
 
 import "gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
 
 /*
 This represents a minimal self-managed did document
 definition: https://w3c.github.io/did-core/
-
-{
-  "@context": "https://www.w3.org/ns/did/v1",
-  "id": "did:example:123456789abcdefghi",
-  "authentication": [{
-    "id": "did:example:123456789abcdefghi#keys-1",
-    "type": "Ed25519VerificationKey2018",
-    "controller": "did:example:123456789abcdefghi",
-    "publicKeyBase58": "H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"
-  }],
-  "service": [{
-    "id":"did:example:123456789abcdefghi#vcs",
-    "type": "VerifiableCredentialService",
-    "serviceEndpoint": "https://example.com/vc/"
-  }]
-}
 */
 
 // DidDocument represents a dencentralised identifer.
@@ -32,7 +17,7 @@ message DidDocument {
   option (gogoproto.goproto_getters)  = false;
 
   // @context is spec for did document.
-  repeated string context                          = 1;
+  repeated string context                          = 1 [(gogoproto.jsontag) = "@context,omitempty"];
 
   // id represents the id for the did document.
   string id                                        = 2;
@@ -45,12 +30,12 @@ message DidDocument {
   // such as cryptographic public keys, which can be used 
   // to authenticate or authorize interactions with the DID subject or associated parties.
   // https://www.w3.org/TR/did-core/#verification-methods
-  repeated VerificationMethod verificationMethods  = 4;
+  repeated VerificationMethod verificationMethod  = 4;
 
   // Services are used in DID documents to express ways of communicating 
   // with the DID subject or associated entities.
   // https://www.w3.org/TR/did-core/#services
-  repeated Service services                        = 5;
+  repeated Service service                        = 5;
 
   // NOTE: below this line there are the relationships
 
@@ -87,19 +72,35 @@ message DidDocument {
 // https://www.w3.org/TR/did-core/#verification-methods
 message VerificationMethod {
   option (gogoproto.equal) = true;
+  option (gogoproto.goproto_getters)  = false;
 
   string id                    = 1;
   string type                  = 2;
   string controller            = 3;
-  string blockchainAccountID   = 4; // by default we support only blockchainAccountID
+  oneof verificationMaterial { 
+    string blockchainAccountID = 4;
+    string publicKeyHex        = 5;
+  }
 }
 
 // Service defines how to find data associated with a identifer
 message Service {
   option (gogoproto.equal) = true;
+  option (gogoproto.goproto_getters)  = false;
 
   string id          	   = 1;
   string type         	 = 2;
   string serviceEndpoint = 3;
 }
 
+// DidMetadata defines metadata associated to a did document such as 
+// the status of the DID document
+message DidMetadata {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_getters)  = false;
+
+  string versionId                  = 1;
+  google.protobuf.Timestamp created = 2 [(gogoproto.stdtime) = true];
+  google.protobuf.Timestamp updated = 3 [(gogoproto.stdtime) = true];
+  bool deactivated                  = 4;
+}

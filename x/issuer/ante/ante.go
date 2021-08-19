@@ -12,8 +12,8 @@ import (
 	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
 	"github.com/allinbits/cosmos-cash/x/issuer/keeper"
 	"github.com/allinbits/cosmos-cash/x/issuer/types"
-	vcskeeper "github.com/allinbits/cosmos-cash/x/verifiable-credential-service/keeper"
-	vcstypes "github.com/allinbits/cosmos-cash/x/verifiable-credential-service/types"
+	vcskeeper "github.com/allinbits/cosmos-cash/x/verifiable-credential/keeper"
+	vcstypes "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 )
 
 // CheckIssuerCredentialsDecorator checks the issuer has a EMILicense in a preprocessing hook
@@ -46,7 +46,7 @@ func (cicd CheckIssuerCredentialsDecorator) AnteHandle(
 		if msg.Type() == "create-issuer" {
 			imsg := msg.(*types.MsgCreateIssuer)
 
-			signerDID := didtypes.DID(imsg.Owner)
+			signerDID := didtypes.DID(ctx.ChainID(), imsg.Owner)
 
 			// TODO: pass in the did URI as an arg {msg.Id}
 			// TODO: ensure this keeper can only read from store
@@ -68,7 +68,7 @@ func (cicd CheckIssuerCredentialsDecorator) AnteHandle(
 
 			// check if the did document has the issuer credential
 			hasIssuerCredential := false
-			for _, service := range did.Services {
+			for _, service := range did.Service {
 				// TODO use enum here
 				if service.Type == "IssuerCredential" {
 					// TODO: ensure this keeper can only read from store
@@ -175,7 +175,7 @@ func (cicd CheckUserCredentialsDecorator) validateKYCCredential(
 	address string,
 	issuerAddress string,
 ) error {
-	issuerDID := didtypes.DID(address)
+	issuerDID := didtypes.DID(ctx.ChainID(), address)
 
 	// TODO: tidy this functionality into the keeper,
 	// GetDidDocumentWithCondition, GetDidDocumentWithService, GetDidDocumentWithAuth
@@ -196,7 +196,7 @@ func (cicd CheckUserCredentialsDecorator) validateKYCCredential(
 
 	// check if the did document has the issuer credential
 	hasUserCredential := false
-	for _, service := range did.Services {
+	for _, service := range did.Service {
 		// TODO use enum here
 		if service.Type != "KYCCredential" {
 			continue

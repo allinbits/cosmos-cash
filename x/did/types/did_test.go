@@ -3,6 +3,7 @@ package types
 import (
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -11,25 +12,29 @@ import (
 func TestDID(t *testing.T) {
 
 	tests := []struct {
-		did  string
-		want string
+		did   string
+		chain string
+		want  string
 	}{
 		{
 			"subject",
-			"did:cash:subject",
+			"cash",
+			"did:cosmos:cash:subject",
 		},
 		{
 			"",
-			"did:cash:",
+			"cash",
+			"did:cosmos:cash:",
 		},
 		{
 			"cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75",
-			"did:cash:cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75",
+			"cosmoshub",
+			"did:cosmos:cosmoshub:cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75",
 		},
 	}
 	for i, tt := range tests {
 		t.Run(fmt.Sprint("TestDID#", i), func(t *testing.T) {
-			if got := DID(tt.did); got != tt.want {
+			if got := DID(tt.chain, tt.did); got != tt.want {
 				t.Errorf("DID() = %v, want %v", got, tt.want)
 			}
 		})
@@ -106,6 +111,121 @@ func TestIsValidRFC3986Uri(t *testing.T) {
 	}
 }
 
+func TestIsValidDIDDocument(t *testing.T) {
+	tests := []struct {
+		didFn func() *DidDocument
+		want  bool
+	}{
+		{
+			func() *DidDocument {
+				return &DidDocument{
+					Context: []string{contextDIDBase},
+					Id:      "did:cosmos:cash:1",
+				}
+			},
+			true, // all good
+		},
+		{
+			func() *DidDocument {
+				return &DidDocument{
+					Context: []string{},
+					Id:      "did:cosmos:cash:1",
+				}
+			},
+			false, // missing context
+		},
+		{
+			func() *DidDocument {
+				dd, _ := NewDidDocument("did:cosmos:cash:1")
+				return &dd
+			},
+			true, // all good
+		},
+		{
+			func() *DidDocument {
+				dd, _ := NewDidDocument("")
+				return &dd
+			},
+			false, // empty id
+		},
+		{
+			func() *DidDocument {
+				return nil
+			},
+			false, // nil pointer
+		},
+	}
+	for i, tt := range tests {
+		t.Run(fmt.Sprint("TestIsValidDIDDocument#", i), func(t *testing.T) {
+			if got := IsValidDIDDocument(tt.didFn()); got != tt.want {
+				t.Errorf("TestIsValidDIDDocument() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestIsValidDIDMetadata(t *testing.T) {
+
+	tests := []struct {
+		didMetaFn func() *DidMetadata
+		want      bool
+	}{
+		{
+			func() *DidMetadata {
+				now := time.Now()
+				return &DidMetadata{
+					VersionId: "d95daac05a36f93d1494208d02d1522d758466c62ea6b64c50b78999d2021f51",
+					Created:   &now,
+				}
+			},
+			true, // all good
+		},
+		{
+			func() *DidMetadata {
+				now := time.Now()
+				return &DidMetadata{
+					VersionId: "",
+					Created:   &now,
+				}
+			},
+			false, // missing version
+		},
+		{
+			func() *DidMetadata {
+				now := time.Now()
+				return &DidMetadata{
+					VersionId: "d95daac05a36f93d1494208d02d1522d758466c62ea6b64c50b78999d2021f51",
+					Updated:   &now,
+				}
+			},
+			false, // null created
+		},
+		{
+			func() *DidMetadata {
+				var now time.Time
+				return &DidMetadata{
+					VersionId: "d95daac05a36f93d1494208d02d1522d758466c62ea6b64c50b78999d2021f51",
+					Created:   &now,
+				}
+			},
+			false, // zero created
+		},
+		{
+			func() *DidMetadata {
+				return nil
+			},
+			false, // nil pointer
+		},
+	}
+	for i, tt := range tests {
+		t.Run(fmt.Sprint("TestIsValidDIDMetadata#", i), func(t *testing.T) {
+			if got := IsValidDIDMetadata(tt.didMetaFn()); got != tt.want {
+				t.Errorf("TestIsValidDIDMetadata() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestValidateVerification(t *testing.T) {
 	tests := []struct {
 		v       *Verification
@@ -115,9 +235,9 @@ func TestValidateVerification(t *testing.T) {
 			v: NewVerification(
 				NewVerificationMethod(
 					"did:cash:subject#key-1",
-					"EcdsaSecp256k1VerificationKey2019",
 					"did:cash:subject",
 					"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+					DIDVerificationMaterialPublicKeyHex,
 				),
 				nil,
 				nil,
@@ -132,9 +252,9 @@ func TestValidateVerification(t *testing.T) {
 			v: NewVerification(
 				NewVerificationMethod(
 					"did:cash:subject#key-1",
-					"EcdsaSecp256k1VerificationKey2019",
 					"did:cash:subject",
 					"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+					DIDVerificationMaterialPublicKeyHex,
 				),
 				[]string{string(AssertionMethod)},
 				nil,
@@ -213,9 +333,9 @@ func TestNewDidDocument(t *testing.T) {
 						NewVerification(
 							NewVerificationMethod(
 								"did:cash:subject#key-1",
-								"EcdsaSecp256k1VerificationKey2019",
 								"did:cash:subject",
-								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+								DIDVerificationMaterialPublicKeyHex,
 							),
 							[]string{
 								string(Authentication),
@@ -231,9 +351,9 @@ func TestNewDidDocument(t *testing.T) {
 						NewVerification(
 							NewVerificationMethod(
 								"did:cash:subject#key-2",
-								"EcdsaSecp256k1VerificationKey2019",
 								"did:cash:subject",
-								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+								"cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
+								DIDVerificationMaterialBlockchainAccountID,
 							),
 							[]string{
 								string(Authentication),
@@ -258,21 +378,21 @@ func TestNewDidDocument(t *testing.T) {
 				},
 				Id:         "did:cash:subject",
 				Controller: []string{"did:cash:controller-1"},
-				VerificationMethods: []*VerificationMethod{
+				VerificationMethod: []*VerificationMethod{
 					{
 						"did:cash:subject#key-1",
-						"EcdsaSecp256k1VerificationKey2019",
+						DIDVerificationMethodTypeSecp256k1_2020,
 						"did:cash:subject",
-						"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+						&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 					},
 					{
 						"did:cash:subject#key-2",
-						"EcdsaSecp256k1VerificationKey2019",
+						DIDVerificationMethodTypeCosmosAddress,
 						"did:cash:subject",
-						"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+						&VerificationMethod_BlockchainAccountID{"cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2"},
 					},
 				},
-				Services: []*Service{
+				Service: []*Service{
 					{
 						"agent:xyz",
 						"DIDCommMessaging",
@@ -292,9 +412,9 @@ func TestNewDidDocument(t *testing.T) {
 						NewVerification(
 							NewVerificationMethod(
 								"did:cash:subject#key-1",
-								"EcdsaSecp256k1VerificationKey2019",
 								"did:cash:subject",
-								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+								DIDVerificationMaterialPublicKeyHex,
 							),
 							[]string{
 								Authentication,
@@ -307,9 +427,9 @@ func TestNewDidDocument(t *testing.T) {
 						NewVerification(
 							NewVerificationMethod(
 								"did:cash:subject#key-1", // duplicate key
-								"EcdsaSecp256k1VerificationKey2019",
 								"did:cash:subject",
-								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+								DIDVerificationMaterialPublicKeyHex,
 							),
 							[]string{
 								Authentication,
@@ -336,9 +456,9 @@ func TestNewDidDocument(t *testing.T) {
 						NewVerification(
 							NewVerificationMethod(
 								"did:cash:subject#key-1",
-								"EcdsaSecp256k1VerificationKey2019",
 								"did:cash:subject",
-								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+								"02503c8ace59c085b15c5f9c2474e9235bcb9694f07516bdc06f7caec788c3dd2c",
+								DIDVerificationMaterialPublicKeyHex,
 							),
 							[]string{
 								Authentication,
@@ -490,9 +610,9 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 					NewVerification(
 						NewVerificationMethod(
 							"did:cash:subject#key-1",
-							"EcdsaSecp256k1VerificationKey2019",
 							"did:cash:subject",
 							"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+							DIDVerificationMaterialPublicKeyHex,
 						),
 						[]string{
 							Authentication,
@@ -503,9 +623,9 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 					NewVerification(
 						NewVerificationMethod(
 							"did:cash:subject#key-2",
-							"EcdsaSecp256k1VerificationKey2019",
 							"did:cash:subject",
 							"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+							DIDVerificationMaterialPublicKeyHex,
 						),
 						[]string{
 							Authentication,
@@ -524,21 +644,21 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 				},
 				Id:         "did:cash:subject",
 				Controller: nil,
-				VerificationMethods: []*VerificationMethod{
+				VerificationMethod: []*VerificationMethod{
 					{
 						"did:cash:subject#key-1",
-						"EcdsaSecp256k1VerificationKey2019",
+						DIDVerificationMethodTypeSecp256k1_2020,
 						"did:cash:subject",
-						"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+						&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
 					},
 					{
 						"did:cash:subject#key-2",
-						"EcdsaSecp256k1VerificationKey2019",
+						DIDVerificationMethodTypeSecp256k1_2020,
 						"did:cash:subject",
-						"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+						&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
 					},
 				},
-				Services:             nil,
+				Service:              nil,
 				Authentication:       []string{"did:cash:subject#key-1", "did:cash:subject#key-2"},
 				KeyAgreement:         []string{"did:cash:subject#key-1"},
 				CapabilityInvocation: []string{"did:cash:subject#key-2"},
@@ -552,9 +672,9 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 						NewVerification(
 							NewVerificationMethod(
 								"did:cash:subject#key-1",
-								"EcdsaSecp256k1VerificationKey2019",
 								"did:cash:subject",
 								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+								DIDVerificationMaterialPublicKeyHex,
 							),
 							[]string{
 								Authentication,
@@ -572,9 +692,9 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 					NewVerification(
 						NewVerificationMethod(
 							"did:cash:subject#key-1",
-							"EcdsaSecp256k1VerificationKey2019",
 							"did:cash:subject",
 							"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+							DIDVerificationMaterialPublicKeyHex,
 						),
 						[]string{
 							string(CapabilityDelegation),
@@ -595,9 +715,9 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 						NewVerification(
 							NewVerificationMethod(
 								"did:cash:subject#key-1",
-								"EcdsaSecp256k1VerificationKey2019",
 								"did:cash:subject",
 								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+								DIDVerificationMaterialPublicKeyHex,
 							),
 							[]string{
 								Authentication,
@@ -615,9 +735,9 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 					NewVerification(
 						NewVerificationMethod(
 							"did:cash:subject#key-2",
-							"EcdsaSecp256k1VerificationKey2019",
 							"did:cash:subject",
 							"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+							DIDVerificationMaterialPublicKeyHex,
 						),
 						[]string{
 							KeyAgreement,
@@ -629,9 +749,9 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 					NewVerification(
 						NewVerificationMethod(
 							"did:cash:subject#key-2",
-							"EcdsaSecp256k1VerificationKey2019",
 							"did:cash:subject",
 							"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+							DIDVerificationMaterialPublicKeyHex,
 						),
 						[]string{
 							Authentication,
@@ -652,9 +772,9 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 						NewVerification(
 							NewVerificationMethod(
 								"did:cash:subject#key-1",
-								"EcdsaSecp256k1VerificationKey2019",
 								"did:cash:subject",
 								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+								DIDVerificationMaterialPublicKeyHex,
 							),
 							[]string{
 								Authentication,
@@ -677,9 +797,9 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 						},
 						&VerificationMethod{
 							"invalid method url",
-							"EcdsaSecp256k1VerificationKey2019",
+							DIDVerificationMethodTypeSecp256k1_2020,
 							"did:cash:subject",
-							"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+							&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
 						},
 						[]string{
 							"https://gpg.jsld.org/contexts/lds-gpg2020-v0.0.jsonld",
@@ -705,9 +825,9 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 						},
 						&VerificationMethod{
 							"did:cash:subject#key1",
-							"EcdsaSecp256k1VerificationKey2019",
+							DIDVerificationMethodTypeSecp256k1_2020,
 							"did:cash:subject",
-							"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+							&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
 						},
 						[]string{
 							"https://gpg.jsld.org/contexts/lds-gpg2020-v0.0.jsonld",
@@ -754,9 +874,9 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 							NewVerification(
 								NewVerificationMethod(
 									"did:cash:subject#key-1",
-									"EcdsaSecp256k1VerificationKey2019",
 									"did:cash:subject",
 									"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+									DIDVerificationMaterialPublicKeyHex,
 								),
 								[]string{
 									Authentication,
@@ -767,9 +887,9 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 							NewVerification(
 								NewVerificationMethod(
 									"did:cash:subject#key-2",
-									"EcdsaSecp256k1VerificationKey2019",
 									"did:cash:subject",
 									"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+									DIDVerificationMaterialPublicKeyHex,
 								),
 								[]string{
 									Authentication,
@@ -792,15 +912,15 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 				},
 				Id:         "did:cash:subject",
 				Controller: nil,
-				VerificationMethods: []*VerificationMethod{
+				VerificationMethod: []*VerificationMethod{
 					{
 						"did:cash:subject#key-1",
-						"EcdsaSecp256k1VerificationKey2019",
+						DIDVerificationMethodTypeSecp256k1_2020,
 						"did:cash:subject",
-						"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+						&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
 					},
 				},
-				Services:       nil,
+				Service:        nil,
 				Authentication: []string{"did:cash:subject#key-1"},
 				KeyAgreement:   []string{"did:cash:subject#key-1"},
 			},
@@ -814,9 +934,9 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 							NewVerification(
 								VerificationMethod{
 									"did:cash:subject#key-1",
-									"EcdsaSecp256k1VerificationKey2019",
+									DIDVerificationMethodTypeSecp256k1_2020,
 									"did:cash:subject",
-									"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+									&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
 								},
 								[]string{
 									Authentication,
@@ -846,9 +966,9 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 							NewVerification(
 								VerificationMethod{
 									"did:cash:subject#key-1",
-									"EcdsaSecp256k1VerificationKey2019",
+									DIDVerificationMethodTypeSecp256k1_2020,
 									"did:cash:subject",
-									"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+									&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
 								},
 								[]string{
 									Authentication,
@@ -859,9 +979,9 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 							NewVerification(
 								VerificationMethod{
 									"did:cash:subject#key-2",
-									"EcdsaSecp256k1VerificationKey2019",
+									DIDVerificationMethodTypeSecp256k1_2020,
 									"did:cash:subject",
-									"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+									&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
 								},
 								[]string{
 									Authentication,
@@ -872,9 +992,9 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 							NewVerification(
 								VerificationMethod{
 									"did:cash:subject#key-3",
-									"EcdsaSecp256k1VerificationKey2019",
+									DIDVerificationMethodTypeSecp256k1_2020,
 									"did:cash:subject",
-									"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+									&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
 								},
 								[]string{
 									Authentication,
@@ -895,21 +1015,21 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 				},
 				Id:         "did:cash:subject",
 				Controller: nil,
-				VerificationMethods: []*VerificationMethod{
+				VerificationMethod: []*VerificationMethod{
 					{
 						"did:cash:subject#key-1",
-						"EcdsaSecp256k1VerificationKey2019",
+						DIDVerificationMethodTypeSecp256k1_2020,
 						"did:cash:subject",
-						"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+						&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
 					},
 					{
 						"did:cash:subject#key-3",
-						"EcdsaSecp256k1VerificationKey2019",
+						DIDVerificationMethodTypeSecp256k1_2020,
 						"did:cash:subject",
-						"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+						&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
 					},
 				},
-				Services:        nil,
+				Service:         nil,
 				Authentication:  []string{"did:cash:subject#key-1", "did:cash:subject#key-3"},
 				KeyAgreement:    []string{"did:cash:subject#key-1", "did:cash:subject#key-3"},
 				AssertionMethod: []string{"did:cash:subject#key-3"},
@@ -924,9 +1044,9 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 							NewVerification(
 								NewVerificationMethod(
 									"did:cash:subject#key-1",
-									"EcdsaSecp256k1VerificationKey2019",
 									"did:cash:subject",
 									"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+									DIDVerificationMaterialPublicKeyHex,
 								),
 								[]string{
 									Authentication,
@@ -937,9 +1057,9 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 							NewVerification(
 								NewVerificationMethod(
 									"did:cash:subject#key-2",
-									"EcdsaSecp256k1VerificationKey2019",
 									"did:cash:subject",
 									"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+									DIDVerificationMaterialPublicKeyHex,
 								),
 								[]string{
 									Authentication,
@@ -1022,9 +1142,9 @@ func TestDidDocument_SetVerificationRelationships(t *testing.T) {
 						NewVerification(
 							VerificationMethod{
 								"did:cash:subject#key-1",
-								"EcdsaSecp256k1VerificationKey2019",
+								DIDVerificationMethodTypeSecp256k1_2020,
 								"did:cash:subject",
-								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+								&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
 							},
 							[]string{
 								Authentication,
@@ -1047,12 +1167,12 @@ func TestDidDocument_SetVerificationRelationships(t *testing.T) {
 			wantDid: DidDocument{
 				Context: []string{contextDIDBase},
 				Id:      "did:cash:subject",
-				VerificationMethods: []*VerificationMethod{
+				VerificationMethod: []*VerificationMethod{
 					{
 						"did:cash:subject#key-1",
-						"EcdsaSecp256k1VerificationKey2019",
+						DIDVerificationMethodTypeSecp256k1_2020,
 						"did:cash:subject",
-						"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+						&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
 					},
 				},
 				AssertionMethod: []string{"did:cash:subject#key-1"},
@@ -1066,9 +1186,9 @@ func TestDidDocument_SetVerificationRelationships(t *testing.T) {
 						NewVerification(
 							VerificationMethod{
 								"did:cash:subject#key-1",
-								"EcdsaSecp256k1VerificationKey2019",
+								DIDVerificationMethodTypeSecp256k1_2020,
 								"did:cash:subject",
-								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+								&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
 							},
 							[]string{
 								Authentication,
@@ -1079,9 +1199,9 @@ func TestDidDocument_SetVerificationRelationships(t *testing.T) {
 						NewVerification(
 							VerificationMethod{
 								"did:cash:subject#key-2",
-								"EcdsaSecp256k1VerificationKey2019",
+								DIDVerificationMethodTypeSecp256k1_2020,
 								"did:cash:subject",
-								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+								&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
 							},
 							[]string{
 								Authentication,
@@ -1097,18 +1217,18 @@ func TestDidDocument_SetVerificationRelationships(t *testing.T) {
 			wantDid: DidDocument{
 				Context: []string{contextDIDBase},
 				Id:      "did:cash:subject",
-				VerificationMethods: []*VerificationMethod{
+				VerificationMethod: []*VerificationMethod{
 					{
 						"did:cash:subject#key-1",
-						"EcdsaSecp256k1VerificationKey2019",
+						DIDVerificationMethodTypeSecp256k1_2020,
 						"did:cash:subject",
-						"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+						&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
 					},
 					{
 						"did:cash:subject#key-2",
-						"EcdsaSecp256k1VerificationKey2019",
+						DIDVerificationMethodTypeSecp256k1_2020,
 						"did:cash:subject",
-						"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+						&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
 					},
 				},
 				Authentication:  []string{"did:cash:subject#key-2"},
@@ -1123,9 +1243,9 @@ func TestDidDocument_SetVerificationRelationships(t *testing.T) {
 						NewVerification(
 							VerificationMethod{
 								"did:cash:subject#key-2",
-								"EcdsaSecp256k1VerificationKey2019",
+								DIDVerificationMethodTypeSecp256k1_2020,
 								"did:cash:subject",
-								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+								&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
 							},
 							[]string{
 								Authentication,
@@ -1135,9 +1255,9 @@ func TestDidDocument_SetVerificationRelationships(t *testing.T) {
 						NewVerification(
 							VerificationMethod{
 								"did:cash:subject#key-3",
-								"EcdsaSecp256k1VerificationKey2019",
+								DIDVerificationMethodTypeSecp256k1_2020,
 								"did:cash:subject",
-								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+								&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
 							},
 							[]string{
 								Authentication,
@@ -1147,9 +1267,9 @@ func TestDidDocument_SetVerificationRelationships(t *testing.T) {
 						NewVerification(
 							VerificationMethod{
 								"did:cash:subject#key-1",
-								"EcdsaSecp256k1VerificationKey2019",
+								DIDVerificationMethodTypeSecp256k1_2020,
 								"did:cash:subject",
-								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+								&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
 							},
 							[]string{
 								Authentication,
@@ -1166,24 +1286,24 @@ func TestDidDocument_SetVerificationRelationships(t *testing.T) {
 			wantDid: DidDocument{
 				Context: []string{contextDIDBase},
 				Id:      "did:cash:subject",
-				VerificationMethods: []*VerificationMethod{
+				VerificationMethod: []*VerificationMethod{
 					{
 						"did:cash:subject#key-2",
-						"EcdsaSecp256k1VerificationKey2019",
+						DIDVerificationMethodTypeSecp256k1_2020,
 						"did:cash:subject",
-						"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+						&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
 					},
 					{
 						"did:cash:subject#key-3",
-						"EcdsaSecp256k1VerificationKey2019",
+						DIDVerificationMethodTypeSecp256k1_2020,
 						"did:cash:subject",
-						"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+						&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
 					},
 					{
 						"did:cash:subject#key-1",
-						"EcdsaSecp256k1VerificationKey2019",
+						DIDVerificationMethodTypeSecp256k1_2020,
 						"did:cash:subject",
-						"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+						&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
 					},
 				},
 
@@ -1228,9 +1348,9 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 						NewVerification(
 							NewVerificationMethod(
 								"did:cash:subject#key-1",
-								"EcdsaSecp256k1VerificationKey2019",
 								"did:cash:subject",
-								"signer",
+								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+								DIDVerificationMaterialPublicKeyHex,
 							),
 							[]string{
 								string(Authentication),
@@ -1241,7 +1361,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 					))
 					return dd
 				},
-				signer: "signer",
+				signer: "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 				relationships: []string{
 					string(AssertionMethod),
 					string(Authentication),
@@ -1256,9 +1376,9 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 						NewVerification(
 							NewVerificationMethod(
 								"did:cash:subject#key-1",
-								"EcdsaSecp256k1VerificationKey2019",
 								"did:cash:subject",
-								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+								DIDVerificationMaterialPublicKeyHex,
 							),
 							[]string{
 								Authentication,
@@ -1269,9 +1389,9 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 						NewVerification(
 							NewVerificationMethod(
 								"did:cash:controller-1#key-1",
-								"EcdsaSecp256k1VerificationKey2019",
 								"did:cash:controller-1",
-								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+								"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+								DIDVerificationMaterialBlockchainAccountID,
 							),
 							[]string{
 								CapabilityDelegation,
@@ -1294,7 +1414,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 					dd, _ := NewDidDocument("did:cash:subject")
 					return dd
 				},
-				signer: "did:cash:subject",
+				signer: "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 				relationships: []string{
 					string(CapabilityDelegation),
 				},
@@ -1308,9 +1428,9 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 						NewVerification(
 							NewVerificationMethod(
 								"did:cash:subject#key-1",
-								"EcdsaSecp256k1VerificationKey2019",
 								"did:cash:subject",
-								"signer",
+								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+								DIDVerificationMaterialPublicKeyHex,
 							),
 							[]string{
 								Authentication,
@@ -1321,7 +1441,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 					))
 					return dd
 				},
-				signer:        "signer",
+				signer:        "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 				relationships: nil,
 			},
 		},
@@ -1333,9 +1453,9 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 						NewVerification(
 							NewVerificationMethod(
 								"did:cash:subject#key-1",
-								"EcdsaSecp256k1VerificationKey2019",
 								"did:cash:subject",
-								"signer",
+								"00dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+								DIDVerificationMaterialPublicKeyHex,
 							),
 							[]string{
 								Authentication,
@@ -1345,9 +1465,9 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 						NewVerification(
 							NewVerificationMethod(
 								"did:cash:subject#key-2",
-								"EcdsaSecp256k1VerificationKey2019",
 								"did:cash:subject",
-								"signer",
+								"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+								DIDVerificationMaterialBlockchainAccountID,
 							),
 							[]string{
 								KeyAgreement,
@@ -1357,7 +1477,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 					))
 					return dd
 				},
-				signer: "signer",
+				signer: "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 				relationships: []string{
 					string(KeyAgreement),
 				},
@@ -1406,7 +1526,7 @@ func TestDidDocument_AddServices(t *testing.T) {
 			wantDid: DidDocument{
 				Context: []string{contextDIDBase},
 				Id:      "did:cash:subject",
-				Services: []*Service{
+				Service: []*Service{
 					NewService(
 						"agent:abc",
 						"DIDCommMessaging",
@@ -1567,7 +1687,7 @@ func TestDidDocument_DeleteService(t *testing.T) {
 			wantDid: DidDocument{
 				Context: []string{contextDIDBase},
 				Id:      "did:cash:subject",
-				Services: []*Service{
+				Service: []*Service{
 					{
 						"agent:zyz",
 						"DIDCommMessaging",
@@ -1606,7 +1726,7 @@ func TestDidDocument_DeleteService(t *testing.T) {
 			wantDid: DidDocument{
 				Context: []string{contextDIDBase},
 				Id:      "did:cash:subject",
-				Services: []*Service{
+				Service: []*Service{
 					{
 						"agent:zyz",
 						"DIDCommMessaging",

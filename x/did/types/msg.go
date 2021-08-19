@@ -16,13 +16,13 @@ func NewMsgCreateDidDocument(
 	id string,
 	verifications []*Verification,
 	services []*Service,
-	signer string,
+	signerAccount string,
 ) *MsgCreateDidDocument {
 	return &MsgCreateDidDocument{
 		Id:            id,
 		Verifications: verifications,
 		Services:      services,
-		Signer:        signer,
+		Signer:        signerAccount,
 	}
 }
 
@@ -61,12 +61,12 @@ const (
 func NewMsgUpdateDidDocument(
 	id string,
 	controller []string,
-	signer string,
+	signerAccount string,
 ) *MsgUpdateDidDocument {
 	return &MsgUpdateDidDocument{
 		Id:         id,
 		Controller: controller,
-		Signer:     signer,
+		Signer:     signerAccount,
 	}
 }
 
@@ -107,12 +107,12 @@ var _ sdk.Msg = &MsgAddVerification{}
 func NewMsgAddVerification(
 	id string,
 	verification *Verification,
-	signer string,
+	signerAccount string,
 ) *MsgAddVerification {
 	return &MsgAddVerification{
 		Id:           id,
 		Verification: verification,
-		Signer:       signer,
+		Signer:       signerAccount,
 	}
 }
 
@@ -154,12 +154,12 @@ var _ sdk.Msg = &MsgRevokeVerification{}
 func NewMsgRevokeVerification(
 	id string,
 	methodID string,
-	signer string,
+	signerAccount string,
 ) *MsgRevokeVerification {
 	return &MsgRevokeVerification{
 		Id:       id,
 		MethodId: methodID,
-		Signer:   signer,
+		Signer:   signerAccount,
 	}
 }
 
@@ -198,13 +198,13 @@ func NewMsgSetVerificationRelationships(
 	id string,
 	methodID string,
 	relationships []string,
-	signer string,
+	signerAccount string,
 ) *MsgSetVerificationRelationships {
 	return &MsgSetVerificationRelationships{
 		Id:            id,
 		MethodId:      methodID,
 		Relationships: relationships,
-		Signer:        signer,
+		Signer:        signerAccount,
 	}
 }
 
@@ -246,12 +246,12 @@ var _ sdk.Msg = &MsgAddService{}
 func NewMsgAddService(
 	id string,
 	service *Service,
-	signer string,
+	signerAccount string,
 ) *MsgAddService {
 	return &MsgAddService{
 		Id:          id,
 		ServiceData: service,
-		Signer:      signer,
+		Signer:      signerAccount,
 	}
 }
 
@@ -290,12 +290,12 @@ const (
 func NewMsgDeleteService(
 	id string,
 	serviceID string,
-	signer string,
+	signerAccount string,
 ) *MsgDeleteService {
 	return &MsgDeleteService{
 		Id:        id,
 		ServiceId: serviceID,
-		Signer:    signer,
+		Signer:    signerAccount,
 	}
 }
 

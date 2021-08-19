@@ -21,15 +21,15 @@ func TestMsgCreateDidDocument(t *testing.T) {
 					[]string{string(Authentication)},
 					&VerificationMethod{
 						"did:auth:whatever#1",
-						"EcdsaSecp256k1VerificationKey2019",
+						DIDVerificationMethodTypeSecp256k1_2020,
 						"did:auth:whatever",
-						"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+						&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 					},
 					[]string{},
 				},
 			},
 			Services{},
-			"owner",
+			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 			true,
 		},
 		{
@@ -39,15 +39,15 @@ func TestMsgCreateDidDocument(t *testing.T) {
 					[]string{string(Authentication)},
 					&VerificationMethod{
 						"did:auth:whatever#1",
-						"EcdsaSecp256k1VerificationKey2019",
+						DIDVerificationMethodTypeCosmosAddress,
 						"did:auth:whatever",
-						"",
+						&VerificationMethod_BlockchainAccountID{""},
 					},
 					[]string{},
 				},
 			},
 			Services{},
-			"owner",
+			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 			false, // empty pub key
 		},
 		{
@@ -59,13 +59,13 @@ func TestMsgCreateDidDocument(t *testing.T) {
 						"did:auth:whatever#1",
 						"",
 						"did:auth:whatever",
-						"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+						&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 					},
 					[]string{},
 				},
 			},
 			Services{},
-			"owner",
+			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 			false, // emtpy verification method type
 		},
 		{
@@ -75,15 +75,15 @@ func TestMsgCreateDidDocument(t *testing.T) {
 					[]string{},
 					&VerificationMethod{
 						"did:auth:whatever#1",
-						"EcdsaSecp256k1VerificationKey2019",
+						DIDVerificationMethodTypeSecp256k1_2020,
 						"did:auth:whatever",
-						"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+						&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 					},
 					[]string{},
 				},
 			},
 			Services{},
-			"owner",
+			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 			false, // empty relationships
 		},
 		{
@@ -93,15 +93,15 @@ func TestMsgCreateDidDocument(t *testing.T) {
 					[]string{string(Authentication)},
 					&VerificationMethod{
 						"did:auth:whatever#/asd 123",
-						"EcdsaSecp256k1VerificationKey2019",
+						DIDVerificationMethodTypeSecp256k1_2020,
 						"did:auth:whatever",
-						"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+						&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 					},
 					[]string{},
 				},
 			},
 			Services{},
-			"owner",
+			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 			false, // invalid method id
 		},
 		{
@@ -111,15 +111,15 @@ func TestMsgCreateDidDocument(t *testing.T) {
 					[]string{string(Authentication)},
 					&VerificationMethod{
 						"did:auth:whatever#1",
-						"EcdsaSecp256k1VerificationKey2019",
+						DIDVerificationMethodTypeSecp256k1_2020,
 						"did:auth:whatever",
-						"",
+						&VerificationMethod_PublicKeyHex{""},
 					},
 					[]string{},
 				},
 			},
 			Services{},
-			"owner",
+			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 			false, // empty verification key
 		},
 		{
@@ -131,13 +131,13 @@ func TestMsgCreateDidDocument(t *testing.T) {
 						"did:auth:whatever#1",
 						"",
 						"did:auth:whatever",
-						"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+						&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 					},
 					[]string{},
 				},
 			},
 			Services{},
-			"owner",
+			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 			false, // empty verification method type
 		},
 		{
@@ -147,15 +147,15 @@ func TestMsgCreateDidDocument(t *testing.T) {
 					[]string{string(Authentication)},
 					&VerificationMethod{
 						"did:auth:whatever#1",
-						"EcdsaSecp256k1VerificationKey2019",
+						DIDVerificationMethodTypeCosmosAddress,
 						"",
-						"abcdef123123123",
+						&VerificationMethod_BlockchainAccountID{"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"},
 					},
 					[]string{},
 				},
 			},
 			Services{},
-			"owner",
+			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 			false, // invalid verification method controller
 		},
 		{
@@ -173,15 +173,15 @@ func TestMsgCreateDidDocument(t *testing.T) {
 					[]string{string(Authentication)},
 					&VerificationMethod{
 						"did:auth:whatever#1",
-						"EcdsaSecp256k1VerificationKey2019",
+						DIDVerificationMethodTypeSecp256k1_2020,
 						"cont",
-						"value",
+						&VerificationMethod_BlockchainAccountID{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 					},
 					[]string{},
 				},
 			},
 			Services{},
-			"owner",
+			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 			false, // invalid did
 		},
 		{
@@ -191,9 +191,9 @@ func TestMsgCreateDidDocument(t *testing.T) {
 					[]string{string(Authentication)},
 					&VerificationMethod{
 						"did:auth:whatever#1",
-						"EcdsaSecp256k1VerificationKey2019",
+						DIDVerificationMethodTypeSecp256k1_2020,
 						"did:auth:whatever",
-						"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+						&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 					},
 					[]string{},
 				},
@@ -205,7 +205,7 @@ func TestMsgCreateDidDocument(t *testing.T) {
 					"https://agent.xyz/agent/123",
 				},
 			},
-			"owner",
+			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 			true,
 		},
 		{
@@ -215,9 +215,9 @@ func TestMsgCreateDidDocument(t *testing.T) {
 					[]string{string(Authentication)},
 					&VerificationMethod{
 						"did:auth:whatever#1",
-						"EcdsaSecp256k1VerificationKey2019",
+						DIDVerificationMethodTypeSecp256k1_2020,
 						"did:auth:whatever",
-						"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+						&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 					},
 					[]string{},
 				},
@@ -229,7 +229,7 @@ func TestMsgCreateDidDocument(t *testing.T) {
 					"https://agent.xyz/agent/123",
 				},
 			},
-			"owner",
+			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 			false, // empty service type
 		},
 		{
@@ -239,9 +239,9 @@ func TestMsgCreateDidDocument(t *testing.T) {
 					[]string{string(Authentication)},
 					&VerificationMethod{
 						"did:auth:whatever#1",
-						"EcdsaSecp256k1VerificationKey2019",
+						DIDVerificationMethodTypeSecp256k1_2020,
 						"did:auth:whatever",
-						"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+						&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 					},
 					[]string{},
 				},
@@ -253,7 +253,7 @@ func TestMsgCreateDidDocument(t *testing.T) {
 					"https://agent.xyz/agent/123",
 				},
 			},
-			"owner",
+			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 			false, // service id is not valid
 		},
 		{
@@ -263,9 +263,9 @@ func TestMsgCreateDidDocument(t *testing.T) {
 					[]string{string(Authentication)},
 					&VerificationMethod{
 						"did:auth:whatever#1",
-						"EcdsaSecp256k1VerificationKey2019",
+						DIDVerificationMethodTypeSecp256k1_2020,
 						"did:auth:whatever",
-						"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
+						&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 					},
 					[]string{},
 				},
@@ -277,7 +277,7 @@ func TestMsgCreateDidDocument(t *testing.T) {
 					"",
 				},
 			},
-			"owner",
+			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 			false, // service id is not valid
 		},
 	}
@@ -372,13 +372,13 @@ func TestMsgAddVerification(t *testing.T) {
 				[]string{string(Authentication)},
 				&VerificationMethod{
 					"did:cash:subject#1",
-					"EcdsaSecp256k1RecoveryMethod2020",
+					DIDVerificationMethodTypeSecp256k1_2020,
 					"did:cash:subject",
-					"027560af3387d375e3342a6968179ef3c6d04f5d33b2b611cf326d4708badd7770",
+					&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 				},
 				[]string{},
 			},
-			"owner",
+			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 			true,
 		},
 		{
@@ -387,13 +387,13 @@ func TestMsgAddVerification(t *testing.T) {
 				[]string{string(Authentication)},
 				&VerificationMethod{
 					"did:cash:subject#1",
-					"EcdsaSecp256k1RecoveryMethod2020",
+					DIDVerificationMethodTypeSecp256k1_2020,
 					"did:cash:subject",
-					"027560af3387d375e3342a6968179ef3c6d04f5d33b2b611cf326d4708badd7770",
+					&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 				},
 				[]string{},
 			},
-			"owner",
+			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 			false, // invalid did
 		},
 	}

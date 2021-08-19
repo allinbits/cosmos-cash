@@ -2,12 +2,13 @@ package keeper
 
 import (
 	"context"
+	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/allinbits/cosmos-cash/x/did/types"
-	vcstypes "github.com/allinbits/cosmos-cash/x/verifiable-credential-service/types"
+	vcstypes "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 )
 
 type msgServer struct {
@@ -37,6 +38,7 @@ func (k msgServer) CreateDidDocument(
 	if err != nil {
 		return nil, err
 	}
+
 	// check that the did is not already taken
 	_, found := k.Keeper.GetDidDocument(ctx, []byte(msg.Id))
 	if found {
@@ -45,6 +47,10 @@ func (k msgServer) CreateDidDocument(
 
 	// persist the did document
 	k.Keeper.SetDidDocument(ctx, []byte(msg.Id), did)
+
+	// now create and persist the metadata
+	didM := types.NewDidMetadata(ctx.TxBytes(), ctx.BlockTime())
+	k.Keeper.SetDidMetadata(ctx, []byte(msg.Id), didM)
 
 	k.Logger(ctx).Info("Created a DidDocument for", "did", msg.Id, "controller", msg.Signer)
 
@@ -83,8 +89,12 @@ func (k msgServer) UpdateDidDocument(
 	}
 	// write the did
 	k.Keeper.SetDidDocument(ctx, []byte(msg.Id), didDoc)
-
 	k.Logger(ctx).Info("Updated a DidDocument for", "did", msg.Id, "controller", msg.Signer)
+
+	// update the Metadata
+	if err := updateDidMetadata(&k.Keeper, ctx, didDoc.Id); err != nil {
+		k.Logger(ctx).Error(err.Error(), "did", didDoc.Id)
+	}
 
 	// NOTE: events are expected to change during client development
 	ctx.EventManager().EmitEvent(
@@ -122,8 +132,12 @@ func (k msgServer) AddVerification(
 
 	// write the did
 	k.Keeper.SetDidDocument(ctx, []byte(msg.Id), didDoc)
-
 	k.Logger(ctx).Info("Added a new verification method for", "did", msg.Id, "controller", msg.Signer)
+
+	// update the Metadata
+	if err := updateDidMetadata(&k.Keeper, ctx, didDoc.Id); err != nil {
+		k.Logger(ctx).Error(err.Error(), "did", didDoc.Id)
+	}
 
 	// NOTE: events are expected to change during client development
 	ctx.EventManager().EmitEvent(
@@ -169,8 +183,13 @@ func (k msgServer) AddService(
 	}
 	// write to storage
 	k.Keeper.SetDidDocument(ctx, []byte(msg.Id), didDoc)
-
 	k.Logger(ctx).Info("Added a new service for", "did", msg.Id, "controller", msg.Signer)
+
+	// update the Metadata
+	if err := updateDidMetadata(&k.Keeper, ctx, didDoc.Id); err != nil {
+		k.Logger(ctx).Error(err.Error(), "did", didDoc.Id)
+	}
+
 	// NOTE: events are expected to change during client development
 	ctx.EventManager().EmitEvent(
 		types.NewServiceAddedEvent(msg.Id, msg.ServiceData.Id),
@@ -205,8 +224,12 @@ func (k msgServer) RevokeVerification(
 
 	// persist to storage
 	k.Keeper.SetDidDocument(ctx, []byte(msg.Id), didDoc)
-
 	k.Logger(ctx).Info("Revoked verification method from did document for", "did", msg.Id, "controller", msg.Signer)
+
+	// update the Metadata
+	if err := updateDidMetadata(&k.Keeper, ctx, didDoc.Id); err != nil {
+		k.Logger(ctx).Error(err.Error(), "did", didDoc.Id)
+	}
 
 	// emit event
 	ctx.EventManager().EmitEvent(
@@ -237,7 +260,7 @@ func (k msgServer) DeleteService(
 		)
 	}
 	// Only try to remove service if there are services
-	if len(didDoc.Services) == 0 {
+	if len(didDoc.Service) == 0 {
 		return nil, sdkerrors.Wrapf(types.ErrInvalidState, "the did document doesn't have services associated")
 	}
 	// delete the service
@@ -245,8 +268,12 @@ func (k msgServer) DeleteService(
 
 	// persist the did document
 	k.Keeper.SetDidDocument(ctx, []byte(msg.Id), didDoc)
-
 	k.Logger(ctx).Info("Removed service from did document for", "did", msg.Id, "controller", msg.Signer)
+
+	// update the Metadata
+	if err := updateDidMetadata(&k.Keeper, ctx, didDoc.Id); err != nil {
+		k.Logger(ctx).Error(err.Error(), "did", didDoc.Id)
+	}
 
 	// NOTE: events are expected to change during client development
 	ctx.EventManager().EmitEvent(
@@ -285,8 +312,12 @@ func (k msgServer) SetVerificationRelationships(
 
 	// persist the did document
 	k.Keeper.SetDidDocument(ctx, []byte(msg.Id), didDoc)
-
 	k.Logger(ctx).Info("Set verification relationship from did document for", "did", msg.Id, "controller", msg.Signer)
+
+	// update the Metadata
+	if err := updateDidMetadata(&k.Keeper, ctx, didDoc.Id); err != nil {
+		k.Logger(ctx).Error(err.Error(), "did", didDoc.Id)
+	}
 
 	// NOTE: events are expected to change during client development
 	ctx.EventManager().EmitEvent(
@@ -294,4 +325,16 @@ func (k msgServer) SetVerificationRelationships(
 	)
 
 	return &types.MsgSetVerificationRelationshipsResponse{}, nil
+}
+
+// helper function to update the did metadata
+func updateDidMetadata(keeper *Keeper, ctx sdk.Context, did string) (err error) {
+	didMeta, found := keeper.GetDidMetadata(ctx, []byte(did))
+	if found {
+		types.UpdateDidMetadata(&didMeta, ctx.TxBytes(), ctx.BlockTime())
+		keeper.SetDidMetadata(ctx, []byte(did), didMeta)
+	} else {
+		err = fmt.Errorf("(warning) did metadata not found")
+	}
+	return
 }

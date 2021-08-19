@@ -9,7 +9,7 @@ import (
 	didkeeper "github.com/allinbits/cosmos-cash/x/did/keeper"
 	issuerante "github.com/allinbits/cosmos-cash/x/issuer/ante"
 	issuerkeeper "github.com/allinbits/cosmos-cash/x/issuer/keeper"
-	vcskeeper "github.com/allinbits/cosmos-cash/x/verifiable-credential-service/keeper"
+	vcskeeper "github.com/allinbits/cosmos-cash/x/verifiable-credential/keeper"
 )
 
 // NewAnteHandler returns an AnteHandler that checks and increments sequence

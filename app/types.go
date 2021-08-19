@@ -13,6 +13,7 @@ type CosmosApp interface {
 	// Name return the assigned name of the app.
 	Name() string
 
+	//nolint
 	// LegacyAmino returns the legacy amino coded
 	// NOTE: This should be sealed before being returned.
 	LegacyAmino() *codec.LegacyAmino

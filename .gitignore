@@ -41,3 +41,6 @@ cscope.out
 
 # macOS files
 .DS_Store
+
+# build directory
+build

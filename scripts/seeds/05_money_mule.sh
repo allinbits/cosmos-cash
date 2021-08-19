@@ -15,7 +15,7 @@ set_up_account() {
         cosmos-cashd tx did create-did --from aml$2$1 --keyring-backend test --chain-id cash -y
 
 	### issue credential
-        cosmos-cashd tx verifiablecredentialservice create-verifiable-credential \
+        cosmos-cashd tx verifiablecredential create-verifiable-credential \
 		did:cash:$(cosmos-cashd keys show aml$2$1 --keyring-backend test -a) $2-cred-$1 secret$1 name address dob nationalId phoneNumber --from validator --chain-id cash -y
 
 	### attach credential to did document
@@ -26,7 +26,7 @@ set_up_account() {
 
 	echo "Querying data for aml$2$1"
 	cosmos-cashd query did did did:cash:$(cosmos-cashd keys show aml$2$1 --keyring-backend test -a) --output json | jq
-	cosmos-cashd query verifiablecredentialservice verifiable-credential $2-cred-$1 --output json | jq
+	cosmos-cashd query verifiablecredential verifiable-credential $2-cred-$1 --output json | jq
 
 	sleep 1
 }

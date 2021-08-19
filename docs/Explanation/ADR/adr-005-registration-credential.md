@@ -1,35 +1,32 @@
-# ADR 005: A VASP license based on W3C verifiable credentials
+# ADR 005: A VASP Registration Credential based on W3C Standards
 
 ## Table of Contents
 
-* [Changelog](#changelog)
-* [Status](#status)
-* [Abstract](#abstract)
-* [Context](#context)
-	* [Terminology](#terminology)
-* [Decision](#decision)
-	* [Credential Defintion](#credential-defintion)
-	* [Overall Structure](#overall-structure)
-	* [VASP](#vasp)
-	* [Legal Person](#legal-person)
-		* [Name](#name)
-		* [Name Type](#name-type)
-	* [Identification Type](#identification-type)
-		* [Identifier Type Code](#identifier-type-code)
-	* [Address](#address)
-		* [Address Type](#address-type)
-	* [License](#license)
-	* [Agreement](#agreement)
-	* [Example Credential](#example-credential)
-* [Consequences](#consequences)
-	* [Backwards Compatibility](#backwards-compatibility)
-	* [Positive](#positive)
-	* [Negative](#negative)
-	* [Neutral](#neutral)
-* [Further Discussions](#further-discussions)
-* [References](#references)
-
-
+- [ADR 005: A VASP Registration Credential based on W3C Standards](#adr-005-a-vasp-registration-credential-based-on-w3c-standards)
+	- [Table of Contents](#table-of-contents)
+	- [Changelog](#changelog)
+	- [Status](#status)
+	- [Abstract](#abstract)
+	- [Context](#context)
+		- [Terminology](#terminology)
+	- [Decision](#decision)
+		- [Credential Structure](#credential-structure)
+		- [VASP](#vasp)
+		- [Legal Person](#legal-person)
+			- [Name](#name)
+			- [Name Type](#name-type)
+		- [Identification Type](#identification-type)
+			- [Identifier Type Code](#identifier-type-code)
+		- [Address](#address)
+			- [Address Type](#address-type)
+		- [Example Credential](#example-credential)
+	- [Consequences](#consequences)
+		- [Backwards Compatibility](#backwards-compatibility)
+		- [Positive](#positive)
+		- [Negative](#negative)
+		- [Neutral](#neutral)
+	- [Further Discussions](#further-discussions)
+	- [References](#references)
 ## Changelog
 
 * 29-Jul-2021: Initial Draft
@@ -43,20 +40,15 @@ DRAFT - Not Implemented
 
 ## Abstract
 
-Financial services regulation is based on licenses issued by a publicly appointed authority for a given jurisdiction. Licenses allow legal entities to perform activities such holding client money, offer financial advice etc. Typically a record of all issued licensees is maintained centrally in a public registry such as the [FCA register](https://register.fca.org.uk/s/). 
+Financial services regulation is based on registrations issued by publicly appointed authorities for a given jurisdiction. Registrations together with licenses allow legal entities to perform activities such holding client money, offer financial advice etc. Typically a regulator will maintain a central public registry, for example the [FCA register](https://register.fca.org.uk/s/). 
 
-This ADR describes the structure of a Financial Services License based on the [W3C specification](https://www.w3.org/TR/vc-data-model/) for verifiable credential. This credential will be signed by the relevant authority and can be used as proof of identity (for example, when establishing relationships with new clients) and proof that holder can perform claimed services.
-
-With respect to Cosmos Cash, any legal person with a suitable license can present this evidence of authority and perform network services, such as: 
-
-* Mint or burn e-money tokens
-* Operate a Decentralized Exchange 
+This ADR describes the structure of a Financial Services registration based on the [W3C specification](https://www.w3.org/TR/vc-data-model/) for verifiable credential. This credential will be signed by the relevant authority and can be used as proof of identity such as when establishing relationships with new clients or counterparties.
 
 ---
 
 ## Context
 
-[ADR-003 defines an issuer module](https://github.com/allinbits/cosmos-cash/blob/main/docs/Explanation/ADR/adr-003-issuer.md). One of the actors defined in that ADR was an issuer. This issuer would hold a license that gives permissions to perform certain activities. The license is issued by an authority actor: the regulator.
+[ADR-003](https://github.com/allinbits/cosmos-cash/blob/main/docs/Explanation/ADR/adr-003-issuer.md) identified an `issuer` actor. This issuer holds a license that gives permissions to perform certain activities. The license is issued by an authority actor: the regulator.
 
 The use cases of Role-based permissions on-chain extends to other services or protocols. For example, exchange and custody services. A definition that can extend to these cases would be vital.
 
@@ -68,35 +60,32 @@ In the case of the EU, regulation can extend across multiple jurisdiction, speci
 
 ### Terminology
 
-* `Legal Person`: any person or entity that is able to perform legal activties, such as enter into contracts, own property, and so on
-* `Virtual Asset Service Provider`: FATF defines a VASP as the following: *“Any natural/legal person who ...  as a business conducts one or more of the following activities or operations for or on behalf of another natural or legal person: i. exchange between virtual assets and fiat currencies; ii. exchange between one or more forms of virtual assets; iii. transfer of virtual assets; iv. safekeeping and/or administration of virtual assets or instruments enabling control over virtual assets; and v. participation in and provision of financial services related to an issuer’s offer and/or sale of a virtual asset.”*
-* `Regulator`: entities established by governments or other organizations to oversee the functioning and fairness of financial markets and the firms that engage in financial activity.
-* `DID`: Decentralised Identifier. W3C defines a DID as *"A portable URL-based identifier ... associated with an entity ... An example of a DID is did:example:123456abcdef"*
+See [Glossary](../../reference/Glossary.md) for specific terms.
 
-> **DISCUSSION NOTES:** 
+> **NOTES:** 
 > * Need to decide between 'legal person' and `legal entity`. `legal person` has a legal meaning, but `legal entity` is closer to W3C documentation where it refers to "entities"
 
 ---
 
 ## Decision
 
-Within Cosmos Cash, licenses will be based upon Verifiable Credentials, as per [W3C Recommendation](https://www.w3.org/TR/vc-data-model/).  These SHALL BE called a `LicenseCredential`.
+Within Cosmos Cash, registrations will be based upon Verifiable Credentials, as per [W3C Recommendation](https://www.w3.org/TR/vc-data-model/).  These SHALL BE called a `RegistrationCredential`.
 
-* Each credential SHALL BE issued by a single authority. 
-* The credential SHALL BE issued to a single legal person.
-* The legal person will be denoted by their **PUBLIC DID**. 
-* DID SHALL BE the primary means for identification of VASPs and authorities.
-* Each credential SHALL DEFINE the services that legal person can perform on-chain.
-* The credential Schema SHALL BE stored in a Verifiable Data Registry (VDR)
-* The credential SHALL BE stored in the same VDR AND be viewed. 
-* Licenses CAN NOT expire, but CAN BE revoked.
-* Licenses SHALL BE revoked through the removal of one or more licenses by the authority.
+- Each credential SHALL BE issued by a single authority. 
+- The credential SHALL BE issued to a single legal person.
+- The legal person will be denoted by their **PUBLIC DID**. 
+- DID SHALL BE the primary means for identification of VASPs and authorities.
+- The credential Schema SHALL BE stored in a Verifiable Data Registry (VDR)
+- The credential SHALL BE stored in the same VDR AND be viewed. 
+- Registrations CAN NOT expire, but CAN BE revoked under certain circumstances such as 
+  - The holder no longer exists
+  - Some form of malpractice.
 
 ### Credential Structure
 
 Overall structure is based on standard verifiable credentials.
 
-![Diagram](../../Reference/architecture/out/LicenseCredential.svg)
+![Diagram](../../Reference/architecture/out/RegistrationCredential.svg)
 
 | Level 1             | Level 2        | Type          					| Mult. | Notes                                         |
 | :------------------ | :------------- | :----------------------------- | :---- | :-------------------------------------------- |
@@ -105,10 +94,8 @@ Overall structure is based on standard verifiable credentials.
 | `type`              |                | List[String]  					| 1..1  | See [W3C Types Data Model](https://www.w3.org/TR/vc-data-model/#types)|
 | `issuer`            |                | DID           					| 1..1  |                     |
 | `issuanceDate`      |                | String        					| 1..1  | Date format SHALL BE [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339) standard |
-| `credentialSubject` |                |             					| 1..1  |                                               |
-|                     | `vasp`         | [VASP](#vasp)					| 1..1  |                                               |
-|                     | `license`      | List[[License](#license)]		| 0..*  |                                    			|
-|                     | `agreement`    | List[[Agreement](#agreement)]	| 0..*  |                                               |
+| `credentialSubject` |                |             					| 1..1  | 
+|                     | `vasp`         | [VASP](#vasp)					| 1..1  |                       |
 | `proof`			  |				   | 								| 1..*  | As per [W3C Proofs Data Model](https://www.w3.org/TR/vc-data-model/#proofs-signatures) |
 
 
@@ -117,23 +104,20 @@ Overall structure is based on standard verifiable credentials.
 * Contexts CAN TAKE this value as an example: 
 `[
     "https://www.w3.org/2018/credentials/v1",
-    "https://www.cosmos.cash/2021/credentials/license/v1"
+    "https://www.cosmos.cash/2021/credentials/registration/v1"
   ]`. 
-* License Credential SHALL BE versioned based on the context
+* Registration Credential SHALL BE versioned based on the context
 * `id` SHALL BE the DID of credential subject  
-* Types SHALL TAKE this value `["VerifiableCredential", "LicenseCredential"]`
+* Types SHALL TAKE this value `["VerifiableCredential", "RegistrationCredential"]`
 * `issuer` SHALL BE the DID of credential issuer 
 
-> **DISCUSSION NOTES:** 
-> * What does `agreement` mean? It is not obvious from OpenVASP specification -> candidate for removal.
-> * Is identity `credentialSubject/type` actually required? again, it is not obvious what this means? Propse that this is removed from LicenseCredential
-> Does it make sense to have id in credential "header" AND the "credentialSubject"?
-> Removed version from the `credentialSubject` because saying we can use context to do this instead.
-
+> **NOTES:** 
+> - Does it make sense to have id in credential "header" AND the "credentialSubject"?
+> - Removed version from the `credentialSubject` because saying we can use context to do this instead.
 
 ### VASP
 
-A **Virtual Asset Service Provider (VASP)** SHALL BE the legal person that can perform licensed activities. They will have a DID, one or more names, a registered address and one or more identifiers for tax, license and operating purposes.
+A **Virtual Asset Service Provider (VASP)** SHALL BE the registered legal person. They will have a DID, one or more names, a registered address and one or more identifiers for tax, license and operating purposes.
 
 | Level 1            | Name      		| Type                                          | Mult. | Notes                    |
 | :----------------- | :-------- 		| :-------------------------------------------- | :---- | :----------------------- |
@@ -176,7 +160,7 @@ Each `Name` SHALL HAVE two values: the name itself and a value denoting the type
 
 #### Name Type
 
-`Name type` identifies the nature of the name being specified for a legal person. `Name Type` CAN TAKE the following values:
+A legal person can operate using a range of different names - see the example above. `Name Type` CAN TAKE the following values:
 
 | Code   | Name         | Description                                             |
 | :----- | :----------- | :------------------------------------------------------ |
@@ -256,39 +240,20 @@ Identifies the nature of the address
 | `GEOG` | Geographic  | Unspecified physical address |           |
 
 
-### License
-
-
-| Level 2       | Name        	   | Type          | Mult. | Notes     													   |
-| :------------ | :--------------- | :------------ | :---- | :------------------------------------------------------------ |
-| License Type	| `licenseType`    | String        | 1..1  | Name of recognized license or registration    				   |
-| Country		| `country`   	   | String(2)     | 1..1  | Uses [ISO 3166-1](https://www.iso.org/obp/ui/#iso:std:iso:3166:-1:ed-4:v1:en) |
-| Authority		| `authority` 	   | String        | 1..1  | Licensing authority                           				   |
-| License ID	| `licenseId`      | String        | 0..1  | License number                                				   |
-
-
-### Agreement
-
-| Level 2       	| Name        	  | Type          | Mult. | Notes     									  |
-| :---------------- | :-------------- | :------------ | :---- | :-------------------------------------------- |
-| Agreement Type	| `agreementType` | String        | 1..1  | `NetworkAgreement_v1.0`                       |
-| Message Families  | `msgFamilies`   | List[String]  | 1..1  | Covered message families (e.g. `TFR`, `ALL`)  |
-
-
 ### Example Credential
 
-Example credential in `json-ld` format is as follows:
+Example Registration Credential in `json-ld` format is as follows:
 
 ```javascript
 {
 	"@context": [
 		"https://www.w3.org/2018/credentials/v1",
-		"https://www.cosmos.cash/2021/credentials/license/v1"
+		"https://www.cosmos.cash/2021/credentials/registration/v1"
 	],
 	"id": "did:cosmos:cash:1000bb528777",
 	"type": [
 		"VerifiableCredential", 
-		"LicenseCredential"
+		"RegistrationCredential"
 	],
 	"issuer": "did:sov:12345",
 	"issuanceDate": "2021-08-01T15:23:24Z",
@@ -320,23 +285,6 @@ Example credential in `json-ld` format is as follows:
 				"idId": "529900W6B9NEA233DS71",
 				"idType": "LEIX"
 			}]
-		},
-		"licenses": [{
-			"licenseType": "VQFSRO",
-			"country": "CH",
-			"authority": "Financial Services Standards Association (VQF)" // should authority be a DID?
-		}, {
-			"licenseType": "MICAEMI", // here is a MiCA EMI license, for example
-			"country": "CH",
-			"authority": "Another Financial Services Body (AFFB)",
-			"attributes": {
-				"denom": "sEUR",
-				"circulationLimit": 100.0,  
-			}
-		}],
-		"agreement": {
-			"type": "NetworkAgreement_v1.0",
-			"mf": "ALL"
 		}
 	},
 	"proof": {
@@ -355,11 +303,16 @@ Example credential in `json-ld` format is as follows:
 
 ### Backwards Compatibility
 
-> All ADRs that introduce backwards incompatibilities must include a section describing these incompatibilities and their severity. The ADR must explain how the author proposes to deal with these incompatibilities. ADR submissions without a sufficient backwards compatibility treatise may be rejected outright.
+This is the first definition of the credential. Backwards compatibility is not a concern. 
 
 ### Positive
 
-{positive consequences}
+This ADR offers the following benefits
+
+- A public VASP registry maintained by a regulator
+- A verified registration credential issued by a regulator provides guarantees to new clients that the holder is a registered VASP. Combined with a license credential it offer guarantees to the 
+- The credential is compatible with W3C standards
+- 
 
 ### Negative
 

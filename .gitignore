@@ -38,3 +38,6 @@ cscope.out
 
 # vim
 *.swp
+
+# macOS files
+.DS_Store

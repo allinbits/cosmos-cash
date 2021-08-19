@@ -33,8 +33,7 @@
 
 - `Verifiable Credential`:
 - `Verifiable Presentation`: 
-- `Virtual Asset Service Provider`: FATF defines a VASP as the following: *“Any natural/legal person who ...  as a business conducts one or more of the following activities or operations for or on behalf of another natural or legal person: i. exchange between virtual assets and fiat currencies; ii. exchange between one or more forms of virtual assets; iii. transfer of virtual assets; iv. safekeeping and/or administration of virtual assets or instruments enabling control over virtual assets; and v. participation in and provision of financial services related to an issuer’s offer and/or sale of a virtual asset.”*
-
+- `Virtual Asset Service Provider`: FATF defines a VASP as the following: *“Any natural/legal person who ...  as a business conducts one or more of the following activities or operations for or on behalf of another natural or legal person: i. exchange between virtual assets and fiat currencies; ii. exchange between one or more forms of virtual assets; iii. transfer of virtual assets; iv. safekeeping and/or administration of virtual assets or instruments enabling control over virtual assets; and v. participation in and provision of financial services related to an issuer’s offer and/or sale of a virtual asset.”*[FATF guidance to the G20](www.fatf-gafi.org/publications/virtualassets/documents/report-g20-so-called-stablecoins-june-2020.html)
 
 
 

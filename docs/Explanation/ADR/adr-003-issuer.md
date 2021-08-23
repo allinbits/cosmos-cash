@@ -92,11 +92,11 @@ Likewise, the Regulator DID will also have multiple controllers with multi-signa
 The functionality SHALL USE Verifiable Credentials to establish role-based access to functions. See [ADR-OO5 License Credential](https://github.com/allinbits/cosmos-cash/blob/main/docs/Explanation/ADR/adr-005-license-credential.md) for details regarding issuance, revocation, and so on.
 
 
-### Setting up an issuer
+### Setting up an Issuer
 
 * A Regulator actor WILL BE defined. 
 * This Regulator WILL ISSUE signed license verifiable credentials to an Issuer.
-* The Regulator address and DID document SHALL BE defined in Genesis
+* The Regulator address and DID document SHALL BE defined in Genesis.
 
 > Does the Regulator also do this from Verifiable Credential?
 
@@ -131,11 +131,11 @@ This is a new module so backward compatibility is not a concern.
 ### Positive
 
 * Allows Cosmos Cash to support multiple issuers and multiple payment tokens on the same network 
-* It will be regulatory compliant because it offers
-    * Issuers can only be created with correct regulatory sign-off
-    * Can pause and unpause tokens
+* The issuer module will be regulatory compliant because it offers:
+    * Restrictions to Issuer creation so that Issuer creation is possible only with correct regulatory sign-off
+    * Functionality to pause and unpause tokens
     * Controls to manage token circulation
-* It will be utilise Decentralized Identity and Verifiable Credentials authentication and authorization of actions.
+* The issuer module will use Decentralized Identity and Verifiable Credentials authentication and authorization of actions.
 
 ### Negative
 

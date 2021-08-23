@@ -2,6 +2,8 @@ package keeper
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 )
 
@@ -16,11 +18,9 @@ func (suite *KeeperTestSuite) TestVerifiableCredentialsKeeperSetAndGet() {
 			"data stored successfully",
 			types.NewUserVerifiableCredential(
 				"did:cash:1111",
-				[]string{"context"},
 				"",
-				"",
+				time.Now(),
 				types.NewUserCredentialSubject("", "root", true),
-				types.NewProof("", "", "", "", ""),
 			),
 			true,
 		},

@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 )
@@ -73,11 +74,9 @@ func (suite *KeeperTestSuite) TestGRPCQueryVerifiableCredential() {
 
 				vc := types.NewUserVerifiableCredential(
 					"new-verifiable-cred-3",
-					[]string{"VerifiableCredential", "KYCCredential"},
 					"accAddr",
-					fmt.Sprintf("%s", "currentTome"),
+					time.Now(),
 					cs,
-					types.NewProof("", "", "", "", ""),
 				)
 				suite.keeper.SetVerifiableCredential(
 					suite.ctx,
@@ -146,11 +145,9 @@ func (suite *KeeperTestSuite) TestGRPCQueryValidateVerifiableCredential() {
 
 				vc := types.NewUserVerifiableCredential(
 					"new-verifiable-cred-3",
-					[]string{"VerifiableCredential", "KYCCredential"},
 					"accAddr",
-					fmt.Sprintf("%s", "currentTime"),
+					time.Now(),
 					cs,
-					types.NewProof("", "", "", "", ""),
 				)
 
 				p := types.NewProof(

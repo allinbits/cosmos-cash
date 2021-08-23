@@ -34,7 +34,6 @@ func (k msgServer) CreateVerifiableCredential(
 			types.ErrVerifiableCredentialFound,
 			"vc already exists",
 		)
-
 	}
 
 	k.Keeper.SetVerifiableCredential(

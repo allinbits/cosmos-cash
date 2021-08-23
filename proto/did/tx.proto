@@ -114,7 +114,7 @@ message MsgAddService {
 
   string  id           = 1; // the did
   Service service_data = 2; // the service data to add
-  string signer        = 3; // address of the account signing the message 
+  string  signer       = 3; // address of the account signing the message 
 }
 
 message MsgAddServiceResponse {}

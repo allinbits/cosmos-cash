@@ -2,156 +2,102 @@
 
 In this section we describe the processing of the staking messages and the corresponding updates to the state. All created/modified state objects specified by each message are defined within the [state](./02_state_transitions.md) section.
 
-## MsgCreateIdentifier
 
-A decentralized identifier (DID) is created using the `MsgCreateIdentifier` service message.
+### Verification 
 
-+++ https://github.com/allinbits/cosmos-cash/blob/main/proto/identifier/tx.proto#L12
+A verification message represent a combination of a verification method and a set of verification relationships. It has the following fields:
 
-+++ https://github.com/allinbits/cosmos-cash/blob/main/proto/identifier/tx.proto#L20-L37
+- `relationships` - a list of strings identifying the verification relationship for the verification method
+- `method` - a [verification method object](02_state.md#verification_method) 
+- `context` - a list of strings identifying additional [json ld contexts](https://json-ld.org/spec/latest/json-ld/#the-context)
 
-This service message is expected to fail if:
 
-- another identifier with the same id is already registered
+#### Source 
+https://github.com/allinbits/cosmos-cash/blob/v1.0.0/proto/did/tx.proto#L32
 
-This service message creates and stores the `Identifier` object at appropriate indexes.
 
 
-## MsgAddVerification
+### MsgCreateDidDocument
 
-An verification method and one or more verification relationships are added to a decentralized identifier (DID) using the `MsgAddVerification` service message.
+A `MsgCreateDidDocument` is used to create a new did document, it has the following fields
 
-+++ https://github.com/allinbits/cosmos-cash/blob/main/proto/identifier/tx.proto#L13
+- `id` - the did string identifying the did document
+- `controller` - a list of did that are controllers of the did document
+- `verifications` - a list of [verification](04_messages.md#verification) for the did document
+- `services` - a list of [services](02_state.md#service) for the did document
+- `signer` - a string containing the cosmos address of the private key signing the transaction 
 
-+++ https://github.com/allinbits/cosmos-cash/blob/main/proto/identifier/tx.proto#L37-L52
+#### Source
 
-This service message is expected to fail if:
+https://github.com/allinbits/cosmos-cash/blob/v1.0.0/proto/did/tx.proto#L45
 
-- the target did does not exists
-- the verification method is invalid (according to the verification method specifications)
-- the sender DID composed with the address signing the transaction is not the controller of a verification method listed in the `Authorization` verification relationships
-- another verification method identifier with the same id is already registered
+### MsgUpdateDidDocument
 
-### Caveats :warning:
+The `MsgUpdateDidDocument` is used to update a did document. It has the following fields:
 
-- the module does not try to resolve the verification method controller
+- `id` - the did string identifying the did document
+- `controller` - a list of did that are controllers of the did document
+- `signer` - a string containing the cosmos address of the private key signing the transaction 
 
-This service message adds an authentication method to an `Identifier` and stores the `Identifier` object at the appropriate index.
+#### Source
+https://github.com/allinbits/cosmos-cash/blob/v1.0.0/proto/did/tx.proto#L58
+### MsgAddVerification
 
-## MsgDeleteAuthentication
+The `MsgAddVerification` is used to add new [verification methods](https://w3c.github.io/did-core/#verification-methods) and [verification relationships](https://w3c.github.io/did-core/#verification-relationships) to a did document. It has the following fields:
 
-An authentication method is removed from a decentralized identifier (DID) using the `MsgDeleteAuthentication` service message.
+- `id` - the did string identifying the did document
+- `verification` - the [verification](04_messages.md#verification) to add to the did document
+- `signer` - a string containing the cosmos address of the private key signing the transaction 
 
-+++ https://github.com/allinbits/cosmos-cash/blob/main/proto/identifier/tx.proto#L15
+#### Source:
+https://github.com/allinbits/cosmos-cash/blob/v1.0.0/proto/did/tx.proto#L73
 
-+++ https://github.com/allinbits/cosmos-cash/blob/main/proto/identifier/tx.proto#L69-L80
+### MsgSetVerificationRelationships
 
-This service message is expected to fail if:
+The `MsgSetVerificationRelationships` is used to overwrite the [verification relationships](https://w3c.github.io/did-core/#verification-relationships) for a [verification methods](https://w3c.github.io/did-core/#verification-methods) of a did document. It has the following fields:
 
-- cannot find the given identifier id
-- sender is not associtated with the given identifier id
-- there will be less than 1 authentication method left in the identifier
-- a given public key cannot be decoded 
+- `id` - the did string identifying the did document
+- `method_id` - a string containing the unique identifier of the verification method within the did document.
+- `relationships` - a list of strings identifying the verification relationship for the verification method
+- `signer` - a string containing the cosmos address of the private key signing the transaction 
 
-This service message deletes an authentication method from a `Identifier` and stores the `Identifier` object at the appropriate index.
+#### Source:
+https://github.com/allinbits/cosmos-cash/blob/v1.0.0/proto/did/tx.proto#L84
+### MsgRevokeVerification
 
-## MsgAddService
+The `MsgRevokeVerification` is used to remove a [verification method](https://w3c.github.io/did-core/#verification-methods) and related [verification relationships](https://w3c.github.io/did-core/#verification-relationships) from a did document. It has the following fields:
 
-A service is added to a decentralized identifier (DID) using the `MsgAddService` service message.
+- `id` - the did string identifying the did document
+- `method_id` - a string containing the unique identifier of the verification method within the did document
+- `signer` - a string containing the cosmos address of the private key signing the transaction 
 
-+++ https://github.com/allinbits/cosmos-cash/blob/main/proto/identifier/tx.proto#L14
+#### Source:
+https://github.com/allinbits/cosmos-cash/blob/v1.0.0/proto/did/tx.proto#L96
+### MsgAddService
 
-+++ https://github.com/allinbits/cosmos-cash/blob/main/proto/identifier/tx.proto#L54-L67
+The `MsgAddService` is used to add a [service](https://w3c.github.io/did-core/#services) to a did document. It has the following fields:
 
-This service message is expected to fail if:
+- `id` - the did string identifying the did document
+- `service_data` - the [service](02_state.md#service) object to add to the did document 
+- `signer` - a string containing the cosmos address of the private key signing the transaction 
 
-- cannot find the given identifier id
+#### Source:
+https://github.com/allinbits/cosmos-cash/blob/v1.0.0/proto/did/tx.proto#L111
+### MsgDeleteService
 
-This service message adds a service to an `Identifier` and stores the `Identifier` object at the appropriate index.
+The `MsgDeleteService` is used to remove a [service](https://w3c.github.io/did-core/#services) from a did document. It has the following fields:
 
-## MsgDeleteService
+- `id` - the did string identifying the did document
+- `service_id` - the unique id of the [service](02_state.md#service) in the did document 
+- `signer` - a string containing the cosmos address of the private key signing the transaction 
 
-A service is delted from a decentralized identifier (DID) using the `MsgDeleteService` service message.
+#### Source:
+https://github.com/allinbits/cosmos-cash/blob/v1.0.0/proto/did/tx.proto#L122
+### QueryDidDocumentRequest
 
-+++ https://github.com/allinbits/cosmos-cash/blob/main/proto/identifier/tx.proto#L16
+The `QueryDidDocumentRequest` is used to resolve a did document. That is, to retrieve  a did document from its id. It has the following fields:
 
-+++ https://github.com/allinbits/cosmos-cash/blob/main/proto/identifier/tx.proto#L82-L93
+- `id` - the did string identifying the did document
 
-This service message is expected to fail if:
-
-- cannot find the given identifier id
-
-This service message deletes a service from an `Identifier` and stores the `Identifier` object at the appropriate index.
-
-
---------------------
-
-### GRPC Methods 
-
-#### Create DID Document
-
-**Params**
-- `Id`: did uri 
-- `DidDocument`: did document
-- `signer`: address of the account signing the transaction
-
-**Defaults**
-- `context`: https://www.w3.org/TR/did-core/
-
-#### Update DID Document
-
-#### Add Verification 
-
-#### Revoke Verification
-
-#### Set Verification Relationships
-
-#### Add Service 
-
-
-### Command Line Client
-
-
----
-hic sunt leones
-
---- 
-
-## Decentralized Identifiers 
-
-The implementation is based on the [w3c draft specifications v1.0.0](https://www.w3.org/TR/did-core/)
-
-
-## Supported Messages 
-
-### CreateIdentifier 
-
-creates a new did with the following defaults
-
-- context: ["https://www.w3.org/ns/did/v1"]
-
-
-validation:
-
-- id must be set (and be a valid did)
-- controller must be a valid did (if set)
-- upper limit of 5 Verification Methods 
-- upper limit of 5 Services 
-
-### AddVerification 
-
-add one verification to the did
-
-validation:
-
-- the owner of the call must have an `Authorization` verification relationship
-
-
-Design decisions:
-Verification Method can exists only if they exist in a relationship 
-
-
-### SetVerificationRelationships
-
-overwrites the verification relationships of an existing verification
-
+#### Source: 
+https://github.com/allinbits/cosmos-cash/blob/v1.0.0/proto/did/query.proto#L45

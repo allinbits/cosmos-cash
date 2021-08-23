@@ -36,17 +36,17 @@ DRAFT - Not Implemented
 
 ## Abstract
 
-Financial services regulation is based on registrations issued by a publicly appointed authority for a given jurisdiction. Registrations together with licenses allow legal entities to perform activities such holding client money, offer financial advice etc. Typically a regulator will maintain a central public registry, for example the [FCA register](https://register.fca.org.uk/s/). 
+Financial services regulation is based on registrations that are issued by a publicly appointed authority for a given jurisdiction. Registrations, together with licenses, allow legal entities to perform activities such as holding client money, offering financial advice, and so on. Typically a regulator maintains a central public registry like the [FCA register](https://register.fca.org.uk/s/). 
 
-This ADR describes the structure of an issuer license based on the [W3C specification](https://www.w3.org/TR/vc-data-model/) for verifiable credential. This license makes reference to the classes of crypto assets described in MiCA, but the license could easily be adopted as proof of authority to issue various types of crypto or virtual assets. In all cases this credential will be signed by an `authority` and acts as proof that the holder can offer the financial services defined in the License Credential.
+This ADR describes the structure of an issuer license based on the W3C [Verifiable Credentials Data Model 1.0](https://www.w3.org/TR/vc-data-model/) specification. This license makes reference to the classes of crypto assets described in MiCA, but the license could easily be adopted as proof of authority to issue various types of crypto or virtual assets. In all cases, this credential will be signed by an `authority` and acts as proof that the holder can offer the financial services defined in the License Credential.
 
 ## Context
 
 Current regulation is typically based around a single jurisdiction. Each jurisdiction can have one or more authorities who regulate one or more types of financial service. These authorities typically issue license or permits to qualified legal persons. Licenses permit the holder to offer services subject to defined constraints. A legal person can have one or more licenses to provide different services from different authorities. 
 
-In the case of the EU, regulation can extend across multiple jurisdictions through a passporting mechanism. This mechanism allows licensed legal persons in one jurisdiction can offer the same financial services in another EU-based jurisdiction. 
+In the case of the EU, regulation can extend across multiple jurisdictions through a passporting mechanism. This mechanism allows licensed legal persons in one jurisdiction to offer the same financial services in another EU-based jurisdiction. 
 
-[OpenVASP](https://openvasp.org) defines a [credential](https://github.com/OpenVASP/ovips/blob/master/ovip-0015.md) and [ovip-0013](https://github.com/OpenVASP/ovips/blob/master/ovip-0013.md) as part of their protocol. This credential is an equivalent of the [registration credential](./adr-005-registration-credential.md), but this credential does not define the services that a VASP can perform. 
+[OpenVASP](https://openvasp.org) defines the [ovip-15](https://github.com/OpenVASP/ovips/blob/master/ovip-0015.md) and [ovip-0013](https://github.com/OpenVASP/ovips/blob/master/ovip-0013.md) credentials as part of their protocol. These credential are an equivalent of the [registration credential](./adr-005-registration-credential.md), but this ADR 005 license credential does not define the services that a VASP can perform. 
 
 ### Terminology
 
@@ -59,16 +59,16 @@ See [Glossary](../../reference/Glossary.md) for specific terms.
 
 ## Decision
 
-Within Cosmos Cash, licenses will be based upon Verifiable Credentials, as per [W3C Recommendation](https://www.w3.org/TR/vc-data-model/).  These SHALL BE called an `IssuerLicense`.
+Within Cosmos Cash, licenses will be based upon Verifiable Credentials, as per W3C [Verifiable Credentials Data Model 1.0](https://www.w3.org/TR/vc-data-model/) specification.  The Cosmos Cash license credential SHALL BE called an `IssuerLicense`.
 
 - Each credential SHALL BE issued by a single authority. 
 - The credential SHALL BE issued to a single legal person.
-- The license entitles the holder to mint one token up to a defined limit.
+- The license entitles the holder to mint one or more tokens up to a defined limit.
 - The legal person will be denoted by their **PUBLIC DID**. 
 - DID SHALL BE the primary means for identification of VASPs and authorities.
-- The credential Schema SHALL BE stored in a Verifiable Data Registry (VDR).
+- The credential schema SHALL BE stored in a Verifiable Data Registry (VDR).
 - The credential SHALL BE stored in the holder's private wallet 
-- Licenses CAN NOT expire, but CAN BE revoked under certain circumstances such as:
+- Licenses CANNOT expire, but CAN BE revoked under certain circumstances such as:
   - The holder no longer exists.
   - Some form of malpractice on the part of the issuer.
 - Licenses can be updated, for example in the case of an update of a change issuance limit.
@@ -181,18 +181,18 @@ Example credential in `json-ld` format is as follows:
 
 ## Consequences
 
-### Backwards Compatibility
+### Backward Compatibility
 
-This is the first definition of the credential. Backwards compatibility is not a concern. 
+This is the first definition of the credential. Backward compatibility is not a concern. 
 
 ### Positive
 
 This ADR offers the following benefits:
 
 - Regulatory compliance through open standards
-- It implements a Role Based Access to services on Cosmos Cash.
-- It uses Self-Sovereign Identity (SSI) standards so this means:
-  - Interoperability - for example the credential can be stored in a variety of different identity wallets
+- Implements a Role Based Access to services on Cosmos Cash.
+- Uses Self-Sovereign Identity (SSI) standards so this means:
+  - Interoperability - for example, the credential can be stored in a variety of different identity wallets
   - Flexibility - for example, this credential can be re-used in other scenarios where token issuance is required
 - Adoption of SSI for provision of financial services offers benefits in terms of licensing and management on public platforms.
 
@@ -202,7 +202,7 @@ This ADR offers the following benefits:
 
 ### Neutral
 
-There are a number of macro-level concerns, but these do not affect the adoption of this model for Role Based Access Control (RBAC). These macro concerns include:
+There are a number of macro-level concerns, but these do not affect the adoption of this model for role-based access control (RBAC). These macro concerns include:
 
 - Self-Sovereign Identity technologies are still relatively new. 
 - eiDAS legislation is still in development.

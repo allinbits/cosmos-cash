@@ -37,9 +37,9 @@ All major stablecoins, Tether and USDC are based on Ethereum and are composed fr
 * [Ownable](https://www.notion.so/allinbits/USDC-vs-USDT-vs-CASH-ISSUER-5e1e6530247c433292caabf4e96038bf#b78214caa3c748968bdb4773cbae5d02)
 * [RBAC](https://www.notion.so/allinbits/USDC-vs-USDT-vs-CASH-ISSUER-5e1e6530247c433292caabf4e96038bf#e5a99af185a24f25bb847dc63604c7cf) - manage contract/role access
 
-In addition these implementations also have a range of bespoke functions:
+These Ethereum-based stablecoin issuer implementations also have a range of bespoke functions:
 
-* Blocklist, which implies adding/removing addresses from a block list and also rescuing or burning a blocklisted users' funds (USDT and USDC)
+* Blocklist that implies adding and removing addresses from a block list, and also rescuing or burning a blocklisted users' funds (USDT and USDC)
 * Set minting limits for a minter (USDC)
 * Set spending limits by address (USDC)
 
@@ -53,17 +53,18 @@ These contracts then have role based access to perform certain actions such as m
 
 ### Licenses
 
-Regulators and issuers are issued licenses through a regulator or other government body. The licenses then permit the holder to perform certain activities such as hold client money etc. In the UK the [FCA register](https://register.fca.org.uk/s/) acts as public record of licensed entities and the services they can provide. For example, this the record for [UBS AG](https://register.fca.org.uk/s/firm?id=001b000000MfHZiAAN)
+Regulators and issuers are issued licenses through a regulator or other government body. The licenses then permit the holder to perform certain activities such as holding client money, and so on. In the UK, the [FCA register](https://register.fca.org.uk/s/) acts as the public record of licensed entities and the services the entities can provide. For example, the record for UBS AG on FCA is [UBS AG
+Reference number: 186958](https://register.fca.org.uk/s/firm?id=001b000000MfHZiAAN). 
 
 ---
 
 ## Decision
 
-WE SHALL implement an Issuer module with functionality similar to those shown by Tether and USDC. This module will have the following functionality:
+WE SHALL implement an issuer module with functionality that is similar to Tether and USDC. This module will have the following functionality:
 
 * Create an issuer and a payment token
-* Mint/Burn tokens
-* Pause/Unpause token circulation
+* Mint and burn tokens
+* Pause and unpause token circulation
 * Set an upper bound on token circulation
 * Set a fee rate
 * Rescue funds from frozen accounts
@@ -72,23 +73,23 @@ WE SHALL implement an Issuer module with functionality similar to those shown by
 
 There SHALL BE the following actors with permissions actions:
 
-* **Regulator** - this actor SHALL HAVE permissions to 
-    * Create/Revoke an issuer.
-    * Set/update an upper bound on total amount of tokens in circulation.
-* **Issuer** - this actor SHALL HAVE permissions to
-    * Mint/Burn tokens
-    * Pause/Unpause tokens in circulation
-    * Redeem tokens from block listed address 
+* **Regulator** - this actor SHALL HAVE role-based permissions to: 
+    * Create and revoke an issuer.
+    * Set and update an upper bound on the total amount of tokens in circulation.
+* **Issuer** - this actor SHALL HAVE role-based permissions to:
+    * Mint and burn tokens
+    * Pause and unpause tokens in circulation
+    * Redeem tokens from block-listed address 
 
 ### DID
 
-The Regulator and the Issuer Decentralized Identifier Document (DID) SHALL HAVE multiple DID controllers. For an Issuer these represent the different functions within a financial insitutions - Operations, Compliance etc. This SHALL support multiple signing such that `Pause/Unpause` requires two parties to make the change. This would mimic a case where Operations would request the pause and Compliance or a Senior Manager would approve the action.
+The Regulator and the Issuer Decentralized Identifier Document (DID) SHALL HAVE multiple DID controllers. For an Issuer, these controllers represent the different functions within a financial institution - Operations, Compliance, and so on. This DID SHALL support multiple signing such that `Pause and unpause` requires two parties to make the change. This requirement would mimic a case where Operations would request the pause and Compliance or a Senior Manager would approve the action.
 
-Likewise, the Regulator DID will also have multiple controllers with multi-signatories required for creating/removing an issuer and setting circulation bounds
+Likewise, the Regulator DID will also have multiple controllers with multi-signatories that are required for creating and removing an issuer and setting circulation bounds.
 
 ### Verifiable Credentials
 
-The functionality SHALL USE Verifiable Credentials to establish Role Based Access to functions. See [ADR-OO5 License Credential](https://github.com/allinbits/cosmos-cash/blob/main/docs/Explanation/ADR/adr-005-license-credential.md) for further details regarding issuance, revocation etc.
+The functionality SHALL USE Verifiable Credentials to establish role-based access to functions. See [ADR-OO5 License Credential](https://github.com/allinbits/cosmos-cash/blob/main/docs/Explanation/ADR/adr-005-license-credential.md) for details regarding issuance, revocation, and so on.
 
 
 ### Setting up an issuer
@@ -101,11 +102,11 @@ The functionality SHALL USE Verifiable Credentials to establish Role Based Acces
 
 ### Revocation Lists
 
-Given that Role Based Access uses Verifiable Credentials then in order to revoke and unrevoke access then address needs to be added to a revocation list in order to override the credential.
+Given that role-based access uses Verifiable Credentials then the address must be added to a revocation list to override the credential to revoke and unrevoke access.
 
-* Revocation lists wil be maintain as accumulators on the identity chain.
+* Revocation lists will be maintained as accumulators on the identity chain.
 * There WILL BE revocation lists for issuers and users.
-* A regulator actor can not be revoked
+* A Regulator actor cannot be revoked.
 
 
 
@@ -114,16 +115,16 @@ Given that Role Based Access uses Verifiable Credentials then in order to revoke
 
 The issuer module for USDT and USDC both handle blocklisting with a defined Blacklister role. 
 
-As propsoed by this ADR, the Issuer module WILL NOT have functionality to maintain access. These permissions will be handled through Verifiable Credentials which will be off-chain. Revocation will be handled as described above.
+As proposed by this ADR, the Issuer module WILL NOT have the functionality to maintain access. These permissions will be handled through Verifiable Credentials which will be off-chain. Revocation will be handled as described in the [Revocation Lists](#revocation-lists) section.
 
-User transaction limits will also be handled in verifiable credentials. When a user performs a transaction they will present a credential. The credential will prove if the transaction is within the limit for that user.
+User transaction limits will also be handled in [Verifiable Credentials](#verifiable-credentials). A user will present a credential each time they perform a transaction. The credential will prove if the transaction is within the limit for that user.
 
 
 ---
 
 ## Consequences
 
-### Backwards Compatibility
+### Backward Compatibility
 
 This is a new module so backward compatibility is not a concern.
 
@@ -138,7 +139,7 @@ This is a new module so backward compatibility is not a concern.
 
 ### Negative
 
-* This won't be compatible with USDC or USDT issuers module, but it separates permission model from the actual functionality.
+* This module is not compatible with USDC or USDT issuers module because it separates the permission model from the actual functionality.
 
 ---
 

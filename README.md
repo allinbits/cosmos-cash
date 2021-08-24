@@ -21,11 +21,11 @@ For more information on the research behind the cosmos cash protocol, please loo
 
 ### Architecture
 
-The Cosmos Cash approach leverage open standards to reach it's goals and to offer an open model compatible with 3rd party projects that uses the open standards. In particular we use 
-- SSI 
-- DID
-- Verifiable Credentials
-- Zero knowledge proof  
+The Cosmos Cash approach leverages open standards to reach its goals and to offer an open model that is compatible with third-party projects that use the open standards. In particular, the Cosmos Cash project uses: 
+- Self-sovereign identity (SSI)
+- Decentralized identifier (DID)
+- Verifiable credentials (VC)
+- Zero-knowledge proofs  
 
 For a detailed architecture description and design choices, visit the [ADR](./docs/Explanation/ADR) section. 
 
@@ -39,17 +39,17 @@ Links to presentations, discussions and interviews are available in the [present
 
 ### Getting started 
 
-To get start and contribute to the project visit the [technical setup](./TECHNICAL-SETUP.md) page and the [contributing](./CONTRIBUTING.md) page.
+To get started and contribute to the project, visit the [technical setup](./TECHNICAL-SETUP.md) page and the [contributing](./CONTRIBUTING.md) page.
 
 
-A Cosmos Cash testnet is available at this coordinates:
+A Cosmos Cash testnet is available at these coordinates:
 
 - **Chain ID**: `cosmoscash-testnet`
 - **Token Denom**: `cash`
 - **Genesis**: [cosmos-cash.app.beta.starport.cloud/genesis](https://cosmos-cash.app.beta.starport.cloud/genesis?)
 - **RPC URL**:  `https://rpc.cosmos-cash.app.beta.starport.cloud:443`
 
-A Cosmos Cash DID resolver endpoint (compatible with the [universal resolver](https://github.com/decentralized-identity/universal-resolver) driver specifications) is available at:
+A Cosmos Cash DID resolver endpoint that is compatible with the [universal resolver](https://github.com/decentralized-identity/universal-resolver) driver specifications is available at:
 
 ```
 https://api.cosmos-cash.app.beta.starport.cloud/identifier/
@@ -60,4 +60,4 @@ A universal resolver frontend is also available for testing and verification pur
 
 --- 
 
-Have questions or want to get in touch? drop an email at *cosmos-cash@tendermint.com*
+Do you have questions or want to get in touch? Send us an email at *cosmos-cash@tendermint.com*.

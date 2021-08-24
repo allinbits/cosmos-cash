@@ -18,29 +18,46 @@ For more information on the research behind the cosmos cash protocol, please loo
 
 [Cosmos Cash: Investigation into EU regulations affecting E-Money tokens](https://drive.google.com/file/d/1zmEyA8kA0uAIRGDKxYElOKvjtz4f_Ep5/view)
 
-### How to build
 
-- `make install`
-- `cosmos-cashd -h`
+### Architecture
 
-### How to run the chain
+The Cosmos Cash approach leverage open standards to reach it's goals and to offer an open model compatible with 3rd party projects that uses the open standards. In particular we use 
+- SSI 
+- DID
+- Verifiable Credentials
+- Zero knowledge proof  
 
-- `make start-dev`
+For a detailed architecture description and design choices, visit the [ADR](./docs/Explanation/ADR) section. 
 
-### How to seed the chain
+### Documentation
 
-- `make seed`
+The Cosmos Cash documentation is available under the [docs](./docs) folder. 
 
-### How to test
+Technical reference is bundled within each module, visit the [module index](./docs/Reference/MODULES.md) page for links to individual modules.
 
-- `make test`
+Links to presentations, discussions and interviews are available in the [presentations page](./docs/Explanation/presentations.md).
 
-## Testnet 
+### Getting started 
 
-The Cosmos Cash testnet coordinates are:
+To get start and contribute to the project visit the [technical setup](./TECHNICAL-SETUP.md) page and the [contributing](./CONTRIBUTING.md) page.
+
+
+A Cosmos Cash testnet is available at this coordinates:
 
 - **Chain ID**: `cosmoscash-testnet`
 - **Token Denom**: `cash`
 - **Genesis**: [cosmos-cash.app.beta.starport.cloud/genesis](https://cosmos-cash.app.beta.starport.cloud/genesis?)
 - **RPC URL**:  `https://rpc.cosmos-cash.app.beta.starport.cloud:443`
-- **Explorer URL**: TBD
+
+A Cosmos Cash DID resolver endpoint (compatible with the [universal resolver](https://github.com/decentralized-identity/universal-resolver) driver specifications) is available at:
+
+```
+https://api.cosmos-cash.app.beta.starport.cloud/identifier/
+```
+
+A universal resolver frontend is also available for testing and verification purposes at:
+- https://uniresolver.cosmos-cash.app.beta.starport.cloud
+
+--- 
+
+Have questions or want to get in touch? drop an email at *cosmos-cash@tendermint.com*

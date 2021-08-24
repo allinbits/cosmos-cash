@@ -1,8 +1,8 @@
 # Cosmos Cash Modules
 
 
-- [DID](../x/identifier/README.md)
+- [DID](../x/did/README.md)
 - [Issuer](../x/issuer/README.md)
-- [Verifiable Credentials](../x/verifiable-verifiable-credential/README.md)
+- [Verifiable Credentials](../x/verifiable-credential/README.md)
 
 

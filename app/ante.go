@@ -7,7 +7,7 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	didkeeper "github.com/allinbits/cosmos-cash/x/did/keeper"
-	// issuerante "github.com/allinbits/cosmos-cash/x/issuer/ante"
+	issuerante "github.com/allinbits/cosmos-cash/x/issuer/ante"
 	issuerkeeper "github.com/allinbits/cosmos-cash/x/issuer/keeper"
 	vcskeeper "github.com/allinbits/cosmos-cash/x/verifiable-credential/keeper"
 )
@@ -39,7 +39,7 @@ func NewAnteHandler(
 		authante.NewSigGasConsumeDecorator(ak, sigGasConsumer),
 		authante.NewSigVerificationDecorator(ak, signModeHandler),
 		authante.NewIncrementSequenceDecorator(ak),
-	//	issuerante.NewCheckIssuerCredentialsDecorator(ik, dk, vcsk),
-	//	issuerante.NewCheckUserCredentialsDecorator(ak, ik, dk, vcsk),
+		issuerante.NewCheckIssuerCredentialsDecorator(ik, dk, vcsk),
+		issuerante.NewCheckUserCredentialsDecorator(ak, ik, dk, vcsk),
 	)
 }

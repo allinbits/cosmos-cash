@@ -6,7 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	accountKeeper "github.com/cosmos/cosmos-sdk/x/auth/ante"
-	bank "github.com/cosmos/cosmos-sdk/x/bank/types"
+	//bank "github.com/cosmos/cosmos-sdk/x/bank/types"
 
 	didkeeper "github.com/allinbits/cosmos-cash/x/did/keeper"
 	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
@@ -42,72 +42,71 @@ func (cicd CheckIssuerCredentialsDecorator) AnteHandle(
 	next sdk.AnteHandler,
 ) (newCtx sdk.Context, err error) {
 	// TODO: improve logic here
-	for _, msg := range tx.GetMsgs() {
-		if msg.String() == "create-issuer" {
-			imsg := msg.(*types.MsgCreateIssuer)
-
-			signerDID := didtypes.DID(ctx.ChainID(), imsg.Owner)
-
-			// TODO: pass in the did URI as an arg {msg.Id}
-			// TODO: ensure this keeper can only read from store
-			did, found := cicd.ik.GetDidDocument(ctx, []byte(signerDID))
-			if !found {
-				return ctx, sdkerrors.Wrapf(
-					types.ErrDidDocumentDoesNotExist,
-					"did does not exists",
-				)
-			}
-
-			// verification authorization
-			if !did.HasRelationship(signerDID, didtypes.Authentication) {
-				return ctx, sdkerrors.Wrapf(
-					types.ErrIncorrectControllerOfDidDocument,
-					"msg sender not in auth array in did document",
-				)
-			}
-
-			// check if the did document has the issuer credential
-			hasIssuerCredential := false
-			for _, service := range did.Service {
-				// TODO use enum here
-				if service.Type == "IssuerCredential" {
-					// TODO: ensure this keeper can only read from store
-					vc, found := cicd.vcsk.GetVerifiableCredential(ctx, []byte(service.Id))
-					if !found {
-						return ctx, sdkerrors.Wrapf(
-							types.ErrIssuerFound,
-							"verifiable credential not found",
-						)
-					}
-
-					issuerCred := vc.GetUserCred()
-					if issuerCred.Id != signerDID {
-						return ctx, sdkerrors.Wrapf(
-							types.ErrIssuerFound,
-							"issuer id not correct",
-						)
-					}
-
-					//	if issuerCred.IsVerified == false {
-					//		return ctx, sdkerrors.Wrapf(
-					//			types.ErrIssuerFound,
-					//			"issuer is not verified",
-					//		)
-					//	}
-
-					hasIssuerCredential = true
-					// TODO: validate credential here has been issued by regulator
-				}
-			}
-			if !hasIssuerCredential {
-				return ctx, sdkerrors.Wrapf(
-					types.ErrIssuerFound,
-					"did document doesnt have a credential to create issuers",
-				)
-			}
-		}
-	}
-
+	//	for _, msg := range tx.GetMsgs() {
+	//		if msg.String() == "create-issuer" {
+	//			imsg := msg.(*types.MsgCreateIssuer)
+	//
+	//			signerDID := didtypes.DID(ctx.ChainID(), imsg.Owner)
+	//
+	//			// TODO: pass in the did URI as an arg {msg.Id}
+	//			// TODO: ensure this keeper can only read from store
+	//			did, found := cicd.ik.GetDidDocument(ctx, []byte(signerDID))
+	//			if !found {
+	//				return ctx, sdkerrors.Wrapf(
+	//					types.ErrDidDocumentDoesNotExist,
+	//					"did does not exists",
+	//				)
+	//			}
+	//
+	//			// verification authorization
+	//			if !did.HasRelationship(signerDID, didtypes.Authentication) {
+	//				return ctx, sdkerrors.Wrapf(
+	//					types.ErrIncorrectControllerOfDidDocument,
+	//					"msg sender not in auth array in did document",
+	//				)
+	//			}
+	//
+	//			// check if the did document has the issuer credential
+	//			hasIssuerCredential := false
+	//			for _, service := range did.Services {
+	//				// TODO use enum here
+	//				if service.Type == "IssuerCredential" {
+	//					// TODO: ensure this keeper can only read from store
+	//					vc, found := cicd.vcsk.GetVerifiableCredential(ctx, []byte(service.Id))
+	//					if !found {
+	//						return ctx, sdkerrors.Wrapf(
+	//							types.ErrIssuerFound,
+	//							"verifiable credential not found",
+	//						)
+	//					}
+	//
+	//					issuerCred := vc.GetUserCred()
+	//					if issuerCred.Id != signerDID {
+	//						return ctx, sdkerrors.Wrapf(
+	//							types.ErrIssuerFound,
+	//							"issuer id not correct",
+	//						)
+	//					}
+	//
+	//					//	if issuerCred.IsVerified == false {
+	//					//		return ctx, sdkerrors.Wrapf(
+	//					//			types.ErrIssuerFound,
+	//					//			"issuer is not verified",
+	//					//		)
+	//					//	}
+	//
+	//					hasIssuerCredential = true
+	//					// TODO: validate credential here has been issued by regulator
+	//				}
+	//			}
+	//			if !hasIssuerCredential {
+	//				return ctx, sdkerrors.Wrapf(
+	//					types.ErrIssuerFound,
+	//					"did document doesnt have a credential to create issuers",
+	//				)
+	//			}
+	//		}
+	//	}
 	return next(ctx, tx, simulate)
 }
 
@@ -143,27 +142,27 @@ func (cicd CheckUserCredentialsDecorator) AnteHandle(
 ) (newCtx sdk.Context, err error) {
 	// TODO: ensure this keepers can only read from store
 	// TODO: improve logic here
-	for _, msg := range tx.GetMsgs() {
-		// FIXME: this will fail with the next cosmos-sdk update as Type() gone from interface
-		// use protoMessage type e.g bank/v1beta1/send
-		if msg.String() == "send" {
-			imsg := msg.(*bank.MsgSend)
-			// FIXME: iterate over tokens and check the multi-send
-			issuer, found := cicd.issuerk.GetIssuerByToken(ctx, []byte(imsg.Amount[0].Denom))
-
-			if found {
-				err := cicd.validateKYCCredential(ctx, imsg.ToAddress, issuer.Address)
-				if err != nil {
-					return ctx, err
-				}
-
-				err = cicd.validateKYCCredential(ctx, imsg.FromAddress, issuer.Address)
-				if err != nil {
-					return ctx, err
-				}
-			}
-		}
-	}
+	//	for _, msg := range tx.GetMsgs() {
+	//		// FIXME: this will fail with the next cosmos-sdk update as Type() gone from interface
+	//		// use protoMessage type e.g bank/v1beta1/send
+	//		if msg.String() == "send" {
+	//			imsg := msg.(*bank.MsgSend)
+	//			// FIXME: iterate over tokens and check the multi-send
+	//			issuer, found := cicd.issuerk.GetIssuerByToken(ctx, []byte(imsg.Amount[0].Denom))
+	//
+	//			if found {
+	//				err := cicd.validateKYCCredential(ctx, imsg.ToAddress, issuer.Address)
+	//				if err != nil {
+	//					return ctx, err
+	//				}
+	//
+	//				err = cicd.validateKYCCredential(ctx, imsg.FromAddress, issuer.Address)
+	//				if err != nil {
+	//					return ctx, err
+	//				}
+	//			}
+	//		}
+	//	}
 
 	return next(ctx, tx, simulate)
 }

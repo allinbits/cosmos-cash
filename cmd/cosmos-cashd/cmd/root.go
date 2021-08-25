@@ -291,23 +291,23 @@ func (a appCreator) appExport(
 	logger log.Logger, db dbm.DB, traceStore io.Writer, height int64, forZeroHeight bool, jailAllowedAddrs []string,
 	appOpts servertypes.AppOptions) (servertypes.ExportedApp, error) {
 
-	var app *app.App
+	var appl *app.App
 	homePath, ok := appOpts.Get(flags.FlagHome).(string)
 	if !ok || homePath == "" {
 		return servertypes.ExportedApp{}, errors.New("application home not set")
 	}
 
 	if height != -1 {
-		//	app = app.New(logger, db, traceStore, false, map[int64]bool{}, homePath, uint(1), a.encCfg, appOpts)
+		appl = app.New(appName, logger, db, traceStore, false, map[int64]bool{}, homePath, uint(1), a.encCfg, appOpts)
 
-		//	if err := app.LoadHeight(height); err != nil {
-		//		return servertypes.ExportedApp{}, err
-		//	}
+		if err := appl.LoadHeight(height); err != nil {
+			return servertypes.ExportedApp{}, err
+		}
 	} else {
-		//app = app.New(logger, db, traceStore, true, map[int64]bool{}, homePath, uint(1), a.encCfg, appOpts)
+		appl = app.New(appName, logger, db, traceStore, true, map[int64]bool{}, homePath, uint(1), a.encCfg, appOpts)
 	}
 
-	return app.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs)
+	return appl.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs)
 }
 
 func overwriteFlagDefaults(c *cobra.Command, defaults map[string]string) {

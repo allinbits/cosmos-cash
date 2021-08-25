@@ -25,7 +25,7 @@ The Cosmos Cash platform is based on the following principles:
 
 - Open financial infrastructure is a public good
 - Money laundering prevention also benefits society
-- Users should benefit from a strict privacy-respecting approach (GDPR)
+- Users benefit from a strict privacy-respecting approach (GDPR)
 
 The self-sovereign identity (SSI) approach to tackling the identity and privacy challenge has been gaining momentum in recent years. Coupled with distributed ledger technology (DLT) technology, the SSI approach has been capturing the attention of both the private and public sectors. 
 
@@ -61,17 +61,17 @@ id-char                   = ALPHA / DIGIT / (ALPHA "-") / (DIGIT "-")
 
 For the `unique-identifier` it is RECOMMENDED to use a UUID.
 
-The `identifier-type` distinguish between two did types: 
+The `identifier-type` distinguishes between two DID types: 
 
-1. the `key` type (inspired from the [`did:key`](https://w3c-ccg.github.io/did-method-key/) method)
-2. the `net` type that identifies did and the originating network of the did
+1. The `key` type, inspired from the [`did:key`](https://w3c-ccg.github.io/did-method-key/) method
+2. The `net` type that identifies the DID and the originating network of the DID
 
-DIDs of `key` type are ephemeral and immutable: they are are always generated from the cosmos blockchain address they refer to. The following are examples of DIDs of `key` type 
+DIDs of `key` type are ephemeral and immutable. DIDs of `key` type are always generated from the Cosmos blockchain address they refer to. For example, see these DIDs of `key` type:
 
 - `did:cosmos:key:cash1ts9ejqg7k4ht2sm53hycty875362yqxqmt9grj` 
 - `did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2`
 
-DIDs of `net` type are persistent and mutable: they are stored in the node database and can be created and updated according to rules described in the [DID Operations](#did-operations) section. The following are the examples of DIDs with `net` type:
+DIDs of `net` type are persistent and mutable. DIDs of `net` type are stored in the node database and can be created and updated according to rules described in the [DID Operations](#did-operations) section. For example, see these DIDs of `net` type:
 
 - `did:cosmos:net:cash:806e557e-ecdb-4e80-ab0d-a82ad35c9ceb`
 - `did:cosmos:net:cosmoshub:1cc7813c-bb31-4999-a768-19424e6c10fa`
@@ -79,7 +79,7 @@ DIDs of `net` type are persistent and mutable: they are stored in the node datab
 
 ##### DID Operations
 
-DID and associated DID documents are managed by a Cosmos SDK module that uses the gRPC communication protocol. This section defines the [CRUD operations](https://www.w3.org/TR/did-core/#method-operations) for a Cosmos DID. 
+DID and associated DID documents are managed by a Cosmos SDK module that uses the gRPC communication protocol. See [Method operations](https://www.w3.org/TR/did-core/#method-operations) for details on how the create, read, update and delete (CRUD) operations are handed in a Cosmos DID. 
 
 ###### Create
 
@@ -89,12 +89,12 @@ To create and publish a DID document use the message
 MsgCreateDidDocument(id string, signerPubKey string)
 ```
 
-The message parameters are the DID to be created and the `signerPubKey` MUST be the public key of the account signing the transaction. The public key MUST be used to attach a verification method of type `EcdsaSecp256k1RecoveryMethod2020` with the value of `publicKeyHex` containing the public key encoded in hexadecimal.
+The message parameters are the DID to be created and the `signerPubKey`. The `signerPubKey` MUST be the public key of the account that signs the transaction. The public key MUST be used to attach a verification method of type `EcdsaSecp256k1RecoveryMethod2020` with the value of `publicKeyHex` that contains the public key encoded in hexadecimal.
 
-The verification method controller MUST be one of the following
+The verification method controller MUST be one of the following:
 
-- the DID of the document
-- the key DID of the address signing the transaction
+- The DID of the document
+- The DID of `key` type of the address that signs the transaction
 
 The verification method id SHOULD be generated as:
 
@@ -108,14 +108,14 @@ If the input DID is not a valid DID for the Cosmos method, or if the DID already
 
 Contextually with the creation of a DID document, a [DID document metadata](#did-document-metadata) MUST be created with the following values:
 
-- the hash of the transaction as `versionId`
-- the block time for the `created` and `updated` fields
-- `false` for the `deactivated` field
+- The hash of the transaction as `versionId`
+- The block time for the `created` and `updated` fields
+- The `deactivated` field is `false`
 
 
 To address privacy concerns:
 
-- Do not use an id that is the same as the blockchain account address
+- Use an id that is different from the blockchain account address
 - Isolate the verification methods to the DID subject (for example, during key rotation)
 
 
@@ -132,7 +132,7 @@ A DID can be resolved using the gRPC message:
 QueryDidDocumentRequest(did string)
 ```
 
-Example of a did document resolved via gRPC interface:
+This example shows a DID document that was resolved using the gRPC interface:
 
 ```javascript
 {
@@ -167,13 +167,13 @@ Example of a did document resolved via gRPC interface:
 
 
 
-Or via a REST endpoint that MUST be compatible with the [W3C DID recommendations](https://www.w3.org/TR/did-core) and pass the [did test suite](https://w3c.github.io/did-test-suite/):
+The DID can also be resolved by a REST endpoint. The REST endpoint MUST be compatible with the [W3C DID core recommendations](https://www.w3.org/TR/did-core) and pass the [DID Core Specification Test Suite](https://w3c.github.io/did-test-suite/):
 
 ```
 {NODE_URL}:{NODE_REST_PORT}/identifier/{did}
 ```
 
-Example of a did document resolved via a REST endpoint:
+This example shows a DID document that was resolved using a REST endpoint:
 
 ```javascript
 {
@@ -234,11 +234,11 @@ MsgUpdateDidDocument(did string, controllers []string, signerAccount string)
 
 The parameters are as follows:
 
- - `did` identifies the did document
- - `controllers` are a list of cosmos addresses that will replace the DID document controllers list 
- - `signerAccount` is the account address that is signing the transaction
+ - `did` identifies the DID document
+ - `controllers` are a list of Cosmos addresses that will replace the DID document controllers list 
+ - `signerAccount` is the account address that signs the transaction
 
-Controllers will be added using the `did:cosmos:key:` method type. A controller of a DID document MUST be a did of type `key`.
+Controllers will be added using the `did:cosmos:key:` method type. A controller of a DID document MUST be a DID of type `key`.
 
 **Manipulate Verification Methods and Relationships**
 
@@ -255,7 +255,7 @@ The parameters are as follows:
  - `relationships` is the list of relationships that the `accountId` will be registered into
  - `signerAccount` is the account address that is signing the transaction
 
-The list of relationships must contain only valid [relationships names](#verification-relationships) as defined in the DID document:
+The list of relationships must contain only valid [verification relationships](#verification-relationships) names as defined in the DID document and MUST be non-empty:
 
 
 Set the relationships of a verification method using the gRPC message:
@@ -264,7 +264,6 @@ Set the relationships of a verification method using the gRPC message:
 MsgSetVerificationRelationships(did string, accountId string, relationships []string, signerAccount string)
 ```
 
-The list of relationships MUST contain only valid [relationships names](#verification-relationships) and MUST be non empty.
 
 
 **Services**
@@ -302,14 +301,14 @@ MsgDeactivateDid(did string, signerAccount string)
 The operation MUST update the DID document metadata and set the `deactivated` value to true. The operation is not reversible.
 
 
-### Method-specific Properties 
+### Method-Specific Properties 
 
-#### DID-core Verification Material
+#### DID Core Verification Material
 
-The [Verification Material](https://www.w3.org/TR/did-core/#verification-material) type MUST support
+The [Verification Material](https://www.w3.org/TR/did-core/#verification-material) type MUST support:
 
-- type `EcdsaSecp256k1RecoveryMethod2020` with `pubKeyHex` to encode a cosmos account public key in hexadecimal format
-- type `CosmosAccountAddress` with `blockchainAccountID` to represent a cosmos account 
+- Type `EcdsaSecp256k1RecoveryMethod2020` with `pubKeyHex` to encode a Cosmos account public key in hexadecimal format
+- Type `CosmosAccountAddress` with `blockchainAccountID` to represent a Cosmos account 
 
 
 Support for other verification materials can be added. 

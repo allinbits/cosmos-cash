@@ -7,7 +7,7 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	didkeeper "github.com/allinbits/cosmos-cash/x/did/keeper"
-	issuerante "github.com/allinbits/cosmos-cash/x/issuer/ante"
+	// issuerante "github.com/allinbits/cosmos-cash/x/issuer/ante"
 	issuerkeeper "github.com/allinbits/cosmos-cash/x/issuer/keeper"
 	vcskeeper "github.com/allinbits/cosmos-cash/x/verifiable-credential/keeper"
 )
@@ -16,13 +16,14 @@ import (
 // numbers, checks signatures & account numbers, and deducts fees from the first
 // signer.
 func NewAnteHandler(
-	ak authante.AccountKeeper, bankKeeper authtypes.BankKeeper,
+	ak authante.AccountKeeper,
+	bankKeeper authtypes.BankKeeper,
+	feeGrantKeeper authante.FeegrantKeeper,
 	ik issuerkeeper.Keeper,
 	dk didkeeper.Keeper,
 	vcsk vcskeeper.Keeper,
 	sigGasConsumer authante.SignatureVerificationGasConsumer,
 	signModeHandler signing.SignModeHandler,
-	fgk authante.FeegrantKeeper,
 ) sdk.AnteHandler {
 	return sdk.ChainAnteDecorators(
 		authante.NewSetUpContextDecorator(), // outermost AnteDecorator. SetUpContext must be called first
@@ -32,13 +33,13 @@ func NewAnteHandler(
 		authante.TxTimeoutHeightDecorator{},
 		authante.NewValidateMemoDecorator(ak),
 		authante.NewConsumeGasForTxSizeDecorator(ak),
-		authante.NewRejectExtensionOptionsDecorator(),
 		authante.NewSetPubKeyDecorator(ak), // SetPubKeyDecorator must be called before all signature verification decorators
 		authante.NewValidateSigCountDecorator(ak),
-		authante.NewDeductFeeDecorator(ak, bankKeeper, fgk),
+		authante.NewDeductFeeDecorator(ak, bankKeeper, feeGrantKeeper),
 		authante.NewSigGasConsumeDecorator(ak, sigGasConsumer),
 		authante.NewSigVerificationDecorator(ak, signModeHandler),
-		issuerante.NewCheckIssuerCredentialsDecorator(ik, dk, vcsk),
-		issuerante.NewCheckUserCredentialsDecorator(ak, ik, dk, vcsk),
+		authante.NewIncrementSequenceDecorator(ak),
+	//	issuerante.NewCheckIssuerCredentialsDecorator(ik, dk, vcsk),
+	//	issuerante.NewCheckUserCredentialsDecorator(ak, ik, dk, vcsk),
 	)
 }

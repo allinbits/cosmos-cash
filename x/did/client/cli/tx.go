@@ -36,7 +36,7 @@ func GetTxCmd() *cobra.Command {
 		NewRevokeVerificationCmd(),
 		NewDeleteServiceCmd(),
 		NewUpdateDidDocumentCmd(),
-		NewAddVerificationRelationshipCmd(),
+		NewSetVerificationRelationshipCmd(),
 	)
 
 	return cmd
@@ -344,13 +344,20 @@ func NewUpdateDidDocumentCmd() *cobra.Command {
 	return cmd
 }
 
-// NewAddVerificationRelationshipCmd adds a verification relationship to a verification method
-func NewAddVerificationRelationshipCmd() *cobra.Command {
+// NewSetVerificationRelationshipCmd adds a verification relationship to a verification method
+func NewSetVerificationRelationshipCmd() *cobra.Command {
+
+	// relationships
+	var relationships []string
+	// if true do not add the default authentication relationship
+	var unsafe bool
+
 	cmd := &cobra.Command{
-		Use:     "add-verification-relationship [id] [method-id] [relationship]",
-		Short:   "adds a verification relationship to a key on a decentralized identifier (did) document",
-		Example: "add-verification-relationship vasp vasp#6f1e0700-6c86-41b6-9e05-ae3cf839cdd0 ",
-		Args:    cobra.ExactArgs(3),
+		Use:     "set-verification-relationship [id] [method-id] --relationship NAME [--relationship NAME ...]",
+		Short:   "adds a verification relationship to a key on a decentralized identifier (did) document.",
+		Example: "add-verification-relationship vasp vasp#6f1e0700-6c86-41b6-9e05-ae3cf839cdd0",
+		Args:    cobra.ExactArgs(2),
+
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -362,18 +369,13 @@ func NewAddVerificationRelationshipCmd() *cobra.Command {
 			// method id
 			methodID := types.DID(clientCtx.ChainID, args[1])
 
-			// relationship types
-			relationship := args[2]
-
 			// signer
 			signer := clientCtx.GetFromAddress()
 
 			msg := types.NewMsgSetVerificationRelationships(
 				did,
 				methodID,
-				[]string{
-					relationship,
-				},
+				relationships,
 				signer.String(),
 			)
 
@@ -381,9 +383,17 @@ func NewAddVerificationRelationshipCmd() *cobra.Command {
 				return err
 			}
 
+			// make sure that the authentication relationship is preserved
+			if !unsafe {
+				msg.Relationships = append(msg.Relationships, types.Authentication)
+			}
+
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
+	// add flags to set did relationships
+	cmd.Flags().StringSliceVarP(&relationships, "relationship", "r", []string{}, "the relationships to set for the verification method in the DID")
+	cmd.Flags().BoolVar(&unsafe, "unsafe", false, fmt.Sprint("do not ensure that '", types.Authentication, "' relationship is set"))
 
 	flags.AddTxFlagsToCmd(cmd)
 

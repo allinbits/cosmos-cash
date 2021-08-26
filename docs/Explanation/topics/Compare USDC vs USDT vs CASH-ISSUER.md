@@ -29,6 +29,8 @@ USDC and USDT are both Ethereum, ERC-20 smart contract-based stablecoins pegged 
 - Compare to the current Cosmos Cash proof-of-concept implementation
 - Conclude best practices that will inform the Issuer ADR for Cosmos Cash.
 
+> Why USDT and  USDC? These are currently the leading stablecoin tokens with total market capitalisation of over 90Bn USD (source: coinmarketcap.com)
+
 ## Methodology
 
 Each function is labelled based on the following criteria:

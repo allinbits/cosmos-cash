@@ -22,11 +22,11 @@ Linux-based systems, through your distributions package manager
 
 ## Contributing diagrams
 
-The source code for all diagrams SHOULD be stored in `./src` folder AND have the `.puml` suffix. Please refer to the [PlanUML documentation](https://plantuml.com) for further details.
+The source code for all diagrams SHOULD be stored in `./src` folder AND have the `.puml` suffix. See the [PlanUML documentation](https://plantuml.com) for further details.
 
 ## Themes
 
-Where possible all diagrams will be rendered to have a similar look and feel. To achieve this add the following to your diagram:
+Where possible all diagrams are rendered to have a similar look and feel. To achieve this look and feel, add the following theme to your diagram:
 
 ```
 @startuml myDiagram
@@ -46,15 +46,15 @@ There are [many ways to run PlantUML](https://plantuml.com/running) to generate 
 
 ### PlantUML CLI
 
-There is [makefile](.makefile) that will build all `src/*.puml` files. To create SVG images just run `make (svg|png)` as needed. `make clean` will get a clean folder ready for new build.
+The [makefile](.makefile) builds all `src/*.puml` files. To create SVG images, run `make (svg|png)` as needed. Run `make clean` to get a clean folder ready for a new build.
 
-This is the preferred and cleanest way to create all the architecture documentation.
+Using PlantUML and makefile is the preferred and cleanest way to create all the architecture documentation.
 
 ### Proxy service
 
 This method uses PlantUML's [proxy service](https://plantuml.com/server) to put generate images and embed into a Markdown page. 
 
-To use the proxy service integration simply use:
+To use the proxy service integration, use:
 
 ```
 ![cached image](http://www.plantuml.com/plantuml/proxy?src=https://raw.github.com/plantuml/plantuml-server/master/src/main/webapp/resource/test2diagrams.txt)
@@ -66,9 +66,9 @@ Or if caching is required:
 
 ### Visual Studio Code
 
-If you use [Visual Studio Code](https://code.visualstudio.com/) there is [PlantUML plugin](https://marketplace.visualstudio.com/items?itemName=jebbs.plantuml) available. 
+If you use [Visual Studio Code](https://code.visualstudio.com/), a [PlantUML plugin](https://marketplace.visualstudio.com/items?itemName=jebbs.plantuml) is available. 
 
-From here, one can preview diagrams through the command palette (CTRL+SHIFT+P on Windows/Linux or COMMAND+SHIFT+P on MacOS)
+From here, you can preview diagrams by using the command palette (CTRL+SHIFT+P on Windows/Linux or COMMAND+SHIFT+P on macOS).
 
 ```
 > PlantUML: Preview Current Diagram

@@ -11,7 +11,6 @@
 		- [Terminology](#terminology)
 	- [Decision](#decision)
 		- [Credential Structure](#credential-structure)
-		- [VASP](#vasp)
 		- [Legal Person](#legal-person)
 			- [Name](#name)
 			- [Name Type](#name-type)
@@ -21,7 +20,7 @@
 			- [Address Type](#address-type)
 		- [Example Credential](#example-credential)
 	- [Consequences](#consequences)
-		- [Backwards Compatibility](#backwards-compatibility)
+		- [Backward Compatibility](#backward-compatibility)
 		- [Positive](#positive)
 		- [Negative](#negative)
 		- [Neutral](#neutral)
@@ -63,7 +62,7 @@ In the case of the EU, regulation can extend across multiple jurisdiction, speci
 See [Glossary](../../reference/Glossary.md) for specific terms.
 
 > **NOTES:** 
-> * Need to decide between 'legal person' and `legal entity`. `legal person` has a legal meaning, but `legal entity` is closer to W3C documentation where it refers to "entities"
+> In this ADR we SHALL USE `legal person` rather than `legal entity`. The terms are interchangeable, but `legal person` has a legal meaning. Note that W3C documentation uses `legal entity` when it refers to `legal person`
 
 ---
 
@@ -81,22 +80,27 @@ Within Cosmos Cash, registrations will be based upon Verifiable Credentials, as 
   - The holder no longer exists
   - Some form of malpractice.
 
+
 ### Credential Structure
 
 Overall structure is based on standard verifiable credentials.
 
 ![Diagram](../../Reference/architecture/out/RegistrationCredential.svg)
 
-| Level 1             | Level 2        | Type          					| Mult. | Notes                                         |
-| :------------------ | :------------- | :----------------------------- | :---- | :-------------------------------------------- |
-| `@context`          |                |               					| 1..1  | See [W3C Contexts Data Model](https://www.w3.org/TR/vc-data-model/#contexts)      |
-| `id`                |                | DID          					| 1..1  | See [W3C Identifiers Data Model](https://www.w3.org/TR/vc-data-model/#identifiers)                   |
-| `type`              |                | List[String]  					| 1..1  | See [W3C Types Data Model](https://www.w3.org/TR/vc-data-model/#types)|
-| `issuer`            |                | DID           					| 1..1  |                     |
-| `issuanceDate`      |                | String        					| 1..1  | Date format SHALL BE [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339) standard |
-| `credentialSubject` |                |             					| 1..1  | 
-|                     | `vasp`         | [VASP](#vasp)					| 1..1  |                       |
-| `proof`			  |				   | 								| 1..*  | As per [W3C Proofs Data Model](https://www.w3.org/TR/vc-data-model/#proofs-signatures) |
+| Level 1             | Level 2        | Type          								   | Mult. | Notes                                         |
+| :------------------ | :------------- | :-------------------------------------------- | :---- | :-------------------------------------------- |
+| `@context`          |                |               								   | 1..1  | See [W3C Contexts Data Model](https://www.w3.org/TR/vc-data-model/#contexts)      |
+| `id`                |                | 	          								   | 1..1  | See [W3C Identifiers Data Model](https://www.w3.org/TR/vc-data-model/#identifiers)                   |
+| `type`              |                | List[String]  								   | 1..1  | See [W3C Types Data Model](https://www.w3.org/TR/vc-data-model/#types)|
+| `issuer`            |                | DID           								   | 1..1  | DID of credential issuer, for example "did:sov:12345" |
+| `issuanceDate`      |                | String        								   | 1..1  | Date format SHALL BE [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339) standard |
+| `credentialSubject` |                |             								   | 1..1  | 
+|					  | `id`  	   	   | DID                                           | 1..1  | DID of credential subject, for example "did:cosmos:cash:12345"  |
+|					  | `issuerId`	   | DID                                           | 1..1  | DID of credential issuer, for example "did:sov:12345"           |
+|					  | `legalPerson`  | [Legal Person](#legal-person)                 | 0..1  |                          |
+| 			          | `address` 	   | [Address](#address)                           | 1..1  |                          |
+| 			          | `ids`      	   | [Identification Type](#identification-type)   | 1..*  |                          |
+| `proof`			  |				   | 											   | 1..*  | As per [W3C Proofs Data Model](https://www.w3.org/TR/vc-data-model/#proofs-signatures) |
 
 
 **Notes:**
@@ -107,30 +111,11 @@ Overall structure is based on standard verifiable credentials.
     "https://www.cosmos.cash/2021/credentials/registration/v1"
   ]`. 
 * Registration Credential SHALL BE versioned based on the context
-* `id` SHALL BE the DID of credential subject  
+* `id` SHALL BE the ID of credential, for example "http://fca.gov.uk/credentials/1234"
 * Types SHALL TAKE this value `["VerifiableCredential", "RegistrationCredential"]`
-* `issuer` SHALL BE the DID of credential issuer 
-
-> **NOTES:** 
-> - Does it make sense to have id in credential "header" AND the "credentialSubject"?
-> - Removed version from the `credentialSubject` because saying we can use context to do this instead.
-
-### VASP
-
-A **Virtual Asset Service Provider (VASP)** SHALL BE the registered legal person. They will have a DID, one or more names, a registered address and one or more identifiers for tax, license and operating purposes.
-
-| Level 1            | Name      		| Type                                          | Mult. | Notes                    |
-| :----------------- | :-------- 		| :-------------------------------------------- | :---- | :----------------------- |
-| VASP Identifier    | `vaspId`  		| DID                                           | 1..1  |                          |
-| Legal person       | `legalPerson`	| [Legal Person](#legal-person)                 | 0..1  |                          |
-| Address            | `address` 		| [Address](#address)                           | 1..1  |                          |
-| Identifiers		 | `ids`      		| [Identification Type](#identification-type)   | 1..*  |                          |
-
-**Notes:** 
-
-* The Decentralised Identifier (DID) for subject SHALL BE a **PUBLIC DID**.
-* Unlike OpenVASP there is no concept of Natural Person in this credential. This WILL BE separated into a KYC credential
-* OpenVASP `vaspId` is a string and must be a VASP Identifier as specified in [ovip-0002](https://github.com/OpenVASP/ovips/blob/master/ovip-0002.md). This is a string that is very similar to [IBANs](https://www.iban.com/). In our specification Decentralized Identifiers SHALL BE used.
+* Unlike the OpenVASP standard, the version is no longer part of the `credentialSubject`. The  context SHALL BE USED to do this instead.
+* The subject of the credential SHALL BE the registered legal person. They will have a DID, one or more names, a registered address and one or more identifiers for tax, license and operating purposes.
+* OpenVASP `vaspId` is a string and must be a VASP Identifier as specified in [ovip-0002](https://github.com/OpenVASP/ovips/blob/master/ovip-0002.md). This is a string that is very similar to [IBANs](https://www.iban.com/). In our specification Decentralized Identifiers SHALL BE used. This SHALL BE a **PUBLIC DID**, for example "did:git:df1245"
 
 
 ### Legal Person
@@ -156,7 +141,8 @@ Each `Name` SHALL HAVE two values: the name itself and a value denoting the type
 | Level 3   | Name        | Type                    | Mult. | Notes     |
 | :-------- | :---------- | :---------------------- | :---- | :-------- |
 | Name      | `name`      | String                  | 1..1  |           |
-| Name type | `nameType`  | [Name Type](#name-type) | 1..1  |           |
+| Name type | `type`  	  | [Name Type](#name-type) | 1..1  |           |
+
 
 #### Name Type
 
@@ -172,15 +158,15 @@ A legal person can operate using a range of different names - see the example ab
 
 | Level 2                  | Name      		| Type                                             | Mult. | Notes     	|
 | :----------------------- | :------------- | :----------------------------------------------- | :---- | :---------	|
-| Identifier      		   | `idId`   		| String                                           | 1..1  |           	|
-| Identifier Type		   | `idType` 		| [Identifier Type Code](#identifier-type-code)    | 1..1  |			|
+| Identifier      		   | `id`   		| String                                           | 1..1  |           	|
+| Identifier Type		   | `type` 		| [Identifier Type Code](#identifier-type-code)    | 1..1  |			|
 | Country of issue         | `idCtry`		| String                                           | 0..1  |			|
 | Registration Authority   | `idAuthority`  | String                                           | 0..1  |			|
 
 **Notes:**
 
-* If value of `idType` is in [`RAID`, `TXID`, `MISC`] then `idAuthority` MUST BE present.
-* If the value of `idType` is `LEIX` then `id_reg` MUST NOT BE present.
+* If value of `type` is in [`RAID`, `TXID`, `MISC`] then `idAuthority` MUST BE present.
+* If the value of `type` is `LEIX` then `idAuthority` MUST NOT BE present.
 * `idCtry` MUST BE formatted as per [ISO 3166-1](https://www.iso.org/obp/ui/#iso:std:iso:3166:-1:ed-4:v1:en).
 * `idAuthority` MUST BE a valid [GLEIF Registration Authority Code](https://www.gleif.org/en/about-lei/code-lists/gleif-registration-authorities-list)
 
@@ -205,7 +191,6 @@ Identifies the national identification type.
 
 * This is more generic than required for a VASP, but this COULD BE reused for KYC credentials.
 
-
 ### Address
 
 Unlike OpenVASP, `address` SHALL USE collonly defined standards for address, that include:
@@ -228,7 +213,6 @@ Address currently WILL NOT permit geographical coordinates.
 | administrative_area 		| `adminArea`   | String						| 0..1  | Equivalent of State/Province/Region	|
 | Country             		| `ctry`        | String						| 1..1  |               						|
 
-
 #### Address Type
 
 Identifies the nature of the address
@@ -250,7 +234,7 @@ Example Registration Credential in `json-ld` format is as follows:
 		"https://www.w3.org/2018/credentials/v1",
 		"https://www.cosmos.cash/2021/credentials/registration/v1"
 	],
-	"id": "did:cosmos:cash:1000bb528777",
+	"id": "http://fca.gov.uk/credentials/1234",
 	"type": [
 		"VerifiableCredential", 
 		"RegistrationCredential"
@@ -258,34 +242,33 @@ Example Registration Credential in `json-ld` format is as follows:
 	"issuer": "did:sov:12345",
 	"issuanceDate": "2021-08-01T15:23:24Z",
 	"credentialSubject": {
-		"vasp": {
-			"vaspId": "did:cosmos:cash:1000bb528777",
-			"legalPerson": {
-				"names": [{
-					"name": "Example VASP AG",
-					"nametype": "LEGL"
-				}, {
-					"name": "EgVASP",
-					"nametype": "SHRT"
-				}],
-				"ctryReg": "CH"
-			},
-			"address": {
-				"adr_type": "BIZZ",
-				"thfare": "Liverpool Street",
-				"premise": "22",
-				"postcode": "EC2R",
-				"locality": "London",
-				"country": "GB"
-			},
-			"ids": [{
-				"idId": "CH02035398520",
-				"idType": "RAID"
+		"id": "did:cosmos:cash:1000bb528777",
+		"issuerId": "did:sov:12345"
+		"legalPerson": {
+			"names": [{
+				"name": "Example VASP AG",
+				"type": "LEGL"
 			}, {
-				"idId": "529900W6B9NEA233DS71",
-				"idType": "LEIX"
-			}]
-		}
+				"name": "EgVASP",
+				"type": "SHRT"
+			}],
+			"ctryReg": "CH"
+		},
+		"address": {
+			"addr_type": "BIZZ",
+			"thfare": "Liverpool Street",
+			"premise": "22",
+			"postcode": "EC2R",
+			"locality": "London",
+			"country": "GB"
+		},
+		"ids": [{
+			"id": "CH02035398520",
+			"type": "RAID"
+		}, {
+			"id": "529900W6B9NEA233DS71",
+			"type": "LEIX"
+		}]
 	},
 	"proof": {
 		"type": "RsaSignature2018",
@@ -301,7 +284,7 @@ Example Registration Credential in `json-ld` format is as follows:
 
 > This section describes the resulting context after applying the decision. List all consequences here, taking care not to list only the "positive" consequences. A particular decision may have positive, negative, and neutral consequences, but all of the consesquences affect the team and project in the future.
 
-### Backwards Compatibility
+### Backward Compatibility
 
 This is the first definition of the credential. Backwards compatibility is not a concern. 
 
@@ -312,7 +295,6 @@ This ADR offers the following benefits
 - A public VASP registry maintained by a regulator
 - A verified registration credential issued by a regulator provides guarantees to new clients that the holder is a registered VASP. Combined with a license credential it offer guarantees to the 
 - The credential is compatible with W3C standards
-- 
 
 ### Negative
 

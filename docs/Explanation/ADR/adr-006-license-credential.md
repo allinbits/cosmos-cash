@@ -13,10 +13,9 @@
     - [Credential Structure](#credential-structure)
     - [License](#license)
       - [License Type](#license-type)
-    - [Agreement](#agreement)
     - [Example Credential](#example-credential)
   - [Consequences](#consequences)
-    - [Backwards Compatibility](#backwards-compatibility)
+    - [Backward Compatibility](#backward-compatibility)
     - [Positive](#positive)
     - [Negative](#negative)
     - [Neutral](#neutral)
@@ -86,10 +85,10 @@ Overall structure is based on standard verifiable credentials.
 | `type`              |                | List[String]  			| 1..1  | See [W3C Types Data Model](https://www.w3.org/TR/vc-data-model/#types)|
 | `issuer`            |                | DID           			| 1..1  |                     |
 | `issuanceDate`      |                | String        			| 1..1  | Format SHALL BE [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339) standard |
-| `credentialSubject` |                |             			    | 1..1  | |
-|                     | `license`      | [License](#license)        | 1..1  | |
-|                     | `agreement`    | [Agreement](#agreement)    | 1..1  | |
-| `proof`			  |				   | 						| 1..*  | See [W3C Proofs Data Model](https://www.w3.org/TR/vc-data-model/#proofs-signatures) |
+| `credentialSubject` |                |             			  | 1..1  | |
+|                     | `id`           | DID          			| 1..1  | DID of the license holder |
+|                     | `license`      | [License](#license)| 1..1  | |
+| `proof`			        |				         | 						        | 1..*  | See [W3C Proofs Data Model](https://www.w3.org/TR/vc-data-model/#proofs-signatures) |
 
 
 **Notes:**
@@ -100,28 +99,27 @@ Overall structure is based on standard verifiable credentials.
     "https://www.cosmos.cash/2021/credentials/issuerlicense/v1"
   ]`. 
 * Issuer License Credential SHALL BE versioned based on the context
-* `id` SHALL BE the DID of credential subject  
+* header `id` SHALL BE the ID of credential, for example "http://fca.gov.uk/credentials/4567"
 * Types SHALL TAKE this value `["VerifiableCredential", "IssuerLicense"]`
-* `issuer` SHALL BE the DID of credential issuer 
+* `issuer` SHALL BE the DID of credential issuer, for example "did:sov:12345"
+* `id` SHALL BE the DID of credential subject, for example "did:git:67890"
+* Unlike OpenVASP's definition, this credential will not have an `agreement` structure
 
-> **DISCUSSION NOTES:** 
-> - Remove `agreement` from the definition
-> - Does it make sense to have id in credential "header" AND the "credentialSubject"?
-> - Removed version from the `credentialSubject` because saying we can use context to do this instead.
- 
 ### License
-
 
 | Level 2           | Name        	    | Type                      | Mult. | Notes     													   |
 | :---------------- | :---------------- | :------------------------ | :---- | :--------------------------------------------------------------- |
 | License Type	    | `licenseType`     | [License Type](#license)  | 1..1  | Name of recognized license or registration    				   |
-| Country		    | `country`   	    | String(2)                 | 1..1  | Uses [ISO 3166-1](https://www.iso.org/obp/ui/#iso:std:iso:3166:-1:ed-4:v1:en) |
-| Authority		    | `authority` 	    | String                    | 1..1  | Licensing authority                           				   |
+| Issuer       	    | `issuerId`        | DID          			        | 1..1  | DID of the license issuer e.g. "did:sov:12345" |
+| Country		        | `country`   	    | String(2)                 | 1..1  | Uses [ISO 3166-1](https://www.iso.org/obp/ui/#iso:std:iso:3166:-1:ed-4:v1:en) |
+| Authority		      | `authority` 	    | String                    | 1..1  | Licensing authority                           				   |
 | Denomination	    | `denom`           | String                    | 1..1  | Token identifier or denomination                 				   |
 | Circulation Limit | `circulationLimit`| Integer                   | 1..1  | Amount of tokens that can be issued             				   |
 
-> **Discussion Notes:**
-> Should this license also include list of all permissions for holder? e.g. mint, burn, block etc?
+**Notes:**
+
+* The license type is defined by the MICA regulation and will be used to identify different types of token assets. This will be used to identify different asset classes of tokens being issued by Issuers.
+* A later version of this credential COULD BE extended to include explicitly a list of all permissions that a holder can perform upon presentation of this credential. In this case this would include mint, burn, freeze, unfreeze and rescue.
 
 #### License Type
 
@@ -131,14 +129,6 @@ Overall structure is based on standard verifiable credentials.
 | :-------- | :------------------------ | :------------------------------------------- |
 | `MICAEMI` | E-Money Token             | E-Money Token as defined under MiCA          |
 | `MICAART` | Asset Referenced Token    | Asset Referenced Token as defined under MiCA |
-
-
-### Agreement
-
-| Level 2       	| Name        	  | Type          | Mult. | Notes     									  |
-| :---------------- | :-------------- | :------------ | :---- | :---------------------------------------- |
-| Agreement Type	| `agreementType` | String        | 1..1  | `NetworkAgreement_v1.0`                   |
-| Message Families  | `msgFamilies`   | List[String]  | 1..1  | Covered message families (e.g. `TFR`, `ALL`)  |
 
 
 ### Example Credential
@@ -151,7 +141,7 @@ Example credential in `json-ld` format is as follows:
 		"https://www.w3.org/2018/credentials/v1",
 		"https://www.cosmos.cash/2021/credentials/license/v1"
 	],
-	"id": "did:cosmos:cash:1000bb528777",
+	"id": "http://fca.gov.uk/credentials/1234",
 	"type": [
 		"VerifiableCredential", 
 		"LicenseCredential"
@@ -159,13 +149,15 @@ Example credential in `json-ld` format is as follows:
 	"issuer": "did:sov:12345",
 	"issuanceDate": "2021-08-01T15:23:24Z",
 	"credentialSubject": {
-		"license": {
-			"licenseType": "MICAEMI", // MiCA issuer license - can fine tune this to asset backed tokens, E-Money tokens etc
-			"country": "CH",
-			"authority": "Another Financial Services Body (AFFB)",
-            "denom": "sEUR",
-            "circulationLimit": 100
-		}
+      "id": "did:cosmos:cash:1000bb528777",
+      "license": {
+        "issuerId": "did:sov:12345"
+        "licenseType": "MICAEMI", // MiCA issuer license - can fine tune this to asset backed tokens, E-Money tokens etc
+        "country": "CH",
+        "authority": "Another Financial Services Body (AFSB)",
+        "denom": "sEUR",
+        "circulationLimit": 100
+      }
 	},
 	"proof": {
 		"type": "RsaSignature2018",
@@ -173,7 +165,7 @@ Example credential in `json-ld` format is as follows:
 		"proofPurpose": "assertionMethod",
 		"verificationMethod": "https://example.edu/issuers/keys/1",
 		"jws": "eyJhbGciOiJSUzI1NiIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..." // truncated for readability
-  	}
+  }
 }
 ```
 

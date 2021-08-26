@@ -1,5 +1,29 @@
 # ADR 003: Cosmos Cash Issuance model
 
+## Table of Contents
+
+- [ADR 003: Cosmos Cash Issuance model](#adr-003-cosmos-cash-issuance-model)
+  - [Table of Contents](#table-of-contents)
+  - [Changelog](#changelog)
+  - [Status](#status)
+  - [Abstract](#abstract)
+  - [Context](#context)
+    - [Ethereum based Stablecoin issuers](#ethereum-based-stablecoin-issuers)
+    - [Licenses](#licenses)
+  - [Decision](#decision)
+    - [Actors](#actors)
+    - [DID](#did)
+    - [Verifiable Credentials](#verifiable-credentials)
+    - [Setting up an issuer](#setting-up-an-issuer)
+    - [Revocation Lists](#revocation-lists)
+    - [Out-of-Scope](#out-of-scope)
+  - [Consequences](#consequences)
+    - [Backwards Compatibility](#backwards-compatibility)
+    - [Positive](#positive)
+    - [Negative](#negative)
+  - [Further Discussions](#further-discussions)
+  - [References](#references)
+
 ## Changelog
 
 * 29-Jul-2021: Initial Draft
@@ -28,22 +52,7 @@ This functionality will use Role Based Access based on Verifiable Credentials wi
 
 ### Ethereum based Stablecoin issuers
 
-All major stablecoins, Tether and USDC are based on Ethereum and are composed from a number smart contract standards. Those of interest here include:
-
-* [ERC-20](https://www.notion.so/allinbits/USDC-vs-USDT-vs-CASH-ISSUER-5e1e6530247c433292caabf4e96038bf#b035a266c0954b3abdde3d6577d74908) - transfer, transferFrom and approve
-* [Mintable](https://www.notion.so/allinbits/USDC-vs-USDT-vs-CASH-ISSUER-5e1e6530247c433292caabf4e96038bf#22bd3b30f86b4b4fbfe7097c04707f68)
-* [Burnable](https://www.notion.so/allinbits/USDC-vs-USDT-vs-CASH-ISSUER-5e1e6530247c433292caabf4e96038bf#0d815a8305824674ad7b61ce3393f790)
-* [Pausable](https://www.notion.so/allinbits/USDC-vs-USDT-vs-CASH-ISSUER-5e1e6530247c433292caabf4e96038bf#22bd3b30f86b4b4fbfe7097c04707f68)
-* [Ownable](https://www.notion.so/allinbits/USDC-vs-USDT-vs-CASH-ISSUER-5e1e6530247c433292caabf4e96038bf#b78214caa3c748968bdb4773cbae5d02)
-* [RBAC](https://www.notion.so/allinbits/USDC-vs-USDT-vs-CASH-ISSUER-5e1e6530247c433292caabf4e96038bf#e5a99af185a24f25bb847dc63604c7cf) - manage contract/role access
-
-In addition these implementations also have a range of bespoke functions:
-
-* Blocklist, which implies adding/removing addresses from a block list and also rescuing or burning a blocklisted users' funds (USDT and USDC)
-* Set minting limits for a minter (USDC)
-* Set spending limits by address (USDC)
-
-These contracts then have role based access to perform certain actions such as mint/burn tokens. Both tokens are deemed to be regulatory compliant in terms of functionality.
+All major stablecoins, USDT and USDC are based on Ethereum and are composed from a [number smart contract standards with Role Based Access Control](../topics/Compare USDC vs USDT vs CASH-ISSUER.md). Both tokens are deemed to be regulatory compliant in terms of functionality.
 
 [Cosmos Cash Proof of Concept issuer](https://github.com/allinbits/cosmos-cash-poc/tree/master/x/issuer) has some similar functionality:
 
@@ -88,7 +97,7 @@ Likewise, the Regulator DID will also have multiple controllers with multi-signa
 
 ### Verifiable Credentials
 
-The functionality SHALL USE Verifiable Credentials to establish Role Based Access to functions. See [ADR-OO5 License Credential](https://github.com/allinbits/cosmos-cash/blob/main/docs/Explanation/ADR/adr-005-license-credential.md) for further details regarding issuance, revocation etc.
+The functionality SHALL USE Verifiable Credentials to establish Role Based Access to functions. See [ADR-OO5 License Credential](https://github.com/allinbits/cosmos-cash/blob/main/docs/Explanation/ADR/adr-006-license-credential.md) for further details regarding issuance, revocation etc.
 
 
 ### Setting up an issuer
@@ -106,8 +115,6 @@ Given that Role Based Access uses Verifiable Credentials then in order to revoke
 * Revocation lists wil be maintain as accumulators on the identity chain.
 * There WILL BE revocation lists for issuers and users.
 * A regulator actor can not be revoked
-
-
 
 
 ### Out-of-Scope

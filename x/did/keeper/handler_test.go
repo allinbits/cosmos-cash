@@ -405,6 +405,36 @@ func (suite *KeeperTestSuite) TestHandleMsgSetVerificationRelationships() {
 			true,
 		},
 		{
+			"FAIL: verification method does not exists ",
+			func() {
+				// setup
+				didDoc, _ := types.NewDidDocument(
+					"did:cosmos:cash:subject",
+					types.WithVerifications(
+						types.NewVerification(
+							types.NewVerificationMethod(
+								"did:cosmos:cash:subject#key-1",
+								"did:cosmos:cash:subject",
+								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+								types.DIDVerificationMaterialPublicKeyHex,
+							),
+							[]string{types.Authentication},
+							nil,
+						),
+					),
+				)
+				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+				// actual test
+				req = *types.NewMsgSetVerificationRelationships(
+					"did:cosmos:cash:subject",
+					"did:cosmos:cash:subject#key-does-not-exists",
+					[]string{types.Authentication, types.CapabilityInvocation},
+					"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+				)
+			},
+			true,
+		},
+		{
 			"PASS: add a new relationship",
 			func() {
 				// setup

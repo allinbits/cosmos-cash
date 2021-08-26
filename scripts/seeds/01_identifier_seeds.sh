@@ -21,15 +21,11 @@ cosmos-cashd query did dids --output json | jq
 echo "Adding service to decentralized did for user: validator"
 cosmos-cashd tx did add-service vasp new-verifiable-cred-3 KYCCredential cosmos-cash:new-verifiable-cred-3 --from validator --chain-id cash -y
 
-sleep 3
+vmID=$(cosmos-cashd query did dids --output json | jq '.didDocuments[0].verificationMethod[1].id')
+vmID=${vmID:17:-1}
 
-# FIXME: the keys subcommand returns a different value for public keys now
-# this needs to be updated, as this uses the previously created verificationMethods
-#vmID=$(cosmos-cashd query did dids --output json | jq '.didDocuments[0].verificationMethods[1].id')
-#vmID=${vmID:17:-1}
-#
-#echo "Adding a verification relationship from decentralized did for user: validator"
-#cosmos-cashd tx did add-verification-relationship vasp $vmID assertionMethod --from validator --chain-id cash -y
+echo "Adding a verification relationship from decentralized did for user: validator"
+cosmos-cashd tx did set-verification-relationship vasp $vmID --relationship assertionMethod --relationship capabilityInvocation --from validator --chain-id cash -y
 
 echo "Querying dids"
 cosmos-cashd query did dids --output json | jq

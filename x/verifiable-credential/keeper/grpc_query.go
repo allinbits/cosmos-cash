@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/base64"
 
+	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -66,7 +67,9 @@ func (q Keeper) ValidateVerifiableCredential(
 	if !found {
 		return nil, status.Errorf(codes.NotFound, "vc %s not found", req.VerifiableCredentialId)
 	}
-	pubkey, _ := sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeAccPub, req.IssuerPubkey)
+	//
+	pubKeyRaw, _ := sdk.GetFromBech32(req.IssuerPubkey, sdk.GetConfig().GetBech32AccountPubPrefix())
+	pubkey := secp256k1.PubKey{Key: pubKeyRaw}
 	signature := vc.Proof.Signature
 	emptyProof := types.NewProof("", "", "", "", "")
 	vc.Proof = &emptyProof

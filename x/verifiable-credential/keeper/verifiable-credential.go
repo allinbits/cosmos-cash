@@ -18,7 +18,7 @@ func (q Keeper) GetVerifiableCredential(ctx sdk.Context, key []byte) (types.Veri
 func (q Keeper) UnmarshalVerifiableCredential(value []byte) (interface{}, bool) {
 	vc := types.VerifiableCredential{}
 
-	err := q.cdc.UnmarshalBinaryBare(value, &vc)
+	err := q.cdc.Unmarshal(value, &vc)
 	if err != nil {
 		return types.VerifiableCredential{}, false
 	}
@@ -33,7 +33,7 @@ func (q Keeper) UnmarshalVerifiableCredential(value []byte) (interface{}, bool) 
 func (q Keeper) MarshalVerifiableCredential(value interface{}) []byte {
 	did := value.(types.VerifiableCredential)
 
-	bytes, _ := q.cdc.MarshalBinaryBare(&did)
+	bytes, _ := q.cdc.Marshal(&did)
 
 	return bytes
 }

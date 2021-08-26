@@ -42,9 +42,9 @@ func (k Keeper) UnmarshalDidMetadata(value []byte) (interface{}, bool) {
 func (k Keeper) Marshal(value interface{}) (bytes []byte) {
 	switch value := value.(type) {
 	case types.DidDocument:
-		bytes, _ = k.cdc.MarshalBinaryBare(&value)
+		bytes = k.cdc.MustMarshal(&value)
 	case types.DidMetadata:
-		bytes, _ = k.cdc.MarshalBinaryBare(&value)
+		bytes = k.cdc.MustMarshal(&value)
 	}
 	return
 }
@@ -54,7 +54,7 @@ func (k Keeper) Unmarshal(data []byte, val codec.ProtoMarshaler) bool {
 	if len(data) == 0 {
 		return false
 	}
-	if err := k.cdc.UnmarshalBinaryBare(data, val); err != nil {
+	if err := k.cdc.Unmarshal(data, val); err != nil {
 		return false
 	}
 	return true

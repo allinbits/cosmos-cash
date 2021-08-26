@@ -16,7 +16,9 @@ import (
 // numbers, checks signatures & account numbers, and deducts fees from the first
 // signer.
 func NewAnteHandler(
-	ak authante.AccountKeeper, bankKeeper authtypes.BankKeeper,
+	ak authante.AccountKeeper,
+	bankKeeper authtypes.BankKeeper,
+	feeGrantKeeper authante.FeegrantKeeper,
 	ik issuerkeeper.Keeper,
 	dk didkeeper.Keeper,
 	vcsk vcskeeper.Keeper,
@@ -31,12 +33,12 @@ func NewAnteHandler(
 		authante.TxTimeoutHeightDecorator{},
 		authante.NewValidateMemoDecorator(ak),
 		authante.NewConsumeGasForTxSizeDecorator(ak),
-		authante.NewRejectFeeGranterDecorator(),
 		authante.NewSetPubKeyDecorator(ak), // SetPubKeyDecorator must be called before all signature verification decorators
 		authante.NewValidateSigCountDecorator(ak),
-		authante.NewDeductFeeDecorator(ak, bankKeeper),
+		authante.NewDeductFeeDecorator(ak, bankKeeper, feeGrantKeeper),
 		authante.NewSigGasConsumeDecorator(ak, sigGasConsumer),
 		authante.NewSigVerificationDecorator(ak, signModeHandler),
+		authante.NewIncrementSequenceDecorator(ak),
 		issuerante.NewCheckIssuerCredentialsDecorator(ik, dk, vcsk),
 		issuerante.NewCheckUserCredentialsDecorator(ak, ik, dk, vcsk),
 	)

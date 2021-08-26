@@ -100,7 +100,7 @@ func (s *IntegrationTestSuite) TestGetCmdQueryIssuers() {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
 				s.Require().Equal(tc.expected.String(), tc.respType.String())
 
 			}

@@ -68,7 +68,8 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 
 			initClientCtx = client.ReadHomeFlag(initClientCtx, cmd)
 
-			initClientCtx, err := config.ReadFromClientConfig(initClientCtx)
+			// FIXME: this is a shadow declartion, fix and upstream change to SDK
+			initClientCtx, err := config.ReadFromClientConfig(initClientCtx) //nolint
 			if err != nil {
 				return err
 			}

@@ -47,8 +47,8 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 
 			config.SetRoot(clientCtx.HomeDir)
 
-			addr, err := sdk.AccAddressFromBech32(args[0])
-			if err != nil {
+			addr, decodingErr := sdk.AccAddressFromBech32(args[0])
+			if decodingErr != nil {
 				inBuf := bufio.NewReader(cmd.InOrStdin())
 				keyringBackend, _ := cmd.Flags().GetString(flags.FlagKeyringBackend)
 
@@ -108,7 +108,7 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 				genAccount = baseAccount
 			}
 
-			if err := genAccount.Validate(); err != nil {
+			if validateErr := genAccount.Validate(); validateErr != nil {
 				return fmt.Errorf("failed to validate new genesis account: %w", err)
 			}
 

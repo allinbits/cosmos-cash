@@ -96,7 +96,6 @@ Overall structure is based on standard verifiable credentials.
 | `issuanceDate`      |                | String        								   | 1..1  | Date format SHALL BE [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339) standard |
 | `credentialSubject` |                |             								   | 1..1  | 
 |					  | `id`  	   	   | DID                                           | 1..1  | DID of credential subject, for example "did:cosmos:cash:12345"  |
-|					  | `issuerId`	   | DID                                           | 1..1  | DID of credential issuer, for example "did:sov:12345"           |
 |					  | `legalPerson`  | [Legal Person](#legal-person)                 | 0..1  |                          |
 | 			          | `address` 	   | [Address](#address)                           | 1..1  |                          |
 | 			          | `ids`      	   | [Identification Type](#identification-type)   | 1..*  |                          |
@@ -243,7 +242,6 @@ Example Registration Credential in `json-ld` format is as follows:
 	"issuanceDate": "2021-08-01T15:23:24Z",
 	"credentialSubject": {
 		"id": "did:cosmos:cash:1000bb528777",
-		"issuerId": "did:sov:12345"
 		"legalPerson": {
 			"names": [{
 				"name": "Example VASP AG",
@@ -271,11 +269,11 @@ Example Registration Credential in `json-ld` format is as follows:
 		}]
 	},
 	"proof": {
-		"type": "RsaSignature2018",
+		"type": "SIGNATURE-TYPE",
 		"created": "2021-08-01T15:23:24Z",
 		"proofPurpose": "assertionMethod",
 		"verificationMethod": "https://example.edu/issuers/keys/1",
-		"jws": "eyJhbGciOiJSUzI1NiIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..." // truncated for readability
+		"jws": "a_jws_..."
   	}
 }
 ```

@@ -110,7 +110,6 @@ Overall structure is based on standard verifiable credentials.
 | Level 2           | Name        	    | Type                      | Mult. | Notes     													   |
 | :---------------- | :---------------- | :------------------------ | :---- | :--------------------------------------------------------------- |
 | License Type	    | `licenseType`     | [License Type](#license)  | 1..1  | Name of recognized license or registration    				   |
-| Issuer       	    | `issuerId`        | DID          			        | 1..1  | DID of the license issuer e.g. "did:sov:12345" |
 | Country		        | `country`   	    | String(2)                 | 1..1  | Uses [ISO 3166-1](https://www.iso.org/obp/ui/#iso:std:iso:3166:-1:ed-4:v1:en) |
 | Authority		      | `authority` 	    | String                    | 1..1  | Licensing authority                           				   |
 | Denomination	    | `denom`           | String                    | 1..1  | Token identifier or denomination                 				   |
@@ -151,7 +150,6 @@ Example credential in `json-ld` format is as follows:
 	"credentialSubject": {
       "id": "did:cosmos:cash:1000bb528777",
       "license": {
-        "issuerId": "did:sov:12345"
         "licenseType": "MICAEMI", // MiCA issuer license - can fine tune this to asset backed tokens, E-Money tokens etc
         "country": "CH",
         "authority": "Another Financial Services Body (AFSB)",
@@ -160,11 +158,11 @@ Example credential in `json-ld` format is as follows:
       }
 	},
 	"proof": {
-		"type": "RsaSignature2018",
+		"type": "SIGNATURE_TYPE",
 		"created": "2021-08-01T15:23:24Z",
 		"proofPurpose": "assertionMethod",
 		"verificationMethod": "https://example.edu/issuers/keys/1",
-		"jws": "eyJhbGciOiJSUzI1NiIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..." // truncated for readability
+		"jws": "jws123.." // truncated for readability
   }
 }
 ```

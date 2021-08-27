@@ -171,7 +171,6 @@ func (s *IntegrationTestSuite) TestNewCreateVerifiableCredentialCmd() {
 				"businessName",
 				"businessRegistrationNumber",
 				"businessType",
-				"businessAddress",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
@@ -201,7 +200,7 @@ func (s *IntegrationTestSuite) TestNewCreateVerifiableCredentialCmd() {
 
 	for _, tc := range testCases {
 		s.Run(tc.name, func() {
-			cmd := cli.NewCreateIssuerVerifiableCredentialCmd()
+			cmd := cli.NewCreateKYCVerifiableCredentialCmd()
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)

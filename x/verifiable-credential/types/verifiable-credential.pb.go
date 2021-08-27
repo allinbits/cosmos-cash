@@ -5,16 +5,22 @@ package types
 
 import (
 	fmt "fmt"
+	types "github.com/cosmos/cosmos-sdk/types"
+	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
+	github_com_gogo_protobuf_types "github.com/gogo/protobuf/types"
+	_ "github.com/golang/protobuf/ptypes/timestamp"
 	io "io"
 	math "math"
 	math_bits "math/bits"
+	time "time"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
+var _ = time.Kitchen
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the proto package it is being compiled against.
@@ -22,16 +28,43 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
+// VerifiableCredential represents a verifiable credential
 type VerifiableCredential struct {
-	Context      []string `protobuf:"bytes,1,rep,name=context,proto3" json:"context,omitempty"`
-	Id           string   `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
-	Type         []string `protobuf:"bytes,3,rep,name=type,proto3" json:"type,omitempty"`
-	Issuer       string   `protobuf:"bytes,4,opt,name=issuer,proto3" json:"issuer,omitempty"`
-	IssuanceDate string   `protobuf:"bytes,5,opt,name=issuance_date,json=issuanceDate,proto3" json:"issuance_date,omitempty"`
+	// @context is spec for verifiable credential.
+	Context []string `protobuf:"bytes,1,rep,name=context,proto3" json:"@context,omitempty"`
+	// The value of the id property MUST be a single URI. It is RECOMMENDED
+	// that the URI in the id be one which, if dereferenced, results in a
+	// document containing machine-readable information about the id.
+	Id string `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
+	// The value of the type property MUST be, or map to (through interpretation
+	// of the @context property), one or more URIs. If more than one URI is
+	// provided, the URIs MUST be interpreted as an unordered set.
+	Type []string `protobuf:"bytes,3,rep,name=type,proto3" json:"type,omitempty"`
+	// The value of the issuer property MUST be either a URI or an object
+	// containing an id property. It is RECOMMENDED that the URI in the issuer
+	// or its id be one which, if dereferenced, results in a document containing
+	// machine-readable information about the issuer that can be used to verify
+	// the information expressed in the credential.
+	Issuer string `protobuf:"bytes,4,opt,name=issuer,proto3" json:"issuer,omitempty"`
+	// A credential MUST have an issuanceDate property. The value of the issuanceDate
+	// property MUST be a string value of an [RFC3339] combined date and time string
+	// representing the date and time the credential becomes valid, which could
+	// be a date and time in the future. Note that this value represents the earliest
+	// point in time at which the information associated with the credentialSubject
+	// property becomes valid.
+	IssuanceDate *time.Time `protobuf:"bytes,5,opt,name=issuance_date,json=issuanceDate,proto3,stdtime" json:"issuance_date,omitempty"`
+	// The value of the credentialSubject property is defined as a set of
+	// objects that contain one or more properties that are each related
+	// to a subject of the verifiable credential.
+	//
 	// Types that are valid to be assigned to CredentialSubject:
 	//	*VerifiableCredential_UserCred
+	//	*VerifiableCredential_LicenseCred
 	CredentialSubject isVerifiableCredential_CredentialSubject `protobuf_oneof:"credential_subject"`
-	Proof             *Proof                                   `protobuf:"bytes,7,opt,name=proof,proto3" json:"proof,omitempty"`
+	// One or more cryptographic proofs that can be used to detect tampering
+	// and verify the authorship of a credential or presentation. The specific
+	// method used for an embedded proof MUST be included using the type property.
+	Proof *Proof `protobuf:"bytes,8,opt,name=proof,proto3" json:"proof,omitempty"`
 }
 
 func (m *VerifiableCredential) Reset()         { *m = VerifiableCredential{} }
@@ -76,8 +109,12 @@ type isVerifiableCredential_CredentialSubject interface {
 type VerifiableCredential_UserCred struct {
 	UserCred *UserCredentialSubject `protobuf:"bytes,6,opt,name=user_cred,json=userCred,proto3,oneof" json:"user_cred,omitempty"`
 }
+type VerifiableCredential_LicenseCred struct {
+	LicenseCred *LicenseCredentialSubject `protobuf:"bytes,7,opt,name=license_cred,json=licenseCred,proto3,oneof" json:"license_cred,omitempty"`
+}
 
-func (*VerifiableCredential_UserCred) isVerifiableCredential_CredentialSubject() {}
+func (*VerifiableCredential_UserCred) isVerifiableCredential_CredentialSubject()    {}
+func (*VerifiableCredential_LicenseCred) isVerifiableCredential_CredentialSubject() {}
 
 func (m *VerifiableCredential) GetCredentialSubject() isVerifiableCredential_CredentialSubject {
 	if m != nil {
@@ -114,16 +151,23 @@ func (m *VerifiableCredential) GetIssuer() string {
 	return ""
 }
 
-func (m *VerifiableCredential) GetIssuanceDate() string {
+func (m *VerifiableCredential) GetIssuanceDate() *time.Time {
 	if m != nil {
 		return m.IssuanceDate
 	}
-	return ""
+	return nil
 }
 
 func (m *VerifiableCredential) GetUserCred() *UserCredentialSubject {
 	if x, ok := m.GetCredentialSubject().(*VerifiableCredential_UserCred); ok {
 		return x.UserCred
+	}
+	return nil
+}
+
+func (m *VerifiableCredential) GetLicenseCred() *LicenseCredentialSubject {
+	if x, ok := m.GetCredentialSubject().(*VerifiableCredential_LicenseCred); ok {
+		return x.LicenseCred
 	}
 	return nil
 }
@@ -139,9 +183,13 @@ func (m *VerifiableCredential) GetProof() *Proof {
 func (*VerifiableCredential) XXX_OneofWrappers() []interface{} {
 	return []interface{}{
 		(*VerifiableCredential_UserCred)(nil),
+		(*VerifiableCredential_LicenseCred)(nil),
 	}
 }
 
+// UserCredentialSubject represents a privacy respecting
+// credential_subject of a verifiable credential. This
+// is used as an on chain verifiable credential.
 type UserCredentialSubject struct {
 	Id         string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Root       string `protobuf:"bytes,2,opt,name=root,proto3" json:"root,omitempty"`
@@ -202,6 +250,97 @@ func (m *UserCredentialSubject) GetIsVerified() bool {
 	return false
 }
 
+// The LicenseCredential message makes reference to the classes of crypto assets
+// described in MiCA, but the license could easily be adopted as proof of
+// authority to issue various types of crypto or virtual assets. The LicenseCredential
+// is used a a credential_subject in a verifiable credential.
+type LicenseCredentialSubject struct {
+	// The value of id represents the ID of the credential_subject
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The license type is defined by the MICA regulation. This will
+	// be used to identify different asset classes of tokens being issuedi
+	// by the credential_subject.
+	LicenseType string `protobuf:"bytes,2,opt,name=license_type,json=licenseType,proto3" json:"license_type,omitempty"`
+	// The country field represents the country the credential was issued in.
+	Country string `protobuf:"bytes,3,opt,name=country,proto3" json:"country,omitempty"`
+	// The authority field represents a licensing authority that issued the LicenseCredential
+	Authority string `protobuf:"bytes,4,opt,name=authority,proto3" json:"authority,omitempty"`
+	// The circulation_limit represents the amount of a token
+	// that can be minted by a credential_subject.
+	CirculationLimit types.Coin `protobuf:"bytes,5,opt,name=circulation_limit,json=circulationLimit,proto3" json:"circulation_limit"`
+}
+
+func (m *LicenseCredentialSubject) Reset()         { *m = LicenseCredentialSubject{} }
+func (m *LicenseCredentialSubject) String() string { return proto.CompactTextString(m) }
+func (*LicenseCredentialSubject) ProtoMessage()    {}
+func (*LicenseCredentialSubject) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cf6469f22440938e, []int{2}
+}
+func (m *LicenseCredentialSubject) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *LicenseCredentialSubject) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_LicenseCredentialSubject.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *LicenseCredentialSubject) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_LicenseCredentialSubject.Merge(m, src)
+}
+func (m *LicenseCredentialSubject) XXX_Size() int {
+	return m.Size()
+}
+func (m *LicenseCredentialSubject) XXX_DiscardUnknown() {
+	xxx_messageInfo_LicenseCredentialSubject.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_LicenseCredentialSubject proto.InternalMessageInfo
+
+func (m *LicenseCredentialSubject) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
+
+func (m *LicenseCredentialSubject) GetLicenseType() string {
+	if m != nil {
+		return m.LicenseType
+	}
+	return ""
+}
+
+func (m *LicenseCredentialSubject) GetCountry() string {
+	if m != nil {
+		return m.Country
+	}
+	return ""
+}
+
+func (m *LicenseCredentialSubject) GetAuthority() string {
+	if m != nil {
+		return m.Authority
+	}
+	return ""
+}
+
+func (m *LicenseCredentialSubject) GetCirculationLimit() types.Coin {
+	if m != nil {
+		return m.CirculationLimit
+	}
+	return types.Coin{}
+}
+
+// The Proof message represents a cryptographic proof that the
+// credential has not been tampered with or changed without the issuersi
+// knowledge. This can be used to verify the verifiable credential.
 type Proof struct {
 	Type               string `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
 	Created            string `protobuf:"bytes,2,opt,name=created,proto3" json:"created,omitempty"`
@@ -214,7 +353,7 @@ func (m *Proof) Reset()         { *m = Proof{} }
 func (m *Proof) String() string { return proto.CompactTextString(m) }
 func (*Proof) ProtoMessage()    {}
 func (*Proof) Descriptor() ([]byte, []int) {
-	return fileDescriptor_cf6469f22440938e, []int{2}
+	return fileDescriptor_cf6469f22440938e, []int{3}
 }
 func (m *Proof) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -279,9 +418,10 @@ func (m *Proof) GetSignature() string {
 }
 
 func init() {
-	proto.RegisterType((*VerifiableCredential)(nil), "allinbits.cosmoscash.verifiablecredentialservice.VerifiableCredential")
-	proto.RegisterType((*UserCredentialSubject)(nil), "allinbits.cosmoscash.verifiablecredentialservice.UserCredentialSubject")
-	proto.RegisterType((*Proof)(nil), "allinbits.cosmoscash.verifiablecredentialservice.Proof")
+	proto.RegisterType((*VerifiableCredential)(nil), "allinbits.cosmoscash.verifiablecredential.VerifiableCredential")
+	proto.RegisterType((*UserCredentialSubject)(nil), "allinbits.cosmoscash.verifiablecredential.UserCredentialSubject")
+	proto.RegisterType((*LicenseCredentialSubject)(nil), "allinbits.cosmoscash.verifiablecredential.LicenseCredentialSubject")
+	proto.RegisterType((*Proof)(nil), "allinbits.cosmoscash.verifiablecredential.Proof")
 }
 
 func init() {
@@ -289,35 +429,47 @@ func init() {
 }
 
 var fileDescriptor_cf6469f22440938e = []byte{
-	// 442 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x52, 0xbb, 0x6e, 0x13, 0x41,
-	0x14, 0xf5, 0xd8, 0xb1, 0x93, 0xbd, 0x09, 0x14, 0x43, 0x40, 0x53, 0xa0, 0xc5, 0x32, 0x8d, 0x9b,
-	0xec, 0xf2, 0x28, 0xe8, 0x28, 0x02, 0x12, 0x34, 0x91, 0xa2, 0x45, 0x44, 0x08, 0x21, 0xad, 0x66,
-	0x67, 0xaf, 0xe3, 0x41, 0xf6, 0xce, 0x6a, 0x66, 0x36, 0x0a, 0x7f, 0xc1, 0x6f, 0xf0, 0x27, 0x94,
-	0x29, 0xa9, 0x10, 0xb2, 0x7f, 0x04, 0xed, 0xcc, 0x3e, 0x52, 0xb8, 0x71, 0x37, 0xf7, 0x9c, 0xfb,
-	0x38, 0xf7, 0x9e, 0x81, 0x97, 0x37, 0xa8, 0xe5, 0x42, 0xf2, 0x6c, 0x85, 0x67, 0x42, 0x63, 0x8e,
-	0x85, 0x95, 0x7c, 0x15, 0xef, 0x44, 0xa3, 0x52, 0x2b, 0xab, 0xe8, 0x0b, 0xbe, 0x5a, 0xc9, 0x22,
-	0x93, 0xd6, 0x44, 0x42, 0x99, 0xb5, 0x32, 0x82, 0x9b, 0x65, 0xd4, 0x57, 0xf4, 0x05, 0x06, 0xf5,
-	0x8d, 0x14, 0x38, 0xfb, 0x3b, 0x84, 0xd3, 0xab, 0x8e, 0x7f, 0xd7, 0xf1, 0x94, 0xc1, 0xa1, 0x50,
-	0x85, 0xc5, 0x5b, 0xcb, 0xc8, 0x74, 0x34, 0x0f, 0x92, 0x36, 0xa4, 0x0f, 0x61, 0x28, 0x73, 0x36,
-	0x9c, 0x92, 0x79, 0x90, 0x0c, 0x65, 0x4e, 0x29, 0x1c, 0xd8, 0x1f, 0x25, 0xb2, 0x91, 0x4b, 0x73,
-	0x6f, 0xfa, 0x04, 0x26, 0xd2, 0x98, 0x0a, 0x35, 0x3b, 0x70, 0x79, 0x4d, 0x44, 0x9f, 0xc3, 0x83,
-	0xfa, 0xc5, 0x0b, 0x81, 0x69, 0xce, 0x2d, 0xb2, 0xb1, 0xa3, 0x4f, 0x5a, 0xf0, 0x3d, 0xb7, 0x48,
-	0x17, 0x10, 0x54, 0x06, 0x75, 0x5a, 0xab, 0x65, 0x93, 0x29, 0x99, 0x1f, 0xbf, 0xfa, 0x10, 0xed,
-	0xbb, 0x59, 0xf4, 0xd9, 0xa0, 0xee, 0xf7, 0xf9, 0x54, 0x65, 0xdf, 0x51, 0xd8, 0x8f, 0x83, 0xe4,
-	0xa8, 0x6a, 0x08, 0x7a, 0x01, 0xe3, 0x52, 0x2b, 0xb5, 0x60, 0x87, 0x6e, 0xc6, 0x9b, 0xfd, 0x67,
-	0x5c, 0xd6, 0xe5, 0x89, 0xef, 0x72, 0x7e, 0x0a, 0xb4, 0xcf, 0x48, 0x8d, 0x1f, 0x38, 0xfb, 0x06,
-	0x8f, 0x77, 0x2a, 0x69, 0xce, 0x48, 0xee, 0x9f, 0x51, 0x2b, 0x65, 0x9b, 0xc3, 0xba, 0x37, 0x7d,
-	0x06, 0xc7, 0xd2, 0xa4, 0x5e, 0x01, 0xe6, 0x6c, 0x34, 0x25, 0xf3, 0xa3, 0x04, 0xa4, 0xb9, 0x6a,
-	0x90, 0xd9, 0x2f, 0x02, 0x63, 0x27, 0xa2, 0x73, 0xc1, 0x37, 0xf4, 0x2e, 0xd4, 0x1e, 0x6a, 0xe4,
-	0x16, 0x5b, 0xbb, 0xda, 0xb0, 0xf6, 0xc1, 0x89, 0x4e, 0xcb, 0x4a, 0x97, 0xca, 0xa0, 0x6b, 0x1d,
-	0x24, 0x27, 0x0e, 0xbc, 0xf4, 0x18, 0x8d, 0xe1, 0x91, 0x1f, 0x2d, 0xb8, 0x95, 0xaa, 0x48, 0xd7,
-	0x68, 0x97, 0x2a, 0x6f, 0x1c, 0xa5, 0xf7, 0xa9, 0x0b, 0xc7, 0xd0, 0xa7, 0x10, 0x18, 0x79, 0x5d,
-	0x70, 0x5b, 0xe9, 0xd6, 0xd9, 0x1e, 0x38, 0xff, 0xf2, 0x7b, 0x13, 0x92, 0xbb, 0x4d, 0x48, 0xfe,
-	0x6d, 0x42, 0xf2, 0x73, 0x1b, 0x0e, 0xee, 0xb6, 0xe1, 0xe0, 0xcf, 0x36, 0x1c, 0x7c, 0x7d, 0x7b,
-	0x2d, 0xed, 0xb2, 0xca, 0x22, 0xa1, 0xd6, 0x71, 0xe7, 0x41, 0xec, 0x3d, 0x38, 0xab, 0x4d, 0x88,
-	0x6f, 0x77, 0x7f, 0xfb, 0xb8, 0x5e, 0xd3, 0x64, 0x13, 0xf7, 0xfb, 0x5f, 0xff, 0x0f, 0x00, 0x00,
-	0xff, 0xff, 0x29, 0x74, 0x10, 0x6e, 0x32, 0x03, 0x00, 0x00,
+	// 638 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x54, 0xcb, 0x6e, 0xd3, 0x40,
+	0x14, 0x8d, 0x9b, 0xf4, 0x91, 0x69, 0x8b, 0x60, 0x28, 0x95, 0xa9, 0x90, 0x13, 0xc2, 0x26, 0x48,
+	0xd4, 0x6e, 0x61, 0x8f, 0xaa, 0x14, 0x10, 0x8b, 0x22, 0x55, 0xa6, 0x54, 0x08, 0x21, 0x59, 0x63,
+	0xe7, 0x36, 0x19, 0x64, 0x7b, 0xac, 0x99, 0x71, 0xd5, 0xfc, 0x45, 0x7f, 0x83, 0x3f, 0xe9, 0xb2,
+	0x12, 0x1b, 0x56, 0x05, 0xb5, 0x3b, 0xd6, 0x7c, 0x00, 0x9a, 0x87, 0xe3, 0x48, 0x04, 0x89, 0xee,
+	0x66, 0xee, 0x9d, 0x33, 0xc7, 0xe7, 0xcc, 0xb9, 0x46, 0xbb, 0xa7, 0xc0, 0xe9, 0x09, 0x25, 0x71,
+	0x0a, 0xdb, 0x09, 0x87, 0x21, 0xe4, 0x92, 0x92, 0x34, 0x98, 0x5b, 0xf5, 0x0b, 0xce, 0x24, 0xc3,
+	0x4f, 0x49, 0x9a, 0xd2, 0x3c, 0xa6, 0x52, 0xf8, 0x09, 0x13, 0x19, 0x13, 0x09, 0x11, 0x63, 0xbf,
+	0x46, 0xd4, 0x80, 0xad, 0x8d, 0x11, 0x1b, 0x31, 0x8d, 0x0a, 0xd4, 0xca, 0x5c, 0xb0, 0xd5, 0x19,
+	0x31, 0x36, 0x4a, 0x21, 0xd0, 0xbb, 0xb8, 0x3c, 0x09, 0x24, 0xcd, 0x40, 0x48, 0x92, 0x15, 0xf6,
+	0x80, 0x67, 0xee, 0x0d, 0x62, 0x22, 0x20, 0x38, 0xdd, 0x8d, 0x41, 0x92, 0xdd, 0x20, 0x61, 0x34,
+	0x37, 0xfd, 0xde, 0xef, 0x26, 0xda, 0x38, 0x9e, 0xf2, 0xed, 0x4f, 0xf9, 0xf0, 0x0e, 0x5a, 0x4e,
+	0x58, 0x2e, 0xe1, 0x4c, 0xba, 0x4e, 0xb7, 0xd9, 0x6f, 0x0f, 0x36, 0x7f, 0x5d, 0x75, 0xf0, 0x9e,
+	0xad, 0x3d, 0x63, 0x19, 0x95, 0x90, 0x15, 0x72, 0x12, 0x56, 0xc7, 0xf0, 0x1d, 0xb4, 0x40, 0x87,
+	0xee, 0x42, 0xd7, 0xe9, 0xb7, 0xc3, 0x05, 0x3a, 0xc4, 0x18, 0xb5, 0xe4, 0xa4, 0x00, 0xb7, 0xa9,
+	0xe0, 0xa1, 0x5e, 0xe3, 0x4d, 0xb4, 0x44, 0x85, 0x28, 0x81, 0xbb, 0x2d, 0x7d, 0xce, 0xee, 0xf0,
+	0x6b, 0xb4, 0xae, 0x56, 0x24, 0x4f, 0x20, 0x1a, 0x12, 0x09, 0xee, 0x62, 0xd7, 0xe9, 0xaf, 0x3e,
+	0xdf, 0xf2, 0x8d, 0x3e, 0xbf, 0xd2, 0xe7, 0x1f, 0x55, 0xfa, 0x06, 0xad, 0xf3, 0x1f, 0x1d, 0x27,
+	0x5c, 0xab, 0x60, 0xaf, 0x88, 0x04, 0x1c, 0xa1, 0x76, 0x29, 0x80, 0x47, 0xca, 0x37, 0x77, 0x49,
+	0x5f, 0xb1, 0xe7, 0xff, 0xb7, 0xc7, 0xfe, 0x07, 0x01, 0xbc, 0xb6, 0xe0, 0x7d, 0x19, 0x7f, 0x81,
+	0x44, 0xbe, 0x6d, 0x84, 0x2b, 0xa5, 0x6d, 0xe0, 0x31, 0x5a, 0x4b, 0x69, 0x02, 0xb9, 0x00, 0xc3,
+	0xb1, 0xac, 0x39, 0xf6, 0x6f, 0xc1, 0x71, 0x60, 0xe0, 0xf3, 0x68, 0x56, 0xd3, 0xba, 0x87, 0xdf,
+	0xa0, 0xc5, 0x82, 0x33, 0x76, 0xe2, 0xae, 0x68, 0x8a, 0x9d, 0x5b, 0x50, 0x1c, 0x2a, 0x5c, 0x68,
+	0xe0, 0x83, 0x0d, 0x84, 0xeb, 0x56, 0x24, 0x0c, 0x59, 0xef, 0x33, 0x7a, 0x30, 0x57, 0xac, 0x7d,
+	0x44, 0x67, 0xf6, 0x11, 0x39, 0x63, 0xd2, 0x3e, 0xab, 0x5e, 0xe3, 0x0e, 0x5a, 0xa5, 0x22, 0x32,
+	0xd4, 0x30, 0x74, 0x9b, 0x5d, 0xa7, 0xbf, 0x12, 0x22, 0x2a, 0x8e, 0x6d, 0xa5, 0xf7, 0xcd, 0x41,
+	0xee, 0xbf, 0x74, 0xfe, 0xc5, 0xf0, 0xb8, 0xb6, 0x54, 0xc7, 0xc5, 0x30, 0x55, 0x5e, 0x1c, 0xa9,
+	0xd4, 0xb8, 0x2a, 0x8b, 0x65, 0x2e, 0xf9, 0x44, 0x93, 0xb5, 0xc3, 0x6a, 0x8b, 0x1f, 0xa1, 0x36,
+	0x29, 0xe5, 0x98, 0x71, 0x2a, 0x27, 0x36, 0x52, 0x75, 0x01, 0x1f, 0xa0, 0x7b, 0x09, 0xe5, 0x49,
+	0x99, 0x12, 0x49, 0x59, 0x1e, 0xa5, 0x34, 0xa3, 0xd2, 0x26, 0xeb, 0xa1, 0x75, 0xd1, 0x57, 0x83,
+	0xe1, 0xdb, 0xc1, 0xf0, 0xf7, 0x19, 0xcd, 0x07, 0xad, 0x8b, 0xab, 0x4e, 0x23, 0xbc, 0x3b, 0x83,
+	0x3c, 0x50, 0xc0, 0xde, 0x57, 0x07, 0x2d, 0x6a, 0x6b, 0xa7, 0xc9, 0x36, 0x22, 0x4c, 0xb2, 0xd5,
+	0x37, 0x72, 0x20, 0x12, 0xaa, 0x11, 0xa8, 0xb6, 0xf8, 0x09, 0x5a, 0xd7, 0x4f, 0x11, 0x15, 0x25,
+	0x2f, 0x98, 0x00, 0xab, 0x61, 0x4d, 0x17, 0x0f, 0x4d, 0x0d, 0x07, 0xe8, 0xbe, 0x31, 0x34, 0x31,
+	0xdf, 0x9a, 0x81, 0x1c, 0xb3, 0xa1, 0x95, 0x84, 0x67, 0x5b, 0xef, 0x74, 0x47, 0x29, 0x17, 0x74,
+	0x94, 0x13, 0x59, 0x72, 0x33, 0x2d, 0xed, 0xb0, 0x2e, 0x0c, 0x3e, 0x5e, 0x5c, 0x7b, 0xce, 0xe5,
+	0xb5, 0xe7, 0xfc, 0xbc, 0xf6, 0x9c, 0xf3, 0x1b, 0xaf, 0x71, 0x79, 0xe3, 0x35, 0xbe, 0xdf, 0x78,
+	0x8d, 0x4f, 0x2f, 0x47, 0x54, 0x8e, 0xcb, 0xd8, 0x4f, 0x58, 0x16, 0x4c, 0x23, 0x15, 0x18, 0x33,
+	0xb6, 0x55, 0xa6, 0x82, 0xb3, 0xf9, 0xbf, 0xac, 0x40, 0xc9, 0x14, 0xf1, 0x92, 0x1e, 0xc5, 0x17,
+	0x7f, 0x02, 0x00, 0x00, 0xff, 0xff, 0x8e, 0xa9, 0xaf, 0x77, 0xee, 0x04, 0x00, 0x00,
 }
 
 func (m *VerifiableCredential) Marshal() (dAtA []byte, err error) {
@@ -350,7 +502,7 @@ func (m *VerifiableCredential) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 			i = encodeVarintVerifiableCredential(dAtA, i, uint64(size))
 		}
 		i--
-		dAtA[i] = 0x3a
+		dAtA[i] = 0x42
 	}
 	if m.CredentialSubject != nil {
 		{
@@ -361,10 +513,13 @@ func (m *VerifiableCredential) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 			}
 		}
 	}
-	if len(m.IssuanceDate) > 0 {
-		i -= len(m.IssuanceDate)
-		copy(dAtA[i:], m.IssuanceDate)
-		i = encodeVarintVerifiableCredential(dAtA, i, uint64(len(m.IssuanceDate)))
+	if m.IssuanceDate != nil {
+		n2, err2 := github_com_gogo_protobuf_types.StdTimeMarshalTo(*m.IssuanceDate, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdTime(*m.IssuanceDate):])
+		if err2 != nil {
+			return 0, err2
+		}
+		i -= n2
+		i = encodeVarintVerifiableCredential(dAtA, i, uint64(n2))
 		i--
 		dAtA[i] = 0x2a
 	}
@@ -424,6 +579,27 @@ func (m *VerifiableCredential_UserCred) MarshalToSizedBuffer(dAtA []byte) (int, 
 	}
 	return len(dAtA) - i, nil
 }
+func (m *VerifiableCredential_LicenseCred) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *VerifiableCredential_LicenseCred) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	if m.LicenseCred != nil {
+		{
+			size, err := m.LicenseCred.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintVerifiableCredential(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x3a
+	}
+	return len(dAtA) - i, nil
+}
 func (m *UserCredentialSubject) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -458,6 +634,67 @@ func (m *UserCredentialSubject) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.Root)
 		copy(dAtA[i:], m.Root)
 		i = encodeVarintVerifiableCredential(dAtA, i, uint64(len(m.Root)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Id) > 0 {
+		i -= len(m.Id)
+		copy(dAtA[i:], m.Id)
+		i = encodeVarintVerifiableCredential(dAtA, i, uint64(len(m.Id)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *LicenseCredentialSubject) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *LicenseCredentialSubject) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *LicenseCredentialSubject) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.CirculationLimit.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintVerifiableCredential(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x2a
+	if len(m.Authority) > 0 {
+		i -= len(m.Authority)
+		copy(dAtA[i:], m.Authority)
+		i = encodeVarintVerifiableCredential(dAtA, i, uint64(len(m.Authority)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.Country) > 0 {
+		i -= len(m.Country)
+		copy(dAtA[i:], m.Country)
+		i = encodeVarintVerifiableCredential(dAtA, i, uint64(len(m.Country)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.LicenseType) > 0 {
+		i -= len(m.LicenseType)
+		copy(dAtA[i:], m.LicenseType)
+		i = encodeVarintVerifiableCredential(dAtA, i, uint64(len(m.LicenseType)))
 		i--
 		dAtA[i] = 0x12
 	}
@@ -566,8 +803,8 @@ func (m *VerifiableCredential) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovVerifiableCredential(uint64(l))
 	}
-	l = len(m.IssuanceDate)
-	if l > 0 {
+	if m.IssuanceDate != nil {
+		l = github_com_gogo_protobuf_types.SizeOfStdTime(*m.IssuanceDate)
 		n += 1 + l + sovVerifiableCredential(uint64(l))
 	}
 	if m.CredentialSubject != nil {
@@ -592,6 +829,18 @@ func (m *VerifiableCredential_UserCred) Size() (n int) {
 	}
 	return n
 }
+func (m *VerifiableCredential_LicenseCred) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.LicenseCred != nil {
+		l = m.LicenseCred.Size()
+		n += 1 + l + sovVerifiableCredential(uint64(l))
+	}
+	return n
+}
 func (m *UserCredentialSubject) Size() (n int) {
 	if m == nil {
 		return 0
@@ -609,6 +858,33 @@ func (m *UserCredentialSubject) Size() (n int) {
 	if m.IsVerified {
 		n += 2
 	}
+	return n
+}
+
+func (m *LicenseCredentialSubject) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Id)
+	if l > 0 {
+		n += 1 + l + sovVerifiableCredential(uint64(l))
+	}
+	l = len(m.LicenseType)
+	if l > 0 {
+		n += 1 + l + sovVerifiableCredential(uint64(l))
+	}
+	l = len(m.Country)
+	if l > 0 {
+		n += 1 + l + sovVerifiableCredential(uint64(l))
+	}
+	l = len(m.Authority)
+	if l > 0 {
+		n += 1 + l + sovVerifiableCredential(uint64(l))
+	}
+	l = m.CirculationLimit.Size()
+	n += 1 + l + sovVerifiableCredential(uint64(l))
 	return n
 }
 
@@ -808,7 +1084,7 @@ func (m *VerifiableCredential) Unmarshal(dAtA []byte) error {
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field IssuanceDate", wireType)
 			}
-			var stringLen uint64
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowVerifiableCredential
@@ -818,23 +1094,27 @@ func (m *VerifiableCredential) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
+			if msglen < 0 {
 				return ErrInvalidLengthVerifiableCredential
 			}
-			postIndex := iNdEx + intStringLen
+			postIndex := iNdEx + msglen
 			if postIndex < 0 {
 				return ErrInvalidLengthVerifiableCredential
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.IssuanceDate = string(dAtA[iNdEx:postIndex])
+			if m.IssuanceDate == nil {
+				m.IssuanceDate = new(time.Time)
+			}
+			if err := github_com_gogo_protobuf_types.StdTimeUnmarshal(m.IssuanceDate, dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
 			iNdEx = postIndex
 		case 6:
 			if wireType != 2 {
@@ -872,6 +1152,41 @@ func (m *VerifiableCredential) Unmarshal(dAtA []byte) error {
 			m.CredentialSubject = &VerifiableCredential_UserCred{v}
 			iNdEx = postIndex
 		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field LicenseCred", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowVerifiableCredential
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			v := &LicenseCredentialSubject{}
+			if err := v.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			m.CredentialSubject = &VerifiableCredential_LicenseCred{v}
+			iNdEx = postIndex
+		case 8:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Proof", wireType)
 			}
@@ -1041,6 +1356,217 @@ func (m *UserCredentialSubject) Unmarshal(dAtA []byte) error {
 				}
 			}
 			m.IsVerified = bool(v != 0)
+		default:
+			iNdEx = preIndex
+			skippy, err := skipVerifiableCredential(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *LicenseCredentialSubject) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowVerifiableCredential
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: LicenseCredentialSubject: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: LicenseCredentialSubject: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowVerifiableCredential
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Id = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field LicenseType", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowVerifiableCredential
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.LicenseType = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Country", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowVerifiableCredential
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Country = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Authority", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowVerifiableCredential
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Authority = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CirculationLimit", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowVerifiableCredential
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.CirculationLimit.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipVerifiableCredential(dAtA[iNdEx:])

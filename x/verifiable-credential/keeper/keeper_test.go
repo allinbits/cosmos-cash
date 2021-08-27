@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/stretchr/testify/suite"
 	"testing"
+	"time"
 
 	"github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -60,7 +61,7 @@ func TestKeeperTestSuite(t *testing.T) {
 
 func (suite *KeeperTestSuite) TestGenericKeeperSetAndGet() {
 	testCases := []struct {
-		msg        string
+		msg string
 		did types.VerifiableCredential
 		// TODO: add mallate func and clean up test
 		expPass bool
@@ -69,11 +70,9 @@ func (suite *KeeperTestSuite) TestGenericKeeperSetAndGet() {
 			"data stored successfully",
 			types.NewUserVerifiableCredential(
 				"did:cash:1111",
-				[]string{"context"},
 				"",
-				"",
+				time.Now(),
 				types.NewUserCredentialSubject("", "root", true),
-				types.NewProof("", "", "", "", ""),
 			),
 			true,
 		},

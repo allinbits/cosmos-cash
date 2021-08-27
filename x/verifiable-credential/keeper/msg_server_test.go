@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -27,11 +28,9 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateVerifableCredential() {
 
 				vc := types.NewUserVerifiableCredential(
 					"new-verifiable-cred-3",
-					[]string{"VerifiableCredential", "KYCCredential"},
 					"accAddr",
-					fmt.Sprintf("%s", "currentTome"),
+					time.Now(),
 					cs,
-					types.NewProof("", "", "", "", ""),
 				)
 				req = *types.NewMsgCreateVerifiableCredential(vc, "did:cash:1111")
 			},
@@ -48,11 +47,9 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateVerifableCredential() {
 
 				vc := types.NewUserVerifiableCredential(
 					"new-verifiable-cred-3",
-					[]string{"VerifiableCredential", "KYCCredential"},
 					"accAddr",
-					fmt.Sprintf("%s", "currentTome"),
+					time.Now(),
 					cs,
-					types.NewProof("", "", "", "", ""),
 				)
 				suite.keeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
 

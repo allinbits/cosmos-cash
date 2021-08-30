@@ -48,7 +48,7 @@ func deriveVMType(pubKey cryptotypes.PubKey) (vmType types.VerificationMaterialT
 	case *ed25519.PubKey:
 		vmType = types.DIDVMethodTypeEd25519VerificationKey2018
 	case *secp256k1.PubKey:
-		vmType = types.DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020
+		vmType = types.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019
 	default:
 		err = types.ErrKeyFormatNotSupported
 	}

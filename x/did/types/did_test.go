@@ -236,8 +236,8 @@ func TestValidateVerification(t *testing.T) {
 				NewVerificationMethod(
 					"did:cash:subject#key-1",
 					"did:cash:subject",
-					"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
-					DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020,
+					"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+					DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
 				),
 				nil,
 				nil,
@@ -253,8 +253,8 @@ func TestValidateVerification(t *testing.T) {
 				NewVerificationMethod(
 					"did:cash:subject#key-1",
 					"did:cash:subject",
-					"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
-					DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020,
+					"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+					DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
 				),
 				[]string{string(AssertionMethod)},
 				nil,
@@ -335,7 +335,7 @@ func TestNewDidDocument(t *testing.T) {
 								"did:cash:subject#key-1",
 								"did:cash:subject",
 								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
-								DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020,
+								DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
 							),
 							[]string{
 								string(Authentication),
@@ -381,7 +381,7 @@ func TestNewDidDocument(t *testing.T) {
 				VerificationMethod: []*VerificationMethod{
 					{
 						"did:cash:subject#key-1",
-						string(DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020),
+						DIDVMethodTypeEcdsaSecp256k1VerificationKey2019.String(),
 						"did:cash:subject",
 						&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 					},
@@ -414,7 +414,7 @@ func TestNewDidDocument(t *testing.T) {
 								"did:cash:subject#key-1",
 								"did:cash:subject",
 								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
-								DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020,
+								DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
 							),
 							[]string{
 								Authentication,
@@ -429,7 +429,7 @@ func TestNewDidDocument(t *testing.T) {
 								"did:cash:subject#key-1", // duplicate key
 								"did:cash:subject",
 								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
-								DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020,
+								DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
 							),
 							[]string{
 								Authentication,
@@ -458,7 +458,7 @@ func TestNewDidDocument(t *testing.T) {
 								"did:cash:subject#key-1",
 								"did:cash:subject",
 								"02503c8ace59c085b15c5f9c2474e9235bcb9694f07516bdc06f7caec788c3dd2c",
-								DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020,
+								DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
 							),
 							[]string{
 								Authentication,
@@ -611,8 +611,8 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 						NewVerificationMethod(
 							"did:cash:subject#key-1",
 							"did:cash:subject",
-							"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
-							DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020,
+							"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+							DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
 						),
 						[]string{
 							Authentication,
@@ -624,8 +624,8 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 						NewVerificationMethod(
 							"did:cash:subject#key-2",
 							"did:cash:subject",
-							"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
-							DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020,
+							"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+							DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
 						),
 						[]string{
 							Authentication,
@@ -647,15 +647,15 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 				VerificationMethod: []*VerificationMethod{
 					{
 						"did:cash:subject#key-1",
-						string(DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020),
+						DIDVMethodTypeEcdsaSecp256k1VerificationKey2019.String(),
 						"did:cash:subject",
-						&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
+						&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 					},
 					{
 						"did:cash:subject#key-2",
-						string(DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020),
+						DIDVMethodTypeEcdsaSecp256k1VerificationKey2019.String(),
 						"did:cash:subject",
-						&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
+						&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 					},
 				},
 				Service:              nil,
@@ -673,8 +673,8 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 							NewVerificationMethod(
 								"did:cash:subject#key-1",
 								"did:cash:subject",
-								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
-								DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020,
+								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+								DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
 							),
 							[]string{
 								Authentication,
@@ -693,8 +693,8 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 						NewVerificationMethod(
 							"did:cash:subject#key-1",
 							"did:cash:subject",
-							"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
-							DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020,
+							"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+							DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
 						),
 						[]string{
 							string(CapabilityDelegation),
@@ -716,8 +716,8 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 							NewVerificationMethod(
 								"did:cash:subject#key-1",
 								"did:cash:subject",
-								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
-								DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020,
+								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+								DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
 							),
 							[]string{
 								Authentication,
@@ -736,8 +736,8 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 						NewVerificationMethod(
 							"did:cash:subject#key-2",
 							"did:cash:subject",
-							"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
-							DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020,
+							"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+							DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
 						),
 						[]string{
 							KeyAgreement,
@@ -750,8 +750,8 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 						NewVerificationMethod(
 							"did:cash:subject#key-2",
 							"did:cash:subject",
-							"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
-							DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020,
+							"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+							DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
 						),
 						[]string{
 							Authentication,
@@ -773,8 +773,8 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 							NewVerificationMethod(
 								"did:cash:subject#key-1",
 								"did:cash:subject",
-								"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
-								DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020,
+								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+								DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
 							),
 							[]string{
 								Authentication,
@@ -797,9 +797,9 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 						},
 						&VerificationMethod{
 							"invalid method url",
-							string(DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020),
+							DIDVMethodTypeEcdsaSecp256k1VerificationKey2019.String(),
 							"did:cash:subject",
-							&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
+							&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 						},
 						[]string{
 							"https://gpg.jsld.org/contexts/lds-gpg2020-v0.0.jsonld",
@@ -825,9 +825,9 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 						},
 						&VerificationMethod{
 							"did:cash:subject#key1",
-							string(DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020),
+							DIDVMethodTypeEcdsaSecp256k1VerificationKey2019.String(),
 							"did:cash:subject",
-							&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
+							&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 						},
 						[]string{
 							"https://gpg.jsld.org/contexts/lds-gpg2020-v0.0.jsonld",
@@ -875,8 +875,8 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 								NewVerificationMethod(
 									"did:cash:subject#key-1",
 									"did:cash:subject",
-									"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
-									DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020,
+									"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+									DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
 								),
 								[]string{
 									Authentication,
@@ -888,8 +888,8 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 								NewVerificationMethod(
 									"did:cash:subject#key-2",
 									"did:cash:subject",
-									"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
-									DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020,
+									"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+									DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
 								),
 								[]string{
 									Authentication,
@@ -915,9 +915,9 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 				VerificationMethod: []*VerificationMethod{
 					{
 						"did:cash:subject#key-1",
-						string(DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020),
+						DIDVMethodTypeEcdsaSecp256k1VerificationKey2019.String(),
 						"did:cash:subject",
-						&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
+						&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 					},
 				},
 				Service:        nil,
@@ -934,9 +934,9 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 							NewVerification(
 								VerificationMethod{
 									"did:cash:subject#key-1",
-									string(DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020),
+									DIDVMethodTypeEcdsaSecp256k1VerificationKey2019.String(),
 									"did:cash:subject",
-									&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
+									&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 								},
 								[]string{
 									Authentication,
@@ -966,9 +966,9 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 							NewVerification(
 								VerificationMethod{
 									"did:cash:subject#key-1",
-									string(DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020),
+									DIDVMethodTypeEcdsaSecp256k1VerificationKey2019.String(),
 									"did:cash:subject",
-									&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
+									&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 								},
 								[]string{
 									Authentication,
@@ -979,9 +979,9 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 							NewVerification(
 								VerificationMethod{
 									"did:cash:subject#key-2",
-									string(DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020),
+									DIDVMethodTypeEcdsaSecp256k1VerificationKey2019.String(),
 									"did:cash:subject",
-									&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
+									&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 								},
 								[]string{
 									Authentication,
@@ -992,9 +992,9 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 							NewVerification(
 								VerificationMethod{
 									"did:cash:subject#key-3",
-									string(DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020),
+									DIDVMethodTypeEcdsaSecp256k1VerificationKey2019.String(),
 									"did:cash:subject",
-									&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
+									&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 								},
 								[]string{
 									Authentication,
@@ -1018,15 +1018,15 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 				VerificationMethod: []*VerificationMethod{
 					{
 						"did:cash:subject#key-1",
-						string(DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020),
+						DIDVMethodTypeEcdsaSecp256k1VerificationKey2019.String(),
 						"did:cash:subject",
-						&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
+						&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 					},
 					{
 						"did:cash:subject#key-3",
-						string(DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020),
+						DIDVMethodTypeEcdsaSecp256k1VerificationKey2019.String(),
 						"did:cash:subject",
-						&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
+						&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 					},
 				},
 				Service:         nil,
@@ -1045,8 +1045,8 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 								NewVerificationMethod(
 									"did:cash:subject#key-1",
 									"did:cash:subject",
-									"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
-									DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020,
+									"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+									DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
 								),
 								[]string{
 									Authentication,
@@ -1058,8 +1058,8 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 								NewVerificationMethod(
 									"did:cash:subject#key-2",
 									"did:cash:subject",
-									"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV",
-									DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020,
+									"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+									DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
 								),
 								[]string{
 									Authentication,
@@ -1142,9 +1142,9 @@ func TestDidDocument_SetVerificationRelationships(t *testing.T) {
 						NewVerification(
 							VerificationMethod{
 								"did:cash:subject#key-1",
-								string(DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020),
+								DIDVMethodTypeEcdsaSecp256k1VerificationKey2019.String(),
 								"did:cash:subject",
-								&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
+								&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 							},
 							[]string{
 								Authentication,
@@ -1170,9 +1170,9 @@ func TestDidDocument_SetVerificationRelationships(t *testing.T) {
 				VerificationMethod: []*VerificationMethod{
 					{
 						"did:cash:subject#key-1",
-						string(DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020),
+						DIDVMethodTypeEcdsaSecp256k1VerificationKey2019.String(),
 						"did:cash:subject",
-						&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
+						&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 					},
 				},
 				AssertionMethod: []string{"did:cash:subject#key-1"},
@@ -1186,9 +1186,9 @@ func TestDidDocument_SetVerificationRelationships(t *testing.T) {
 						NewVerification(
 							VerificationMethod{
 								"did:cash:subject#key-1",
-								string(DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020),
+								DIDVMethodTypeEcdsaSecp256k1VerificationKey2019.String(),
 								"did:cash:subject",
-								&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
+								&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 							},
 							[]string{
 								Authentication,
@@ -1199,9 +1199,9 @@ func TestDidDocument_SetVerificationRelationships(t *testing.T) {
 						NewVerification(
 							VerificationMethod{
 								"did:cash:subject#key-2",
-								string(DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020),
+								DIDVMethodTypeEcdsaSecp256k1VerificationKey2019.String(),
 								"did:cash:subject",
-								&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
+								&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 							},
 							[]string{
 								Authentication,
@@ -1220,15 +1220,15 @@ func TestDidDocument_SetVerificationRelationships(t *testing.T) {
 				VerificationMethod: []*VerificationMethod{
 					{
 						"did:cash:subject#key-1",
-						string(DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020),
+						DIDVMethodTypeEcdsaSecp256k1VerificationKey2019.String(),
 						"did:cash:subject",
-						&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
+						&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 					},
 					{
 						"did:cash:subject#key-2",
-						string(DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020),
+						DIDVMethodTypeEcdsaSecp256k1VerificationKey2019.String(),
 						"did:cash:subject",
-						&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
+						&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 					},
 				},
 				Authentication:  []string{"did:cash:subject#key-2"},
@@ -1243,9 +1243,9 @@ func TestDidDocument_SetVerificationRelationships(t *testing.T) {
 						NewVerification(
 							VerificationMethod{
 								"did:cash:subject#key-2",
-								string(DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020),
+								DIDVMethodTypeEcdsaSecp256k1VerificationKey2019.String(),
 								"did:cash:subject",
-								&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
+								&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 							},
 							[]string{
 								Authentication,
@@ -1255,9 +1255,9 @@ func TestDidDocument_SetVerificationRelationships(t *testing.T) {
 						NewVerification(
 							VerificationMethod{
 								"did:cash:subject#key-3",
-								string(DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020),
+								DIDVMethodTypeEcdsaSecp256k1VerificationKey2019.String(),
 								"did:cash:subject",
-								&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
+								&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 							},
 							[]string{
 								Authentication,
@@ -1267,9 +1267,9 @@ func TestDidDocument_SetVerificationRelationships(t *testing.T) {
 						NewVerification(
 							VerificationMethod{
 								"did:cash:subject#key-1",
-								string(DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020),
+								DIDVMethodTypeEcdsaSecp256k1VerificationKey2019.String(),
 								"did:cash:subject",
-								&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
+								&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 							},
 							[]string{
 								Authentication,
@@ -1289,21 +1289,21 @@ func TestDidDocument_SetVerificationRelationships(t *testing.T) {
 				VerificationMethod: []*VerificationMethod{
 					{
 						"did:cash:subject#key-2",
-						string(DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020),
+						DIDVMethodTypeEcdsaSecp256k1VerificationKey2019.String(),
 						"did:cash:subject",
-						&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
+						&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 					},
 					{
 						"did:cash:subject#key-3",
-						string(DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020),
+						DIDVMethodTypeEcdsaSecp256k1VerificationKey2019.String(),
 						"did:cash:subject",
-						&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
+						&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 					},
 					{
 						"did:cash:subject#key-1",
-						string(DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020),
+						DIDVMethodTypeEcdsaSecp256k1VerificationKey2019.String(),
 						"did:cash:subject",
-						&VerificationMethod_PublicKeyHex{"H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"},
+						&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
 					},
 				},
 
@@ -1350,7 +1350,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 								"did:cash:subject#key-1",
 								"did:cash:subject",
 								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
-								DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020,
+								DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
 							),
 							[]string{
 								string(Authentication),
@@ -1378,7 +1378,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 								"did:cash:subject#key-1",
 								"did:cash:subject",
 								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
-								DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020,
+								DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
 							),
 							[]string{
 								Authentication,
@@ -1430,7 +1430,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 								"did:cash:subject#key-1",
 								"did:cash:subject",
 								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
-								DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020,
+								DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
 							),
 							[]string{
 								Authentication,
@@ -1455,7 +1455,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 								"did:cash:subject#key-1",
 								"did:cash:subject",
 								"00dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
-								DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020,
+								DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
 							),
 							[]string{
 								Authentication,

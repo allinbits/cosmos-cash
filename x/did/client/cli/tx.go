@@ -8,7 +8,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
 
@@ -40,6 +42,19 @@ func GetTxCmd() *cobra.Command {
 	return cmd
 }
 
+// deriveVMType derive the verification method type from a public key
+func deriveVMType(pubKey cryptotypes.PubKey) (vmType types.VerificationMaterialType, err error) {
+	switch pubKey.(type) {
+	case *ed25519.PubKey:
+		vmType = types.DIDVMethodTypeEd25519VerificationKey2018
+	case *secp256k1.PubKey:
+		vmType = types.DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020
+	default:
+		err = types.ErrKeyFormatNotSupported
+	}
+	return
+}
+
 // NewCreateDidDocumentCmd defines the command to create a new IBC light client.
 func NewCreateDidDocumentCmd() *cobra.Command {
 	cmd := &cobra.Command{
@@ -53,9 +68,7 @@ func NewCreateDidDocumentCmd() *cobra.Command {
 				return err
 			}
 			// did
-
 			did := types.DID(clientCtx.ChainID, args[0])
-
 			// verification
 			signer := clientCtx.GetFromAddress()
 			// pubkey
@@ -66,13 +79,17 @@ func NewCreateDidDocumentCmd() *cobra.Command {
 			pubKey := info.GetPubKey()
 			// verification method id
 			vmID := fmt.Sprint(did, "#", sdk.MustBech32ifyAddressBytes(sdk.GetConfig().GetBech32AccountAddrPrefix(), pubKey.Address().Bytes()))
-
+			// understand the vmType
+			vmType, err := deriveVMType(pubKey)
+			if err != nil {
+				return err
+			}
 			auth := types.NewVerification(
 				types.NewVerificationMethod(
 					vmID,
 					did,
 					hex.EncodeToString(pubKey.Bytes()),
-					types.DIDVerificationMaterialPublicKeyHex,
+					vmType,
 				),
 				[]string{types.Authentication},
 				nil,
@@ -113,18 +130,23 @@ func NewAddVerificationCmd() *cobra.Command {
 			// signer address
 			signer := clientCtx.GetFromAddress()
 			// public key
-			pubKeyRaw, err := sdk.GetFromBech32(args[1], sdk.GetConfig().GetBech32AccountPubPrefix())
+			var pk cryptotypes.PubKey
+			err = clientCtx.Codec.UnmarshalInterfaceJSON([]byte(args[1]), &pk)
+			if err != nil {
+				return err
+			}
+			// derive the public key type
+			vmType, err := deriveVMType(pk)
 			if err != nil {
 				return err
 			}
 			// document did
 			did := types.DID(clientCtx.ChainID, args[0])
 			// verification method id
-			pubKey := secp256k1.PubKey{Key: pubKeyRaw}
 			vmID := fmt.Sprint(did, "#",
 				sdk.MustBech32ifyAddressBytes(
 					sdk.GetConfig().GetBech32AccountAddrPrefix(),
-					pubKey.Address().Bytes(),
+					pk.Address().Bytes(),
 				),
 			)
 
@@ -132,8 +154,8 @@ func NewAddVerificationCmd() *cobra.Command {
 				types.NewVerificationMethod(
 					vmID,
 					did,
-					hex.EncodeToString(pubKeyRaw),
-					types.DIDVerificationMaterialPublicKeyHex,
+					hex.EncodeToString(pk.Bytes()),
+					vmType,
 				),
 				[]string{types.Authentication},
 				nil,

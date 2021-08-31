@@ -19,4 +19,5 @@ var (
 	ErrInvalidInput               = sdkerrors.Register(ModuleName, 1108, "input is invalid")
 	ErrVerificationMethodNotFound = sdkerrors.Register(ModuleName, 1109, "verification method not found")
 	ErrInvalidDidMethodFormat     = sdkerrors.Register(ModuleName, 1110, "invalid did method format")
+	ErrKeyFormatNotSupported      = sdkerrors.Register(ModuleName, 1111, "key format not supported")
 )

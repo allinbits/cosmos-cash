@@ -67,7 +67,7 @@ func ResolveAccountDID(did string) (didDoc types.DidDocument, didMeta types.DidM
 				fmt.Sprint(did, "#", account),
 				did,
 				account,
-				types.DIDVerificationMaterialBlockchainAccountID,
+				types.DIDVMethodTypeCosmosAccountAddress,
 			),
 			[]string{
 				types.Authentication,

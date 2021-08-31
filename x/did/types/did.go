@@ -81,19 +81,20 @@ func parseRelationshipLabels(relNames ...string) (vrs []VerificationRelationship
 }
 
 // VerificationMaterialType encode the verification material type
-type VerificationMaterialType int
+type VerificationMaterialType string
 
-// List of supported verification material types
+// Verification method material types
 const (
-	DIDVerificationMaterialBlockchainAccountID VerificationMaterialType = iota
-	DIDVerificationMaterialPublicKeyHex
+	DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020 VerificationMaterialType = "EcdsaSecp256k1RecoveryMethod2020"
+	//DIDVMethodTypeEcdsaSecp256k1VerificationKey2019 VerificationMaterialType = "EcdsaSecp256k1VerificationKey2019"
+	DIDVMethodTypeEd25519VerificationKey2018 VerificationMaterialType = "Ed25519VerificationKey2018"
+	DIDVMethodTypeCosmosAccountAddress       VerificationMaterialType = "CosmosAccountAddress"
 )
 
-// Verification method types
-const (
-	DIDVerificationMethodTypeSecp256k1_2020 = "EcdsaSecp256k1RecoveryMethod2020"
-	DIDVerificationMethodTypeCosmosAddress  = "CosmosAccountAddress"
-)
+// String return string name for the Verification Method type
+func (p VerificationMaterialType) String() string {
+	return string(p)
+}
 
 /**
 Regexp generated using this ABNF specs and using https://abnf.msweet.org/index.php
@@ -631,14 +632,15 @@ func NewVerificationMethod(id, controller, key string, vmt VerificationMaterialT
 	vm := VerificationMethod{
 		Id:         id,
 		Controller: controller,
+		Type:       string(vmt),
 	}
 	switch vmt {
-	case DIDVerificationMaterialPublicKeyHex:
-		vm.VerificationMaterial = &VerificationMethod_PublicKeyHex{key}
-		vm.Type = DIDVerificationMethodTypeSecp256k1_2020
-	case DIDVerificationMaterialBlockchainAccountID:
+	case DIDVMethodTypeCosmosAccountAddress:
 		vm.VerificationMaterial = &VerificationMethod_BlockchainAccountID{key}
-		vm.Type = DIDVerificationMethodTypeCosmosAddress
+	case DIDVMethodTypeEd25519VerificationKey2018, DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020:
+		vm.VerificationMaterial = &VerificationMethod_PublicKeyHex{key}
+	default:
+		vm.VerificationMaterial = &VerificationMethod_PublicKeyHex{key}
 	}
 	return vm
 

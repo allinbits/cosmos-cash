@@ -405,7 +405,7 @@ func (suite *KeeperTestSuite) TestHandleMsgSetVerificationRelationships() {
 			true,
 		},
 		{
-			"FAIL: verification method does not exists ",
+			"FAIL: verification method does not exist ",
 			func() {
 				// setup
 				didDoc, _ := types.NewDidDocument(

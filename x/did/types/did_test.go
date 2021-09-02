@@ -1333,7 +1333,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 
 	type params struct {
 		malleate      func() DidDocument
-		signer        string
+		signer        BlockchainAccountID
 		relationships []string
 	}
 	tests := []struct {
@@ -1361,7 +1361,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 					))
 					return dd
 				},
-				signer: "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+				signer: NewBlockchainAccountID("cash", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"),
 				relationships: []string{
 					string(AssertionMethod),
 					string(Authentication),
@@ -1401,7 +1401,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 					))
 					return dd
 				},
-				signer: "did:cash:subject",
+				signer: NewBlockchainAccountID("cash", "subject"),
 				relationships: []string{
 					string(CapabilityDelegation),
 				},
@@ -1414,7 +1414,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 					dd, _ := NewDidDocument("did:cash:subject")
 					return dd
 				},
-				signer: "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+				signer: NewBlockchainAccountID("cash", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"),
 				relationships: []string{
 					string(CapabilityDelegation),
 				},
@@ -1441,7 +1441,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 					))
 					return dd
 				},
-				signer:        "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+				signer:        NewBlockchainAccountID("cash", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"),
 				relationships: nil,
 			},
 		},
@@ -1477,7 +1477,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 					))
 					return dd
 				},
-				signer: "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+				signer: NewBlockchainAccountID("cash", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"),
 				relationships: []string{
 					string(KeyAgreement),
 				},

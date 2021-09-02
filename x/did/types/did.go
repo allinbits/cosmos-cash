@@ -138,12 +138,19 @@ func DIDKey(didMethodSpecificDidDocument string) string {
 	return fmt.Sprint(DidKeyPrefix, didMethodSpecificDidDocument)
 }
 
-// BlockchainAccountID return the account of the user with the chain id postfixed
-// https://w3c.github.io/did-spec-registries/#blockchainAccountId
-func BlockchainAccountID(account string) string {
-	//TODO: at the moment the app doesn't do anything but we
-	// might use the format suggested by the the specification
-	return account
+// BlockchainAccountID formats an account address as per the CAIP-10 Account ID specification.
+// https://w3c.github.io/did-spec-registries/#blockchainaccountid
+// https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md
+type BlockchainAccountID string
+
+// String returns the string representation of a blockchain account id
+func (baID BlockchainAccountID) String() string {
+	return string(baID)
+}
+
+// NewBlockchainAccountID build a new blockchain account ID struct
+func NewBlockchainAccountID(account, chainID string) BlockchainAccountID {
+	return BlockchainAccountID(fmt.Sprint("cosmos:", chainID, ":", account))
 }
 
 // IsValidDID validate the input string according to the
@@ -513,8 +520,9 @@ func (didDoc DidDocument) GetVerificationRelationships(methodID string) []string
 
 // HasRelationship verifies if a controller did
 // exists for at least one of the relationships in the did document
+// the account
 func (didDoc DidDocument) HasRelationship(
-	signer string,
+	signer BlockchainAccountID,
 	relationships ...string,
 ) bool {
 	// first check if the controller exists
@@ -522,7 +530,7 @@ func (didDoc DidDocument) HasRelationship(
 
 		switch k := vm.VerificationMaterial.(type) {
 		case *VerificationMethod_BlockchainAccountID:
-			if BlockchainAccountID(k.BlockchainAccountID) != BlockchainAccountID(signer) {
+			if k.BlockchainAccountID != signer.String() {
 				continue
 			}
 		case *VerificationMethod_PublicKeyHex:
@@ -547,7 +555,7 @@ func (didDoc DidDocument) HasRelationship(
 			if err != nil {
 				continue
 			}
-			if BlockchainAccountID(addr) != BlockchainAccountID(signer) {
+			if addr != signer.String() {
 				continue
 			}
 		}

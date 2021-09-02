@@ -10,7 +10,7 @@ sleep 5
 
 echo "Creating verifiable credential for user :issuer"
 cosmos-cashd tx verifiablecredential create-license-verifiable-credential \
-	did:cosmos:cash:dollarlicense-credential did:cosmos:cash:issuer did:cosmos:cash:vasp \
+	did:cosmos:cash:dollarlicense-credential did:cosmos:cash:vasp did:cosmos:cash:issuer \
 	MICAEMI IRL "Another Financial Services Body (AFFB)" sUSD 1000 \
 	--from validator --chain-id cash -y
 

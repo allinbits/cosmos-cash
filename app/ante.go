@@ -9,6 +9,7 @@ import (
 	didkeeper "github.com/allinbits/cosmos-cash/x/did/keeper"
 	issuerante "github.com/allinbits/cosmos-cash/x/issuer/ante"
 	issuerkeeper "github.com/allinbits/cosmos-cash/x/issuer/keeper"
+	vcsante "github.com/allinbits/cosmos-cash/x/verifiable-credential/ante"
 	vcskeeper "github.com/allinbits/cosmos-cash/x/verifiable-credential/keeper"
 )
 
@@ -41,5 +42,6 @@ func NewAnteHandler(
 		authante.NewIncrementSequenceDecorator(ak),
 		issuerante.NewCheckIssuerCredentialsDecorator(ik, dk, vcsk),
 		issuerante.NewCheckUserCredentialsDecorator(ak, ik, dk, vcsk),
+		vcsante.NewCheckSignerHasDIDDecorator(dk, vcsk),
 	)
 }

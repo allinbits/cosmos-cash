@@ -9,6 +9,7 @@ const (
 	AttributeValueCategory = ModuleName
 
 	EventTypeCredentialCreated = "credential_created"
+	EventTypeCredentialDeleted = "credential_deleted"
 
 	AttributeKeyOwner        = "owner"
 	AttributeKeyCredentialID = "credential_id"
@@ -18,6 +19,15 @@ const (
 func NewCredentialCreatedEvent(owner string, credentialID string) sdk.Event {
 	return sdk.NewEvent(
 		EventTypeCredentialCreated,
+		sdk.NewAttribute(AttributeKeyOwner, owner),
+		sdk.NewAttribute(AttributeKeyCredentialID, credentialID),
+	)
+}
+
+// NewCredentialCreatedEvent constructs a new credential_created sdk.Event
+func NewCredentialDeletedEvent(owner string, credentialID string) sdk.Event {
+	return sdk.NewEvent(
+		EventTypeCredentialDeleted,
 		sdk.NewAttribute(AttributeKeyOwner, owner),
 		sdk.NewAttribute(AttributeKeyCredentialID, credentialID),
 	)

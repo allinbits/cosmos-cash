@@ -21,6 +21,9 @@ func NewHandler(k Keeper) sdk.Handler {
 		case *types.MsgCreateVerifiableCredential:
 			res, err := msgServer.CreateVerifiableCredential(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
+		case *types.MsgDeleteVerifiableCredential:
+			res, err := msgServer.DeleteVerifiableCredential(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
 
 		// this line is used by starport scaffolding # 1
 		default:

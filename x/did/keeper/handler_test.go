@@ -416,7 +416,7 @@ func (suite *KeeperTestSuite) TestHandleMsgSetVerificationRelationships() {
 								"did:cosmos:cash:subject#key-1",
 								"did:cosmos:cash:subject",
 								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
-								types.DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020,
+								types.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
 							),
 							[]string{types.Authentication},
 							nil,

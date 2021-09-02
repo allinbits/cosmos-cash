@@ -42,22 +42,28 @@ func (cshd CheckSignerHasDIDDecorator) AnteHandle(
 			did, found := cshd.didk.GetDidDocument(ctx, []byte(msg.IssuerDid))
 			if !found {
 				return ctx, sdkerrors.Wrapf(
-					nil,
+					vcstypes.ErrDidDocumentDoesNotExist,
 					"did does not exists",
 				)
 			}
 			vcs, found := cshd.vcsk.GetVerifiableCredential(ctx, []byte(msg.VerifiableCredentialId))
+			if !found {
+				return ctx, sdkerrors.Wrapf(
+					vcstypes.ErrVerifiableCredentialNotFound,
+					"verifiable credential does not exists",
+				)
+			}
 
 			if vcs.Issuer != did.Id {
 				return ctx, sdkerrors.Wrapf(
-					nil,
+					vcstypes.ErrVerifiableCredentialIssuer,
 					"provided vc and did issuer do not match",
 				)
 			}
 
 			if !did.HasRelationship(msg.Owner, didtypes.Authentication) {
 				return ctx, sdkerrors.Wrapf(
-					nil,
+					vcstypes.ErrMessageSigner,
 					"signer is not in issuer did",
 				)
 			}

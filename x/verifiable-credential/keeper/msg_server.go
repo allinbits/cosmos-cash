@@ -48,3 +48,26 @@ func (k msgServer) CreateVerifiableCredential(
 
 	return &types.MsgCreateVerifiableCredentialResponse{}, nil
 }
+
+// DeleteVerifiableCredential deletes a verifiable credential
+func (k msgServer) DeleteVerifiableCredential(
+	goCtx context.Context,
+	msg *types.MsgDeleteVerifiableCredential,
+) (*types.MsgDeleteVerifiableCredentialResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	vc, found := k.Keeper.GetVerifiableCredential(ctx, []byte(msg.VerifiableCredentialId))
+	if !found {
+		return nil, sdkerrors.Wrapf(
+			types.ErrVerifiableCredentialNotFound,
+			"error deleting credential; credential not found",
+		)
+	}
+
+	k.Keeper.DeleteVerifiableCredentialFromStore(ctx, []byte(vc.Id))
+
+	ctx.EventManager().EmitEvent(
+		types.NewCredentialDeletedEvent(msg.Owner, msg.VerifiableCredentialId),
+	)
+
+	return &types.MsgDeleteVerifiableCredentialResponse{}, nil
+}

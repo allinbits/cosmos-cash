@@ -1,11 +1,13 @@
 syntax = "proto3";
 package allinbits.cosmoscash.issuer;
 
-// this line is used by starport scaffolding # genesis/proto/import
-
 option go_package = "github.com/allinbits/cosmos-cash/x/issuer/types";
+
+// this line is used by starport scaffolding # genesis/proto/import
+import "did/did.proto";
 
 // GenesisState defines the issuer module's genesis state.
 message GenesisState {
     // this line is used by starport scaffolding # genesis/proto/state
+    allinbits.cosmoscash.did.DidDocument regulator_did_document  = 1;
 }

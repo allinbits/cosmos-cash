@@ -101,7 +101,7 @@ func (msg MsgSetVerificationRelationships) ValidateBasic() error {
 
 	// there should be more then one relationship
 	if len(msg.Relationships) == 0 {
-		return sdkerrors.Wrap(ErrEmptyRelationships, "controller validation error")
+		return sdkerrors.Wrap(ErrEmptyRelationships, "one ore more relationships is required")
 	}
 
 	return nil

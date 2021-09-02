@@ -419,10 +419,10 @@ The operation will fail if:
 
 <!--
 
-cosmos-cashd tx did add-verification-relationships \
+cosmos-cashd tx did set-verification-relationships \
  900d82bc-2bfe-45a7-ab22-a8d11773568e \
  900d82bc-2bfe-45a7-ab22-a8d11773568e#cosmos1x5hrv0hngmg8gls5cft7nphqs83njj25pwxpt0 \
- capabilityInvocation \
+ --relationship capabilityInvocation \
  --from vasp --node https://cosmos-cash.app.beta.starport.cloud:443 --chain-id cosmoscash-testnet
 
 -->

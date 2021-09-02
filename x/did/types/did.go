@@ -444,6 +444,17 @@ func (didDoc *DidDocument) SetVerificationRelationships(methodID string, relatio
 	if !IsValidDIDURL(methodID) {
 		return sdkerrors.Wrapf(ErrInvalidDIDURLFormat, "verification method id: %v", methodID)
 	}
+	// check that the methodID exists
+	hasVM := false
+	for _, vm := range didDoc.VerificationMethod {
+		if vm.Id == methodID {
+			hasVM = true
+			break
+		}
+	}
+	if !hasVM {
+		return sdkerrors.Wrapf(ErrVerificationMethodNotFound, "verification method %v not found", methodID)
+	}
 	// check that there is at least a relationship
 	if len(relationships) == 0 {
 		return sdkerrors.Wrap(ErrEmptyRelationships, "at least a verification relationship is required")

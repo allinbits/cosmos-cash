@@ -12,7 +12,7 @@
     "verificationMethods": [
       {
         "id": "did:cosmos:cash:123456789#cosmos17km4mldepzm4xxc50wv24ygrumtmskrd8f4tfh",
-        "type": "EcdsaSecp256k1RecoveryMethod2020",
+        "type": "EcdsaSecp256k1VerificationKey2019",
         "controller": "did:cosmos:cash:123456789",
         "publicKeyHex": "0381517311d6b3e6f849fc617b721f7d84ca8c28d006677bb7a5ea09423049368b"
       }

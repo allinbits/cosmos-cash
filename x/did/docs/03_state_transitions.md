@@ -46,7 +46,7 @@ CreateDidDocument(
                     "controller": "did:cosmos:cosmoscash-testnet:900d82bc-2bfe-45a7-ab22-a8d11773568e",
                     "id": "did:cosmos:cosmoscash-testnet:900d82bc-2bfe-45a7-ab22-a8d11773568e#cosmos1x5hrv0hngmg8gls5cft7nphqs83njj25pwxpt0",
                     "publicKeyHex": "0248a5178d7a90ec187b3c3d533a4385db905f6fcdaac5026859ca5ef7b0b1c3b5",
-                    "type": "EcdsaSecp256k1RecoveryMethod2020"
+                    "type": "EcdsaSecp256k1VerificationKey2019"
                 },
                 [],
             },
@@ -69,7 +69,7 @@ CreateDidDocument(
         "controller": "did:cosmos:cosmoscash-testnet:900d82bc-2bfe-45a7-ab22-a8d11773568e",
         "id": "did:cosmos:cosmoscash-testnet:900d82bc-2bfe-45a7-ab22-a8d11773568e#cosmos1x5hrv0hngmg8gls5cft7nphqs83njj25pwxpt0",
         "publicKeyHex": "0248a5178d7a90ec187b3c3d533a4385db905f6fcdaac5026859ca5ef7b0b1c3b5",
-        "type": "EcdsaSecp256k1RecoveryMethod2020"
+        "type": "EcdsaSecp256k1VerificationKey2019"
       }
     ],
     "service": [],
@@ -133,7 +133,7 @@ QueryDidDocument(
         "controller": "did:cosmos:cosmoscash-testnet:900d82bc-2bfe-45a7-ab22-a8d11773568e",
         "id": "did:cosmos:cosmoscash-testnet:900d82bc-2bfe-45a7-ab22-a8d11773568e#cosmos1x5hrv0hngmg8gls5cft7nphqs83njj25pwxpt0",
         "publicKeyHex": "0248a5178d7a90ec187b3c3d533a4385db905f6fcdaac5026859ca5ef7b0b1c3b5",
-        "type": "EcdsaSecp256k1RecoveryMethod2020"
+        "type": "EcdsaSecp256k1VerificationKey2019"
       }
     ],
     "service": [],
@@ -221,7 +221,7 @@ UpdateDidDocument(
         "controller": "did:cosmos:cosmoscash-testnet:900d82bc-2bfe-45a7-ab22-a8d11773568e",
         "id": "did:cosmos:cosmoscash-testnet:900d82bc-2bfe-45a7-ab22-a8d11773568e#cosmos1x5hrv0hngmg8gls5cft7nphqs83njj25pwxpt0",
         "publicKeyHex": "0248a5178d7a90ec187b3c3d533a4385db905f6fcdaac5026859ca5ef7b0b1c3b5",
-        "type": "EcdsaSecp256k1RecoveryMethod2020"
+        "type": "EcdsaSecp256k1VerificationKey2019"
       }
     ],
     "service": [],
@@ -277,7 +277,7 @@ AddVerification(
                 "controller": "did:cosmos:cosmoscash-testnet:900d82bc-2bfe-45a7-ab22-a8d11773568e",
                 "id": "did:cosmos:cosmoscash-testnet:900d82bc-2bfe-45a7-ab22-a8d11773568e#cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
                 "publicKeyHex": "03786095e15eb228f4e15692eda6e0607a313cc081ad54d69aadd15d515e304590",
-                "type": "EcdsaSecp256k1RecoveryMethod2020"
+                "type": "EcdsaSecp256k1VerificationKey2019"
             },
             [],
         },
@@ -301,13 +301,13 @@ AddVerification(
         "controller": "did:cosmos:cosmoscash-testnet:900d82bc-2bfe-45a7-ab22-a8d11773568e",
         "id": "did:cosmos:cosmoscash-testnet:900d82bc-2bfe-45a7-ab22-a8d11773568e#cosmos1x5hrv0hngmg8gls5cft7nphqs83njj25pwxpt0",
         "publicKeyHex": "0248a5178d7a90ec187b3c3d533a4385db905f6fcdaac5026859ca5ef7b0b1c3b5",
-        "type": "EcdsaSecp256k1RecoveryMethod2020"
+        "type": "EcdsaSecp256k1VerificationKey2019"
       },
       {
         "controller": "did:cosmos:cosmoscash-testnet:900d82bc-2bfe-45a7-ab22-a8d11773568e",
         "id": "did:cosmos:cosmoscash-testnet:900d82bc-2bfe-45a7-ab22-a8d11773568e#cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
         "publicKeyHex": "03786095e15eb228f4e15692eda6e0607a313cc081ad54d69aadd15d515e304590",
-        "type": "EcdsaSecp256k1RecoveryMethod2020"
+        "type": "EcdsaSecp256k1VerificationKey2019"
       }
     ],
     "service": [],
@@ -378,7 +378,7 @@ RevokeVerification(
         "controller": "did:cosmos:cosmoscash-testnet:900d82bc-2bfe-45a7-ab22-a8d11773568e",
         "id": "did:cosmos:cosmoscash-testnet:900d82bc-2bfe-45a7-ab22-a8d11773568e#cosmos1x5hrv0hngmg8gls5cft7nphqs83njj25pwxpt0",
         "publicKeyHex": "0248a5178d7a90ec187b3c3d533a4385db905f6fcdaac5026859ca5ef7b0b1c3b5",
-        "type": "EcdsaSecp256k1RecoveryMethod2020"
+        "type": "EcdsaSecp256k1VerificationKey2019"
       }
     ],
     "service": [],
@@ -453,7 +453,7 @@ SetVerificationRelationships(
         "controller": "did:cosmos:cosmoscash-testnet:900d82bc-2bfe-45a7-ab22-a8d11773568e",
         "id": "did:cosmos:cosmoscash-testnet:900d82bc-2bfe-45a7-ab22-a8d11773568e#cosmos1x5hrv0hngmg8gls5cft7nphqs83njj25pwxpt0",
         "publicKeyHex": "0248a5178d7a90ec187b3c3d533a4385db905f6fcdaac5026859ca5ef7b0b1c3b5",
-        "type": "EcdsaSecp256k1RecoveryMethod2020"
+        "type": "EcdsaSecp256k1VerificationKey2019"
       }
     ],
     "service": [],
@@ -533,7 +533,7 @@ AddService(
         "controller": "did:cosmos:cosmoscash-testnet:900d82bc-2bfe-45a7-ab22-a8d11773568e",
         "id": "did:cosmos:cosmoscash-testnet:900d82bc-2bfe-45a7-ab22-a8d11773568e#cosmos1x5hrv0hngmg8gls5cft7nphqs83njj25pwxpt0",
         "publicKeyHex": "0248a5178d7a90ec187b3c3d533a4385db905f6fcdaac5026859ca5ef7b0b1c3b5",
-        "type": "EcdsaSecp256k1RecoveryMethod2020"
+        "type": "EcdsaSecp256k1VerificationKey2019"
       }
     ],
     "service": [
@@ -612,7 +612,7 @@ DeleteService(
         "controller": "did:cosmos:cosmoscash-testnet:900d82bc-2bfe-45a7-ab22-a8d11773568e",
         "id": "did:cosmos:cosmoscash-testnet:900d82bc-2bfe-45a7-ab22-a8d11773568e#cosmos1x5hrv0hngmg8gls5cft7nphqs83njj25pwxpt0",
         "publicKeyHex": "0248a5178d7a90ec187b3c3d533a4385db905f6fcdaac5026859ca5ef7b0b1c3b5",
-        "type": "EcdsaSecp256k1RecoveryMethod2020"
+        "type": "EcdsaSecp256k1VerificationKey2019"
       }
     ],
     "service": [],

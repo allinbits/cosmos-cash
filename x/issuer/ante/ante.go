@@ -37,7 +37,7 @@ func NewCheckIssuerCredentialsDecorator(
 	}
 }
 
-// AnteHandle verifies the issuer credentials
+// AnteHandle check issuer credentials
 // FIXME: fix this file
 func (cicd CheckIssuerCredentialsDecorator) AnteHandle(
 	ctx sdk.Context,

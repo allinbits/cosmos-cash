@@ -89,7 +89,7 @@ To create and publish a DID document use the message
 MsgCreateDidDocument(id string, signerPubKey string)
 ```
 
-The message parameters are the DID to be created and the `signerPubKey`. The `signerPubKey` MUST be the public key of the account that signs the transaction. The public key MUST be used to attach a verification method of type `EcdsaSecp256k1RecoveryMethod2020` with the value of `publicKeyHex` that contains the public key encoded in hexadecimal.
+The message parameters are the DID to be created and the `signerPubKey`. The `signerPubKey` MUST be the public key of the account that signs the transaction. The public key MUST be used to attach a verification method of type `EcdsaSecp256k1VerificationKey2019` with the value of `publicKeyHex` that contains the public key encoded in hexadecimal.
 
 The verification method controller MUST be one of the following:
 
@@ -149,7 +149,7 @@ This example shows a DID document that was resolved using the gRPC interface:
         "controller": "did:cosmos:net:cosmoscash-testnet:900d82bc-2bfe-45a7-ab22-a8d11773568e",
         "id": "did:cosmos:net:cosmoscash-testnet:900d82bc-2bfe-45a7-ab22-a8d11773568e#cosmos1x5hrv0hngmg8gls5cft7nphqs83njj25pwxpt0",
         "publicKeyHex": "0248a5178d7a90ec187b3c3d533a4385db905f6fcdaac5026859ca5ef7b0b1c3b5",
-        "type": "EcdsaSecp256k1RecoveryMethod2020"
+        "type": "EcdsaSecp256k1VerificationKey2019"
       }
     ],
     "authentication": [
@@ -190,7 +190,7 @@ This example shows a DID document that was resolved using a REST endpoint:
             "controller":"did:cosmos:net:cosmoscash-testnet:900d82bc-2bfe-45a7-ab22-a8d11773568e",
             "id":"did:cosmos:net:cosmoscash-testnet:900d82bc-2bfe-45a7-ab22-a8d11773568e#cosmos1x5hrv0hngmg8gls5cft7nphqs83njj25pwxpt0",
             "publicKeyHex":"0248a5178d7a90ec187b3c3d533a4385db905f6fcdaac5026859ca5ef7b0b1c3b5",
-            "type":"EcdsaSecp256k1RecoveryMethod2020"
+            "type":"EcdsaSecp256k1VerificationKey2019"
          }
       ],
       "authentication":[
@@ -307,7 +307,7 @@ The operation MUST update the DID document metadata and set the `deactivated` va
 
 The [Verification Material](https://www.w3.org/TR/did-core/#verification-material) type MUST support:
 
-- Type `EcdsaSecp256k1RecoveryMethod2020` with `pubKeyHex` to encode a Cosmos account public key in hexadecimal format
+- Type `EcdsaSecp256k1VerificationKey2019` with `pubKeyHex` to encode a Cosmos account public key in hexadecimal format
 - Type `CosmosAccountAddress` with `blockchainAccountID` to represent a Cosmos account 
 
 

@@ -85,10 +85,9 @@ type VerificationMaterialType string
 
 // Verification method material types
 const (
-	DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020 VerificationMaterialType = "EcdsaSecp256k1RecoveryMethod2020"
-	//DIDVMethodTypeEcdsaSecp256k1VerificationKey2019 VerificationMaterialType = "EcdsaSecp256k1VerificationKey2019"
-	DIDVMethodTypeEd25519VerificationKey2018 VerificationMaterialType = "Ed25519VerificationKey2018"
-	DIDVMethodTypeCosmosAccountAddress       VerificationMaterialType = "CosmosAccountAddress"
+	DIDVMethodTypeEcdsaSecp256k1VerificationKey2019 VerificationMaterialType = "EcdsaSecp256k1VerificationKey2019"
+	DIDVMethodTypeEd25519VerificationKey2018        VerificationMaterialType = "Ed25519VerificationKey2018"
+	DIDVMethodTypeCosmosAccountAddress              VerificationMaterialType = "CosmosAccountAddress"
 )
 
 // String return string name for the Verification Method type
@@ -648,7 +647,7 @@ func NewVerificationMethod(id, controller, key string, vmt VerificationMaterialT
 	switch vmt {
 	case DIDVMethodTypeCosmosAccountAddress:
 		vm.VerificationMaterial = &VerificationMethod_BlockchainAccountID{key}
-	case DIDVMethodTypeEd25519VerificationKey2018, DIDVMethodTypeEcdsaSecp256k1RecoveryMethod2020:
+	case DIDVMethodTypeEd25519VerificationKey2018, DIDVMethodTypeEcdsaSecp256k1VerificationKey2019:
 		vm.VerificationMaterial = &VerificationMethod_PublicKeyHex{key}
 	default:
 		vm.VerificationMaterial = &VerificationMethod_PublicKeyHex{key}

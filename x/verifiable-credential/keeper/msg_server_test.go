@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
 	"github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -84,8 +85,21 @@ func (suite *KeeperTestSuite) TestMsgSeverDeleteVerifableCredential() {
 		expPass  bool
 	}{
 		{
-			"correctly deletes vc",
+			"PASS: correctly deletes vc",
 			func() {
+				did := "did:cosmos:cash:subject"
+				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
+					didtypes.NewVerification(
+						didtypes.NewVerificationMethod(
+							"did:cosmos:cash:subject#key-1",
+							"did:cosmos:cash:subject",
+							"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
+							didtypes.DIDVMethodTypeCosmosAccountAddress,
+						),
+						[]string{didtypes.Authentication},
+						nil,
+					),
+				))
 				cs := types.NewUserCredentialSubject(
 					"accAddr",
 					"root",
@@ -94,18 +108,74 @@ func (suite *KeeperTestSuite) TestMsgSeverDeleteVerifableCredential() {
 
 				vc := types.NewUserVerifiableCredential(
 					"new-verifiable-cred-3",
-					"did:cash:1111",
+					didDoc.Id,
 					time.Now(),
 					cs,
 				)
 				suite.keeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
 
-				req = *types.NewMsgDeleteVerifiableCredential(vc.Id, vc.Issuer, "did:cash:1111")
+				req = *types.NewMsgDeleteVerifiableCredential(vc.Id, vc.Issuer, "cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a")
 			},
 			true,
 		},
 		{
-			"vc does not exists",
+			"FAIL: vc issuer and did id do not match",
+			func() {
+				did := "did:cosmos:cash:subject"
+				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
+					didtypes.NewVerification(
+						didtypes.NewVerificationMethod(
+							"did:cosmos:cash:subject#key-1",
+							"did:cosmos:cash:subject",
+							"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
+							didtypes.DIDVMethodTypeCosmosAccountAddress,
+						),
+						[]string{didtypes.Authentication},
+						nil,
+					),
+				))
+				cs := types.NewUserCredentialSubject(
+					"accAddr",
+					"root",
+					true,
+				)
+
+				vc := types.NewUserVerifiableCredential(
+					"new-verifiable-cred-3",
+					"did:cosmos:cash:noone",
+					time.Now(),
+					cs,
+				)
+				suite.keeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+
+				req = *types.NewMsgDeleteVerifiableCredential(vc.Id, vc.Issuer, "cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a")
+			},
+			false,
+		},
+		{
+			"FAIL: vc does not exist",
+			func() {
+				did := "did:cosmos:cash:subject"
+				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
+					didtypes.NewVerification(
+						didtypes.NewVerificationMethod(
+							"did:cosmos:cash:subject#key-1",
+							"did:cosmos:cash:subject",
+							"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
+							didtypes.DIDVMethodTypeCosmosAccountAddress,
+						),
+						[]string{didtypes.Authentication},
+						nil,
+					),
+				))
+				suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+			},
+			false,
+		},
+		{
+			"FAIL: did does not exists",
 			func() {
 				req = *types.NewMsgDeleteVerifiableCredential(
 					"new-verifiable-cred-3",

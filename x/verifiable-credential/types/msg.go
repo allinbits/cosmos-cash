@@ -3,6 +3,8 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
+	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
 )
 
 // msg types
@@ -48,7 +50,7 @@ func (msg MsgCreateVerifiableCredential) ValidateBasic() error {
 }
 
 func (msg MsgCreateVerifiableCredential) GetSignBytes() []byte {
-	panic("IBC messages do not support amino")
+	panic("VerifiableCredential messages do not support amino")
 }
 
 // GetSigners implements sdk.Msg
@@ -88,12 +90,15 @@ func (msg MsgDeleteVerifiableCredential) ValidateBasic() error {
 	if msg.VerifiableCredentialId == "" {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "empty verifiable cred")
 	}
+	if !didtypes.IsValidDID(msg.IssuerDid) {
+		return sdkerrors.Wrap(didtypes.ErrInvalidDIDFormat, msg.IssuerDid)
+	}
 
 	return nil
 }
 
 func (msg MsgDeleteVerifiableCredential) GetSignBytes() []byte {
-	panic("IBC messages do not support amino")
+	panic("VerifiableCredential messages do not support amino")
 }
 
 // GetSigners implements sdk.Msg

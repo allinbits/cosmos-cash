@@ -3,7 +3,6 @@ package types
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	"encoding/json"
 	"fmt"
 	"regexp"
 	"sort"
@@ -661,22 +660,6 @@ func NewVerificationMethod(id, controller, key string, vmt VerificationMaterialT
 		vm.VerificationMaterial = &VerificationMethod_PublicKeyHex{key}
 	}
 	return vm
-
-}
-
-// MarshalJSON implements a custom marshaller for rendergin verification material
-func (vm VerificationMethod) MarshalJSON() ([]byte, error) {
-	vmd := make(map[string]string, 4)
-	vmd["id"] = vm.Id
-	vmd["controller"] = vm.Controller
-	vmd["type"] = vm.Type
-	switch m := vm.VerificationMaterial.(type) {
-	case *VerificationMethod_BlockchainAccountID:
-		vmd["blockchainAccountId"] = m.BlockchainAccountID
-	case *VerificationMethod_PublicKeyHex:
-		vmd["publicKeyHex"] = m.PublicKeyHex
-	}
-	return json.Marshal(vmd)
 }
 
 // GetBytes is a helper for serializing
@@ -712,6 +695,37 @@ func UpdateDidMetadata(meta *DidMetadata, versionData []byte, updated time.Time)
 	txH := sha256.Sum256(versionData)
 	meta.VersionId = hex.EncodeToString(txH[:])
 	meta.Updated = &updated
+}
+
+// ResolveAccountDID generates a DID document from an address
+func ResolveAccountDID(did, chainID string) (didDoc DidDocument, didMeta DidMetadata, err error) {
+	if !IsValidDIDKeyFormat(did) {
+		err = ErrInvalidDidMethodFormat
+		return
+	}
+	account := strings.TrimPrefix(did, DidKeyPrefix)
+	// compose the metadata
+	didMeta = NewDidMetadata([]byte(account), time.Now())
+	// compose the did document
+	didDoc, err = NewDidDocument(did, WithVerifications(
+		NewVerification(
+			NewVerificationMethod(
+				fmt.Sprint(did, "#", account),
+				did,
+				account,
+				DIDVMethodTypeCosmosAccountAddress,
+			),
+			[]string{
+				Authentication,
+				KeyAgreement,
+				AssertionMethod,
+				CapabilityInvocation,
+				CapabilityDelegation,
+			},
+			nil,
+		),
+	))
+	return
 }
 
 // union perform union, distinct amd sort operation between two slices

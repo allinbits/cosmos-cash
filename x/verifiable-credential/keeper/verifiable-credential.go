@@ -15,6 +15,10 @@ func (q Keeper) GetVerifiableCredential(ctx sdk.Context, key []byte) (types.Veri
 	return val.(types.VerifiableCredential), found
 }
 
+func (q Keeper) DeleteVerifiableCredentialFromStore(ctx sdk.Context, key []byte) {
+	q.Delete(ctx, key, types.VerifiableCredentialKey)
+}
+
 func (q Keeper) UnmarshalVerifiableCredential(value []byte) (interface{}, bool) {
 	vc := types.VerifiableCredential{}
 

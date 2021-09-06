@@ -6,6 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
+	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
 	"github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 )
 
@@ -47,4 +48,49 @@ func (k msgServer) CreateVerifiableCredential(
 	)
 
 	return &types.MsgCreateVerifiableCredentialResponse{}, nil
+}
+
+// DeleteVerifiableCredential deletes a verifiable credential
+func (k msgServer) DeleteVerifiableCredential(
+	goCtx context.Context,
+	msg *types.MsgDeleteVerifiableCredential,
+) (*types.MsgDeleteVerifiableCredentialResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	did, found := k.Keeper.didKeeper.GetDidDocument(ctx, []byte(msg.IssuerDid))
+	if !found {
+		return nil, sdkerrors.Wrapf(
+			types.ErrDidDocumentDoesNotExist,
+			"did does not exists",
+		)
+	}
+
+	vc, found := k.Keeper.GetVerifiableCredential(ctx, []byte(msg.VerifiableCredentialId))
+	if !found {
+		return nil, sdkerrors.Wrapf(
+			types.ErrVerifiableCredentialNotFound,
+			"error deleting credential; credential not found",
+		)
+	}
+
+	if vc.Issuer != did.Id {
+		return nil, sdkerrors.Wrapf(
+			types.ErrVerifiableCredentialIssuer,
+			"provided vc and did issuer do not match",
+		)
+	}
+
+	if !did.HasRelationship(msg.Owner, didtypes.Authentication) {
+		return nil, sdkerrors.Wrapf(
+			types.ErrMessageSigner,
+			"signer is not in issuer did",
+		)
+	}
+
+	k.Keeper.DeleteVerifiableCredentialFromStore(ctx, []byte(vc.Id))
+
+	ctx.EventManager().EmitEvent(
+		types.NewCredentialDeletedEvent(msg.Owner, msg.VerifiableCredentialId),
+	)
+
+	return &types.MsgDeleteVerifiableCredentialResponse{}, nil
 }

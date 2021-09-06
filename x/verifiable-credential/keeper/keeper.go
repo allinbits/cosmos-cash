@@ -18,40 +18,70 @@ type MarshalFn func(value interface{}) []byte
 
 // Keeper holds the application data
 type Keeper struct {
-	cdc      codec.Codec
-	storeKey sdk.StoreKey
-	memKey   sdk.StoreKey
+	cdc       codec.Codec
+	storeKey  sdk.StoreKey
+	memKey    sdk.StoreKey
+	didKeeper types.DidKeeper
 }
 
 // NewKeeper create a new instance of a Keeper
-func NewKeeper(cdc codec.Codec, storeKey, memKey sdk.StoreKey) *Keeper {
+func NewKeeper(
+	cdc codec.Codec,
+	storeKey,
+	memKey sdk.StoreKey,
+	didKeeper types.DidKeeper,
+) *Keeper {
 	return &Keeper{
-		cdc:      cdc,
-		storeKey: storeKey,
-		memKey:   memKey,
+		cdc:       cdc,
+		storeKey:  storeKey,
+		memKey:    memKey,
+		didKeeper: didKeeper,
 	}
 }
 
-func (q Keeper) Logger(ctx sdk.Context) log.Logger {
+func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }
 
 // Set sets a value in the db with a prefixed key
-func (q Keeper) Set(ctx sdk.Context, key []byte, prefix []byte, i interface{}, marshal MarshalFn) {
-	store := ctx.KVStore(q.storeKey)
+func (k Keeper) Set(ctx sdk.Context,
+	key []byte,
+	prefix []byte,
+	i interface{},
+	marshal MarshalFn,
+) {
+	store := ctx.KVStore(k.storeKey)
 	store.Set(append(prefix, key...), marshal(i))
 }
 
+// Delete - deletes a value form the store
+func (k Keeper) Delete(
+	ctx sdk.Context,
+	key []byte,
+	prefix []byte,
+) {
+	store := ctx.KVStore(k.storeKey)
+	store.Delete(append(prefix, key...))
+}
+
 // Get gets an item from the store by bytes
-func (q Keeper) Get(ctx sdk.Context, key []byte, prefix []byte, unmarshal UnmarshalFn) (i interface{}, found bool) {
-	store := ctx.KVStore(q.storeKey)
+func (k Keeper) Get(
+	ctx sdk.Context,
+	key []byte,
+	prefix []byte,
+	unmarshal UnmarshalFn,
+) (i interface{}, found bool) {
+	store := ctx.KVStore(k.storeKey)
 	value := store.Get(append(prefix, key...))
 
 	return unmarshal(value)
 }
 
 // GetAll values from with a prefix from the store
-func (q Keeper) GetAll(ctx sdk.Context, prefix []byte) sdk.Iterator {
-	store := ctx.KVStore(q.storeKey)
+func (k Keeper) GetAll(
+	ctx sdk.Context,
+	prefix []byte,
+) sdk.Iterator {
+	store := ctx.KVStore(k.storeKey)
 	return sdk.KVStorePrefixIterator(store, prefix)
 }

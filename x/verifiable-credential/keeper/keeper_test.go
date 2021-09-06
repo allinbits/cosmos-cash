@@ -6,6 +6,8 @@ import (
 	"testing"
 	"time"
 
+	didkeeper "github.com/allinbits/cosmos-cash/x/did/keeper"
+	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
 	"github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	ct "github.com/cosmos/cosmos-sdk/codec/types"
@@ -23,16 +25,21 @@ type KeeperTestSuite struct {
 
 	ctx         sdk.Context
 	keeper      Keeper
+	didkeeper   didkeeper.Keeper
 	queryClient types.QueryClient
 }
 
 // SetupTest creates a test suite to test the did
 func (suite *KeeperTestSuite) SetupTest() {
-	keyDidDocument := sdk.NewKVStoreKey(types.StoreKey)
-	memKeyDidDocument := sdk.NewKVStoreKey(types.MemStoreKey)
+	keyVc := sdk.NewKVStoreKey(types.StoreKey)
+	memKeyVc := sdk.NewKVStoreKey(types.MemStoreKey)
+	keyDidDocument := sdk.NewKVStoreKey(didtypes.StoreKey)
+	memKeyDidDocument := sdk.NewKVStoreKey(didtypes.MemStoreKey)
 
 	db := dbm.NewMemDB()
 	ms := store.NewCommitMultiStore(db)
+	ms.MountStoreWithDB(keyVc, sdk.StoreTypeIAVL, db)
+	ms.MountStoreWithDB(memKeyVc, sdk.StoreTypeIAVL, db)
 	ms.MountStoreWithDB(keyDidDocument, sdk.StoreTypeIAVL, db)
 	ms.MountStoreWithDB(memKeyDidDocument, sdk.StoreTypeIAVL, db)
 	_ = ms.LoadLatestVersion()
@@ -42,17 +49,24 @@ func (suite *KeeperTestSuite) SetupTest() {
 	interfaceRegistry := ct.NewInterfaceRegistry()
 	marshaler := codec.NewProtoCodec(interfaceRegistry)
 
-	k := NewKeeper(
+	didKeeper := didkeeper.NewKeeper(
 		marshaler,
 		keyDidDocument,
 		memKeyDidDocument,
+	)
+
+	k := NewKeeper(
+		marshaler,
+		keyVc,
+		memKeyVc,
+		didKeeper,
 	)
 
 	queryHelper := baseapp.NewQueryServerTestHelper(ctx, interfaceRegistry)
 	types.RegisterQueryServer(queryHelper, k)
 	queryClient := types.NewQueryClient(queryHelper)
 
-	suite.ctx, suite.keeper, suite.queryClient = ctx, *k, queryClient
+	suite.ctx, suite.keeper, suite.didkeeper, suite.queryClient = ctx, *k, *didKeeper, queryClient
 }
 
 func TestKeeperTestSuite(t *testing.T) {

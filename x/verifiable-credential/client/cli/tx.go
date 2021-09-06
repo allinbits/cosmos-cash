@@ -30,6 +30,7 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(
 		NewCreateKYCVerifiableCredentialCmd(),
 		NewCreateLicenseVerifiableCredentialCmd(),
+		NewDeleteVerifiableCredentialCmd(),
 	)
 
 	return cmd
@@ -177,6 +178,43 @@ func NewCreateLicenseVerifiableCredentialCmd() *cobra.Command {
 
 			msg := types.NewMsgCreateVerifiableCredential(
 				vc,
+				accAddrBech32,
+			)
+
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// NewDeleteLicenseVerifiableCredentialCmd defines the command to delete a verifiable credential.
+func NewDeleteVerifiableCredentialCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     `delete-verifiable-credential [cred_id] [issuer_did]`,
+		Short:   "delete a decentralized verifiable-credential",
+		Example: "deletes a license verifiable credential for issuers",
+		Args:    cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			accAddr := clientCtx.GetFromAddress()
+			accAddrBech32 := accAddr.String()
+
+			credentialID := args[0]
+			issuerDid := args[1]
+
+			msg := types.NewMsgDeleteVerifiableCredential(
+				credentialID,
+				issuerDid,
 				accAddrBech32,
 			)
 

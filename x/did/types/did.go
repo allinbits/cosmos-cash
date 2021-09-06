@@ -94,6 +94,11 @@ func (p VerificationMaterialType) String() string {
 	return string(p)
 }
 
+type VerificationMaterial interface {
+	EncodeToString() string
+	Type() VerificationMaterialType
+}
+
 /**
 Regexp generated using this ABNF specs and using https://abnf.msweet.org/index.php
 
@@ -127,29 +132,63 @@ var (
 	rfc3986Regexp          = regexp.MustCompile(rfc3986RegexpStr)
 )
 
+// BlockchainAccountID formats an account address as per the CAIP-10 Account ID specification.
+// https://w3c.github.io/did-spec-registries/#blockchainaccountid
+// https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md
+type BlockchainAccountID string
+
+// EncodeToString returns the string representation of a blockchain account id
+func (baID BlockchainAccountID) EncodeToString() string {
+	return string(baID)
+}
+
+// Type returns the string representation of a blockchain account id
+func (baID BlockchainAccountID) Type() VerificationMaterialType {
+	return DIDVMethodTypeCosmosAccountAddress
+}
+
+// NewBlockchainAccountID build a new blockchain account ID struct
+func NewBlockchainAccountID(account, chainID string) BlockchainAccountID {
+	return BlockchainAccountID(fmt.Sprint("cosmos:", chainID, ":", account))
+}
+
+// PublicKeyMultibase formats an account address as per the CAIP-10 Account ID specification.
+// https://w3c.github.io/did-spec-registries/#publickeymultibase
+// https://datatracker.ietf.org/doc/html/draft-multiformats-multibase-03#appendix-B.1
+type PublicKeyMultibase struct {
+	data   []byte
+	vmType VerificationMaterialType
+}
+
+// EncodeToString returns the string representation of the key in hex format. F is the hex format prefix
+// https://datatracker.ietf.org/doc/html/draft-multiformats-multibase-03#appendix-B.1
+func (pkh PublicKeyMultibase) EncodeToString() string {
+	return string(fmt.Sprint("F", hex.EncodeToString(pkh.data)))
+}
+
+// Type the verification material type
+// https://datatracker.ietf.org/doc/html/draft-multiformats-multibase-03#appendix-B.1
+func (pkh PublicKeyMultibase) Type() VerificationMaterialType {
+	return pkh.vmType
+}
+
+// NewPublicKeyMultibase build a new blockchain account ID struct
+func NewPublicKeyMultibase(pubKey []byte, vmType VerificationMaterialType) PublicKeyMultibase {
+	return PublicKeyMultibase{
+		data:   pubKey,
+		vmType: vmType,
+	}
+}
+
 // DID format a DID from a method specific did
 // cfr.https://www.w3.org/TR/did-core/#did
 func DID(chainName, didID string) string {
 	return fmt.Sprint(DidPrefix, chainName, ":", didID)
 }
 
+// DIDKey format a DID of type key
 func DIDKey(didMethodSpecificDidDocument string) string {
 	return fmt.Sprint(DidKeyPrefix, didMethodSpecificDidDocument)
-}
-
-// BlockchainAccountID formats an account address as per the CAIP-10 Account ID specification.
-// https://w3c.github.io/did-spec-registries/#blockchainaccountid
-// https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md
-type BlockchainAccountID string
-
-// String returns the string representation of a blockchain account id
-func (baID BlockchainAccountID) String() string {
-	return string(baID)
-}
-
-// NewBlockchainAccountID build a new blockchain account ID struct
-func NewBlockchainAccountID(account, chainID string) BlockchainAccountID {
-	return BlockchainAccountID(fmt.Sprint("cosmos:", chainID, ":", account))
 }
 
 // IsValidDID validate the input string according to the
@@ -529,7 +568,7 @@ func (didDoc DidDocument) HasRelationship(
 
 		switch k := vm.VerificationMaterial.(type) {
 		case *VerificationMethod_BlockchainAccountID:
-			if k.BlockchainAccountID != signer.String() {
+			if k.BlockchainAccountID != signer.EncodeToString() {
 				continue
 			}
 		case *VerificationMethod_PublicKeyHex:
@@ -554,7 +593,7 @@ func (didDoc DidDocument) HasRelationship(
 			if err != nil {
 				continue
 			}
-			if addr != signer.String() {
+			if addr != signer.EncodeToString() {
 				continue
 			}
 		}
@@ -645,19 +684,19 @@ func NewVerification(
 }
 
 // NewVerificationMethod build a new verification method
-func NewVerificationMethod(id, controller, key string, vmt VerificationMaterialType) VerificationMethod {
+func NewVerificationMethod(id, controller string, vmr VerificationMaterial) VerificationMethod {
 	vm := VerificationMethod{
 		Id:         id,
 		Controller: controller,
-		Type:       string(vmt),
+		Type:       string(vmr.Type()),
 	}
-	switch vmt {
+	switch vmr.Type() {
 	case DIDVMethodTypeCosmosAccountAddress:
-		vm.VerificationMaterial = &VerificationMethod_BlockchainAccountID{key}
+		vm.VerificationMaterial = &VerificationMethod_BlockchainAccountID{vmr.EncodeToString()}
 	case DIDVMethodTypeEd25519VerificationKey2018, DIDVMethodTypeEcdsaSecp256k1VerificationKey2019:
-		vm.VerificationMaterial = &VerificationMethod_PublicKeyHex{key}
+		vm.VerificationMaterial = &VerificationMethod_PublicKeyHex{vmr.EncodeToString()}
 	default:
-		vm.VerificationMaterial = &VerificationMethod_PublicKeyHex{key}
+		vm.VerificationMaterial = &VerificationMethod_PublicKeyHex{vmr.EncodeToString()}
 	}
 	return vm
 }
@@ -712,8 +751,7 @@ func ResolveAccountDID(did, chainID string) (didDoc DidDocument, didMeta DidMeta
 			NewVerificationMethod(
 				fmt.Sprint(did, "#", account),
 				did,
-				account,
-				DIDVMethodTypeCosmosAccountAddress,
+				NewBlockchainAccountID(did, chainID),
 			),
 			[]string{
 				Authentication,

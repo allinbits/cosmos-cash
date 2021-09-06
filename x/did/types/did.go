@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cosmos/cosmos-sdk/codec/legacy"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -147,8 +147,18 @@ func (baID BlockchainAccountID) Type() VerificationMaterialType {
 	return DIDVMethodTypeCosmosAccountAddress
 }
 
+// MatchAddress check if a blockchain id address matches another address
+// the match ignore the chain ID
+func (baID BlockchainAccountID) MatchAddress(address string) bool {
+	addrStart := strings.LastIndex(string(baID), ":")
+	if addrStart < 0 {
+		return false
+	}
+	return string(baID)[addrStart:] == address
+}
+
 // NewBlockchainAccountID build a new blockchain account ID struct
-func NewBlockchainAccountID(account, chainID string) BlockchainAccountID {
+func NewBlockchainAccountID(chainID, account string) BlockchainAccountID {
 	return BlockchainAccountID(fmt.Sprint("cosmos:", chainID, ":", account))
 }
 
@@ -180,15 +190,23 @@ func NewPublicKeyMultibase(pubKey []byte, vmType VerificationMaterialType) Publi
 	}
 }
 
-// DID format a DID from a method specific did
+// DID identifies ad did string
+type DID string
+
+// NewChainDID format a DID from a method specific did
 // cfr.https://www.w3.org/TR/did-core/#did
-func DID(chainName, didID string) string {
-	return fmt.Sprint(DidPrefix, chainName, ":", didID)
+func NewChainDID(chainName, didID string) DID {
+	return DID(fmt.Sprint(DidPrefix, chainName, ":", didID))
 }
 
-// DIDKey format a DID of type key
-func DIDKey(didMethodSpecificDidDocument string) string {
-	return fmt.Sprint(DidKeyPrefix, didMethodSpecificDidDocument)
+// NewKeyDID format a DID of type key
+func NewKeyDID(account string) DID {
+	return DID(fmt.Sprint(DidKeyPrefix, account))
+}
+
+// String return the string representation of the did
+func (did DID) String() string {
+	return string(did)
 }
 
 // IsValidDID validate the input string according to the
@@ -283,6 +301,11 @@ func ValidateVerification(v *Verification, allowedControllers ...string) (err er
 	case *VerificationMethod_BlockchainAccountID:
 		if IsEmpty(x.BlockchainAccountID) {
 			err = sdkerrors.Wrapf(ErrInvalidInput, "verification material blockchain account id invalid for verification method %s", v.Method.Id)
+			return
+		}
+	case *VerificationMethod_PublicKeyMultibase:
+		if IsEmpty(x.PublicKeyMultibase) {
+			err = sdkerrors.Wrapf(ErrInvalidInput, "verification material multibase pubkey invalid for verification method %s", v.Method.Id)
 			return
 		}
 	case *VerificationMethod_PublicKeyHex:
@@ -565,39 +588,22 @@ func (didDoc DidDocument) HasRelationship(
 ) bool {
 	// first check if the controller exists
 	for _, vm := range didDoc.VerificationMethod {
-
 		switch k := vm.VerificationMaterial.(type) {
 		case *VerificationMethod_BlockchainAccountID:
 			if k.BlockchainAccountID != signer.EncodeToString() {
 				continue
 			}
+		case *VerificationMethod_PublicKeyMultibase:
+			addr, err := toAddress(k.PublicKeyMultibase[1:])
+			if err != nil || signer.MatchAddress(addr) {
+				continue
+			}
 		case *VerificationMethod_PublicKeyHex:
-			// decode the pub key
-			pkb, err := hex.DecodeString(k.PublicKeyHex)
-			if err != nil {
-				continue
-			}
-			// deal with the amino prefix
-			pka, err := hex.DecodeString(fmt.Sprintf("eb5ae987%x", len(pkb)))
-			if err != nil {
-				continue
-			}
-			pka = append(pka, pkb...)
-			// load the pubkey
-			pk, err := legacy.PubKeyFromBytes(pka)
-			if err != nil {
-				continue
-			}
-			// generate the address
-			addr, err := sdk.Bech32ifyAddressBytes(sdk.GetConfig().GetBech32AccountAddrPrefix(), pk.Address())
-			if err != nil {
-				continue
-			}
-			if addr != signer.EncodeToString() {
+			addr, err := toAddress(k.PublicKeyHex)
+			if err != nil || signer.MatchAddress(addr) {
 				continue
 			}
 		}
-
 		vrs := didDoc.GetVerificationRelationships(vm.Id)
 		if len(intersection(vrs, relationships)) > 0 {
 			return true
@@ -684,19 +690,19 @@ func NewVerification(
 }
 
 // NewVerificationMethod build a new verification method
-func NewVerificationMethod(id, controller string, vmr VerificationMaterial) VerificationMethod {
+func NewVerificationMethod(id string, controller DID, vmr VerificationMaterial) VerificationMethod {
 	vm := VerificationMethod{
 		Id:         id,
-		Controller: controller,
+		Controller: controller.String(),
 		Type:       string(vmr.Type()),
 	}
 	switch vmr.Type() {
 	case DIDVMethodTypeCosmosAccountAddress:
 		vm.VerificationMaterial = &VerificationMethod_BlockchainAccountID{vmr.EncodeToString()}
 	case DIDVMethodTypeEd25519VerificationKey2018, DIDVMethodTypeEcdsaSecp256k1VerificationKey2019:
-		vm.VerificationMaterial = &VerificationMethod_PublicKeyHex{vmr.EncodeToString()}
+		vm.VerificationMaterial = &VerificationMethod_PublicKeyMultibase{vmr.EncodeToString()}
 	default:
-		vm.VerificationMaterial = &VerificationMethod_PublicKeyHex{vmr.EncodeToString()}
+		vm.VerificationMaterial = &VerificationMethod_PublicKeyMultibase{vmr.EncodeToString()}
 	}
 	return vm
 }
@@ -750,8 +756,8 @@ func ResolveAccountDID(did, chainID string) (didDoc DidDocument, didMeta DidMeta
 		NewVerification(
 			NewVerificationMethod(
 				fmt.Sprint(did, "#", account),
-				did,
-				NewBlockchainAccountID(did, chainID),
+				DID(did), // the controller is the same as the did subject
+				NewBlockchainAccountID(chainID, did),
 			),
 			[]string{
 				Authentication,
@@ -763,6 +769,25 @@ func ResolveAccountDID(did, chainID string) (didDoc DidDocument, didMeta DidMeta
 			nil,
 		),
 	))
+	return
+}
+
+// toAddress encode a kexKey string to cosmos based address
+func toAddress(hexKey string) (addr string, err error) {
+	// decode the hex string
+	pkb, err := hex.DecodeString(hexKey)
+	if err != nil {
+		return
+	}
+	// check the size of the decoded byte slice, otherwise the pk.Address will panic
+	if len(pkb) != secp256k1.PubKeySize {
+		err = fmt.Errorf("invalid public key size")
+		return
+	}
+	// load the public key
+	pk := &secp256k1.PubKey{Key: pkb}
+	// generate the address
+	addr, err = sdk.Bech32ifyAddressBytes(sdk.GetConfig().GetBech32AccountAddrPrefix(), pk.Address())
 	return
 }
 

@@ -236,8 +236,7 @@ func TestValidateVerification(t *testing.T) {
 				NewVerificationMethod(
 					"did:cash:subject#key-1",
 					"did:cash:subject",
-					"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
-					DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
+					NewPublicKeyMultibase([]byte("03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"), DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
 				),
 				nil,
 				nil,
@@ -253,8 +252,7 @@ func TestValidateVerification(t *testing.T) {
 				NewVerificationMethod(
 					"did:cash:subject#key-1",
 					"did:cash:subject",
-					"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
-					DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
+					NewPublicKeyMultibase([]byte("03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"), DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
 				),
 				[]string{string(AssertionMethod)},
 				nil,
@@ -334,8 +332,7 @@ func TestNewDidDocument(t *testing.T) {
 							NewVerificationMethod(
 								"did:cash:subject#key-1",
 								"did:cash:subject",
-								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
-								DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
+								NewPublicKeyMultibase([]byte("03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"), DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
 							),
 							[]string{
 								string(Authentication),
@@ -352,8 +349,7 @@ func TestNewDidDocument(t *testing.T) {
 							NewVerificationMethod(
 								"did:cash:subject#key-2",
 								"did:cash:subject",
-								"cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
-								DIDVMethodTypeCosmosAccountAddress,
+								NewBlockchainAccountID("cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2", "cash"),
 							),
 							[]string{
 								string(Authentication),
@@ -413,8 +409,7 @@ func TestNewDidDocument(t *testing.T) {
 							NewVerificationMethod(
 								"did:cash:subject#key-1",
 								"did:cash:subject",
-								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
-								DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
+								NewPublicKeyMultibase([]byte("03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"), DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
 							),
 							[]string{
 								Authentication,
@@ -428,8 +423,7 @@ func TestNewDidDocument(t *testing.T) {
 							NewVerificationMethod(
 								"did:cash:subject#key-1", // duplicate key
 								"did:cash:subject",
-								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
-								DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
+								NewPublicKeyMultibase([]byte("03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"), DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
 							),
 							[]string{
 								Authentication,
@@ -457,8 +451,7 @@ func TestNewDidDocument(t *testing.T) {
 							NewVerificationMethod(
 								"did:cash:subject#key-1",
 								"did:cash:subject",
-								"02503c8ace59c085b15c5f9c2474e9235bcb9694f07516bdc06f7caec788c3dd2c",
-								DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
+								NewPublicKeyMultibase([]byte("02503c8ace59c085b15c5f9c2474e9235bcb9694f07516bdc06f7caec788c3dd2c"), DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
 							),
 							[]string{
 								Authentication,
@@ -611,8 +604,7 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 						NewVerificationMethod(
 							"did:cash:subject#key-1",
 							"did:cash:subject",
-							"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
-							DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
+							NewPublicKeyMultibase([]byte("03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"), DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
 						),
 						[]string{
 							Authentication,
@@ -624,8 +616,7 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 						NewVerificationMethod(
 							"did:cash:subject#key-2",
 							"did:cash:subject",
-							"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
-							DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
+							NewPublicKeyMultibase([]byte("03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"), DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
 						),
 						[]string{
 							Authentication,
@@ -673,8 +664,7 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 							NewVerificationMethod(
 								"did:cash:subject#key-1",
 								"did:cash:subject",
-								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
-								DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
+								NewPublicKeyMultibase([]byte("03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"), DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
 							),
 							[]string{
 								Authentication,
@@ -693,8 +683,7 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 						NewVerificationMethod(
 							"did:cash:subject#key-1",
 							"did:cash:subject",
-							"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
-							DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
+							NewPublicKeyMultibase([]byte("03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"), DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
 						),
 						[]string{
 							string(CapabilityDelegation),
@@ -716,8 +705,7 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 							NewVerificationMethod(
 								"did:cash:subject#key-1",
 								"did:cash:subject",
-								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
-								DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
+								NewPublicKeyMultibase([]byte("03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"), DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
 							),
 							[]string{
 								Authentication,
@@ -736,8 +724,7 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 						NewVerificationMethod(
 							"did:cash:subject#key-2",
 							"did:cash:subject",
-							"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
-							DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
+							NewPublicKeyMultibase([]byte("03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"), DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
 						),
 						[]string{
 							KeyAgreement,
@@ -750,8 +737,7 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 						NewVerificationMethod(
 							"did:cash:subject#key-2",
 							"did:cash:subject",
-							"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
-							DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
+							NewPublicKeyMultibase([]byte("03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"), DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
 						),
 						[]string{
 							Authentication,
@@ -773,8 +759,7 @@ func TestDidDocument_AddVerifications(t *testing.T) {
 							NewVerificationMethod(
 								"did:cash:subject#key-1",
 								"did:cash:subject",
-								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
-								DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
+								NewPublicKeyMultibase([]byte("03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"), DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
 							),
 							[]string{
 								Authentication,
@@ -875,8 +860,7 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 								NewVerificationMethod(
 									"did:cash:subject#key-1",
 									"did:cash:subject",
-									"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
-									DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
+									NewPublicKeyMultibase([]byte("03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"), DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
 								),
 								[]string{
 									Authentication,
@@ -888,8 +872,7 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 								NewVerificationMethod(
 									"did:cash:subject#key-2",
 									"did:cash:subject",
-									"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
-									DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
+									NewPublicKeyMultibase([]byte("03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"), DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
 								),
 								[]string{
 									Authentication,
@@ -1045,8 +1028,7 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 								NewVerificationMethod(
 									"did:cash:subject#key-1",
 									"did:cash:subject",
-									"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
-									DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
+									NewPublicKeyMultibase([]byte("03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"), DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
 								),
 								[]string{
 									Authentication,
@@ -1058,8 +1040,7 @@ func TestDidDocument_RevokeVerification(t *testing.T) {
 								NewVerificationMethod(
 									"did:cash:subject#key-2",
 									"did:cash:subject",
-									"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
-									DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
+									NewPublicKeyMultibase([]byte("03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"), DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
 								),
 								[]string{
 									Authentication,
@@ -1349,8 +1330,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 							NewVerificationMethod(
 								"did:cash:subject#key-1",
 								"did:cash:subject",
-								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
-								DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
+								NewPublicKeyMultibase([]byte("03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"), DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
 							),
 							[]string{
 								string(Authentication),
@@ -1377,8 +1357,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 							NewVerificationMethod(
 								"did:cash:subject#key-1",
 								"did:cash:subject",
-								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
-								DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
+								NewPublicKeyMultibase([]byte("03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"), DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
 							),
 							[]string{
 								Authentication,
@@ -1390,8 +1369,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 							NewVerificationMethod(
 								"did:cash:controller-1#key-1",
 								"did:cash:controller-1",
-								"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
-								DIDVMethodTypeCosmosAccountAddress,
+								NewBlockchainAccountID("cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8", "cash"),
 							),
 							[]string{
 								CapabilityDelegation,
@@ -1429,8 +1407,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 							NewVerificationMethod(
 								"did:cash:subject#key-1",
 								"did:cash:subject",
-								"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
-								DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
+								NewPublicKeyMultibase([]byte("03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"), DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
 							),
 							[]string{
 								Authentication,
@@ -1454,8 +1431,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 							NewVerificationMethod(
 								"did:cash:subject#key-1",
 								"did:cash:subject",
-								"00dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
-								DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
+								NewPublicKeyMultibase([]byte("00dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"), DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
 							),
 							[]string{
 								Authentication,
@@ -1466,8 +1442,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 							NewVerificationMethod(
 								"did:cash:subject#key-2",
 								"did:cash:subject",
-								"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
-								DIDVMethodTypeCosmosAccountAddress,
+								NewBlockchainAccountID("cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8", "cash"),
 							),
 							[]string{
 								KeyAgreement,

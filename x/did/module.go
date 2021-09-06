@@ -3,8 +3,6 @@ package did
 import ( // this line is used by starport scaffolding # 1
 	"context"
 	"encoding/json"
-	"net/http"
-	"strings"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -18,7 +16,6 @@ import ( // this line is used by starport scaffolding # 1
 
 	"github.com/allinbits/cosmos-cash/x/did/client/cli"
 	"github.com/allinbits/cosmos-cash/x/did/keeper"
-	"github.com/allinbits/cosmos-cash/x/did/resolver"
 	"github.com/allinbits/cosmos-cash/x/did/types"
 )
 
@@ -165,36 +162,6 @@ func (AppModule) ConsensusVersion() uint64 { return 1 }
 
 // RegisterRESTRoutes registers the capability module's REST service handlers.
 func (AppModuleBasic) RegisterRESTRoutes(clientCtx client.Context, rtr *mux.Router) {
-
-	// identifierHandler
-	didH := func(w http.ResponseWriter, r *http.Request) {
-		vars := mux.Vars(r)
-		did := vars["did"]
-		// parse mime
-		accept := strings.Split(r.Header.Get("accept"), ";")[0]
-		opt := resolver.ResolutionOption{Accept: accept}
-		rr := resolver.ResolveRepresentation(clientCtx, did, opt)
-		// add universal resolver specific data:
-		rr.ResolutionMetadata.DidProperties = map[string]string{
-			"method":           "cosmos",
-			"methodSpecificId": strings.TrimPrefix(rr.Document.Id, types.DidPrefix),
-		}
-		// cors
-		w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("origin"))
-		w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "content-type,accept")
-		w.Header().Set("Access-Control-Expose-Headers", "Authorization")
-
-		w.WriteHeader(http.StatusOK)
-		w.Header().Set("Content-Type", "application/json")
-		err := json.NewEncoder(w).Encode(rr)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-		}
-	}
-
-	rtr.PathPrefix("/identifier/{did}").HandlerFunc(didH).Methods(http.MethodGet, http.MethodOptions)
-	rtr.PathPrefix("/1.0/identifiers/{did}").HandlerFunc(didH).Methods(http.MethodGet, http.MethodOptions)
 
 }
 

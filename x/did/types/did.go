@@ -196,7 +196,7 @@ type DID string
 // NewChainDID format a DID from a method specific did
 // cfr.https://www.w3.org/TR/did-core/#did
 func NewChainDID(chainName, didID string) DID {
-	return DID(fmt.Sprint(DidPrefix, chainName, ":", didID))
+	return DID(fmt.Sprint(DidChainPrefix, chainName, ":", didID))
 }
 
 // NewKeyDID format a DID of type key

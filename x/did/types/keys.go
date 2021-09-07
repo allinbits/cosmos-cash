@@ -20,8 +20,8 @@ const (
 	// QuerierRoute defines the module's query routing key
 	QuerierRoute = ModuleName
 
-	// DidPrefix defines the did prefix for this chain
-	DidPrefix = "did:cosmos:"
+	// DidChainPrefix defines the did prefix for this chain
+	DidChainPrefix = "did:cosmos:net:"
 
 	// DidKeyPrefix defines the did key prefix
 	DidKeyPrefix = "did:cosmos:key:"

@@ -19,17 +19,17 @@ func TestDID(t *testing.T) {
 		{
 			"subject",
 			"cash",
-			DID("did:cosmos:cash:subject"),
+			DID("did:cosmos:net:cash:subject"),
 		},
 		{
 			"",
 			"cash",
-			DID("did:cosmos:cash:"),
+			DID("did:cosmos:net:cash:"),
 		},
 		{
 			"cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75",
 			"cosmoshub",
-			DID("did:cosmos:cosmoshub:cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75"),
+			DID("did:cosmos:net:cosmoshub:cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75"),
 		},
 	}
 	for i, tt := range tests {
@@ -46,7 +46,7 @@ func TestIsValidDID(t *testing.T) {
 		input string
 		want  bool
 	}{
-		{"did:cash:subject", true},
+		{"did:cash:net:subject", true},
 		{"did:cash:cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75", true},
 		{"did:cash:cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75#key-1", false},
 		{"did:subject", false},

@@ -1,9 +1,13 @@
 package types
 
 import (
+	"encoding/base64"
 	"time"
 
+	"github.com/cosmos/cosmos-sdk/crypto/keyring"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/cosmos-sdk/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // Defines the accepted credential types
@@ -120,4 +124,59 @@ func NewProof(
 		VerificationMethod: verificationMethod,
 		Signature:          signature,
 	}
+}
+
+// Validate validates a verifiable credential against a provided public key
+func (vc VerifiableCredential) Validate(
+	pk cryptotypes.PubKey,
+) bool {
+	s, err := base64.StdEncoding.DecodeString(vc.Proof.Signature)
+	if err != nil {
+		panic(err)
+	}
+
+	vc.Proof = nil
+
+	// TODO: this is an expesive operation, could lead to DDOS
+	// TODO: we can hash this and make this less expensive
+	isCorrectPubKey := pk.VerifySignature(
+		vc.GetBytes(),
+		s,
+	)
+
+	return isCorrectPubKey
+}
+
+// Sign signs a credential with a provided private key
+func (vc VerifiableCredential) Sign(
+	keyring keyring.Keyring,
+	address sdk.Address,
+	signerDid string,
+) VerifiableCredential {
+	signedVc := vc
+	tm := time.Now()
+
+	// TODO: this could be expensive review this signing method
+	// TODO: we can hash this an make this less expensive
+	signature, pubKey, err := keyring.SignByAddress(address, signedVc.GetBytes())
+	if err != nil {
+		panic(err)
+	}
+
+	p := NewProof(
+		pubKey.Type(),
+		tm.Format(time.RFC3339),
+		// TODO: define proof purposes
+		"assertionMethod",
+		signerDid+"#"+address.String(),
+		base64.StdEncoding.EncodeToString(signature),
+	)
+	signedVc.Proof = &p
+
+	return signedVc
+}
+
+func (vc VerifiableCredential) Hash() string {
+	// TODO: implement the hashing of creds for signing
+	return "TODO"
 }

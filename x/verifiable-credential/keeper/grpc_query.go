@@ -2,9 +2,7 @@ package keeper
 
 import (
 	"context"
-	"encoding/base64"
 
-	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -51,38 +49,4 @@ func (q Keeper) VerifiableCredential(
 	}
 
 	return &types.QueryVerifiableCredentialResponse{VerifiableCredential: vc}, nil
-}
-
-// ValidateVerifiableCredential queries verifiable credentials info with a public key a check validity
-func (q Keeper) ValidateVerifiableCredential(
-	c context.Context,
-	req *types.QueryValidateVerifiableCredentialRequest,
-) (*types.QueryValidateVerifiableCredentialResponse, error) {
-	if req == nil {
-		return nil, status.Error(codes.InvalidArgument, "empty request")
-	}
-
-	ctx := sdk.UnwrapSDKContext(c)
-	vc, found := q.GetVerifiableCredential(ctx, []byte(req.VerifiableCredentialId))
-	if !found {
-		return nil, status.Errorf(codes.NotFound, "vc %s not found", req.VerifiableCredentialId)
-	}
-	//
-	pubKeyRaw, _ := sdk.GetFromBech32(req.IssuerPubkey, sdk.GetConfig().GetBech32AccountPubPrefix())
-	pubkey := secp256k1.PubKey{Key: pubKeyRaw}
-	signature := vc.Proof.Signature
-	emptyProof := types.NewProof("", "", "", "", "")
-	vc.Proof = &emptyProof
-	s, _ := base64.StdEncoding.DecodeString(signature)
-
-	// TODO: this is an expesive operation, could lead to DDOS
-	// TODO: we can hash this and make this less expensive
-	isCorrectPubKey := pubkey.VerifySignature(
-		vc.GetBytes(),
-		s,
-	)
-
-	return &types.QueryValidateVerifiableCredentialResponse{
-		IsValid: isCorrectPubKey,
-	}, nil
 }

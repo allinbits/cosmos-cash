@@ -232,19 +232,7 @@ func (cicd CheckUserCredentialsDecorator) AnteHandle(
 //		account := cicd.accountk.GetAccount(ctx, address)
 //		pubkey := account.GetPubKey()
 //
-//		s, err := base64.StdEncoding.DecodeString(vc.Proof.Signature)
-//		if err != nil {
-//			continue
-//		}
-//		emptyProof := vcstypes.NewProof("", "", "", "", "")
-//		vc.Proof = &emptyProof
-//
-//		// TODO: this is an expesive operation, could lead to DDOS
-//		// TODO: we can hash this and make this less expensive
-//		hasUserCredential = pubkey.VerifySignature(
-//			vc.GetBytes(),
-//			s,
-//		)
+//		hasUserCredential = vc.Validate(pubkey)
 //
 //		break
 //	}

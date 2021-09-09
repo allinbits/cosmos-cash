@@ -167,7 +167,7 @@ func NewCreateLicenseVerifiableCredentialCmd() *cobra.Command {
 	return cmd
 }
 
-// NewDeleteLicenseVerifiableCredentialCmd defines the command to delete a verifiable credential.
+// NewDeleteVerifiableCredentialCmd defines the command to delete a verifiable credential.
 func NewDeleteVerifiableCredentialCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     `delete-verifiable-credential [cred_id] [issuer_did]`,

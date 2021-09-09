@@ -174,8 +174,7 @@ func (suite *KeeperTestSuite) TestHandleMsgAddVerification() {
 							types.NewVerificationMethod(
 								"did:cosmos:cash:subject#key-1",
 								"did:cosmos:cash:subject",
-																types.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215}, types.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
-
+								types.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215}, types.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
 							),
 							[]string{types.CapabilityInvocation},
 							nil,
@@ -188,7 +187,7 @@ func (suite *KeeperTestSuite) TestHandleMsgAddVerification() {
 					types.NewVerificationMethod(
 						"did:cosmos:cash:subject#key-2",
 						"did:cosmos:cash:subject",
-						types.NewBlockchainAccountID("foochainid","cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"),
+						types.NewBlockchainAccountID("foochainid", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"),
 					),
 					[]string{types.Authentication},
 					nil,
@@ -208,8 +207,7 @@ func (suite *KeeperTestSuite) TestHandleMsgAddVerification() {
 							types.NewVerificationMethod(
 								"did:cosmos:cash:subject#key-1",
 								"did:cosmos:cash:subject",
-																types.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215}, types.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
-
+								types.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215}, types.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
 							),
 							[]string{types.CapabilityInvocation},
 							nil,
@@ -222,7 +220,7 @@ func (suite *KeeperTestSuite) TestHandleMsgAddVerification() {
 					types.NewVerificationMethod(
 						"did:cosmos:cash:subject#key-2",
 						"did:cosmos:cash:subject",
-						types.NewBlockchainAccountID("foochainid","cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"),
+						types.NewBlockchainAccountID("foochainid", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"),
 					),
 					[]string{types.Authentication},
 					nil,
@@ -243,8 +241,7 @@ func (suite *KeeperTestSuite) TestHandleMsgAddVerification() {
 							types.NewVerificationMethod(
 								"did:cosmos:cash:subject#key-1",
 								"did:cosmos:cash:subject",
-																types.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215}, types.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
-
+								types.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215}, types.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
 							),
 							[]string{types.Authentication},
 							nil,
@@ -257,8 +254,7 @@ func (suite *KeeperTestSuite) TestHandleMsgAddVerification() {
 					types.NewVerificationMethod(
 						"",
 						"did:cosmos:cash:subject",
-														types.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215}, types.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
-
+						types.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215}, types.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
 					),
 					[]string{types.Authentication},
 					nil,

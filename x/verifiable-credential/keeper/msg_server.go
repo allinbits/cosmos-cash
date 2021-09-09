@@ -102,7 +102,8 @@ func (k msgServer) validateIssuerIsInDidDoucment(
 		)
 	}
 
-	if !did.HasRelationship(signer, didtypes.Authentication) {
+	signerID := didtypes.NewBlockchainAccountID(ctx.ChainID(), signer)
+	if !did.HasRelationship(signerID, didtypes.Authentication) {
 		return sdkerrors.Wrapf(
 			types.ErrMessageSigner,
 			"signer is not in issuer did",

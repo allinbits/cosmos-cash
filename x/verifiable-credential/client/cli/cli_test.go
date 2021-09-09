@@ -167,6 +167,7 @@ func (s *IntegrationTestSuite) TestNewCreateVerifiableCredentialCmd() {
 			[]string{
 				"did:cash:1111",
 				"test-cred-1",
+				"did:cosmos:net:cash:issuerdid",
 				"secret",
 				"businessName",
 				"businessRegistrationNumber",

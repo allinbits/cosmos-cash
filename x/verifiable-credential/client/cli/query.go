@@ -6,6 +6,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/spf13/cobra"
 
 	"github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
@@ -110,16 +111,27 @@ func GetCmdQueryValidateVerifiableCredential() *cobra.Command {
 			}
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.QueryValidateVerifiableCredentialRequest{
-				VerifiableCredentialId: args[0],
-				IssuerPubkey:           args[1],
-			}
-			res, err := queryClient.ValidateVerifiableCredential(cmd.Context(), params)
+			// query to get the verifiable credential
+			params := &types.QueryVerifiableCredentialRequest{VerifiableCredentialId: args[0]}
+			res, err := queryClient.VerifiableCredential(cmd.Context(), params)
 			if err != nil {
 				return err
 			}
 
-			return clientCtx.PrintProto(res)
+			// check the returned credential is signed by the provided pubkey
+			var pk cryptotypes.PubKey
+			err = clientCtx.Codec.UnmarshalInterfaceJSON([]byte(args[1]), &pk)
+			if err != nil {
+				panic(err)
+			}
+
+			isValid := res.VerifiableCredential.Validate(pk)
+
+			result := &types.QueryValidateVerifiableCredentialResponse{
+				IsValid: isValid,
+			}
+
+			return clientCtx.PrintProto(result)
 		},
 	}
 

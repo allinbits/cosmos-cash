@@ -2,8 +2,11 @@ package keeper
 
 import (
 	"fmt"
+	"time"
 
+	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
 	"github.com/allinbits/cosmos-cash/x/issuer/types"
+	vctypes "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -16,38 +19,252 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateIssuer() {
 		malleate func()
 		expPass  bool
 	}{
-		// TODO: uncomment when the latest version of the cosmos-sdk is released
-		// Fixed by PR https://github.com/cosmos/cosmos-sdk/pull/9229
-		//	{
-		//		"PASS: issuer can be created",
-		//		func() { req = *types.NewMsgCreateIssuer("seuro", 100, "did:cash:1111") },
-		//		true,
-		//	},
+		{
+			"PASS: issuer can be created",
+			func() {
+				did := "did:cosmos:cash:subject"
+				vcID := "did:cosmos:cash:issuercred"
+				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
+					didtypes.NewVerification(
+						didtypes.NewVerificationMethod(
+							"did:cosmos:cash:subject#key-1",
+							"did:cosmos:cash:subject",
+							"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
+							didtypes.DIDVMethodTypeCosmosAccountAddress,
+						),
+						[]string{didtypes.Authentication},
+						nil,
+					),
+				))
+				circulationLimit, _ := sdk.NewIntFromString("1000")
+				coin := sdk.NewCoin("sEUR", circulationLimit)
+				cs := vctypes.NewLicenseCredentialSubject(
+					didDoc.Id,
+					"MICAEMI",
+					"IRL",
+					"Another Financial Services Body (AFFB)",
+					coin,
+				)
+
+				vc := vctypes.NewLicenseVerifiableCredential(
+					vcID,
+					didDoc.Id,
+					time.Now(),
+					cs,
+				)
+				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+				req = *types.NewMsgCreateIssuer(
+					didDoc.Id,
+					vc.Id,
+					"seuro",
+					100,
+					"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
+				)
+			},
+			true,
+		},
+		{
+			"FAIL: signer not in provided did document",
+			func() {
+				did := "did:cosmos:cash:subject"
+				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
+					didtypes.NewVerification(
+						didtypes.NewVerificationMethod(
+							"did:cosmos:cash:subject#key-1",
+							"did:cosmos:cash:subject",
+							"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
+							didtypes.DIDVMethodTypeCosmosAccountAddress,
+						),
+						[]string{didtypes.Authentication},
+						nil,
+					),
+				))
+				suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+				req = *types.NewMsgCreateIssuer(
+					didDoc.Id,
+					"any",
+					"seuro",
+					100,
+					"fail",
+				)
+			},
+			false,
+		},
+		{
+			"FAIL: verifiable credential not found in store",
+			func() {
+				did := "did:cosmos:cash:subject"
+				vcID := "did:cosmos:cash:issuercred"
+				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
+					didtypes.NewVerification(
+						didtypes.NewVerificationMethod(
+							"did:cosmos:cash:subject#key-1",
+							"did:cosmos:cash:subject",
+							"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
+							didtypes.DIDVMethodTypeCosmosAccountAddress,
+						),
+						[]string{didtypes.Authentication},
+						nil,
+					),
+				))
+				suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+				req = *types.NewMsgCreateIssuer(
+					didDoc.Id,
+					vcID,
+					"seuro",
+					100,
+					"fail",
+				)
+			},
+			false,
+		},
+		{
+			"FAIL: issuer id not correctly matching the provided did",
+			func() {
+				did := "did:cosmos:cash:subject"
+				vcID := "did:cosmos:cash:issuercred"
+				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
+					didtypes.NewVerification(
+						didtypes.NewVerificationMethod(
+							"did:cosmos:cash:subject#key-1",
+							"did:cosmos:cash:subject",
+							"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
+							didtypes.DIDVMethodTypeCosmosAccountAddress,
+						),
+						[]string{didtypes.Authentication},
+						nil,
+					),
+				))
+				circulationLimit, _ := sdk.NewIntFromString("1000")
+				coin := sdk.NewCoin("sEUR", circulationLimit)
+				cs := vctypes.NewLicenseCredentialSubject(
+					"incorrect:did",
+					"MICAEMI",
+					"IRL",
+					"Another Financial Services Body (AFFB)",
+					coin,
+				)
+
+				vc := vctypes.NewLicenseVerifiableCredential(
+					vcID,
+					didDoc.Id,
+					time.Now(),
+					cs,
+				)
+				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+				req = *types.NewMsgCreateIssuer(
+					didDoc.Id,
+					vc.Id,
+					"seuro",
+					100,
+					"fail",
+				)
+			},
+			false,
+		},
 		{
 			"FAIL: issuer already exists",
 			func() {
+				did := "did:cosmos:cash:subject"
+				vcID := "did:cosmos:cash:issuercred"
+				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
+					didtypes.NewVerification(
+						didtypes.NewVerificationMethod(
+							"did:cosmos:cash:subject#key-1",
+							"did:cosmos:cash:subject",
+							"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
+							didtypes.DIDVMethodTypeCosmosAccountAddress,
+						),
+						[]string{didtypes.Authentication},
+						nil,
+					),
+				))
+				circulationLimit, _ := sdk.NewIntFromString("1000")
+				coin := sdk.NewCoin("sEUR", circulationLimit)
+				cs := vctypes.NewLicenseCredentialSubject(
+					didDoc.Id,
+					"MICAEMI",
+					"IRL",
+					"Another Financial Services Body (AFFB)",
+					coin,
+				)
+
+				vc := vctypes.NewLicenseVerifiableCredential(
+					vcID,
+					didDoc.Id,
+					time.Now(),
+					cs,
+				)
+				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
 				issuer := types.Issuer{
-					Token:   "seuro",
-					Fee:     1,
-					Address: "did:cash:1111",
+					Token:     "seuro",
+					Fee:       1,
+					IssuerDid: didDoc.Id,
 				}
 
 				suite.keeper.SetIssuer(suite.ctx, issuer)
-				req = *types.NewMsgCreateIssuer("seuro", 100, "did:cash:1111")
+				req = *types.NewMsgCreateIssuer(
+					didDoc.Id,
+					vc.Id,
+					"seuro",
+					100,
+					"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
+				)
 			},
 			false,
 		},
 		{
 			"FAIL: issuer token already exists",
 			func() {
+				did := "did:cosmos:cash:subject"
+				vcID := "did:cosmos:cash:issuercred"
+				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
+					didtypes.NewVerification(
+						didtypes.NewVerificationMethod(
+							"did:cosmos:cash:subject#key-1",
+							"did:cosmos:cash:subject",
+							"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
+							didtypes.DIDVMethodTypeCosmosAccountAddress,
+						),
+						[]string{didtypes.Authentication},
+						nil,
+					),
+				))
+				circulationLimit, _ := sdk.NewIntFromString("1000")
+				coin := sdk.NewCoin("sEUR", circulationLimit)
+				cs := vctypes.NewLicenseCredentialSubject(
+					didDoc.Id,
+					"MICAEMI",
+					"IRL",
+					"Another Financial Services Body (AFFB)",
+					coin,
+				)
+
+				vc := vctypes.NewLicenseVerifiableCredential(
+					vcID,
+					didDoc.Id,
+					time.Now(),
+					cs,
+				)
+				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
 				issuer := types.Issuer{
-					Token:   "seuro",
-					Fee:     1,
-					Address: "did:cash:1112",
+					Token:     "seuro",
+					Fee:       1,
+					IssuerDid: didDoc.Id,
 				}
 
 				suite.keeper.SetIssuer(suite.ctx, issuer)
-				req = *types.NewMsgCreateIssuer("seuro", 100, "did:cash:1111")
+				req = *types.NewMsgCreateIssuer(
+					didDoc.Id,
+					vc.Id,
+					"seuro",
+					100,
+					"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
+				)
 			},
 			false,
 		},

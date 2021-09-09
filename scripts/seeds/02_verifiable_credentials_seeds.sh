@@ -16,6 +16,17 @@ cosmos-cashd tx verifiablecredential create-license-verifiable-credential \
 
 sleep 5
 
+echo "Creating key for user user1"
+echo 'y' | cosmos-cashd keys add user1
+
+echo "Creating verifiable credential for user :kyc'd user"
+cosmos-cashd tx verifiablecredential create-kyc-verifiable-credential \
+	did:cosmos:cash:user1 did:cosmos:cred:kyc1 did:cosmos:cash:vasp secret 1000 1000 1000  \
+	--from validator --chain-id cash -y
+
+
+sleep 5
+
 echo "Querying verifiable credentials"
 cosmos-cashd query verifiablecredential verifiable-credentials --output json | jq
 
@@ -28,8 +39,8 @@ sleep 5
 echo "Querying verifiable credentials"
 cosmos-cashd query verifiablecredential verifiable-credentials --output json | jq
 
-### FIXME: update to new key format in 0.43 SDK
-#echo "Validating verifiable credentials"
-#cosmos-cashd query verifiablecredential validate-verifiable-credential did:cosmos:cash:eurolicense-credential \
-#	$(cosmos-cashd keys show validator -p) --output json | jq
+sleep 5
 
+echo "Validating verifiable credentials"
+cosmos-cashd query verifiablecredential validate-verifiable-credential did:cosmos:cash:eurolicense-credential \
+	$(cosmos-cashd keys show validator -p) --output json | jq

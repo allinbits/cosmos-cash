@@ -18,102 +18,6 @@ import (
 	vcskeeper "github.com/allinbits/cosmos-cash/x/verifiable-credential/keeper"
 )
 
-// CheckIssuerCredentialsDecorator checks the issuer has a EMILicense in a preprocessing hook
-type CheckIssuerCredentialsDecorator struct {
-	issuerk keeper.Keeper
-	ik      didkeeper.Keeper
-	vcsk    vcskeeper.Keeper
-}
-
-func NewCheckIssuerCredentialsDecorator(
-	issuerk keeper.Keeper,
-	ik didkeeper.Keeper,
-	vcsk vcskeeper.Keeper,
-) CheckIssuerCredentialsDecorator {
-	return CheckIssuerCredentialsDecorator{
-		issuerk: issuerk,
-		ik:      ik,
-		vcsk:    vcsk,
-	}
-}
-
-// AnteHandle check issuer credentials
-// FIXME: fix this file
-func (cicd CheckIssuerCredentialsDecorator) AnteHandle(
-	ctx sdk.Context,
-	tx sdk.Tx,
-	simulate bool,
-	next sdk.AnteHandler,
-) (newCtx sdk.Context, err error) {
-	// TODO: improve logic here
-	//	for _, msg := range tx.GetMsgs() {
-	//		if msg.String() == "create-issuer" {
-	//			imsg := msg.(*types.MsgCreateIssuer)
-	//
-	//			signerDID := didtypes.DID(ctx.ChainID(), imsg.Owner)
-	//
-	//			// TODO: pass in the did URI as an arg {msg.Id}
-	//			// TODO: ensure this keeper can only read from store
-	//			did, found := cicd.ik.GetDidDocument(ctx, []byte(signerDID))
-	//			if !found {
-	//				return ctx, sdkerrors.Wrapf(
-	//					types.ErrDidDocumentDoesNotExist,
-	//					"did does not exists",
-	//				)
-	//			}
-	//
-	//			// verification authorization
-	//			if !did.HasRelationship(signerDID, didtypes.Authentication) {
-	//				return ctx, sdkerrors.Wrapf(
-	//					types.ErrIncorrectControllerOfDidDocument,
-	//					"msg sender not in auth array in did document",
-	//				)
-	//			}
-	//
-	//			// check if the did document has the issuer credential
-	//			hasIssuerCredential := false
-	//			for _, service := range did.Services {
-	//				// TODO use enum here
-	//				if service.Type == "IssuerCredential" {
-	//					// TODO: ensure this keeper can only read from store
-	//					vc, found := cicd.vcsk.GetVerifiableCredential(ctx, []byte(service.Id))
-	//					if !found {
-	//						return ctx, sdkerrors.Wrapf(
-	//							types.ErrIssuerFound,
-	//							"verifiable credential not found",
-	//						)
-	//					}
-	//
-	//					issuerCred := vc.GetUserCred()
-	//					if issuerCred.Id != signerDID {
-	//						return ctx, sdkerrors.Wrapf(
-	//							types.ErrIssuerFound,
-	//							"issuer id not correct",
-	//						)
-	//					}
-	//
-	//					//	if issuerCred.IsVerified == false {
-	//					//		return ctx, sdkerrors.Wrapf(
-	//					//			types.ErrIssuerFound,
-	//					//			"issuer is not verified",
-	//					//		)
-	//					//	}
-	//
-	//					hasIssuerCredential = true
-	//					// TODO: validate credential here has been issued by regulator
-	//				}
-	//			}
-	//			if !hasIssuerCredential {
-	//				return ctx, sdkerrors.Wrapf(
-	//					types.ErrIssuerFound,
-	//					"did document doesnt have a credential to create issuers",
-	//				)
-	//			}
-	//		}
-	//	}
-	return next(ctx, tx, simulate)
-}
-
 // CheckUserCredentialsDecorator checks the users has a KYCCredential in a preprocessing hook
 type CheckUserCredentialsDecorator struct {
 	accountk accountKeeper.AccountKeeper
@@ -232,19 +136,7 @@ func (cicd CheckUserCredentialsDecorator) AnteHandle(
 //		account := cicd.accountk.GetAccount(ctx, address)
 //		pubkey := account.GetPubKey()
 //
-//		s, err := base64.StdEncoding.DecodeString(vc.Proof.Signature)
-//		if err != nil {
-//			continue
-//		}
-//		emptyProof := vcstypes.NewProof("", "", "", "", "")
-//		vc.Proof = &emptyProof
-//
-//		// TODO: this is an expesive operation, could lead to DDOS
-//		// TODO: we can hash this and make this less expensive
-//		hasUserCredential = pubkey.VerifySignature(
-//			vc.GetBytes(),
-//			s,
-//		)
+//		hasUserCredential = vc.Validate(pubkey)
 //
 //		break
 //	}

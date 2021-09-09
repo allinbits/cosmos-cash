@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"encoding/base64"
 	"encoding/hex"
 	"fmt"
 	"time"
@@ -39,22 +38,24 @@ func GetTxCmd() *cobra.Command {
 // NewCreateKYCVerifiableCredentialCmd defines the command to create a new verifiable credential.
 func NewCreateKYCVerifiableCredentialCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     `create-kyc-verifiable-credential [did_url] [cred_id] [secret] [amount_per_transaction] [total_number_of_transactions] [total_transaction_amount]`,
+		Use:     `create-kyc-verifiable-credential [cred_subject] [cred_id] [issuer_did] [secret] [amount_per_transaction] [total_number_of_transactions] [total_transaction_amount]`,
 		Short:   "create decentralized verifiable-credential",
 		Example: "creates a verifiable credential for users",
-		Args:    cobra.ExactArgs(6),
+		Args:    cobra.ExactArgs(7),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
-			//cdc := codec.NewProtoCodec(clientCtx.InterfaceRegistry)
 			accAddr := clientCtx.GetFromAddress()
 			accAddrBech32 := accAddr.String()
 
-			secret := args[2]
+			credentialSubject := args[0]
+			credentialID := args[1]
+			issuerDid := args[2]
+			secret := args[3]
 
-			inputs := args[3:6]
+			inputs := args[4:7]
 
 			data := make([][]byte, len(inputs))
 			for i, v := range inputs {
@@ -70,37 +71,23 @@ func NewCreateKYCVerifiableCredentialCmd() *cobra.Command {
 			hexRoot := hex.EncodeToString(root)
 
 			cs := types.NewUserCredentialSubject(
-				args[0],
+				credentialSubject,
 				hexRoot,
 				true,
 			)
 			tm := time.Now()
 
 			vc := types.NewUserVerifiableCredential(
-				args[1],
-				accAddrBech32,
+				credentialID,
+				issuerDid,
 				tm,
 				cs,
 			)
 
-			// TODO: this could be expensive review this signing method
-			// TODO: we can hash this an make this less expensive
-			signature, pubKey, err := clientCtx.Keyring.SignByAddress(accAddr, vc.GetBytes())
-			if err != nil {
-				return err
-			}
-
-			p := types.NewProof(
-				pubKey.Type(),
-				tm.Format(time.RFC3339),
-				"assertionMethod",
-				accAddrBech32+"#keys-1",
-				base64.StdEncoding.EncodeToString(signature),
-			)
-			vc.Proof = &p
+			signedVc := vc.Sign(clientCtx.Keyring, accAddr, issuerDid)
 
 			msg := types.NewMsgCreateVerifiableCredential(
-				vc,
+				signedVc,
 				accAddrBech32,
 			)
 
@@ -156,28 +143,14 @@ func NewCreateLicenseVerifiableCredentialCmd() *cobra.Command {
 			vc := types.NewLicenseVerifiableCredential(
 				credentialID,
 				issuerDid,
-				tm,
+				tm.UTC(),
 				cs,
 			)
 
-			// TODO: this could be expensive review this signing method
-			// TODO: we can hash this an make this less expensive
-			signature, pubKey, err := clientCtx.Keyring.SignByAddress(accAddr, vc.GetBytes())
-			if err != nil {
-				return err
-			}
-
-			p := types.NewProof(
-				pubKey.Type(),
-				tm.Format(time.RFC3339),
-				"assertionMethod",
-				issuerDid+"#"+accAddrBech32,
-				base64.StdEncoding.EncodeToString(signature),
-			)
-			vc.Proof = &p
+			signedVc := vc.Sign(clientCtx.Keyring, accAddr, issuerDid)
 
 			msg := types.NewMsgCreateVerifiableCredential(
-				vc,
+				signedVc,
 				accAddrBech32,
 			)
 

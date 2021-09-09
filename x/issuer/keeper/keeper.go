@@ -21,21 +21,28 @@ type Keeper struct {
 	cdc      codec.Codec
 	storeKey sdk.StoreKey
 	memKey   sdk.StoreKey
-
-	bk bank.Keeper
+	// TODO: update to be the mint keeper from SDK
+	bk        bank.Keeper
+	didKeeper types.DidKeeper
+	vcKeeper  types.VcKeeper
 }
 
 func NewKeeper(
 	cdc codec.Codec,
 	storeKey,
 	memKey sdk.StoreKey,
+	// TODO: update to be the mint keeper from SDK
 	bk bank.Keeper,
+	didKeeper types.DidKeeper,
+	vcKeeper types.VcKeeper,
 ) *Keeper {
 	return &Keeper{
-		cdc:      cdc,
-		storeKey: storeKey,
-		memKey:   memKey,
-		bk:       bk,
+		cdc:       cdc,
+		storeKey:  storeKey,
+		memKey:    memKey,
+		bk:        bk,
+		didKeeper: didKeeper,
+		vcKeeper:  vcKeeper,
 	}
 }
 

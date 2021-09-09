@@ -2,11 +2,11 @@ package keeper
 
 import (
 	"context"
-	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
+	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
 	"github.com/allinbits/cosmos-cash/x/issuer/types"
 )
 
@@ -29,7 +29,44 @@ func (k msgServer) CreateIssuer(
 ) (*types.MsgCreateIssuerResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	_, found := k.Keeper.GetIssuer(ctx, []byte(msg.Owner))
+	// Check to see if the provided did is in the store
+	did, found := k.Keeper.didKeeper.GetDidDocument(ctx, []byte(msg.IssuerDid))
+	if !found {
+		return nil, sdkerrors.Wrapf(
+			types.ErrDidDocumentDoesNotExist,
+			"did does not exists",
+		)
+	}
+
+	// Check to see if the msg signer has a verification relationship in the did document
+	if !did.HasRelationship(msg.Owner, didtypes.Authentication) {
+		return nil, sdkerrors.Wrapf(
+			types.ErrIncorrectControllerOfDidDocument,
+			"msg sender not in auth array in did document",
+		)
+	}
+
+	// Check to see if the provided verifiable credential is in the store
+	vc, found := k.Keeper.vcKeeper.GetVerifiableCredential(ctx, []byte(msg.LicenseCredId))
+	if !found {
+		return nil, sdkerrors.Wrapf(
+			types.ErrIssuerFound,
+			"verifiable credential not found",
+		)
+	}
+
+	// Validate the credential subject ID the same as the provided did document
+	issuerCred := vc.GetLicenseCred()
+	if issuerCred.Id != did.Id {
+		return nil, sdkerrors.Wrapf(
+			types.ErrIssuerFound,
+			"issuer id not correct",
+		)
+	}
+
+	// TODO: validate credential was issued by a regulator
+
+	_, found = k.Keeper.GetIssuer(ctx, []byte(msg.IssuerDid))
 	if found {
 		return nil, sdkerrors.Wrapf(
 			types.ErrIssuerFound,
@@ -45,42 +82,16 @@ func (k msgServer) CreateIssuer(
 		)
 	}
 
-	// TODO: should the did URI be the issuer address
 	issuer := types.Issuer{
-		Token:   msg.Token,
-		Fee:     msg.Fee,
-		Address: msg.Owner,
+		Token:     msg.Token,
+		Fee:       msg.Fee,
+		IssuerDid: msg.IssuerDid,
 	}
 
 	k.Keeper.SetIssuer(ctx, issuer)
 
-	// TODO: remove the next 24 lines in favor of minting tokens using the mint command
-	circulatingSupply := 1000000000000
-
-	issuerToken := sdk.NewCoins(sdk.NewInt64Coin(msg.Token, int64(circulatingSupply)))
-
-	if err := k.bk.MintCoins(
-		ctx, types.ModuleName, issuerToken,
-	); err != nil {
-		return nil, sdkerrors.Wrapf(
-			types.ErrMintingTokens,
-			"cannot mint coins",
-		)
-	}
-
-	recipient, _ := sdk.AccAddressFromBech32(msg.Owner)
-
-	if err := k.bk.SendCoinsFromModuleToAccount(
-		ctx, types.ModuleName, recipient, issuerToken,
-	); err != nil {
-		return nil, sdkerrors.Wrapf(
-			types.ErrMintingTokens,
-			"cannot send tokens from module to issuer account",
-		)
-	}
-
 	ctx.EventManager().EmitEvent(
-		types.NewIssuerCreatedEvent(msg.Owner, msg.Token, fmt.Sprint(circulatingSupply)),
+		types.NewIssuerCreatedEvent(msg.Owner, msg.Token),
 	)
 
 	return &types.MsgCreateIssuerResponse{}, nil
@@ -111,7 +122,7 @@ func (k msgServer) BurnToken(
 	}
 
 	// sender is the issuer
-	sender, _ := sdk.AccAddressFromBech32(issuer.Address)
+	sender, _ := sdk.AccAddressFromBech32(msg.Owner)
 
 	if err := k.bk.SendCoinsFromAccountToModule(
 		ctx, sender, types.ModuleName, amounts,
@@ -171,7 +182,7 @@ func (k msgServer) MintToken(
 	}
 
 	// the recipient is the issuer itself
-	recipient, _ := sdk.AccAddressFromBech32(issuer.Address)
+	recipient, _ := sdk.AccAddressFromBech32(msg.Owner)
 
 	if err := k.bk.MintCoins(
 		ctx, types.ModuleName, amounts,

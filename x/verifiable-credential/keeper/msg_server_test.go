@@ -19,27 +19,89 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateVerifableCredential() {
 		expPass  bool
 	}{
 		{
-			"correctly creates vc",
+			"PASS: correctly creates vc",
 			func() {
+				did := "did:cosmos:cash:subject"
+				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
+					didtypes.NewVerification(
+						didtypes.NewVerificationMethod(
+							"did:cosmos:cash:subject#key-1",
+							"did:cosmos:cash:subject",
+							"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
+							didtypes.DIDVMethodTypeCosmosAccountAddress,
+						),
+						[]string{didtypes.Authentication},
+						nil,
+					),
+				))
 				cs := types.NewUserCredentialSubject(
-					"accAddr",
+					"did:cosmos:cred:cash:kyc",
 					"root",
 					true,
 				)
 
 				vc := types.NewUserVerifiableCredential(
 					"new-verifiable-cred-3",
-					"accAddr",
+					didDoc.Id,
 					time.Now(),
 					cs,
 				)
-				req = *types.NewMsgCreateVerifiableCredential(vc, "did:cash:1111")
+				suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+
+				req = *types.NewMsgCreateVerifiableCredential(vc, "cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a")
 			},
 			true,
 		},
 		{
-			"vc already exists",
+			"FAIL: signer is not in the DID",
 			func() {
+				did := "did:cosmos:cash:subject"
+				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
+					didtypes.NewVerification(
+						didtypes.NewVerificationMethod(
+							"did:cosmos:cash:subject#key-1",
+							"did:cosmos:cash:subject",
+							"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
+							didtypes.DIDVMethodTypeCosmosAccountAddress,
+						),
+						[]string{didtypes.Authentication},
+						nil,
+					),
+				))
+				cs := types.NewUserCredentialSubject(
+					"did:cosmos:cred:cash:kyc",
+					"root",
+					true,
+				)
+
+				vc := types.NewUserVerifiableCredential(
+					"new-verifiable-cred-3",
+					didDoc.Id,
+					time.Now(),
+					cs,
+				)
+				suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+
+				req = *types.NewMsgCreateVerifiableCredential(vc, "did:cash:1111")
+			},
+			false,
+		},
+		{
+			"FAIL: vc already exists",
+			func() {
+				did := "did:cosmos:cash:subject"
+				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
+					didtypes.NewVerification(
+						didtypes.NewVerificationMethod(
+							"did:cosmos:cash:subject#key-1",
+							"did:cosmos:cash:subject",
+							"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
+							didtypes.DIDVMethodTypeCosmosAccountAddress,
+						),
+						[]string{didtypes.Authentication},
+						nil,
+					),
+				))
 				cs := types.NewUserCredentialSubject(
 					"accAddr",
 					"root",
@@ -48,13 +110,14 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateVerifableCredential() {
 
 				vc := types.NewUserVerifiableCredential(
 					"new-verifiable-cred-3",
-					"accAddr",
+					didDoc.Id,
 					time.Now(),
 					cs,
 				)
+				suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
 				suite.keeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
 
-				req = *types.NewMsgCreateVerifiableCredential(vc, "did:cash:1111")
+				req = *types.NewMsgCreateVerifiableCredential(vc, "cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a")
 			},
 			false,
 		},

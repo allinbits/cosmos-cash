@@ -454,6 +454,8 @@ func New(
 		keys[issuertypes.StoreKey],
 		keys[issuertypes.MemStoreKey],
 		app.BankKeeper,
+		app.DidDocumentKeeper,
+		app.VcsKeeper,
 	)
 
 	/****  Module Options ****/

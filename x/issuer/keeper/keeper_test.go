@@ -12,6 +12,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
+	didkeeper "github.com/allinbits/cosmos-cash/x/did/keeper"
+	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
+	vckeeper "github.com/allinbits/cosmos-cash/x/verifiable-credential/keeper"
+	vctypes "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -30,6 +34,8 @@ type KeeperTestSuite struct {
 	ctx         sdk.Context
 	keeper      Keeper
 	queryClient types.QueryClient
+	didkeeper   didkeeper.Keeper
+	vckeeper    vckeeper.Keeper
 }
 
 // SetupTest creates a test suite to test the issuer
@@ -40,6 +46,10 @@ func (suite *KeeperTestSuite) SetupTest() {
 	keyBank := sdk.NewKVStoreKey(banktypes.StoreKey)
 	keyParams := sdk.NewKVStoreKey(paramtypes.StoreKey)
 	memKeyParams := sdk.NewKVStoreKey(paramtypes.TStoreKey)
+	keyVc := sdk.NewKVStoreKey(vctypes.StoreKey)
+	memKeyVc := sdk.NewKVStoreKey(vctypes.MemStoreKey)
+	keyDidDocument := sdk.NewKVStoreKey(didtypes.StoreKey)
+	memKeyDidDocument := sdk.NewKVStoreKey(didtypes.MemStoreKey)
 
 	db := dbm.NewMemDB()
 	ms := store.NewCommitMultiStore(db)
@@ -49,6 +59,10 @@ func (suite *KeeperTestSuite) SetupTest() {
 	ms.MountStoreWithDB(keyBank, sdk.StoreTypeIAVL, db)
 	ms.MountStoreWithDB(keyParams, sdk.StoreTypeIAVL, db)
 	ms.MountStoreWithDB(memKeyParams, sdk.StoreTypeIAVL, db)
+	ms.MountStoreWithDB(keyVc, sdk.StoreTypeIAVL, db)
+	ms.MountStoreWithDB(memKeyVc, sdk.StoreTypeIAVL, db)
+	ms.MountStoreWithDB(keyDidDocument, sdk.StoreTypeIAVL, db)
+	ms.MountStoreWithDB(memKeyDidDocument, sdk.StoreTypeIAVL, db)
 	_ = ms.LoadLatestVersion()
 
 	ctx := sdk.NewContext(ms, tmproto.Header{ChainID: "foochainid"}, true, nil)
@@ -86,18 +100,33 @@ func (suite *KeeperTestSuite) SetupTest() {
 		blockedAddrs,
 	)
 
+	didKeeper := didkeeper.NewKeeper(
+		marshaler,
+		keyDidDocument,
+		memKeyDidDocument,
+	)
+
+	vcKeeper := vckeeper.NewKeeper(
+		marshaler,
+		keyVc,
+		memKeyVc,
+		didKeeper,
+	)
+
 	k := NewKeeper(
 		marshaler,
 		keyIssuer,
 		memKeyIssuer,
 		BankKeeper,
+		didKeeper,
+		vcKeeper,
 	)
 
 	queryHelper := baseapp.NewQueryServerTestHelper(ctx, interfaceRegistry)
 	types.RegisterQueryServer(queryHelper, k)
 	queryClient := types.NewQueryClient(queryHelper)
 
-	suite.ctx, suite.keeper, suite.queryClient = ctx, *k, queryClient
+	suite.ctx, suite.keeper, suite.queryClient, suite.didkeeper, suite.vckeeper = ctx, *k, queryClient, *didKeeper, *vcKeeper
 }
 
 func TestKeeperTestSuite(t *testing.T) {
@@ -122,13 +151,13 @@ func (suite *KeeperTestSuite) TestGenericKeeperSetAndGet() {
 	}
 	for _, tc := range testCases {
 		suite.keeper.Set(suite.ctx,
-			[]byte(tc.issuer.Address),
+			[]byte(tc.issuer.IssuerDid),
 			[]byte{0x01},
 			tc.issuer,
 			suite.keeper.MarshalIssuer,
 		)
 		suite.keeper.Set(suite.ctx,
-			[]byte(tc.issuer.Address+"1"),
+			[]byte(tc.issuer.IssuerDid+"1"),
 			[]byte{0x01},
 			tc.issuer,
 			suite.keeper.MarshalIssuer,
@@ -137,7 +166,7 @@ func (suite *KeeperTestSuite) TestGenericKeeperSetAndGet() {
 			if tc.expPass {
 				_, found := suite.keeper.Get(
 					suite.ctx,
-					[]byte(tc.issuer.Address),
+					[]byte(tc.issuer.IssuerDid),
 					[]byte{0x01},
 					suite.keeper.UnmarshalIssuer,
 				)

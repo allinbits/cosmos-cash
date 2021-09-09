@@ -7,7 +7,7 @@ import (
 )
 
 func (k Keeper) SetIssuer(ctx sdk.Context, issuer types.Issuer) {
-	k.Set(ctx, []byte(issuer.Address), types.IssuerKey, issuer, k.MarshalIssuer)
+	k.Set(ctx, []byte(issuer.IssuerDid), types.IssuerKey, issuer, k.MarshalIssuer)
 	k.Set(ctx, []byte(issuer.Token), types.TokenKey, issuer, k.MarshalIssuer)
 }
 
@@ -17,7 +17,6 @@ func (k Keeper) GetIssuer(ctx sdk.Context, key []byte) (types.Issuer, bool) {
 }
 
 // GetIssuerByToken retrieve an issuer by it's key
-// TODO: this could be improved by only calling Get once in this file
 func (k Keeper) GetIssuerByToken(ctx sdk.Context, key []byte) (types.Issuer, bool) {
 	val, found := k.Get(ctx, key, types.TokenKey, k.UnmarshalIssuer)
 	return val.(types.Issuer), found
@@ -35,7 +34,7 @@ func (k Keeper) UnmarshalIssuer(value []byte) (interface{}, bool) {
 	//	return types.Issuer{}, false
 	//}
 
-	if issuer.Address == "" {
+	if issuer.IssuerDid == "" {
 		return types.Issuer{}, false
 	}
 

@@ -6,7 +6,6 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
-	"github.com/cosmos/cosmos-sdk/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -70,8 +69,8 @@ func NewLicenseVerifiableCredential(
 }
 
 // GetBytes is a helper for serializing
-func (m VerifiableCredential) GetBytes() []byte {
-	dAtA, _ := m.Marshal()
+func (vc VerifiableCredential) GetBytes() []byte {
+	dAtA, _ := vc.Marshal()
 	return dAtA
 }
 
@@ -96,7 +95,7 @@ func NewLicenseCredentialSubject(
 	licenseType string,
 	country string,
 	authority string,
-	circulationLimit types.Coin,
+	circulationLimit sdk.Coin,
 ) VerifiableCredential_LicenseCred {
 	return VerifiableCredential_LicenseCred{
 		&LicenseCredentialSubject{

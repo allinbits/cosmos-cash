@@ -18,12 +18,11 @@ const (
 )
 
 // NewIssuerCreatedEvent constructs a new issuer_created sdk.Event
-func NewIssuerCreatedEvent(issuer string, denom string, amount string) sdk.Event {
+func NewIssuerCreatedEvent(issuer string, denom string) sdk.Event {
 	return sdk.NewEvent(
 		EventTypeIssuerCreated,
 		sdk.NewAttribute(AttributeKeyIssuer, issuer),
 		sdk.NewAttribute(AttributeKeyDenom, denom),
-		sdk.NewAttribute(AttributeKeyAmount, amount),
 	)
 }
 

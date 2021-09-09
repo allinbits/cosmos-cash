@@ -24,7 +24,7 @@ func NewCredentialCreatedEvent(owner string, credentialID string) sdk.Event {
 	)
 }
 
-// NewCredentialCreatedEvent constructs a new credential_created sdk.Event
+// NewCredentialDeletedEvent constructs a new credential_deleted sdk.Event
 func NewCredentialDeletedEvent(owner string, credentialID string) sdk.Event {
 	return sdk.NewEvent(
 		EventTypeCredentialDeleted,

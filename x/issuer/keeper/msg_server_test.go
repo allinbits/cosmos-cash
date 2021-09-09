@@ -29,8 +29,7 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateIssuer() {
 						didtypes.NewVerificationMethod(
 							"did:cosmos:cash:subject#key-1",
 							"did:cosmos:cash:subject",
-							"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
-							didtypes.DIDVMethodTypeCosmosAccountAddress,
+							didtypes.NewBlockchainAccountID(suite.ctx.ChainID(), "cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a"),
 						),
 						[]string{didtypes.Authentication},
 						nil,
@@ -73,8 +72,7 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateIssuer() {
 						didtypes.NewVerificationMethod(
 							"did:cosmos:cash:subject#key-1",
 							"did:cosmos:cash:subject",
-							"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
-							didtypes.DIDVMethodTypeCosmosAccountAddress,
+							didtypes.NewBlockchainAccountID(suite.ctx.ChainID(), "cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a"),
 						),
 						[]string{didtypes.Authentication},
 						nil,
@@ -101,8 +99,7 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateIssuer() {
 						didtypes.NewVerificationMethod(
 							"did:cosmos:cash:subject#key-1",
 							"did:cosmos:cash:subject",
-							"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
-							didtypes.DIDVMethodTypeCosmosAccountAddress,
+							didtypes.NewBlockchainAccountID(suite.ctx.ChainID(), "cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a"),
 						),
 						[]string{didtypes.Authentication},
 						nil,
@@ -129,8 +126,7 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateIssuer() {
 						didtypes.NewVerificationMethod(
 							"did:cosmos:cash:subject#key-1",
 							"did:cosmos:cash:subject",
-							"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
-							didtypes.DIDVMethodTypeCosmosAccountAddress,
+							didtypes.NewBlockchainAccountID(suite.ctx.ChainID(), "cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a"),
 						),
 						[]string{didtypes.Authentication},
 						nil,
@@ -174,8 +170,7 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateIssuer() {
 						didtypes.NewVerificationMethod(
 							"did:cosmos:cash:subject#key-1",
 							"did:cosmos:cash:subject",
-							"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
-							didtypes.DIDVMethodTypeCosmosAccountAddress,
+							didtypes.NewBlockchainAccountID(suite.ctx.ChainID(), "cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a"),
 						),
 						[]string{didtypes.Authentication},
 						nil,
@@ -226,8 +221,7 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateIssuer() {
 						didtypes.NewVerificationMethod(
 							"did:cosmos:cash:subject#key-1",
 							"did:cosmos:cash:subject",
-							"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
-							didtypes.DIDVMethodTypeCosmosAccountAddress,
+							didtypes.NewBlockchainAccountID(suite.ctx.ChainID(), "cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a"),
 						),
 						[]string{didtypes.Authentication},
 						nil,

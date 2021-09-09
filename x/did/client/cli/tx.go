@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"encoding/hex"
 	"errors"
 	"fmt"
 
@@ -68,7 +67,7 @@ func NewCreateDidDocumentCmd() *cobra.Command {
 				return err
 			}
 			// did
-			did := types.DID(clientCtx.ChainID, args[0])
+			did := types.NewChainDID(clientCtx.ChainID, args[0])
 			// verification
 			signer := clientCtx.GetFromAddress()
 			// pubkey
@@ -88,17 +87,16 @@ func NewCreateDidDocumentCmd() *cobra.Command {
 				types.NewVerificationMethod(
 					vmID,
 					did,
-					hex.EncodeToString(pubKey.Bytes()),
-					vmType,
+					types.NewPublicKeyMultibase(pubKey.Bytes(), vmType),
 				),
 				[]string{types.Authentication},
 				nil,
 			)
 			// create the message
 			msg := types.NewMsgCreateDidDocument(
-				did,
-				[]*types.Verification{auth},
-				[]*types.Service{},
+				did.String(),
+				types.Verifications{auth},
+				types.Services{},
 				signer.String(),
 			)
 			// validate
@@ -141,7 +139,7 @@ func NewAddVerificationCmd() *cobra.Command {
 				return err
 			}
 			// document did
-			did := types.DID(clientCtx.ChainID, args[0])
+			did := types.NewChainDID(clientCtx.ChainID, args[0])
 			// verification method id
 			vmID := fmt.Sprint(did, "#",
 				sdk.MustBech32ifyAddressBytes(
@@ -154,15 +152,14 @@ func NewAddVerificationCmd() *cobra.Command {
 				types.NewVerificationMethod(
 					vmID,
 					did,
-					hex.EncodeToString(pk.Bytes()),
-					vmType,
+					types.NewPublicKeyMultibase(pk.Bytes(), vmType),
 				),
 				[]string{types.Authentication},
 				nil,
 			)
 			// add verification
 			msg := types.NewMsgAddVerification(
-				did,
+				did.String(),
 				verification,
 				signer.String(),
 			)
@@ -200,7 +197,7 @@ func NewAddServiceCmd() *cobra.Command {
 			// service parameters
 			serviceID, serviceType, endpoint := args[1], args[2], args[3]
 			// document did
-			did := types.DID(clientCtx.ChainID, args[0])
+			did := types.NewChainDID(clientCtx.ChainID, args[0])
 
 			service := types.NewService(
 				serviceID,
@@ -209,7 +206,7 @@ func NewAddServiceCmd() *cobra.Command {
 			)
 
 			msg := types.NewMsgAddService(
-				did,
+				did.String(),
 				service,
 				signer.String(),
 			)
@@ -239,15 +236,16 @@ func NewRevokeVerificationCmd() *cobra.Command {
 				return err
 			}
 			// document did
-			did := types.DID(clientCtx.ChainID, args[0])
+			did := types.NewChainDID(clientCtx.ChainID, args[0])
 			// signer
 			signer := clientCtx.GetFromAddress()
 			// verification method id
-			vmID := types.DID(clientCtx.ChainID, args[1])
+			// XXX: any vmID could be passed at this point
+			vmID := types.NewChainDID(clientCtx.ChainID, args[1])
 			// build the message
 			msg := types.NewMsgRevokeVerification(
-				did,
-				vmID,
+				did.String(),
+				vmID.String(),
 				signer.String(),
 			)
 			// validate
@@ -277,14 +275,14 @@ func NewDeleteServiceCmd() *cobra.Command {
 				return err
 			}
 			// document did
-			did := types.DID(clientCtx.ChainID, args[0])
+			did := types.NewChainDID(clientCtx.ChainID, args[0])
 			// signer
 			signer := clientCtx.GetFromAddress()
 			// service id
 			sID := args[1]
 
 			msg := types.NewMsgDeleteService(
-				did,
+				did.String(),
 				sID,
 				signer.String(),
 			)
@@ -315,18 +313,18 @@ func NewUpdateDidDocumentCmd() *cobra.Command {
 				return err
 			}
 			// document did
-			did := types.DID(clientCtx.ChainID, args[0])
+			did := types.NewChainDID(clientCtx.ChainID, args[0])
 
 			// did key to use as the controller
-			didKey := types.DIDKey(args[1])
+			didKey := types.NewKeyDID(args[1])
 
 			// signer
 			signer := clientCtx.GetFromAddress()
 
 			msg := types.NewMsgUpdateDidDocument(
-				did,
+				did.String(),
 				[]string{
-					didKey,
+					didKey.String(),
 				},
 				signer.String(),
 			)
@@ -354,8 +352,8 @@ func NewSetVerificationRelationshipCmd() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:     "set-verification-relationship [id] [method-id] --relationship NAME [--relationship NAME ...]",
-		Short:   "adds a verification relationship to a key on a decentralized identifier (did) document.",
-		Example: "add-verification-relationship vasp vasp#6f1e0700-6c86-41b6-9e05-ae3cf839cdd0",
+		Short:   "sets one or more verification relationships to a key on a decentralized identifier (did) document.",
+		Example: "set-verification-relationship vasp vasp#6f1e0700-6c86-41b6-9e05-ae3cf839cdd0 --relationship capabilityInvocation",
 		Args:    cobra.ExactArgs(2),
 
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -364,17 +362,17 @@ func NewSetVerificationRelationshipCmd() *cobra.Command {
 				return err
 			}
 			// document did
-			did := types.DID(clientCtx.ChainID, args[0])
+			did := types.NewChainDID(clientCtx.ChainID, args[0])
 
 			// method id
-			methodID := types.DID(clientCtx.ChainID, args[1])
+			methodID := types.NewChainDID(clientCtx.ChainID, args[1])
 
 			// signer
 			signer := clientCtx.GetFromAddress()
 
 			msg := types.NewMsgSetVerificationRelationships(
-				did,
-				methodID,
+				did.String(),
+				methodID.String(),
 				relationships,
 				signer.String(),
 			)

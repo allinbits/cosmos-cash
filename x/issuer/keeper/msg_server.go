@@ -39,7 +39,8 @@ func (k msgServer) CreateIssuer(
 	}
 
 	// Check to see if the msg signer has a verification relationship in the did document
-	if !did.HasRelationship(msg.Owner, didtypes.Authentication) {
+	ownerID := didtypes.NewBlockchainAccountID(ctx.ChainID(), msg.Owner)
+	if !did.HasRelationship(ownerID, didtypes.Authentication) {
 		return nil, sdkerrors.Wrapf(
 			types.ErrIncorrectControllerOfDidDocument,
 			"msg sender not in auth array in did document",

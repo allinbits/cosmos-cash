@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "Creating issuer for user: validator"
-cosmos-cashd tx issuer create-issuer did:cosmos:cash:vasp did:cosmos:cash:eurolicense-credential seuro 100 --from validator --chain-id cash -y
+cosmos-cashd tx issuer create-issuer did:cosmos:net:cash:vasp did:cosmos:net:cash:eurolicense-credential seuro 100 --from validator --chain-id cash -y
 
 sleep 5
 

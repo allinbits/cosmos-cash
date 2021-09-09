@@ -9,7 +9,6 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/allinbits/cosmos-cash/x/did/resolver"
 	"github.com/allinbits/cosmos-cash/x/did/types"
 )
 
@@ -45,7 +44,7 @@ func (k Keeper) DidDocument(
 			return nil, status.Error(codes.NotFound, fmt.Sprint("resolution failed for did: ", req.Id))
 		}
 		// auto-resolve the address
-		doc, meta, err := resolver.ResolveAccountDID(req.Id)
+		doc, meta, err := types.ResolveAccountDID(req.Id, ctx.ChainID())
 		if err != nil {
 			return nil, status.Error(codes.Unavailable, "cosmos address account resolution error")
 		}

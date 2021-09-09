@@ -3,14 +3,13 @@ package types
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	"encoding/json"
 	"fmt"
 	"regexp"
 	"sort"
 	"strings"
 	"time"
 
-	"github.com/cosmos/cosmos-sdk/codec/legacy"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -95,6 +94,11 @@ func (p VerificationMaterialType) String() string {
 	return string(p)
 }
 
+type VerificationMaterial interface {
+	EncodeToString() string
+	Type() VerificationMaterialType
+}
+
 /**
 Regexp generated using this ABNF specs and using https://abnf.msweet.org/index.php
 
@@ -128,22 +132,81 @@ var (
 	rfc3986Regexp          = regexp.MustCompile(rfc3986RegexpStr)
 )
 
-// DID format a DID from a method specific did
+// BlockchainAccountID formats an account address as per the CAIP-10 Account ID specification.
+// https://w3c.github.io/did-spec-registries/#blockchainaccountid
+// https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md
+type BlockchainAccountID string
+
+// EncodeToString returns the string representation of a blockchain account id
+func (baID BlockchainAccountID) EncodeToString() string {
+	return string(baID)
+}
+
+// Type returns the string representation of a blockchain account id
+func (baID BlockchainAccountID) Type() VerificationMaterialType {
+	return DIDVMethodTypeCosmosAccountAddress
+}
+
+// MatchAddress check if a blockchain id address matches another address
+// the match ignore the chain ID
+func (baID BlockchainAccountID) MatchAddress(address string) bool {
+	addrStart := strings.LastIndex(string(baID), ":")
+	if addrStart < 0 {
+		return false
+	}
+	return string(baID)[addrStart:] == address
+}
+
+// NewBlockchainAccountID build a new blockchain account ID struct
+func NewBlockchainAccountID(chainID, account string) BlockchainAccountID {
+	return BlockchainAccountID(fmt.Sprint("cosmos:", chainID, ":", account))
+}
+
+// PublicKeyMultibase formats an account address as per the CAIP-10 Account ID specification.
+// https://w3c.github.io/did-spec-registries/#publickeymultibase
+// https://datatracker.ietf.org/doc/html/draft-multiformats-multibase-03#appendix-B.1
+type PublicKeyMultibase struct {
+	data   []byte
+	vmType VerificationMaterialType
+}
+
+// EncodeToString returns the string representation of the key in hex format. F is the hex format prefix
+// https://datatracker.ietf.org/doc/html/draft-multiformats-multibase-03#appendix-B.1
+func (pkh PublicKeyMultibase) EncodeToString() string {
+	return string(fmt.Sprint("F", hex.EncodeToString(pkh.data)))
+}
+
+// Type the verification material type
+// https://datatracker.ietf.org/doc/html/draft-multiformats-multibase-03#appendix-B.1
+func (pkh PublicKeyMultibase) Type() VerificationMaterialType {
+	return pkh.vmType
+}
+
+// NewPublicKeyMultibase build a new blockchain account ID struct
+func NewPublicKeyMultibase(pubKey []byte, vmType VerificationMaterialType) PublicKeyMultibase {
+	return PublicKeyMultibase{
+		data:   pubKey,
+		vmType: vmType,
+	}
+}
+
+// DID identifies ad did string
+type DID string
+
+// NewChainDID format a DID from a method specific did
 // cfr.https://www.w3.org/TR/did-core/#did
-func DID(chainName, didID string) string {
-	return fmt.Sprint(DidPrefix, chainName, ":", didID)
+func NewChainDID(chainName, didID string) DID {
+	return DID(fmt.Sprint(DidChainPrefix, chainName, ":", didID))
 }
 
-func DIDKey(didMethodSpecificDidDocument string) string {
-	return fmt.Sprint(DidKeyPrefix, didMethodSpecificDidDocument)
+// NewKeyDID format a DID of type key
+func NewKeyDID(account string) DID {
+	return DID(fmt.Sprint(DidKeyPrefix, account))
 }
 
-// BlockchainAccountID return the account of the user with the chain id postfixed
-// https://w3c.github.io/did-spec-registries/#blockchainAccountId
-func BlockchainAccountID(account string) string {
-	//TODO: at the moment the app doesn't do anything but we
-	// might use the format suggested by the the specification
-	return account
+// String return the string representation of the did
+func (did DID) String() string {
+	return string(did)
 }
 
 // IsValidDID validate the input string according to the
@@ -238,6 +301,11 @@ func ValidateVerification(v *Verification, allowedControllers ...string) (err er
 	case *VerificationMethod_BlockchainAccountID:
 		if IsEmpty(x.BlockchainAccountID) {
 			err = sdkerrors.Wrapf(ErrInvalidInput, "verification material blockchain account id invalid for verification method %s", v.Method.Id)
+			return
+		}
+	case *VerificationMethod_PublicKeyMultibase:
+		if IsEmpty(x.PublicKeyMultibase) {
+			err = sdkerrors.Wrapf(ErrInvalidInput, "verification material multibase pubkey invalid for verification method %s", v.Method.Id)
 			return
 		}
 	case *VerificationMethod_PublicKeyHex:
@@ -513,45 +581,29 @@ func (didDoc DidDocument) GetVerificationRelationships(methodID string) []string
 
 // HasRelationship verifies if a controller did
 // exists for at least one of the relationships in the did document
+// the account
 func (didDoc DidDocument) HasRelationship(
-	signer string,
+	signer BlockchainAccountID,
 	relationships ...string,
 ) bool {
 	// first check if the controller exists
 	for _, vm := range didDoc.VerificationMethod {
-
 		switch k := vm.VerificationMaterial.(type) {
 		case *VerificationMethod_BlockchainAccountID:
-			if BlockchainAccountID(k.BlockchainAccountID) != BlockchainAccountID(signer) {
+			if k.BlockchainAccountID != signer.EncodeToString() {
+				continue
+			}
+		case *VerificationMethod_PublicKeyMultibase:
+			addr, err := toAddress(k.PublicKeyMultibase[1:])
+			if err != nil || signer.MatchAddress(addr) {
 				continue
 			}
 		case *VerificationMethod_PublicKeyHex:
-			// decode the pub key
-			pkb, err := hex.DecodeString(k.PublicKeyHex)
-			if err != nil {
-				continue
-			}
-			// deal with the amino prefix
-			pka, err := hex.DecodeString(fmt.Sprintf("eb5ae987%x", len(pkb)))
-			if err != nil {
-				continue
-			}
-			pka = append(pka, pkb...)
-			// load the pubkey
-			pk, err := legacy.PubKeyFromBytes(pka)
-			if err != nil {
-				continue
-			}
-			// generate the address
-			addr, err := sdk.Bech32ifyAddressBytes(sdk.GetConfig().GetBech32AccountAddrPrefix(), pk.Address())
-			if err != nil {
-				continue
-			}
-			if BlockchainAccountID(addr) != BlockchainAccountID(signer) {
+			addr, err := toAddress(k.PublicKeyHex)
+			if err != nil || signer.MatchAddress(addr) {
 				continue
 			}
 		}
-
 		vrs := didDoc.GetVerificationRelationships(vm.Id)
 		if len(intersection(vrs, relationships)) > 0 {
 			return true
@@ -638,37 +690,21 @@ func NewVerification(
 }
 
 // NewVerificationMethod build a new verification method
-func NewVerificationMethod(id, controller, key string, vmt VerificationMaterialType) VerificationMethod {
+func NewVerificationMethod(id string, controller DID, vmr VerificationMaterial) VerificationMethod {
 	vm := VerificationMethod{
 		Id:         id,
-		Controller: controller,
-		Type:       string(vmt),
+		Controller: controller.String(),
+		Type:       string(vmr.Type()),
 	}
-	switch vmt {
+	switch vmr.Type() {
 	case DIDVMethodTypeCosmosAccountAddress:
-		vm.VerificationMaterial = &VerificationMethod_BlockchainAccountID{key}
+		vm.VerificationMaterial = &VerificationMethod_BlockchainAccountID{vmr.EncodeToString()}
 	case DIDVMethodTypeEd25519VerificationKey2018, DIDVMethodTypeEcdsaSecp256k1VerificationKey2019:
-		vm.VerificationMaterial = &VerificationMethod_PublicKeyHex{key}
+		vm.VerificationMaterial = &VerificationMethod_PublicKeyMultibase{vmr.EncodeToString()}
 	default:
-		vm.VerificationMaterial = &VerificationMethod_PublicKeyHex{key}
+		vm.VerificationMaterial = &VerificationMethod_PublicKeyMultibase{vmr.EncodeToString()}
 	}
 	return vm
-
-}
-
-// MarshalJSON implements a custom marshaller for rendergin verification material
-func (vm VerificationMethod) MarshalJSON() ([]byte, error) {
-	vmd := make(map[string]string, 4)
-	vmd["id"] = vm.Id
-	vmd["controller"] = vm.Controller
-	vmd["type"] = vm.Type
-	switch m := vm.VerificationMaterial.(type) {
-	case *VerificationMethod_BlockchainAccountID:
-		vmd["blockchainAccountId"] = m.BlockchainAccountID
-	case *VerificationMethod_PublicKeyHex:
-		vmd["publicKeyHex"] = m.PublicKeyHex
-	}
-	return json.Marshal(vmd)
 }
 
 // GetBytes is a helper for serializing
@@ -704,6 +740,55 @@ func UpdateDidMetadata(meta *DidMetadata, versionData []byte, updated time.Time)
 	txH := sha256.Sum256(versionData)
 	meta.VersionId = hex.EncodeToString(txH[:])
 	meta.Updated = &updated
+}
+
+// ResolveAccountDID generates a DID document from an address
+func ResolveAccountDID(did, chainID string) (didDoc DidDocument, didMeta DidMetadata, err error) {
+	if !IsValidDIDKeyFormat(did) {
+		err = ErrInvalidDidMethodFormat
+		return
+	}
+	account := strings.TrimPrefix(did, DidKeyPrefix)
+	// compose the metadata
+	didMeta = NewDidMetadata([]byte(account), time.Now())
+	// compose the did document
+	didDoc, err = NewDidDocument(did, WithVerifications(
+		NewVerification(
+			NewVerificationMethod(
+				fmt.Sprint(did, "#", account),
+				DID(did), // the controller is the same as the did subject
+				NewBlockchainAccountID(chainID, did),
+			),
+			[]string{
+				Authentication,
+				KeyAgreement,
+				AssertionMethod,
+				CapabilityInvocation,
+				CapabilityDelegation,
+			},
+			nil,
+		),
+	))
+	return
+}
+
+// toAddress encode a kexKey string to cosmos based address
+func toAddress(hexKey string) (addr string, err error) {
+	// decode the hex string
+	pkb, err := hex.DecodeString(hexKey)
+	if err != nil {
+		return
+	}
+	// check the size of the decoded byte slice, otherwise the pk.Address will panic
+	if len(pkb) != secp256k1.PubKeySize {
+		err = fmt.Errorf("invalid public key size")
+		return
+	}
+	// load the public key
+	pk := &secp256k1.PubKey{Key: pkb}
+	// generate the address
+	addr, err = sdk.Bech32ifyAddressBytes(sdk.GetConfig().GetBech32AccountAddrPrefix(), pk.Address())
+	return
 }
 
 // union perform union, distinct amd sort operation between two slices

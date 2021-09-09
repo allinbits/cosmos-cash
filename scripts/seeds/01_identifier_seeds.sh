@@ -22,9 +22,10 @@ cosmos-cashd tx did add-service vasp new-verifiable-cred-3 KYCCredential cosmos-
 sleep 5
 
 vmID=$(cosmos-cashd query did dids --output json | jq '.didDocuments[0].verificationMethod[1].id')
-vmID=${vmID:17:-1}
+echo "full method ID $vmID"
+vmID=${vmID:21:-1}
 
-echo "Adding a verification relationship from decentralized did for user: validator"
+echo "Adding a verification relationship from decentralized did for user: validator and verificaiton method $vmID"
 cosmos-cashd tx did set-verification-relationship vasp $vmID --relationship assertionMethod --relationship capabilityInvocation --from validator --chain-id cash -y
 
 echo "Querying dids"

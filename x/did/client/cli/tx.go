@@ -352,8 +352,8 @@ func NewSetVerificationRelationshipCmd() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:     "set-verification-relationship [id] [method-id] --relationship NAME [--relationship NAME ...]",
-		Short:   "adds a verification relationship to a key on a decentralized identifier (did) document.",
-		Example: "add-verification-relationship vasp vasp#6f1e0700-6c86-41b6-9e05-ae3cf839cdd0",
+		Short:   "sets one or more verification relationships to a key on a decentralized identifier (did) document.",
+		Example: "set-verification-relationship vasp vasp#6f1e0700-6c86-41b6-9e05-ae3cf839cdd0 --relationship capabilityInvocation",
 		Args:    cobra.ExactArgs(2),
 
 		RunE: func(cmd *cobra.Command, args []string) error {

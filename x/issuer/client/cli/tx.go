@@ -36,10 +36,10 @@ func GetTxCmd() *cobra.Command {
 // NewCreateIssuerCmd defines the command to create a new IBC light client.
 func NewCreateIssuerCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "create-issuer [did] [token] [fee]",
+		Use:     "create-issuer [did] [license_cred_id] [token] [fee]",
 		Short:   "create an issuer of an e-money token",
 		Example: "creates an issuer of an e-money token",
-		Args:    cobra.ExactArgs(2),
+		Args:    cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -48,10 +48,15 @@ func NewCreateIssuerCmd() *cobra.Command {
 
 			accAddr := clientCtx.GetFromAddress()
 			accAddrBech32 := accAddr.String()
+			issuerDid := args[0]
+			licenseCred := args[1]
+			token := args[2]
+			fee, _ := strconv.ParseInt(args[3], 0, 32)
 
-			fee, _ := strconv.ParseInt(args[1], 0, 32)
 			msg := types.NewMsgCreateIssuer(
-				args[0],
+				issuerDid,
+				licenseCred,
+				token,
 				int32(fee),
 				accAddrBech32,
 			)
@@ -144,7 +149,6 @@ func NewMintCommand() *cobra.Command {
 }
 
 // TODO: extra commands:
-//		Use:     "deposit-emoney [did] [token] [fee]",
-//		Use:     "widthdraw-emoney [did] [token] [fee]",
+//		Use:     "widthdraw-emoney [did] [token] [amount]",
 //		Use:     "freeze-all-emoney-tokens [did] [token] [fee]",
 //		Use:     "freeze-account-with-emoney [did] [token] [fee]",

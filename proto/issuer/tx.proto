@@ -18,9 +18,11 @@ message MsgCreateIssuer {
   option (gogoproto.equal)           = false;
   option (gogoproto.goproto_getters) = false;
 
-  string    token        = 1; 
-  int32     fee          = 2; 
-  string    owner        = 3;
+  string    token       	= 1; 
+  int32     fee         	= 2; 
+  string    issuer_did   	= 3; 
+  string    license_cred_id   	= 4; 
+  string    owner        	= 5;
 }
 
 message MsgCreateIssuerResponse {}

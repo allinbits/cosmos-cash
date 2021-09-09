@@ -16,14 +16,18 @@ var _ sdk.Msg = &MsgCreateIssuer{}
 
 // NewMsgCreateIssuer creates a new MsgCreateIssuer instance
 func NewMsgCreateIssuer(
+	issuerDid string,
+	licenseCredID string,
 	token string,
 	fee int32,
 	owner string,
 ) *MsgCreateIssuer {
 	return &MsgCreateIssuer{
-		Token: token,
-		Fee:   fee,
-		Owner: owner,
+		IssuerDid:     issuerDid,
+		LicenseCredId: licenseCredID,
+		Token:         token,
+		Fee:           fee,
+		Owner:         owner,
 	}
 }
 

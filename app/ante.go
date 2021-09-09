@@ -39,7 +39,6 @@ func NewAnteHandler(
 		authante.NewSigGasConsumeDecorator(ak, sigGasConsumer),
 		authante.NewSigVerificationDecorator(ak, signModeHandler),
 		authante.NewIncrementSequenceDecorator(ak),
-		issuerante.NewCheckIssuerCredentialsDecorator(ik, dk, vcsk),
 		issuerante.NewCheckUserCredentialsDecorator(ak, ik, dk, vcsk),
 	)
 }

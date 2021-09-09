@@ -9,5 +9,5 @@ import "gogoproto/gogo.proto";
 message Issuer {
   string token = 1;
   int32 fee = 2;
-  string address = 3;
+  string issuer_did = 3;
 }

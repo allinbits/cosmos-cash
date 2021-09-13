@@ -1,0 +1,26 @@
+syntax = "proto3";
+package allinbits.cosmoscash.regulator;
+
+// this line is used by starport scaffolding # genesis/proto/import
+
+option go_package = "github.com/allinbits/cosmos-cash/x/regulator/types";
+
+import "gogoproto/gogo.proto";
+
+// GenesisState defines the regulator module's genesis state.
+message GenesisState {
+    // this line is used by starport scaffolding # genesis/proto/state
+    // this line is used by starport scaffolding # ibc/genesis/proto
+    Regulators regulators  = 1;
+}
+
+
+// RegulatorsParams defines the addresses of the regulators
+message Regulators {
+    // the addresses of the regualtors for the chain. The addresses will be used to 
+    // generate DID documents at genesis.
+    repeated string addresses = 2 [
+        (gogoproto.jsontag)     = "addresses,omitempty",
+        (gogoproto.moretags)    = "yaml:\"addresses\""
+    ];
+}

@@ -4,10 +4,21 @@ package allinbits.cosmoscash.issuer;
 option go_package = "github.com/allinbits/cosmos-cash/x/issuer/types";
 
 // this line is used by starport scaffolding # genesis/proto/import
-import "did/did.proto";
+import "gogoproto/gogo.proto";
 
 // GenesisState defines the issuer module's genesis state.
 message GenesisState {
     // this line is used by starport scaffolding # genesis/proto/state
-    allinbits.cosmoscash.did.DidDocument regulator_did_document  = 1;
+    RegulatorsParams regulators_params  = 1;
+}
+
+
+// RegulatorsParams defines the addresses of the regulators
+message RegulatorsParams {
+    // the addresses of the regualtors for the chain. The addresses will be used to 
+    // generate DID documents at genesis.
+    repeated string addresses = 2 [
+        (gogoproto.jsontag)     = "addresses,omitempty",
+        (gogoproto.moretags)    = "yaml:\"addresses\""
+    ];
 }

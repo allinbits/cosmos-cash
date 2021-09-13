@@ -19,7 +19,7 @@ import (
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	"github.com/spf13/cobra"
 
-	issuertypes "github.com/allinbits/cosmos-cash/x/issuer/types"
+	regulatortypes "github.com/allinbits/cosmos-cash/x/regulator/types"
 )
 
 const (
@@ -166,12 +166,12 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 			appState[banktypes.ModuleName] = bankGenStateBz
 
 			// load genesis state
-			issuerGenState := issuertypes.DefaultGenesis(regulatorsAddresses...)
-			issuerGenStateBz, err := cdc.MarshalJSON(issuerGenState)
+			regulatorGenState := regulatortypes.DefaultGenesis(regulatorsAddresses...)
+			regulatorGenStateBz, err := cdc.MarshalJSON(regulatorGenState)
 			if err != nil {
-				return fmt.Errorf("failed to marshal issuer genesis state: %w", err)
+				return fmt.Errorf("failed to marshal regulator genesis state: %w", err)
 			}
-			appState[issuertypes.ModuleName] = issuerGenStateBz
+			appState[regulatortypes.ModuleName] = regulatorGenStateBz
 
 			appStateJSON, err := json.Marshal(appState)
 			if err != nil {

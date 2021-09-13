@@ -4,23 +4,21 @@ import (
 	"encoding/json"
 	"fmt"
 
-	// this line is used by starport scaffolding # 1
-
-	"github.com/gorilla/mux"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"github.com/spf13/cobra"
-
-	abci "github.com/tendermint/tendermint/abci/types"
-
-	"github.com/allinbits/cosmos-cash/x/regulator/client/cli"
-	"github.com/allinbits/cosmos-cash/x/regulator/keeper"
-	"github.com/allinbits/cosmos-cash/x/regulator/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	// this line is used by starport scaffolding # ibc/module/import
+
+	// this line is used by starport scaffolding # 1
+	"github.com/gorilla/mux"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+	"github.com/spf13/cobra"
+	abci "github.com/tendermint/tendermint/abci/types"
+
+	"github.com/allinbits/cosmos-cash/x/regulator/client/cli"
+	"github.com/allinbits/cosmos-cash/x/regulator/keeper"
+	"github.com/allinbits/cosmos-cash/x/regulator/types"
 )
 
 var (

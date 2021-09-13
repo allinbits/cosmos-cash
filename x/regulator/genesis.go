@@ -1,10 +1,11 @@
 package regulator
 
 import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
 	"github.com/allinbits/cosmos-cash/x/regulator/keeper"
 	"github.com/allinbits/cosmos-cash/x/regulator/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // DefaultGenesis returns the default issuer genesis state
@@ -45,10 +46,4 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	// this line is used by starport scaffolding # ibc/genesis/export
 
 	return genesis
-}
-
-// Validate performs basic genesis state validation returning an error upon any
-// failure.
-func ValidateGenesis(gs *types.GenesisState) error {
-
 }

@@ -8,7 +8,6 @@ import (
 	bank "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	"github.com/tendermint/tendermint/libs/log"
 
-	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
 	"github.com/allinbits/cosmos-cash/x/issuer/types"
 )
 
@@ -49,19 +48,6 @@ func NewKeeper(
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
-}
-
-// SetDidDocumentWithMeta set a did document with did metadata
-func (k Keeper) SetDidDocumentWithMeta(ctx sdk.Context, didDoc didtypes.DidDocument, didMeta didtypes.DidMetadata) {
-	k.didKeeper.SetDidDocumentWithMeta(ctx, didDoc, didMeta)
-}
-
-// SetRegulatorsParams sets a protocol buffer object in the db with a prefixed key
-func (k Keeper) SetRegulatorsParams(ctx sdk.Context,
-	params *types.RegulatorsParams,
-) {
-	store := ctx.KVStore(k.storeKey)
-	store.Set(types.ParamStoreKeyRegulatorsParams, k.cdc.MustMarshal(params))
 }
 
 // Set sets a value in the db with a prefixed key

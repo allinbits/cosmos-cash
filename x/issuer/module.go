@@ -4,8 +4,6 @@ import ( // this line is used by starport scaffolding # 1
 	"encoding/json"
 	"fmt"
 
-	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -144,21 +142,6 @@ func (am AppModule) RegisterInvariants(_ sdk.InvariantRegistry) {}
 func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.RawMessage) []abci.ValidatorUpdate {
 	var genesisState types.GenesisState
 	cdc.MustUnmarshalJSON(data, &genesisState)
-	// get the regulator parameters
-	rp := genesisState.GetRegulatorsParams()
-	// store the list of regulators
-	am.keeper.SetRegulatorsParams(ctx, rp)
-	// for each address generate a did and store it
-	for _, ra := range rp.GetAddresses() {
-		// build the did document and metadata
-		didDoc, _ := didtypes.NewDidDocument(
-			didtypes.NewChainDID(ctx.ChainID(), ra),
-			didtypes.WithControllers(didtypes.NewKeyDID(ra).String()),
-		)
-		didMeta := didtypes.NewDidMetadata(ctx.TxBytes(), ctx.BlockTime())
-		// store the document
-		am.keeper.SetDidDocumentWithMeta(ctx, didDoc, didMeta)
-	}
 	// InitGenesis(ctx, am.accountKeeper, am.bankKeeper, am.keeper, &genesisState)
 	return []abci.ValidatorUpdate{}
 }

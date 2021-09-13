@@ -398,17 +398,22 @@ func WithControllers(controllers ...string) DidDocumentOption {
 	}
 }
 
-// NewDidDocument constructs a new DidDocument
-func NewDidDocument(id string, options ...DidDocumentOption) (did DidDocument, err error) {
+// IndexKey returns the a byte key to be used in serialization
+func (didDoc DidDocument) IndexKey() []byte {
+	return []byte(didDoc.Id)
+}
 
-	if !IsValidDID(id) {
+// NewDidDocument constructs a new DidDocument
+func NewDidDocument(id DID, options ...DidDocumentOption) (did DidDocument, err error) {
+
+	if !IsValidDID(id.String()) {
 		err = sdkerrors.Wrapf(ErrInvalidDIDFormat, "did %s", id)
 		return
 	}
 
 	did = DidDocument{
 		Context: []string{contextDIDBase},
-		Id:      id,
+		Id:      id.String(),
 	}
 	// apply all the options
 	for _, fn := range options {
@@ -743,12 +748,12 @@ func UpdateDidMetadata(meta *DidMetadata, versionData []byte, updated time.Time)
 }
 
 // ResolveAccountDID generates a DID document from an address
-func ResolveAccountDID(did, chainID string) (didDoc DidDocument, didMeta DidMetadata, err error) {
-	if !IsValidDIDKeyFormat(did) {
+func ResolveAccountDID(did DID, chainID string) (didDoc DidDocument, didMeta DidMetadata, err error) {
+	if !IsValidDIDKeyFormat(did.String()) {
 		err = ErrInvalidDidMethodFormat
 		return
 	}
-	account := strings.TrimPrefix(did, DidKeyPrefix)
+	account := strings.TrimPrefix(did.String(), DidKeyPrefix)
 	// compose the metadata
 	didMeta = NewDidMetadata([]byte(account), time.Now())
 	// compose the did document
@@ -757,7 +762,7 @@ func ResolveAccountDID(did, chainID string) (didDoc DidDocument, didMeta DidMeta
 			NewVerificationMethod(
 				fmt.Sprint(did, "#", account),
 				DID(did), // the controller is the same as the did subject
-				NewBlockchainAccountID(chainID, did),
+				NewBlockchainAccountID(chainID, account),
 			),
 			[]string{
 				Authentication,

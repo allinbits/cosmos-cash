@@ -22,7 +22,7 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateVerifableCredential() {
 			"PASS: correctly creates vc",
 			func() {
 				did := "did:cosmos:cash:subject"
-				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
+				didDoc, _ := didtypes.NewDidDocument(didtypes.DID(did), didtypes.WithVerifications(
 					didtypes.NewVerification(
 						didtypes.NewVerificationMethod(
 							"did:cosmos:cash:subject#key-1",
@@ -55,7 +55,7 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateVerifableCredential() {
 			"FAIL: signer is not in the DID",
 			func() {
 				did := "did:cosmos:cash:subject"
-				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
+				didDoc, _ := didtypes.NewDidDocument(didtypes.DID(did), didtypes.WithVerifications(
 					didtypes.NewVerification(
 						didtypes.NewVerificationMethod(
 							"did:cosmos:cash:subject#key-1",
@@ -88,7 +88,7 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateVerifableCredential() {
 			"FAIL: vc already exists",
 			func() {
 				did := "did:cosmos:cash:subject"
-				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
+				didDoc, _ := didtypes.NewDidDocument(didtypes.DID(did), didtypes.WithVerifications(
 					didtypes.NewVerification(
 						didtypes.NewVerificationMethod(
 							"did:cosmos:cash:subject#key-1",
@@ -148,7 +148,7 @@ func (suite *KeeperTestSuite) TestMsgSeverDeleteVerifableCredential() {
 			"PASS: correctly deletes vc",
 			func() {
 				did := "did:cosmos:cash:subject"
-				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
+				didDoc, _ := didtypes.NewDidDocument(didtypes.DID(did), didtypes.WithVerifications(
 					didtypes.NewVerification(
 						didtypes.NewVerificationMethod(
 							"did:cosmos:cash:subject#key-1",
@@ -182,7 +182,7 @@ func (suite *KeeperTestSuite) TestMsgSeverDeleteVerifableCredential() {
 			"FAIL: vc issuer and did id do not match",
 			func() {
 				did := "did:cosmos:cash:subject"
-				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
+				didDoc, _ := didtypes.NewDidDocument(didtypes.DID(did), didtypes.WithVerifications(
 					didtypes.NewVerification(
 						didtypes.NewVerificationMethod(
 							"did:cosmos:cash:subject#key-1",
@@ -216,7 +216,7 @@ func (suite *KeeperTestSuite) TestMsgSeverDeleteVerifableCredential() {
 			"FAIL: vc does not exist",
 			func() {
 				did := "did:cosmos:cash:subject"
-				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
+				didDoc, _ := didtypes.NewDidDocument(didtypes.DID(did), didtypes.WithVerifications(
 					didtypes.NewVerification(
 						didtypes.NewVerificationMethod(
 							"did:cosmos:cash:subject#key-1",

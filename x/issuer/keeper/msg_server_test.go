@@ -24,7 +24,7 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateIssuer() {
 			func() {
 				did := "did:cosmos:cash:subject"
 				vcID := "did:cosmos:cash:issuercred"
-				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
+				didDoc, _ := didtypes.NewDidDocument(didtypes.DID(did), didtypes.WithVerifications(
 					didtypes.NewVerification(
 						didtypes.NewVerificationMethod(
 							"did:cosmos:cash:subject#key-1",
@@ -67,7 +67,7 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateIssuer() {
 			"FAIL: signer not in provided did document",
 			func() {
 				did := "did:cosmos:cash:subject"
-				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
+				didDoc, _ := didtypes.NewDidDocument(didtypes.DID(did), didtypes.WithVerifications(
 					didtypes.NewVerification(
 						didtypes.NewVerificationMethod(
 							"did:cosmos:cash:subject#key-1",
@@ -94,7 +94,7 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateIssuer() {
 			func() {
 				did := "did:cosmos:cash:subject"
 				vcID := "did:cosmos:cash:issuercred"
-				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
+				didDoc, _ := didtypes.NewDidDocument(didtypes.DID(did), didtypes.WithVerifications(
 					didtypes.NewVerification(
 						didtypes.NewVerificationMethod(
 							"did:cosmos:cash:subject#key-1",
@@ -121,7 +121,7 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateIssuer() {
 			func() {
 				did := "did:cosmos:cash:subject"
 				vcID := "did:cosmos:cash:issuercred"
-				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
+				didDoc, _ := didtypes.NewDidDocument(didtypes.DID(did), didtypes.WithVerifications(
 					didtypes.NewVerification(
 						didtypes.NewVerificationMethod(
 							"did:cosmos:cash:subject#key-1",
@@ -165,7 +165,7 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateIssuer() {
 			func() {
 				did := "did:cosmos:cash:subject"
 				vcID := "did:cosmos:cash:issuercred"
-				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
+				didDoc, _ := didtypes.NewDidDocument(didtypes.DID(did), didtypes.WithVerifications(
 					didtypes.NewVerification(
 						didtypes.NewVerificationMethod(
 							"did:cosmos:cash:subject#key-1",
@@ -216,7 +216,7 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateIssuer() {
 			func() {
 				did := "did:cosmos:cash:subject"
 				vcID := "did:cosmos:cash:issuercred"
-				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
+				didDoc, _ := didtypes.NewDidDocument(didtypes.DID(did), didtypes.WithVerifications(
 					didtypes.NewVerification(
 						didtypes.NewVerificationMethod(
 							"did:cosmos:cash:subject#key-1",

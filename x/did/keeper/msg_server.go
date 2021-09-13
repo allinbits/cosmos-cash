@@ -31,7 +31,8 @@ func (k msgServer) CreateDidDocument(
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// setup a new did document (performs input validation)
-	did, err := types.NewDidDocument(msg.Id,
+	did, err := types.NewDidDocument(
+		types.DID(msg.Id),
 		types.WithServices(msg.Services...),
 		types.WithVerifications(msg.Verifications...),
 	)

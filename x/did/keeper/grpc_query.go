@@ -44,7 +44,7 @@ func (k Keeper) DidDocument(
 			return nil, status.Error(codes.NotFound, fmt.Sprint("resolution failed for did: ", req.Id))
 		}
 		// auto-resolve the address
-		doc, meta, err := types.ResolveAccountDID(req.Id, ctx.ChainID())
+		doc, meta, err := types.ResolveAccountDID(types.DID(req.Id), ctx.ChainID())
 		if err != nil {
 			return nil, status.Error(codes.Unavailable, "cosmos address account resolution error")
 		}

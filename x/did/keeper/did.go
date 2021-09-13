@@ -7,10 +7,19 @@ import (
 	"github.com/allinbits/cosmos-cash/x/did/types"
 )
 
+// SetDidDocumentWithMeta commit a did document and the metadata to the persistent store. The DID of the
+// document and the metadata is read from the did document
+func (k Keeper) SetDidDocumentWithMeta(ctx sdk.Context, document types.DidDocument, meta types.DidMetadata) {
+	k.SetDidDocument(ctx, document.IndexKey(), document)
+	k.SetDidMetadata(ctx, document.IndexKey(), meta)
+}
+
+// SetDidDocument commit a did document to the persistent store
 func (k Keeper) SetDidDocument(ctx sdk.Context, key []byte, document types.DidDocument) {
 	k.Set(ctx, key, types.DidDocumentKey, document, k.Marshal)
 }
 
+// GetDidDocument retrieve a did document from the store, returns nil, false if the document is not found
 func (k Keeper) GetDidDocument(ctx sdk.Context, key []byte) (types.DidDocument, bool) {
 	val, found := k.Get(ctx, key, types.DidDocumentKey, k.UnmarshalDidDocument)
 	return val.(types.DidDocument), found
@@ -24,6 +33,7 @@ func (k Keeper) UnmarshalDidDocument(value []byte) (interface{}, bool) {
 	return data, types.IsValidDIDDocument(&data)
 }
 
+// SetDidMetadata commit a did document metadata to the persistent store
 func (k Keeper) SetDidMetadata(ctx sdk.Context, key []byte, meta types.DidMetadata) {
 	k.Set(ctx, key, types.DidMetadataKey, meta, k.Marshal)
 }

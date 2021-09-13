@@ -490,7 +490,7 @@ func TestNewDidDocument(t *testing.T) {
 	}
 	for i, tt := range tests {
 		t.Run(fmt.Sprint("TestNewDidDocument#", i), func(t *testing.T) {
-			gotDid, err := NewDidDocument(tt.params.id, tt.params.options...)
+			gotDid, err := NewDidDocument(DID(tt.params.id), tt.params.options...)
 
 			if tt.wantErr {
 				require.NotNil(t, err, "test: TestNewDidDocument#%v", i)

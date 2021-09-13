@@ -31,11 +31,11 @@ func (suite *KeeperTestSuite) TestHandleMsgCreateDidDocument() {
 		{
 			"FAIL: did already exists",
 			func() {
-				did := "did:cosmos:cash:subject"
+				did := types.DID("did:cosmos:cash:subject")
 				didDoc, _ := types.NewDidDocument(did)
 
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
-				req = *types.NewMsgCreateDidDocument(did, nil, nil, "subject")
+				req = *types.NewMsgCreateDidDocument(did.String(), nil, nil, "subject")
 			},
 			true,
 		},
@@ -76,7 +76,7 @@ func (suite *KeeperTestSuite) TestHandleMsgUpdateDidDocument() {
 			"FAIL: unauthorized",
 			func() {
 
-				did := "did:cosmos:cash:subject"
+				did := types.DID("did:cosmos:cash:subject")
 				didDoc, _ := types.NewDidDocument(did)
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
 
@@ -88,7 +88,7 @@ func (suite *KeeperTestSuite) TestHandleMsgUpdateDidDocument() {
 			"PASS: nil controllers",
 			func() {
 
-				did := "did:cosmos:cash:subject"
+				did := types.DID("did:cosmos:cash:subject")
 				didDoc, _ := types.NewDidDocument(did, types.WithVerifications(
 					types.NewVerification(
 						types.NewVerificationMethod(
@@ -102,7 +102,7 @@ func (suite *KeeperTestSuite) TestHandleMsgUpdateDidDocument() {
 				))
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
 
-				req = *types.NewMsgUpdateDidDocument(did, nil, "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+				req = *types.NewMsgUpdateDidDocument(did.String(), nil, "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
 			},
 			false,
 		},

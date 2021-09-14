@@ -8,6 +8,8 @@ import (
 
 func (q Keeper) SetVerifiableCredential(ctx sdk.Context, key []byte, vc types.VerifiableCredential) {
 	q.Set(ctx, key, types.VerifiableCredentialKey, vc, q.MarshalVerifiableCredential)
+
+	// TODO: Set cred by (account => vc id)
 }
 
 func (q Keeper) GetVerifiableCredential(ctx sdk.Context, key []byte) (types.VerifiableCredential, bool) {
@@ -17,6 +19,8 @@ func (q Keeper) GetVerifiableCredential(ctx sdk.Context, key []byte) (types.Veri
 
 func (q Keeper) DeleteVerifiableCredentialFromStore(ctx sdk.Context, key []byte) {
 	q.Delete(ctx, key, types.VerifiableCredentialKey)
+
+	// TODO: Delete both vc stores
 }
 
 func (q Keeper) UnmarshalVerifiableCredential(value []byte) (interface{}, bool) {
@@ -66,5 +70,13 @@ func (q Keeper) GetAllVerifiableCredentials(ctx sdk.Context) []types.VerifiableC
 		ctx,
 		types.VerifiableCredentialKey,
 		func(vc types.VerifiableCredential) bool { return true },
+	)
+}
+
+func (q Keeper) GetAllVerifiableCredentialsByIssuer(ctx sdk.Context, issuerDID string) []types.VerifiableCredential {
+	return q.GetAllVerifiableCredentialsWithCondition(
+		ctx,
+		types.VerifiableCredentialKey,
+		func(vc types.VerifiableCredential) bool { return issuerDID == vc.Issuer },
 	)
 }

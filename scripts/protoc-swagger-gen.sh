@@ -11,20 +11,12 @@ for dir in $proto_dirs; do
 
   # generate swagger files (filter query files)
   query_file=$(find "${dir}" -maxdepth 1 \( -name 'query.proto' -o -name 'msg.proto' \))
-  tx_file=$(find "${dir}" -maxdepth 1 \( -name 'tx.proto' -o -name 'msg.proto' \))
   if [[ ! -z "$query_file" ]]; then
     buf protoc  \
       -I "proto" \
       -I="$COSMOS_SDK_DIR/third_party/proto" \
       -I="$COSMOS_SDK_DIR/proto" \
       "$query_file" \
-      --swagger_out=./tmp-swagger-gen \
-      --swagger_opt=logtostderr=true --swagger_opt=fqn_for_swagger_name=true --swagger_opt=simple_operation_ids=true
-    buf protoc  \
-      -I "proto" \
-      -I="$COSMOS_SDK_DIR/third_party/proto" \
-      -I="$COSMOS_SDK_DIR/proto" \
-      "$tx_file" \
       --swagger_out=./tmp-swagger-gen \
       --swagger_opt=logtostderr=true --swagger_opt=fqn_for_swagger_name=true --swagger_opt=simple_operation_ids=true
   fi

@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec/legacy"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -560,6 +561,25 @@ func (didDoc DidDocument) HasRelationship(
 	return false
 }
 
+// HasPublicKey validates if a public key is contained in a DidDocument
+func (didDoc DidDocument) HasPublicKey(pubkey cryptotypes.PubKey) bool {
+	for _, vm := range didDoc.VerificationMethod {
+		switch key := vm.VerificationMaterial.(type) {
+		case *VerificationMethod_BlockchainAccountID:
+			address := sdk.MustBech32ifyAddressBytes(sdk.GetConfig().GetBech32AccountAddrPrefix(), pubkey.Address().Bytes())
+			if key.BlockchainAccountID == address {
+				return true
+			}
+
+		case *VerificationMethod_PublicKeyHex:
+			if key.PublicKeyHex == hex.EncodeToString(pubkey.Bytes()) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 // AddServices add services to a did document
 func (didDoc *DidDocument) AddServices(services ...*Service) (err error) {
 	if didDoc.Service == nil {
@@ -656,7 +676,7 @@ func NewVerificationMethod(id, controller, key string, vmt VerificationMaterialT
 
 }
 
-// MarshalJSON implements a custom marshaller for rendergin verification material
+// MarshalJSON implements a custom marshaller for rendering verification material
 func (vm VerificationMethod) MarshalJSON() ([]byte, error) {
 	vmd := make(map[string]string, 4)
 	vmd["id"] = vm.Id

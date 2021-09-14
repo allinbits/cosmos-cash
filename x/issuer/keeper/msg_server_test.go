@@ -37,7 +37,7 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateIssuer() {
 					),
 				))
 				circulationLimit, _ := sdk.NewIntFromString("1000")
-				coin := sdk.NewCoin("sEUR", circulationLimit)
+				coin := sdk.NewCoin("seuro", circulationLimit)
 				cs := vctypes.NewLicenseCredentialSubject(
 					didDoc.Id,
 					"MICAEMI",
@@ -137,7 +137,7 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateIssuer() {
 					),
 				))
 				circulationLimit, _ := sdk.NewIntFromString("1000")
-				coin := sdk.NewCoin("sEUR", circulationLimit)
+				coin := sdk.NewCoin("seuro", circulationLimit)
 				cs := vctypes.NewLicenseCredentialSubject(
 					"incorrect:did",
 					"MICAEMI",
@@ -182,7 +182,7 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateIssuer() {
 					),
 				))
 				circulationLimit, _ := sdk.NewIntFromString("1000")
-				coin := sdk.NewCoin("sEUR", circulationLimit)
+				coin := sdk.NewCoin("seuro", circulationLimit)
 				cs := vctypes.NewLicenseCredentialSubject(
 					didDoc.Id,
 					"MICAEMI",
@@ -234,7 +234,7 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateIssuer() {
 					),
 				))
 				circulationLimit, _ := sdk.NewIntFromString("1000")
-				coin := sdk.NewCoin("sEUR", circulationLimit)
+				coin := sdk.NewCoin("seuro", circulationLimit)
 				cs := vctypes.NewLicenseCredentialSubject(
 					didDoc.Id,
 					"MICAEMI",
@@ -289,6 +289,7 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateIssuer() {
 func (suite *KeeperTestSuite) TestMsgSeverBurnToken() {
 	server := NewMsgServerImpl(suite.keeper)
 	var req types.MsgBurnToken
+	ctx := sdk.WrapSDKContext(suite.ctx)
 
 	testCases := []struct {
 		msg      string
@@ -296,24 +297,220 @@ func (suite *KeeperTestSuite) TestMsgSeverBurnToken() {
 		expPass  bool
 	}{
 		{
-			"FAIL: issuer does not exist so tokens cannot be burned",
+			"PASS: issuer burns tokens",
+			func() {
+				did := "did:cosmos:cash:subject"
+				vcID := "did:cosmos:cash:issuercred"
+				denom := "seuro"
+				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
+					didtypes.NewVerification(
+						didtypes.NewVerificationMethod(
+							"did:cosmos:cash:subject#key-1",
+							"did:cosmos:cash:subject",
+							"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
+							didtypes.DIDVMethodTypeCosmosAccountAddress,
+						),
+						[]string{didtypes.Authentication},
+						nil,
+					),
+				))
+				circulationLimit, _ := sdk.NewIntFromString("1000")
+				coin := sdk.NewCoin(denom, circulationLimit)
+				cs := vctypes.NewLicenseCredentialSubject(
+					didDoc.Id,
+					"MICAEMI",
+					"IRL",
+					"Another Financial Services Body (AFFB)",
+					coin,
+				)
 
-			func() { req = *types.NewMsgBurnToken(sdk.NewCoin("eeuro", sdk.NewInt(100)), "did:cash:1111") },
+				vc := vctypes.NewLicenseVerifiableCredential(
+					vcID,
+					didDoc.Id,
+					time.Now(),
+					cs,
+				)
+				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+				issuer := types.Issuer{
+					Token:     denom,
+					Fee:       1,
+					IssuerDid: didDoc.Id,
+				}
+
+				suite.keeper.SetIssuer(suite.ctx, issuer)
+				amount, _ := sdk.ParseCoinNormalized("10seuro")
+
+				mint := *types.NewMsgMintToken(
+					did,
+					vcID,
+					amount,
+					"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
+				)
+				_, _ = server.MintToken(ctx, &mint)
+
+				req = *types.NewMsgBurnToken(
+					did,
+					vcID,
+					amount,
+					"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
+				)
+			},
+			true,
+		},
+		{
+			"FAIL: verifiable credential does not exist",
+			func() {
+				amount, _ := sdk.ParseCoinNormalized("999seuro")
+				req = *types.NewMsgBurnToken(
+					"did",
+					"vcID",
+					amount,
+					"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
+				)
+			},
 			false,
 		},
-		// TODO: uncomment when the latest version of the cosmos-sdk is released
-		// Fixed by PR https://github.com/cosmos/cosmos-sdk/pull/9229
-		//		{
-		//			"PASS: issuer burns tokens",
-		//			func() {
-		//				issuer := *types.NewMsgCreateIssuer("seuro", 999, "did:cash:1111")
-		//
-		//				server.CreateIssuer(sdk.WrapSDKContext(suite.ctx), &issuer)
-		//
-		//				req = *types.NewMsgBurnToken(999, "did:cash:1111")
-		//			},
-		//			true,
-		//		},
+		{
+			"FAIL: issuer did does not exist",
+			func() {
+				vcID := "did:cosmos:cash:issuercred"
+				denom := "seuro"
+				circulationLimit, _ := sdk.NewIntFromString("1000")
+				coin := sdk.NewCoin(denom, circulationLimit)
+				cs := vctypes.NewLicenseCredentialSubject(
+					"didDoc.Id",
+					"MICAEMI",
+					"IRL",
+					"Another Financial Services Body (AFFB)",
+					coin,
+				)
+
+				vc := vctypes.NewLicenseVerifiableCredential(
+					vcID,
+					"didDoc.Id",
+					time.Now(),
+					cs,
+				)
+				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				amount, _ := sdk.ParseCoinNormalized("999seuro")
+				req = *types.NewMsgBurnToken(
+					"did:cosmos:cash",
+					vc.Id,
+					amount,
+					"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
+				)
+			},
+			false,
+		},
+		{
+			"FAIL: token being burned is incorrect",
+			func() {
+				did := "did:cosmos:cash:subject"
+				vcID := "did:cosmos:cash:issuercred"
+				denom := "seuro"
+				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
+					didtypes.NewVerification(
+						didtypes.NewVerificationMethod(
+							"did:cosmos:cash:subject#key-1",
+							"did:cosmos:cash:subject",
+							"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
+							didtypes.DIDVMethodTypeCosmosAccountAddress,
+						),
+						[]string{didtypes.Authentication},
+						nil,
+					),
+				))
+				circulationLimit, _ := sdk.NewIntFromString("1000")
+				coin := sdk.NewCoin(denom, circulationLimit)
+				cs := vctypes.NewLicenseCredentialSubject(
+					didDoc.Id,
+					"MICAEMI",
+					"IRL",
+					"Another Financial Services Body (AFFB)",
+					coin,
+				)
+
+				vc := vctypes.NewLicenseVerifiableCredential(
+					vcID,
+					didDoc.Id,
+					time.Now(),
+					cs,
+				)
+				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+				issuer := types.Issuer{
+					Token:     denom,
+					Fee:       1,
+					IssuerDid: didDoc.Id,
+				}
+
+				suite.keeper.SetIssuer(suite.ctx, issuer)
+				amount, _ := sdk.ParseCoinNormalized("900peuro")
+
+				req = *types.NewMsgBurnToken(
+					did,
+					vcID,
+					amount,
+					"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
+				)
+			},
+			false,
+		},
+		{
+			"FAIL: issuer does not have tokens to burn",
+			func() {
+				did := "did:cosmos:cash:subject"
+				vcID := "did:cosmos:cash:issuercred"
+				denom := "seuro"
+				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
+					didtypes.NewVerification(
+						didtypes.NewVerificationMethod(
+							"did:cosmos:cash:subject#key-1",
+							"did:cosmos:cash:subject",
+							"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
+							didtypes.DIDVMethodTypeCosmosAccountAddress,
+						),
+						[]string{didtypes.Authentication},
+						nil,
+					),
+				))
+				circulationLimit, _ := sdk.NewIntFromString("1000")
+				coin := sdk.NewCoin(denom, circulationLimit)
+				cs := vctypes.NewLicenseCredentialSubject(
+					didDoc.Id,
+					"MICAEMI",
+					"IRL",
+					"Another Financial Services Body (AFFB)",
+					coin,
+				)
+
+				vc := vctypes.NewLicenseVerifiableCredential(
+					vcID,
+					didDoc.Id,
+					time.Now(),
+					cs,
+				)
+				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+				issuer := types.Issuer{
+					Token:     denom,
+					Fee:       1,
+					IssuerDid: didDoc.Id,
+				}
+
+				suite.keeper.SetIssuer(suite.ctx, issuer)
+				amount, _ := sdk.ParseCoinNormalized("10seuro")
+
+				req = *types.NewMsgBurnToken(
+					did,
+					vcID,
+					amount,
+					"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
+				)
+			},
+			false,
+		},
 	}
 
 	for _, tc := range testCases {
@@ -336,7 +533,6 @@ func (suite *KeeperTestSuite) Test_msgServer_MintToken() {
 	// create the keeper
 	server := NewMsgServerImpl(suite.keeper)
 	var req types.MsgMintToken
-	// owner := "cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a"
 	ctx := sdk.WrapSDKContext(suite.ctx)
 
 	testCases := []struct {
@@ -345,11 +541,212 @@ func (suite *KeeperTestSuite) Test_msgServer_MintToken() {
 		expPass  bool
 	}{
 		{
-			"FAIL: issuer does not exist so tokens cannot be burned",
-			func() { req = *types.NewMsgMintToken(sdk.NewCoin("cash", sdk.NewInt(100)), "did:cash:1111") },
+			"PASS: issuer mints tokens",
+			func() {
+				did := "did:cosmos:cash:subject"
+				vcID := "did:cosmos:cash:issuercred"
+				denom := "seuro"
+				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
+					didtypes.NewVerification(
+						didtypes.NewVerificationMethod(
+							"did:cosmos:cash:subject#key-1",
+							"did:cosmos:cash:subject",
+							"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
+							didtypes.DIDVMethodTypeCosmosAccountAddress,
+						),
+						[]string{didtypes.Authentication},
+						nil,
+					),
+				))
+				circulationLimit, _ := sdk.NewIntFromString("1000")
+				coin := sdk.NewCoin(denom, circulationLimit)
+				cs := vctypes.NewLicenseCredentialSubject(
+					didDoc.Id,
+					"MICAEMI",
+					"IRL",
+					"Another Financial Services Body (AFFB)",
+					coin,
+				)
+
+				vc := vctypes.NewLicenseVerifiableCredential(
+					vcID,
+					didDoc.Id,
+					time.Now(),
+					cs,
+				)
+				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+				issuer := types.Issuer{
+					Token:     denom,
+					Fee:       1,
+					IssuerDid: didDoc.Id,
+				}
+
+				suite.keeper.SetIssuer(suite.ctx, issuer)
+				amount, _ := sdk.ParseCoinNormalized("999seuro")
+
+				req = *types.NewMsgMintToken(
+					did,
+					vcID,
+					amount,
+					"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
+				)
+			},
+			true,
+		},
+		{
+			"FAIL: verifiable credential does not exist",
+			func() {
+				amount, _ := sdk.ParseCoinNormalized("999seuro")
+				req = *types.NewMsgMintToken(
+					"did:cosmos:cash",
+					"vcID",
+					amount,
+					"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
+				)
+			},
 			false,
 		},
-		// TODO: add successful case when 0.43 is done
+		{
+			"FAIL: issuer did does not exist",
+			func() {
+				vcID := "did:cosmos:cash:issuercred"
+				denom := "seuro"
+				circulationLimit, _ := sdk.NewIntFromString("1000")
+				coin := sdk.NewCoin(denom, circulationLimit)
+				cs := vctypes.NewLicenseCredentialSubject(
+					"didDoc.Id",
+					"MICAEMI",
+					"IRL",
+					"Another Financial Services Body (AFFB)",
+					coin,
+				)
+
+				vc := vctypes.NewLicenseVerifiableCredential(
+					vcID,
+					"didDoc.Id",
+					time.Now(),
+					cs,
+				)
+				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				amount, _ := sdk.ParseCoinNormalized("999seuro")
+				req = *types.NewMsgMintToken(
+					"did:cosmos:cash",
+					vc.Id,
+					amount,
+					"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
+				)
+			},
+			false,
+		},
+		{
+			"FAIL: token being minted is incorrect",
+			func() {
+				did := "did:cosmos:cash:subject"
+				vcID := "did:cosmos:cash:issuercred"
+				denom := "seuro"
+				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
+					didtypes.NewVerification(
+						didtypes.NewVerificationMethod(
+							"did:cosmos:cash:subject#key-1",
+							"did:cosmos:cash:subject",
+							"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
+							didtypes.DIDVMethodTypeCosmosAccountAddress,
+						),
+						[]string{didtypes.Authentication},
+						nil,
+					),
+				))
+				circulationLimit, _ := sdk.NewIntFromString("1000")
+				coin := sdk.NewCoin(denom, circulationLimit)
+				cs := vctypes.NewLicenseCredentialSubject(
+					didDoc.Id,
+					"MICAEMI",
+					"IRL",
+					"Another Financial Services Body (AFFB)",
+					coin,
+				)
+
+				vc := vctypes.NewLicenseVerifiableCredential(
+					vcID,
+					didDoc.Id,
+					time.Now(),
+					cs,
+				)
+				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+				issuer := types.Issuer{
+					Token:     denom,
+					Fee:       1,
+					IssuerDid: didDoc.Id,
+				}
+
+				suite.keeper.SetIssuer(suite.ctx, issuer)
+				amount, _ := sdk.ParseCoinNormalized("900peuro")
+
+				req = *types.NewMsgMintToken(
+					did,
+					vcID,
+					amount,
+					"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
+				)
+			},
+			false,
+		},
+		{
+			"FAIL: reserve amount is less than minting amount",
+			func() {
+				did := "did:cosmos:cash:subject"
+				vcID := "did:cosmos:cash:issuercred"
+				denom := "seuro"
+				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
+					didtypes.NewVerification(
+						didtypes.NewVerificationMethod(
+							"did:cosmos:cash:subject#key-1",
+							"did:cosmos:cash:subject",
+							"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
+							didtypes.DIDVMethodTypeCosmosAccountAddress,
+						),
+						[]string{didtypes.Authentication},
+						nil,
+					),
+				))
+				circulationLimit, _ := sdk.NewIntFromString("1000")
+				coin := sdk.NewCoin(denom, circulationLimit)
+				cs := vctypes.NewLicenseCredentialSubject(
+					didDoc.Id,
+					"MICAEMI",
+					"IRL",
+					"Another Financial Services Body (AFFB)",
+					coin,
+				)
+
+				vc := vctypes.NewLicenseVerifiableCredential(
+					vcID,
+					didDoc.Id,
+					time.Now(),
+					cs,
+				)
+				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+				issuer := types.Issuer{
+					Token:     denom,
+					Fee:       1,
+					IssuerDid: didDoc.Id,
+				}
+
+				suite.keeper.SetIssuer(suite.ctx, issuer)
+				amount, _ := sdk.ParseCoinNormalized("1001seuro")
+
+				req = *types.NewMsgMintToken(
+					did,
+					vcID,
+					amount,
+					"cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a",
+				)
+			},
+			false,
+		},
 	}
 	for _, tc := range testCases {
 		suite.Run(fmt.Sprintf("Case %s", tc.msg), func() {

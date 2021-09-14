@@ -8,6 +8,7 @@ import (
 
 	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
 	"github.com/allinbits/cosmos-cash/x/issuer/types"
+	vctypes "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 )
 
 type msgServer struct {
@@ -29,23 +30,6 @@ func (k msgServer) CreateIssuer(
 ) (*types.MsgCreateIssuerResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check to see if the provided did is in the store
-	did, found := k.Keeper.didKeeper.GetDidDocument(ctx, []byte(msg.IssuerDid))
-	if !found {
-		return nil, sdkerrors.Wrapf(
-			types.ErrDidDocumentDoesNotExist,
-			"did does not exists",
-		)
-	}
-
-	// Check to see if the msg signer has a verification relationship in the did document
-	if !did.HasRelationship(msg.Owner, didtypes.Authentication) {
-		return nil, sdkerrors.Wrapf(
-			types.ErrIncorrectControllerOfDidDocument,
-			"msg sender not in auth array in did document",
-		)
-	}
-
 	// Check to see if the provided verifiable credential is in the store
 	vc, found := k.Keeper.vcKeeper.GetVerifiableCredential(ctx, []byte(msg.LicenseCredId))
 	if !found {
@@ -55,16 +39,11 @@ func (k msgServer) CreateIssuer(
 		)
 	}
 
-	// Validate the credential subject ID the same as the provided did document
-	issuerCred := vc.GetLicenseCred()
-	if issuerCred.Id != did.Id {
-		return nil, sdkerrors.Wrapf(
-			types.ErrIssuerFound,
-			"issuer id not correct",
-		)
+	// Validate the provided issuer credential
+	err := k.validateIssuerCredential(ctx, msg.IssuerDid, vc, msg.Owner)
+	if err != nil {
+		return nil, err
 	}
-
-	// TODO: validate credential was issued by a regulator
 
 	_, found = k.Keeper.GetIssuer(ctx, []byte(msg.IssuerDid))
 	if found {
@@ -104,10 +83,24 @@ func (k msgServer) BurnToken(
 ) (*types.MsgBurnTokenResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	issuer, found := k.Keeper.GetIssuer(ctx, []byte(msg.Owner))
+	// Check to see if the provided verifiable credential is in the store
+	vc, found := k.Keeper.vcKeeper.GetVerifiableCredential(ctx, []byte(msg.LicenseCredId))
 	if !found {
 		return nil, sdkerrors.Wrapf(
-			types.ErrIssuerNotFound,
+			types.ErrIssuerFound,
+			"verifiable credential not found",
+		)
+	}
+
+	err := k.validateIssuerCredential(ctx, msg.IssuerDid, vc, msg.Owner)
+	if err != nil {
+		return nil, err
+	}
+
+	issuer, found := k.Keeper.GetIssuer(ctx, []byte(msg.IssuerDid))
+	if !found {
+		return nil, sdkerrors.Wrapf(
+			types.ErrIssuerFound,
 			"issuer does not exists",
 		)
 	}
@@ -119,6 +112,15 @@ func (k msgServer) BurnToken(
 			sdk.ErrInvalidDecimalStr,
 			"coin string format not recognized",
 		)
+	}
+	for _, a := range amounts {
+		if a.GetDenom() != issuer.Token {
+			return nil, sdkerrors.Wrapf(
+				types.ErrInvalidIssuerDenom,
+				"issuer can only burn tokens of %s (requested %s)",
+				issuer.Token, a.GetDenom(),
+			)
+		}
 	}
 
 	// sender is the issuer
@@ -155,7 +157,21 @@ func (k msgServer) MintToken(
 ) (*types.MsgMintTokenResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	issuer, found := k.Keeper.GetIssuer(ctx, []byte(msg.Owner))
+	// Check to see if the provided verifiable credential is in the store
+	vc, found := k.Keeper.vcKeeper.GetVerifiableCredential(ctx, []byte(msg.LicenseCredId))
+	if !found {
+		return nil, sdkerrors.Wrapf(
+			types.ErrIssuerFound,
+			"verifiable credential not found",
+		)
+	}
+
+	err := k.validateIssuerCredential(ctx, msg.IssuerDid, vc, msg.Owner)
+	if err != nil {
+		return nil, err
+	}
+
+	issuer, found := k.Keeper.GetIssuer(ctx, []byte(msg.IssuerDid))
 	if !found {
 		return nil, sdkerrors.Wrapf(
 			types.ErrIssuerFound,
@@ -178,6 +194,11 @@ func (k msgServer) MintToken(
 				"issuer can only issue tokens of %s (requested %s)",
 				issuer.Token, a.GetDenom(),
 			)
+		}
+
+		err := k.validateMintingAmount(ctx, vc, a)
+		if err != nil {
+			return nil, err
 		}
 	}
 
@@ -207,4 +228,64 @@ func (k msgServer) MintToken(
 	)
 
 	return &types.MsgMintTokenResponse{}, nil
+}
+
+func (k msgServer) validateIssuerCredential(
+	ctx sdk.Context,
+	issuerDid string,
+	licenseCred vctypes.VerifiableCredential,
+	signer string,
+) error {
+	// Check to see if the provided did is in the store
+	did, found := k.Keeper.didKeeper.GetDidDocument(ctx, []byte(issuerDid))
+	if !found {
+		return sdkerrors.Wrapf(
+			types.ErrDidDocumentDoesNotExist,
+			"did does not exists",
+		)
+	}
+
+	// Check to see if the msg signer has a verification relationship in the did document
+	if !did.HasRelationship(signer, didtypes.Authentication) {
+		return sdkerrors.Wrapf(
+			types.ErrIncorrectControllerOfDidDocument,
+			"msg sender not in auth array in did document",
+		)
+	}
+
+	// Validate the credential subject ID the same as the provided did document
+	issuerCred := licenseCred.GetLicenseCred()
+	if issuerCred.Id != did.Id {
+		return sdkerrors.Wrapf(
+			types.ErrIncorrectLicenseCredential,
+			"issuer id not correct",
+		)
+	}
+
+	// TODO: validate credential was issued by a regulator
+	// XXX: query the params of the issuer module for the regulator
+
+	return nil
+}
+
+func (k msgServer) validateMintingAmount(
+	ctx sdk.Context,
+	licenseCred vctypes.VerifiableCredential,
+	mintingAmount sdk.Coin,
+) error {
+	// Get the supply from the bank keeper
+	supply := k.bk.GetSupply(ctx, mintingAmount.Denom)
+
+	// Calculate the reserve by subtraction the supply from the issuer credential circulation limit
+	reserve := licenseCred.GetLicenseCred().CirculationLimit.Amount.Sub(supply.Amount)
+
+	// Validate the reserve is greater that the amount being minted
+	if reserve.LT(mintingAmount.Amount) {
+		return sdkerrors.Wrapf(
+			types.ErrMintingTokens,
+			"issuer cannot mint more than the circulation limit defined in their credential",
+		)
+	}
+
+	return nil
 }

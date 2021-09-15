@@ -68,6 +68,24 @@ func NewLicenseVerifiableCredential(
 	}
 }
 
+// NewRegulatorVerifiableCredential constructs a new VerifiableCredential instance
+func NewRegulatorVerifiableCredential(
+	id string,
+	issuer string,
+	issuanceDate time.Time,
+	credentialSubject VerifiableCredential_RegulatorCred,
+) VerifiableCredential {
+	return VerifiableCredential{
+		Context:           []string{"https://www.w3.org/TR/vc-data-model/"},
+		Id:                id,
+		Type:              []string{"VerifiableCredential", RegulatorCredential},
+		Issuer:            issuer,
+		IssuanceDate:      &issuanceDate,
+		CredentialSubject: &credentialSubject,
+		Proof:             nil,
+	}
+}
+
 // GetBytes is a helper for serializing
 func (vc VerifiableCredential) GetBytes() []byte {
 	dAtA, _ := vc.Marshal()
@@ -104,6 +122,21 @@ func NewLicenseCredentialSubject(
 			Country:          country,
 			Authority:        authority,
 			CirculationLimit: circulationLimit,
+		},
+	}
+}
+
+// NewRegulatorCredentialSubject create a new regulator credential subject
+func NewRegulatorCredentialSubject(
+	id string,
+	name string,
+	country string,
+) VerifiableCredential_RegulatorCred {
+	return VerifiableCredential_RegulatorCred{
+		&RegulatorCredentialSubject{
+			Id:      id,
+			Name:    name,
+			Country: country,
 		},
 	}
 }
@@ -178,4 +211,14 @@ func (vc VerifiableCredential) Sign(
 func (vc VerifiableCredential) Hash() string {
 	// TODO: implement the hashing of creds for signing
 	return "TODO"
+}
+
+// HasType tells whenever a credential has a specific type
+func (vc VerifiableCredential) HasType(vcType string) bool {
+	for _, vct := range vc.Type {
+		if vct == vcType {
+			return true
+		}
+	}
+	return false
 }

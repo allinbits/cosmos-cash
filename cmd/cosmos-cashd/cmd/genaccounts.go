@@ -18,12 +18,18 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	"github.com/spf13/cobra"
+
+	regulatortypes "github.com/allinbits/cosmos-cash/x/regulator/types"
 )
 
 const (
 	flagVestingStart = "vesting-start-time"
 	flagVestingEnd   = "vesting-end-time"
 	flagVestingAmt   = "vesting-amount"
+)
+
+var (
+	regulatorsAddresses []string
 )
 
 // AddGenesisAccountCmd returns add-genesis-account cobra Command.
@@ -159,6 +165,14 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 
 			appState[banktypes.ModuleName] = bankGenStateBz
 
+			// load genesis state
+			regulatorGenState := regulatortypes.DefaultGenesis(regulatorsAddresses...)
+			regulatorGenStateBz, err := cdc.MarshalJSON(regulatorGenState)
+			if err != nil {
+				return fmt.Errorf("failed to marshal regulator genesis state: %w", err)
+			}
+			appState[regulatortypes.ModuleName] = regulatorGenStateBz
+
 			appStateJSON, err := json.Marshal(appState)
 			if err != nil {
 				return fmt.Errorf("failed to marshal application genesis state: %w", err)
@@ -174,6 +188,7 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 	cmd.Flags().String(flagVestingAmt, "", "amount of coins for vesting accounts")
 	cmd.Flags().Int64(flagVestingStart, 0, "schedule start time (unix epoch) for vesting accounts")
 	cmd.Flags().Int64(flagVestingEnd, 0, "schedule end time (unix epoch) for vesting accounts")
+	cmd.Flags().StringSliceVar(&regulatorsAddresses, "regulator", []string{}, "set the addresses for the regulators in this chain")
 	flags.AddQueryFlagsToCmd(cmd)
 
 	return cmd

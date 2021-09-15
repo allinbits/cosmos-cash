@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"fmt"
+	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/suite"
 	"testing"
 
@@ -17,6 +18,7 @@ import (
 	vckeeper "github.com/allinbits/cosmos-cash/x/verifiable-credential/keeper"
 	vctypes "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
+	server "github.com/cosmos/cosmos-sdk/server"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -65,9 +67,10 @@ func (suite *KeeperTestSuite) SetupTest() {
 	ms.MountStoreWithDB(memKeyDidDocument, sdk.StoreTypeIAVL, db)
 	_ = ms.LoadLatestVersion()
 
-	ctx := sdk.NewContext(ms, tmproto.Header{ChainID: "foochainid"}, true, nil)
+	ctx := sdk.NewContext(ms, tmproto.Header{ChainID: "foochainid"}, true, server.ZeroLogWrapper{log.Logger})
 
 	interfaceRegistry := ct.NewInterfaceRegistry()
+	authtypes.RegisterInterfaces(interfaceRegistry)
 	marshaler := codec.NewProtoCodec(interfaceRegistry)
 
 	maccPerms := map[string][]string{

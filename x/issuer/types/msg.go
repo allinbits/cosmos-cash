@@ -73,12 +73,16 @@ var _ sdk.Msg = &MsgBurnToken{}
 
 // NewMsgBurnToken creates a new MsgBurnToken instance
 func NewMsgBurnToken(
+	issuerDid string,
+	licenseCredID string,
 	amount sdk.Coin,
 	owner string,
 ) *MsgBurnToken {
 	return &MsgBurnToken{
-		Amount: amount.String(),
-		Owner:  owner,
+		IssuerDid:     issuerDid,
+		LicenseCredId: licenseCredID,
+		Amount:        amount.String(),
+		Owner:         owner,
 	}
 }
 
@@ -122,12 +126,16 @@ var _ sdk.Msg = &MsgMintToken{}
 
 // NewMsgMintToken creates a new MsgMintToken instance
 func NewMsgMintToken(
+	issuerDid string,
+	licenseCredID string,
 	amount sdk.Coin,
 	owner string,
 ) *MsgMintToken {
 	return &MsgMintToken{
-		Amount: amount.String(),
-		Owner:  owner,
+		IssuerDid:     issuerDid,
+		LicenseCredId: licenseCredID,
+		Amount:        amount.String(),
+		Owner:         owner,
 	}
 }
 

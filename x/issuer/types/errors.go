@@ -18,4 +18,6 @@ var (
 	ErrMintingTokens                    = sdkerrors.Register(ModuleName, 1308, "error minting tokens for issuer")
 	ErrBurningTokens                    = sdkerrors.Register(ModuleName, 1309, "error burning tokens for issuer")
 	ErrIssuerNotFound                   = sdkerrors.Register(ModuleName, 1310, "issuer not found in data store")
+	ErrIncorrectLicenseCredential       = sdkerrors.Register(ModuleName, 1311, "issuer does not have the correct license credential")
+	ErrLicenseCredentialNotFound        = sdkerrors.Register(ModuleName, 1312, "cannot find issuer credential in the store")
 )

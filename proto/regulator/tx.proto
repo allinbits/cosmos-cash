@@ -1,0 +1,29 @@
+syntax = "proto3";
+package allinbits.cosmoscash.regulator;
+
+// this line is used by starport scaffolding # proto/tx/import
+
+option go_package = "github.com/allinbits/cosmos-cash/x/regulator/types";
+
+// Msg defines the Msg service.
+service Msg {
+    // this line is used by starport scaffolding # proto/tx/rpc
+  rpc Activate(MsgActivate) returns (MsgActivateResponse);
+}
+
+// this line is used by starport scaffolding # proto/tx/message
+
+// MsgActivate is used to activate a regulator on chain
+message MsgActivate {
+  string creator = 1;
+  string didId   = 2;
+  string name    = 3;
+  string country = 4;
+}
+
+// MsgActivateResponse contains the reponse for a successful activation
+// of a regulator on chain
+message MsgActivateResponse {
+  string did     = 1; // did of the regulator being activated
+  string vcId    = 2; // id of the regulator credentials
+}

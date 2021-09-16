@@ -2,20 +2,25 @@ package keeper
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/suite"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/suite"
 
 	didkeeper "github.com/allinbits/cosmos-cash/x/did/keeper"
 	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
 	"github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	ct "github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+
 	dbm "github.com/tendermint/tm-db"
 )
 
@@ -24,6 +29,7 @@ type KeeperTestSuite struct {
 	suite.Suite
 
 	ctx         sdk.Context
+	app         *simapp.SimApp
 	keeper      Keeper
 	didkeeper   didkeeper.Keeper
 	queryClient types.QueryClient
@@ -55,11 +61,20 @@ func (suite *KeeperTestSuite) SetupTest() {
 		memKeyDidDocument,
 	)
 
+	accountKeeper := authkeeper.NewAccountKeeper(
+		marshaler,
+		sdk.NewKVStoreKey(authtypes.StoreKey),
+		suite.app.GetSubspace(authtypes.ModuleName),
+		authtypes.ProtoBaseAccount,
+		map[string][]string{},
+	)
+
 	k := NewKeeper(
 		marshaler,
 		keyVc,
 		memKeyVc,
 		didKeeper,
+		accountKeeper,
 	)
 
 	queryHelper := baseapp.NewQueryServerTestHelper(ctx, interfaceRegistry)

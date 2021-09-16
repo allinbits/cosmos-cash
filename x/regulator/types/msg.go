@@ -1,18 +1,17 @@
 package types
 
 import (
+	vctypes "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 var _ sdk.Msg = &MsgActivate{}
 
-func NewMsgActivate(creator, didId, name, country string) *MsgActivate {
+func NewMsgActivate(credentials vctypes.VerifiableCredential, signerAccount string) *MsgActivate {
 	return &MsgActivate{
-		Creator: creator,
-		DidId:   didId,
-		Name:    name,
-		Country: country,
+		Creator:     signerAccount,
+		Credentials: &credentials,
 	}
 }
 

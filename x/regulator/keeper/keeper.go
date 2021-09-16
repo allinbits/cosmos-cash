@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -89,8 +90,13 @@ func (k Keeper) SetDidDocumentWithMeta(ctx sdk.Context, document didtypes.DidDoc
 }
 
 // SetVerifiableCredential store verifiable credentials
-func (k Keeper) SetVerifiableCredential(ctx sdk.Context, vc vctypes.VerifiableCredential) {
-	k.vcKeeper.SetVerifiableCredential(ctx, []byte(vc.Id), vc)
+func (k Keeper) SetVerifiableCredential(ctx sdk.Context, vc vctypes.VerifiableCredential) error {
+	return k.vcKeeper.SetVerifiableCredential(ctx, []byte(vc.Id), vc)
+}
+
+// GetVerifiableCredential return a verifiable credential if exists
+func (k Keeper) GetVerifiableCredential(ctx sdk.Context, vcID string) (vctypes.VerifiableCredential, bool) {
+	return k.vcKeeper.GetVerifiableCredential(ctx, []byte(vcID))
 }
 
 // GetVerifiableCredentialWithType returns the list of verifiable credential of a certain type

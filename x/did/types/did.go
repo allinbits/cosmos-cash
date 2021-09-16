@@ -565,6 +565,28 @@ func (didDoc *DidDocument) setRelationships(methodID string, relationships ...Ve
 	}
 }
 
+// GetVerificationMethodAddress returns the verification method cosmos address of a verification method.
+// it fails if the verification method is not supported or if the verification method is not found
+func (didDoc DidDocument) GetVerificationMethodAddress(methodID string) (address string, err error) {
+	for _, vm := range didDoc.VerificationMethod {
+		if vm.Id == methodID {
+			switch k := vm.VerificationMaterial.(type) {
+			case *VerificationMethod_BlockchainAccountID:
+				address = k.BlockchainAccountID
+			case *VerificationMethod_PublicKeyMultibase:
+				address, err = toAddress(k.PublicKeyMultibase[1:])
+			case *VerificationMethod_PublicKeyHex:
+				address, err = toAddress(k.PublicKeyHex)
+			default:
+				err = ErrKeyFormatNotSupported
+			}
+			return
+		}
+	}
+	err = ErrVerificationMethodNotFound
+	return
+}
+
 // GetVerificationRelationships returns the relationships associated with the
 // verification method id.
 func (didDoc DidDocument) GetVerificationRelationships(methodID string) []string {
@@ -687,6 +709,19 @@ func NewVerification(
 		Method:        &method,
 		Relationships: relationships,
 	}
+}
+
+// NewAccountVerification is a shortcut to create a verification based on comsos address
+func NewAccountVerification(did DID, chainID, accountAddress string, verificationMethods ...string) *Verification {
+	return NewVerification(
+		NewVerificationMethod(
+			fmt.Sprint(did.String(), "#", accountAddress),
+			did,
+			NewBlockchainAccountID(chainID, accountAddress),
+		),
+		verificationMethods,
+		nil,
+	)
 }
 
 // NewVerificationMethod build a new verification method

@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -619,6 +620,33 @@ func (didDoc DidDocument) HasRelationship(
 				if len(intersection(vrs, relationships)) > 0 {
 					return true
 				}
+			}
+		}
+	}
+	return false
+}
+
+// HasPublicKey validates if a public key is contained in a DidDocument
+func (didDoc DidDocument) HasPublicKey(pubkey cryptotypes.PubKey) bool {
+	for _, vm := range didDoc.VerificationMethod {
+		switch key := vm.VerificationMaterial.(type) {
+		case *VerificationMethod_BlockchainAccountID:
+			address := sdk.MustBech32ifyAddressBytes(
+				sdk.GetConfig().GetBech32AccountAddrPrefix(),
+				pubkey.Address().Bytes(),
+			)
+			if key.BlockchainAccountID == address {
+				return true
+			}
+
+		case *VerificationMethod_PublicKeyMultibase:
+			if key.PublicKeyMultibase == fmt.Sprint("F", hex.EncodeToString(pubkey.Bytes())) {
+				return true
+			}
+
+		case *VerificationMethod_PublicKeyHex:
+			if key.PublicKeyHex == hex.EncodeToString(pubkey.Bytes()) {
+				return true
 			}
 		}
 	}

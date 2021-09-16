@@ -68,3 +68,11 @@ func (q Keeper) GetAllVerifiableCredentials(ctx sdk.Context) []types.VerifiableC
 		func(vc types.VerifiableCredential) bool { return true },
 	)
 }
+
+func (q Keeper) GetAllVerifiableCredentialsByIssuer(ctx sdk.Context, issuerDID string) []types.VerifiableCredential {
+	return q.GetAllVerifiableCredentialsWithCondition(
+		ctx,
+		types.VerifiableCredentialKey,
+		func(vc types.VerifiableCredential) bool { return issuerDID == vc.Issuer },
+	)
+}

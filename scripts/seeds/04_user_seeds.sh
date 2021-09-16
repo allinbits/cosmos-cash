@@ -3,39 +3,58 @@
 echo "Creating key for user user1"
 echo 'y' | cosmos-cashd keys add user1
 echo 'y' | cosmos-cashd keys add user2
-echo 'y' | cosmos-cashd keys add user3
 
 echo "Sending tokens to user 1 from validator"
 cosmos-cashd tx bank send $(cosmos-cashd keys show validator -a) $(cosmos-cashd keys show user1 -a) 100000stake --from validator --chain-id cash -y
+
+sleep 5
+
 cosmos-cashd tx bank send $(cosmos-cashd keys show validator -a) $(cosmos-cashd keys show user2 -a) 100000stake --from validator --chain-id cash -y
-cosmos-cashd tx bank send $(cosmos-cashd keys show validator -a) $(cosmos-cashd keys show user3 -a) 100000stake --from validator --chain-id cash -y
+
+sleep 5
 
 echo "Creating decentralized did for users"
-cosmos-cashd tx did create-did --from user1 --chain-id cash -y
-cosmos-cashd tx did create-did --from user2 --chain-id cash -y
-cosmos-cashd tx did create-did --from user3 --chain-id cash -y
+cosmos-cashd tx did create-did user1 --from user1 --chain-id cash -y
+
+sleep 5
+
+cosmos-cashd tx did create-did user2 --from user2 --chain-id cash -y
+
+sleep 5
+
+echo "Creating verifiable credential for user :user1"
+cosmos-cashd tx verifiablecredential create-kyc-verifiable-credential \
+	did:cosmos:net:cash:user1 did:cosmos:cred:kyc1 did:cosmos:net:cash:vasp secret 1000 1000 1000  \
+	--from validator --chain-id cash -y
+
+sleep 5
+
+echo "Creating verifiable credential for user :user2"
+cosmos-cashd tx verifiablecredential create-kyc-verifiable-credential \
+	did:cosmos:net:cash:user2 did:cosmos:cred:kyc2 did:cosmos:net:cash:vasp secret 1000 1000 1000  \
+	--from validator --chain-id cash -y
+
+sleep 5
 
 echo "Creating verifiable credential for user :validator"
-cosmos-cashd tx verifiablecredential create-verifiable-credential did:cash:$(cosmos-cashd keys show user1 -a) kyc-cred-1 secret alice dublin 1-1-1970 1234 3531234  --from validator --chain-id cash -y
-cosmos-cashd tx verifiablecredential create-verifiable-credential did:cash:$(cosmos-cashd keys show user2 -a) kyc-cred-2 secret bob berlin 1-1-1970 g1234 441234 --from validator --chain-id cash -y
-cosmos-cashd tx verifiablecredential create-verifiable-credential did:cash:$(cosmos-cashd keys show user3 -a) kyc-cred-3 secret corm rome 1-1-1970 i1234 111234 --from validator --chain-id cash -y
+cosmos-cashd tx verifiablecredential create-kyc-verifiable-credential \
+	did:cosmos:net:cash:vasp did:cosmos:cred:kyc3 did:cosmos:net:cash:vasp secret 1000 1000 1000  \
+	--from validator --chain-id cash -y
 
-echo "Adding service to decentralized did for users"
-cosmos-cashd tx did add-service did:cash:$(cosmos-cashd keys show user1 -a) kyc-cred-1 IdentityCredential cash:kyc-cred-1 --from user1 --chain-id cash -y
-cosmos-cashd tx did add-service did:cash:$(cosmos-cashd keys show user2 -a) kyc-cred-2 IdentityCredential cash:kyc-cred-2 --from user2 --chain-id cash -y
-cosmos-cashd tx did add-service did:cash:$(cosmos-cashd keys show user3 -a) kyc-cred-3 IdentityCredential cash:kyc-cred-3 --from user3 --chain-id cash -y
+sleep 5
 
 echo "Querying all data"
 cosmos-cashd query did dids --output json | jq
 cosmos-cashd query verifiablecredential verifiable-credentials --output json | jq
 
 echo "Sending issuer tokens to users from validator"
-cosmos-cashd tx bank send $(cosmos-cashd keys show validator -a) $(cosmos-cashd keys show user1 -a) 100000seuro --from validator --chain-id cash -y
-cosmos-cashd tx bank send $(cosmos-cashd keys show validator -a) $(cosmos-cashd keys show user2 -a) 100000seuro --from validator --chain-id cash -y
-cosmos-cashd tx bank send $(cosmos-cashd keys show validator -a) $(cosmos-cashd keys show user3 -a) 100000seuro --from validator --chain-id cash -y
+cosmos-cashd tx bank send $(cosmos-cashd keys show validator -a) $(cosmos-cashd keys show user1 -a) 10seuro --from validator --chain-id cash -y
+
+sleep 5
+
+cosmos-cashd tx bank send $(cosmos-cashd keys show validator -a) $(cosmos-cashd keys show user2 -a) 10seuro --from validator --chain-id cash -y
 
 echo "Querying balances for users"
-gaiad query bank balances $(cosmos-cashd keys show user1 -a) --output json | jq
-gaiad query bank balances $(cosmos-cashd keys show user2 -a) --output json | jq
-gaiad query bank balances $(cosmos-cashd keys show user3 -a) --output json | jq
+cosmos-cashd query bank balances $(cosmos-cashd keys show user1 -a) --output json | jq
+cosmos-cashd query bank balances $(cosmos-cashd keys show user2 -a) --output json | jq
 

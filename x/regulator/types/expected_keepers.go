@@ -17,7 +17,7 @@ type DidKeeper interface {
 // VcKeeper defines the expected verifiable credentials keeper functions
 type VcKeeper interface {
 	GetVerifiableCredential(ctx sdk.Context, key []byte) (vctypes.VerifiableCredential, bool)
-	SetVerifiableCredential(ctx sdk.Context, key []byte, vc vctypes.VerifiableCredential)
+	SetVerifiableCredential(ctx sdk.Context, key []byte, vc vctypes.VerifiableCredential) error
 	//GetVerifiableCredentialByIssuer(ctx sdk.Context, issuerDID string) []vctypes.VerifiableCredential
 	GetAllVerifiableCredentialsWithCondition(
 		ctx sdk.Context,

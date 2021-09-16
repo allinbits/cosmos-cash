@@ -3,10 +3,11 @@ package regulator
 import (
 	"fmt"
 
-	"github.com/allinbits/cosmos-cash/x/regulator/keeper"
-	"github.com/allinbits/cosmos-cash/x/regulator/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
+	"github.com/allinbits/cosmos-cash/x/regulator/keeper"
+	"github.com/allinbits/cosmos-cash/x/regulator/types"
 )
 
 // NewHandler ...

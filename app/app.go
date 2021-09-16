@@ -455,7 +455,9 @@ func New(
 		keys[vcstypes.StoreKey],
 		keys[vcstypes.MemStoreKey],
 		app.DidDocumentKeeper,
+		app.AccountKeeper,
 	)
+
 	app.IssuerKeeper = *issuerkeeper.NewKeeper(
 		appCodec,
 		keys[issuertypes.StoreKey],

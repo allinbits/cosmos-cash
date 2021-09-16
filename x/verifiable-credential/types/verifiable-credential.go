@@ -169,7 +169,7 @@ func (vc VerifiableCredential) Validate(
 
 	vc.Proof = nil
 
-	// TODO: this is an expesive operation, could lead to DDOS
+	// TODO: this is an expensive operation, could lead to DDOS
 	// TODO: we can hash this and make this less expensive
 	isCorrectPubKey := pk.VerifySignature(
 		vc.GetBytes(),
@@ -179,18 +179,23 @@ func (vc VerifiableCredential) Validate(
 	return isCorrectPubKey
 }
 
+// GetPayload returns the data of the verifiable credential that can be signed
+func (vc VerifiableCredential) GetPayload() []byte {
+	vc.Proof = &Proof{}
+	return vc.GetBytes()
+}
+
 // Sign signs a credential with a provided private key
 func (vc VerifiableCredential) Sign(
 	keyring keyring.Keyring,
 	address sdk.Address,
 	signerDid string,
 ) VerifiableCredential {
-	signedVc := vc
 	tm := time.Now()
 
 	// TODO: this could be expensive review this signing method
 	// TODO: we can hash this an make this less expensive
-	signature, pubKey, err := keyring.SignByAddress(address, signedVc.GetBytes())
+	signature, pubKey, err := keyring.SignByAddress(address, vc.GetPayload())
 	if err != nil {
 		panic(err)
 	}
@@ -203,9 +208,8 @@ func (vc VerifiableCredential) Sign(
 		signerDid+"#"+address.String(),
 		base64.StdEncoding.EncodeToString(signature),
 	)
-	signedVc.Proof = &p
-
-	return signedVc
+	vc.Proof = &p
+	return vc
 }
 
 func (vc VerifiableCredential) Hash() string {

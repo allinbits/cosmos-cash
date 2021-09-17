@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/allinbits/cosmos-cash/x/did/types"
@@ -9,6 +10,7 @@ import (
 
 func (k Keeper) SetDidDocument(ctx sdk.Context, key []byte, document types.DidDocument) {
 	k.Set(ctx, key, types.DidDocumentKey, document, k.Marshal)
+	// set document by public key
 }
 
 func (k Keeper) GetDidDocument(ctx sdk.Context, key []byte) (types.DidDocument, bool) {
@@ -90,5 +92,15 @@ func (k Keeper) GetAllDidDocuments(ctx sdk.Context) []types.DidDocument {
 		ctx,
 		types.DidDocumentKey,
 		func(did types.DidDocument) bool { return true },
+	)
+}
+
+func (k Keeper) GetDidDocumentsByPubKey(ctx sdk.Context, pubkey cryptotypes.PubKey) []types.DidDocument {
+	return k.GetAllDidDocumentsWithCondition(
+		ctx,
+		types.DidDocumentKey,
+		func(did types.DidDocument) bool {
+			return did.HasPublicKey(pubkey)
+		},
 	)
 }

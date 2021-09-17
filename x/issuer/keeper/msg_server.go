@@ -8,6 +8,7 @@ import (
 
 	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
 	"github.com/allinbits/cosmos-cash/x/issuer/types"
+	vctypes "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 )
 
 type msgServer struct {
@@ -29,43 +30,20 @@ func (k msgServer) CreateIssuer(
 ) (*types.MsgCreateIssuerResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check to see if the provided did is in the store
-	did, found := k.Keeper.didKeeper.GetDidDocument(ctx, []byte(msg.IssuerDid))
-	if !found {
-		return nil, sdkerrors.Wrapf(
-			types.ErrDidDocumentDoesNotExist,
-			"did does not exists",
-		)
-	}
-
-	// Check to see if the msg signer has a verification relationship in the did document
-	ownerID := didtypes.NewBlockchainAccountID(ctx.ChainID(), msg.Owner)
-	if !did.HasRelationship(ownerID, didtypes.Authentication) {
-		return nil, sdkerrors.Wrapf(
-			types.ErrIncorrectControllerOfDidDocument,
-			"msg sender not in auth array in did document",
-		)
-	}
-
 	// Check to see if the provided verifiable credential is in the store
 	vc, found := k.Keeper.vcKeeper.GetVerifiableCredential(ctx, []byte(msg.LicenseCredId))
 	if !found {
 		return nil, sdkerrors.Wrapf(
-			types.ErrIssuerFound,
+			types.ErrLicenseCredentialNotFound,
 			"verifiable credential not found",
 		)
 	}
 
-	// Validate the credential subject ID the same as the provided did document
-	issuerCred := vc.GetLicenseCred()
-	if issuerCred.Id != did.Id {
-		return nil, sdkerrors.Wrapf(
-			types.ErrIssuerFound,
-			"issuer id not correct",
-		)
+	// Validate the provided issuer credential
+	err := k.validateIssuerCredential(ctx, msg.IssuerDid, vc, msg.Owner)
+	if err != nil {
+		return nil, err
 	}
-
-	// TODO: validate credential was issued by a regulator
 
 	_, found = k.Keeper.GetIssuer(ctx, []byte(msg.IssuerDid))
 	if found {
@@ -98,17 +76,32 @@ func (k msgServer) CreateIssuer(
 	return &types.MsgCreateIssuerResponse{}, nil
 }
 
-// CreateIssuer creates a new e-money token issuer
+// BurnToken burns a token for an e-money issuer
 func (k msgServer) BurnToken(
 	goCtx context.Context,
 	msg *types.MsgBurnToken,
 ) (*types.MsgBurnTokenResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	issuer, found := k.Keeper.GetIssuer(ctx, []byte(msg.Owner))
+	// Check to see if the provided verifiable credential is in the store
+	vc, found := k.Keeper.vcKeeper.GetVerifiableCredential(ctx, []byte(msg.LicenseCredId))
 	if !found {
 		return nil, sdkerrors.Wrapf(
-			types.ErrIssuerNotFound,
+			types.ErrLicenseCredentialNotFound,
+			"verifiable credential not found",
+		)
+	}
+
+	// Validate the provided issuer credential
+	err := k.validateIssuerCredential(ctx, msg.IssuerDid, vc, msg.Owner)
+	if err != nil {
+		return nil, err
+	}
+
+	issuer, found := k.Keeper.GetIssuer(ctx, []byte(msg.IssuerDid))
+	if !found {
+		return nil, sdkerrors.Wrapf(
+			types.ErrIssuerFound,
 			"issuer does not exists",
 		)
 	}
@@ -120,6 +113,15 @@ func (k msgServer) BurnToken(
 			sdk.ErrInvalidDecimalStr,
 			"coin string format not recognized",
 		)
+	}
+	for _, a := range amounts {
+		if a.GetDenom() != issuer.Token {
+			return nil, sdkerrors.Wrapf(
+				types.ErrInvalidIssuerDenom,
+				"issuer can only burn tokens of %s (requested %s)",
+				issuer.Token, a.GetDenom(),
+			)
+		}
 	}
 
 	// sender is the issuer
@@ -150,13 +152,29 @@ func (k msgServer) BurnToken(
 	return &types.MsgBurnTokenResponse{}, nil
 }
 
+// MintToken mints a token for an e-money issuer
 func (k msgServer) MintToken(
 	goCtx context.Context,
 	msg *types.MsgMintToken,
 ) (*types.MsgMintTokenResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	issuer, found := k.Keeper.GetIssuer(ctx, []byte(msg.Owner))
+	// Check to see if the provided verifiable credential is in the store
+	vc, found := k.Keeper.vcKeeper.GetVerifiableCredential(ctx, []byte(msg.LicenseCredId))
+	if !found {
+		return nil, sdkerrors.Wrapf(
+			types.ErrLicenseCredentialNotFound,
+			"verifiable credential not found",
+		)
+	}
+
+	// Validate the provided issuer credential
+	err := k.validateIssuerCredential(ctx, msg.IssuerDid, vc, msg.Owner)
+	if err != nil {
+		return nil, err
+	}
+
+	issuer, found := k.Keeper.GetIssuer(ctx, []byte(msg.IssuerDid))
 	if !found {
 		return nil, sdkerrors.Wrapf(
 			types.ErrIssuerFound,
@@ -180,9 +198,15 @@ func (k msgServer) MintToken(
 				issuer.Token, a.GetDenom(),
 			)
 		}
+
+		// Validate the minting amount is in range
+		err := k.validateMintingAmount(ctx, vc, a)
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	// the recipient is the issuer itself
+	// the recipient is the signer of the message
 	recipient, _ := sdk.AccAddressFromBech32(msg.Owner)
 
 	if err := k.bk.MintCoins(
@@ -208,4 +232,66 @@ func (k msgServer) MintToken(
 	)
 
 	return &types.MsgMintTokenResponse{}, nil
+}
+
+// validateIssuerCredential validate the signer of the message is part of the issuer did and the provided credential
+func (k msgServer) validateIssuerCredential(
+	ctx sdk.Context,
+	issuerDid string,
+	licenseCred vctypes.VerifiableCredential,
+	signer string,
+) error {
+	// Check to see if the provided did is in the store
+	did, found := k.Keeper.didKeeper.GetDidDocument(ctx, []byte(issuerDid))
+	if !found {
+		return sdkerrors.Wrapf(
+			types.ErrDidDocumentDoesNotExist,
+			"did does not exists",
+		)
+	}
+
+	// Check to see if the msg signer has a verification relationship in the did document
+	if !did.HasRelationship(didtypes.NewBlockchainAccountID(ctx.ChainID(), signer), didtypes.Authentication) {
+		return sdkerrors.Wrapf(
+			types.ErrIncorrectControllerOfDidDocument,
+			"msg sender not in auth array in did document",
+		)
+	}
+
+	// Validate the credential subject ID the same as the provided did document
+	issuerCred := licenseCred.GetLicenseCred()
+	if issuerCred.Id != did.Id {
+		return sdkerrors.Wrapf(
+			types.ErrIncorrectLicenseCredential,
+			"issuer id not correct",
+		)
+	}
+
+	// TODO: validate credential was issued by a regulator
+	// XXX: query the params of the issuer module for the regulator
+
+	return nil
+}
+
+// validateMintingAmount validates the amount being minted is correct
+func (k msgServer) validateMintingAmount(
+	ctx sdk.Context,
+	licenseCred vctypes.VerifiableCredential,
+	mintingAmount sdk.Coin,
+) error {
+	// Get the supply from the bank keeper
+	supply := k.bk.GetSupply(ctx, mintingAmount.Denom)
+
+	// Calculate the reserve by subtraction the supply from the issuer credential circulation limit
+	reserve := licenseCred.GetLicenseCred().CirculationLimit.Amount.Sub(supply.Amount)
+
+	// Validate the reserve is greater that the amount being minted
+	if reserve.LT(mintingAmount.Amount) {
+		return sdkerrors.Wrapf(
+			types.ErrMintingTokens,
+			"issuer cannot mint more than the circulation limit defined in their credential",
+		)
+	}
+
+	return nil
 }

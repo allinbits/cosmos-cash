@@ -1,21 +1,16 @@
 package ante
 
 import (
-
-	//	"encoding/base64"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	//	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	accountKeeper "github.com/cosmos/cosmos-sdk/x/auth/ante"
+	bank "github.com/cosmos/cosmos-sdk/x/bank/types"
 
-	//bank "github.com/cosmos/cosmos-sdk/x/bank/types"
 	didkeeper "github.com/allinbits/cosmos-cash/x/did/keeper"
-
-	//	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
 	"github.com/allinbits/cosmos-cash/x/issuer/keeper"
-
-	//	"github.com/allinbits/cosmos-cash/x/issuer/types"
+	"github.com/allinbits/cosmos-cash/x/issuer/types"
 	vcskeeper "github.com/allinbits/cosmos-cash/x/verifiable-credential/keeper"
+	vctypes "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 )
 
 // CheckUserCredentialsDecorator checks the users has a KYCCredential in a preprocessing hook
@@ -48,104 +43,80 @@ func (cicd CheckUserCredentialsDecorator) AnteHandle(
 	simulate bool,
 	next sdk.AnteHandler,
 ) (newCtx sdk.Context, err error) {
-	// TODO: ensure this keepers can only read from store
-	// TODO: improve logic here
-	//	for _, msg := range tx.GetMsgs() {
-	//		// FIXME: this will fail with the next cosmos-sdk update as Type() gone from interface
-	//		// use protoMessage type e.g bank/v1beta1/send
-	//		if msg.String() == "send" {
-	//			imsg := msg.(*bank.MsgSend)
-	//			// FIXME: iterate over tokens and check the multi-send
-	//			issuer, found := cicd.issuerk.GetIssuerByToken(ctx, []byte(imsg.Amount[0].Denom))
-	//
-	//			if found {
-	//				err := cicd.validateKYCCredential(ctx, imsg.ToAddress, issuer.Address)
-	//				if err != nil {
-	//					return ctx, err
-	//				}
-	//
-	//				err = cicd.validateKYCCredential(ctx, imsg.FromAddress, issuer.Address)
-	//				if err != nil {
-	//					return ctx, err
-	//				}
-	//			}
-	//		}
-	//	}
+	for _, msg := range tx.GetMsgs() {
+		switch msg := msg.(type) {
+		case *bank.MsgSend:
+			issuer, found := cicd.issuerk.GetIssuerByToken(ctx, []byte(msg.Amount[0].Denom))
+			if !found {
+				return next(ctx, tx, simulate)
+			}
+
+			if msg.Amount[0].Denom != issuer.Token {
+				return next(ctx, tx, simulate)
+			}
+
+			vcs := cicd.vcsk.GetAllVerifiableCredentialsByIssuer(ctx, issuer.IssuerDid)
+
+			if found {
+				err := cicd.validateKYCCredential(ctx, msg.ToAddress, vcs)
+				if err != nil {
+					return next(ctx, tx, simulate)
+				}
+
+				err = cicd.validateKYCCredential(ctx, msg.FromAddress, vcs)
+				if err != nil {
+					return next(ctx, tx, simulate)
+				}
+			}
+		case *bank.MsgMultiSend:
+			// TODO: implement multi send checks
+		}
+	}
 
 	return next(ctx, tx, simulate)
 }
 
 // validateKYCCredential validates a users KYC credential when they try to send a token
 // to another user, this is called on every bank send message
-//func (cicd CheckUserCredentialsDecorator) validateKYCCredential(
-//	ctx sdk.Context,
-//	address string,
-//	issuerAddress string,
-//) error {
-//	issuerDID := didtypes.DID(ctx.ChainID(), address)
-//
-//	// TODO: tidy this functionality into the keeper,
-//	// GetDidDocumentWithCondition, GetDidDocumentWithService, GetDidDocumentWithAuth
-//	did, found := cicd.ik.GetDidDocument(ctx, []byte(issuerDID))
-//	if !found {
-//		return sdkerrors.Wrapf(
-//			types.ErrDidDocumentDoesNotExist,
-//			"did does not exists when validating the KYC credential",
-//		)
-//	}
-//
-//	if !did.HasRelationship(issuerDID, didtypes.Authentication) {
-//		return sdkerrors.Wrapf(
-//			types.ErrIncorrectControllerOfDidDocument,
-//			"msg sender not in auth slice in did document when validating the KYC credential",
-//		)
-//	}
-//
-//	// check if the did document has the issuer credential
-//	hasUserCredential := false
-//	for _, service := range did.Service {
-//		// TODO use enum here
-//		if service.Type != "KYCCredential" {
-//			continue
-//		}
-//
-//		// TODO: ensure this keeper can only read from store
-//		vc, found := cicd.vcsk.GetVerifiableCredential(ctx, []byte(service.Id))
-//		if !found {
-//			continue
-//		}
-//
-//		userCred := vc.GetUserCred()
-//		if userCred.Id != issuerDID {
-//			continue
-//		}
-//
-//		if !userCred.IsVerified {
-//			continue
-//		}
-//
-//		if vc.Issuer != issuerAddress {
-//			continue
-//		}
-//
-//		address, err := sdk.AccAddressFromBech32(issuerAddress)
-//		if err != nil {
-//			continue
-//		}
-//
-//		account := cicd.accountk.GetAccount(ctx, address)
-//		pubkey := account.GetPubKey()
-//
-//		hasUserCredential = vc.Validate(pubkey)
-//
-//		break
-//	}
-//	if !hasUserCredential {
-//		return sdkerrors.Wrapf(
-//			types.ErrIncorrectUserCredential,
-//			"did document does not have a KYC credential to send e-money tokens",
-//		)
-//	}
-//
-//	return nil
-//}
+func (cicd CheckUserCredentialsDecorator) validateKYCCredential(
+	ctx sdk.Context,
+	address string,
+	vcs []vctypes.VerifiableCredential,
+) error {
+	hasUserCredential := false
+
+	a, err := sdk.AccAddressFromBech32(address)
+	if err != nil {
+		return err
+	}
+
+	// NOTE: test on account with no pubkey
+	account := cicd.accountk.GetAccount(ctx, a)
+	pubkey := account.GetPubKey()
+
+	dids := cicd.ik.GetDidDocumentsByPubKey(ctx, pubkey)
+
+	// TODO: this is brute force, find a better way
+	for _, vc := range vcs {
+		for _, did := range dids {
+			switch key := vc.CredentialSubject.(type) {
+			case *vctypes.VerifiableCredential_UserCred:
+				if key.UserCred.Id == did.Id {
+					hasUserCredential = true
+				}
+			}
+		}
+	}
+
+	// TODO: is this check needed
+	// hasUserCredential = vc.Validate(pubkey)
+
+	if !hasUserCredential {
+		return sdkerrors.Wrapf(
+			types.ErrIncorrectUserCredential,
+			"did document does not have a KYC credential to send e-money tokens",
+		)
+	}
+
+	return nil
+}

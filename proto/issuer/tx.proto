@@ -32,8 +32,10 @@ message MsgBurnToken {
   option (gogoproto.equal)           = false;
   option (gogoproto.goproto_getters) = false;
 
-  string    amount       = 1; 
-  string    owner        = 2;
+  string    issuer_did   	= 1;
+  string    license_cred_id   	= 2;
+  string    amount       	= 3;
+  string    owner        	= 4;
 }
 
 message MsgBurnTokenResponse {}
@@ -44,8 +46,10 @@ message MsgMintToken {
   option (gogoproto.equal)           = false;
   option (gogoproto.goproto_getters) = false;
 
-  string    amount       = 1;
-  string    owner        = 2;
+  string    issuer_did   	= 1; 
+  string    license_cred_id   	= 2; 
+  string    amount       	= 3; 
+  string    owner        	= 4;
 }
 
 message MsgMintTokenResponse {}

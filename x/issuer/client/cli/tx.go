@@ -77,9 +77,9 @@ func NewCreateIssuerCmd() *cobra.Command {
 // NewBurnTokenCmd defines the command to burn tokens.
 func NewBurnTokenCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "burn-token [amount]",
+		Use:   "burn-token [did] [license_cred_id] [amount]",
 		Short: "burn e-money tokens for an issuer",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -88,13 +88,19 @@ func NewBurnTokenCmd() *cobra.Command {
 
 			accAddr := clientCtx.GetFromAddress()
 			accAddrBech32 := accAddr.String()
+
+			didID := args[0]
+			vc := args[1]
+
 			// read the amount to burn
-			amount, err := sdk.ParseCoinNormalized(args[0])
+			amount, err := sdk.ParseCoinNormalized(args[2])
 			if err != nil {
 				return err
 			}
 			// build the burn message
 			msg := types.NewMsgBurnToken(
+				didID,
+				vc,
 				amount,
 				accAddrBech32,
 			)
@@ -114,9 +120,9 @@ func NewBurnTokenCmd() *cobra.Command {
 
 func NewMintCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "mint-token [amount]",
+		Use:   "mint-token [did] [license_cred_id] [amount]",
 		Short: "mint e-money tokens for an issuer",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -126,13 +132,18 @@ func NewMintCommand() *cobra.Command {
 			accAddr := clientCtx.GetFromAddress()
 			accAddrBech32 := accAddr.String()
 
+			didID := args[0]
+			vc := args[1]
+
 			// read the amount to mint
-			amount, err := sdk.ParseCoinNormalized(args[0])
+			amount, err := sdk.ParseCoinNormalized(args[2])
 			if err != nil {
 				return err
 			}
 			// build the message
 			msg := types.NewMsgMintToken(
+				didID,
+				vc,
 				amount,
 				accAddrBech32,
 			)

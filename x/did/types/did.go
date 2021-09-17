@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -154,7 +155,7 @@ func (baID BlockchainAccountID) MatchAddress(address string) bool {
 	if addrStart < 0 {
 		return false
 	}
-	return string(baID)[addrStart:] == address
+	return string(baID)[addrStart+1:] == address
 }
 
 // NewBlockchainAccountID build a new blockchain account ID struct
@@ -595,18 +596,45 @@ func (didDoc DidDocument) HasRelationship(
 			}
 		case *VerificationMethod_PublicKeyMultibase:
 			addr, err := toAddress(k.PublicKeyMultibase[1:])
-			if err != nil || signer.MatchAddress(addr) {
+			if err != nil || !signer.MatchAddress(addr) {
 				continue
 			}
 		case *VerificationMethod_PublicKeyHex:
 			addr, err := toAddress(k.PublicKeyHex)
-			if err != nil || signer.MatchAddress(addr) {
+			if err != nil || !signer.MatchAddress(addr) {
 				continue
 			}
 		}
 		vrs := didDoc.GetVerificationRelationships(vm.Id)
 		if len(intersection(vrs, relationships)) > 0 {
 			return true
+		}
+	}
+	return false
+}
+
+// HasPublicKey validates if a public key is contained in a DidDocument
+func (didDoc DidDocument) HasPublicKey(pubkey cryptotypes.PubKey) bool {
+	for _, vm := range didDoc.VerificationMethod {
+		switch key := vm.VerificationMaterial.(type) {
+		case *VerificationMethod_BlockchainAccountID:
+			address := sdk.MustBech32ifyAddressBytes(
+				sdk.GetConfig().GetBech32AccountAddrPrefix(),
+				pubkey.Address().Bytes(),
+			)
+			if key.BlockchainAccountID == address {
+				return true
+			}
+
+		case *VerificationMethod_PublicKeyMultibase:
+			if key.PublicKeyMultibase == fmt.Sprint("F", hex.EncodeToString(pubkey.Bytes())) {
+				return true
+			}
+
+		case *VerificationMethod_PublicKeyHex:
+			if key.PublicKeyHex == hex.EncodeToString(pubkey.Bytes()) {
+				return true
+			}
 		}
 	}
 	return false

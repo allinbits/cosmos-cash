@@ -3,7 +3,7 @@
 echo "Creating verifiable credential for user :validator"
 cosmos-cashd tx verifiablecredential create-license-verifiable-credential \
 	did:cosmos:net:cash:eurolicense-credential did:cosmos:net:cash:vasp did:cosmos:net:cash:vasp \
-	MICAEMI IRL "Another Financial Services Body (AFFB)" sEUR 1000 \
+	MICAEMI IRL "Another Financial Services Body (AFFB)" sEUR 10000 \
 	--from validator --chain-id cash -y
 
 sleep 5
@@ -11,7 +11,7 @@ sleep 5
 echo "Creating verifiable credential for user :issuer"
 cosmos-cashd tx verifiablecredential create-license-verifiable-credential \
 	did:cosmos:net:cash:dollarlicense-credential did:cosmos:net:cash:vasp did:cosmos:net:cash:issuer \
-	MICAEMI IRL "Another Financial Services Body (AFFB)" sUSD 1000 \
+	MICAEMI IRL "Another Financial Services Body (AFFB)" sUSD 10000 \
 	--from validator --chain-id cash -y
 
 sleep 5

@@ -2,10 +2,10 @@ package keeper
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/allinbits/cosmos-cash/x/did/types"
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 )
 
 func (k Keeper) SetDidDocument(ctx sdk.Context, key []byte, document types.DidDocument) {

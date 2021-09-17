@@ -2,15 +2,12 @@ package ante
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	accountKeeper "github.com/cosmos/cosmos-sdk/x/auth/ante"
-
-	didkeeper "github.com/allinbits/cosmos-cash/x/did/keeper"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/types"
 
+	didkeeper "github.com/allinbits/cosmos-cash/x/did/keeper"
 	"github.com/allinbits/cosmos-cash/x/issuer/keeper"
-
 	"github.com/allinbits/cosmos-cash/x/issuer/types"
 	vcskeeper "github.com/allinbits/cosmos-cash/x/verifiable-credential/keeper"
 	vctypes "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"

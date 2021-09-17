@@ -591,36 +591,23 @@ func (didDoc DidDocument) HasRelationship(
 	for _, vm := range didDoc.VerificationMethod {
 		switch k := vm.VerificationMaterial.(type) {
 		case *VerificationMethod_BlockchainAccountID:
-			if k.BlockchainAccountID == signer.EncodeToString() {
-				vrs := didDoc.GetVerificationRelationships(vm.Id)
-				if len(intersection(vrs, relationships)) > 0 {
-					return true
-				}
+			if k.BlockchainAccountID != signer.EncodeToString() {
+				continue
 			}
 		case *VerificationMethod_PublicKeyMultibase:
 			addr, err := toAddress(k.PublicKeyMultibase[1:])
-			if err != nil {
+			if err != nil || !signer.MatchAddress(addr) {
 				continue
-			}
-
-			if signer.MatchAddress(addr) {
-				vrs := didDoc.GetVerificationRelationships(vm.Id)
-				if len(intersection(vrs, relationships)) > 0 {
-					return true
-				}
 			}
 		case *VerificationMethod_PublicKeyHex:
 			addr, err := toAddress(k.PublicKeyHex)
-			if err != nil {
+			if err != nil || !signer.MatchAddress(addr) {
 				continue
 			}
-
-			if signer.MatchAddress(addr) {
-				vrs := didDoc.GetVerificationRelationships(vm.Id)
-				if len(intersection(vrs, relationships)) > 0 {
-					return true
-				}
-			}
+		}
+		vrs := didDoc.GetVerificationRelationships(vm.Id)
+		if len(intersection(vrs, relationships)) > 0 {
+			return true
 		}
 	}
 	return false

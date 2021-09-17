@@ -65,6 +65,7 @@ func (k msgServer) CreateIssuer(
 		Token:     msg.Token,
 		Fee:       msg.Fee,
 		IssuerDid: msg.IssuerDid,
+		Paused:    false,
 	}
 
 	k.Keeper.SetIssuer(ctx, issuer)
@@ -232,6 +233,47 @@ func (k msgServer) MintToken(
 	)
 
 	return &types.MsgMintTokenResponse{}, nil
+}
+
+// PauseToken pauses a token for an issuer
+func (k msgServer) PauseToken(
+	goCtx context.Context,
+	msg *types.MsgPauseToken,
+) (*types.MsgPauseTokenResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Check to see if the provided verifiable credential is in the store
+	vc, found := k.Keeper.vcKeeper.GetVerifiableCredential(ctx, []byte(msg.LicenseCredId))
+	if !found {
+		return nil, sdkerrors.Wrapf(
+			types.ErrLicenseCredentialNotFound,
+			"verifiable credential not found",
+		)
+	}
+
+	// Validate the provided issuer credential
+	err := k.validateIssuerCredential(ctx, msg.IssuerDid, vc, msg.Owner)
+	if err != nil {
+		return nil, err
+	}
+
+	issuer, found := k.Keeper.GetIssuer(ctx, []byte(msg.IssuerDid))
+	if !found {
+		return nil, sdkerrors.Wrapf(
+			types.ErrIssuerFound,
+			"issuer does not exists",
+		)
+	}
+
+	issuer.Paused = !issuer.Paused
+
+	k.Keeper.SetIssuer(ctx, issuer)
+
+	ctx.EventManager().EmitEvent(
+		types.NewTokenPausedEvent(msg.Owner, issuer.Token),
+	)
+
+	return &types.MsgPauseTokenResponse{}, nil
 }
 
 // validateIssuerCredential validate the signer of the message is part of the issuer did and the provided credential

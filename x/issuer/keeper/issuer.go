@@ -30,10 +30,12 @@ func (k Keeper) UnmarshalIssuer(value []byte) (interface{}, bool) {
 		return types.Issuer{}, false
 	}
 
+	// FIXME: improve these checks
 	//if issuer.Fee == nil {
 	//	return types.Issuer{}, false
 	//}
 
+	// TODO: check issuer DID id is structured correctly
 	if issuer.IssuerDid == "" {
 		return types.Issuer{}, false
 	}

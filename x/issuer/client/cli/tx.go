@@ -27,7 +27,8 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(
 		NewCreateIssuerCmd(),
 		NewBurnTokenCmd(),
-		NewMintCommand(),
+		NewMintTokenCmd(),
+		NewPauseTokenCmd(),
 	)
 
 	return cmd
@@ -118,7 +119,8 @@ func NewBurnTokenCmd() *cobra.Command {
 
 }
 
-func NewMintCommand() *cobra.Command {
+// NewMintTokenCmd defines the command to mint tokens.
+func NewMintTokenCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "mint-token [did] [license_cred_id] [amount]",
 		Short: "mint e-money tokens for an issuer",
@@ -159,7 +161,42 @@ func NewMintCommand() *cobra.Command {
 	return cmd
 }
 
+// NewMintTokenCmd defines the command to pause all transfers of an emoney token.
+func NewPauseTokenCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "pause-token [did] [license_cred_id]",
+		Short: "pauses all transfers of an emoney token",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			accAddr := clientCtx.GetFromAddress()
+			accAddrBech32 := accAddr.String()
+			issuerDid := args[0]
+			licenseCred := args[1]
+
+			msg := types.NewMsgPauseToken(
+				issuerDid,
+				licenseCred,
+				accAddrBech32,
+			)
+
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
 // TODO: extra commands:
-//		Use:     "widthdraw-emoney [did] [token] [amount]",
-//		Use:     "freeze-all-emoney-tokens [did] [token] [fee]",
+//		Use:     "withdraw-emoney [did] [token] [amount]",
 //		Use:     "freeze-account-with-emoney [did] [token] [fee]",

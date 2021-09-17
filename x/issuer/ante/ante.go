@@ -13,7 +13,7 @@ import (
 	vctypes "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 )
 
-// CheckUserCredentialsDecorator checks the users has a KYCCredential in a preprocessing hook
+// CheckUserCredentialsDecorator checks the users has a UserCredential in a preprocessing hook
 type CheckUserCredentialsDecorator struct {
 	accountk accountKeeper.AccountKeeper
 	issuerk  keeper.Keeper
@@ -36,7 +36,7 @@ func NewCheckUserCredentialsDecorator(
 }
 
 // AnteHandle CheckUserCredentialsDecorator is used as a hook to intercept the bank send message then
-// it will validate the KYC credential
+// it will validate the User credential
 func (cicd CheckUserCredentialsDecorator) AnteHandle(
 	ctx sdk.Context,
 	tx sdk.Tx,
@@ -47,23 +47,24 @@ func (cicd CheckUserCredentialsDecorator) AnteHandle(
 		switch msg := msg.(type) {
 		case *bank.MsgSend:
 			issuer, found := cicd.issuerk.GetIssuerByToken(ctx, []byte(msg.Amount[0].Denom))
-			if !found {
+
+			// if the issuer cannot be found, is frozen or not associated with the token
+			if !found || issuer.Paused || msg.Amount[0].Denom != issuer.Token {
 				return next(ctx, tx, simulate)
 			}
 
-			if msg.Amount[0].Denom != issuer.Token {
-				return next(ctx, tx, simulate)
-			}
-
+			// get all the verifiable credential associated with the issuer
 			vcs := cicd.vcsk.GetAllVerifiableCredentialsByIssuer(ctx, issuer.IssuerDid)
 
 			if found {
-				err := cicd.validateKYCCredential(ctx, msg.ToAddress, vcs)
+				// validate that kyc credentials have been issued to the `ToAddress`
+				err := cicd.validateUserCredential(ctx, msg.ToAddress, vcs)
 				if err != nil {
 					return next(ctx, tx, simulate)
 				}
 
-				err = cicd.validateKYCCredential(ctx, msg.FromAddress, vcs)
+				// validate that kyc credentials have been issued to the `FromAddress`
+				err = cicd.validateUserCredential(ctx, msg.FromAddress, vcs)
 				if err != nil {
 					return next(ctx, tx, simulate)
 				}
@@ -76,9 +77,9 @@ func (cicd CheckUserCredentialsDecorator) AnteHandle(
 	return next(ctx, tx, simulate)
 }
 
-// validateKYCCredential validates a users KYC credential when they try to send a token
+// validateUserCredential validates a users User credential when they try to send a token
 // to another user, this is called on every bank send message
-func (cicd CheckUserCredentialsDecorator) validateKYCCredential(
+func (cicd CheckUserCredentialsDecorator) validateUserCredential(
 	ctx sdk.Context,
 	address string,
 	vcs []vctypes.VerifiableCredential,
@@ -114,7 +115,7 @@ func (cicd CheckUserCredentialsDecorator) validateKYCCredential(
 	if !hasUserCredential {
 		return sdkerrors.Wrapf(
 			types.ErrIncorrectUserCredential,
-			"did document does not have a KYC credential to send e-money tokens",
+			"did document does not have a User credential to send e-money tokens",
 		)
 	}
 

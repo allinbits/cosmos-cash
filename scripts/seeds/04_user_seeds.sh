@@ -52,9 +52,24 @@ cosmos-cashd tx bank send $(cosmos-cashd keys show validator -a) $(cosmos-cashd 
 
 sleep 5
 
+echo "Sending issuer tokens to users from validator"
 cosmos-cashd tx bank send $(cosmos-cashd keys show validator -a) $(cosmos-cashd keys show user2 -a) 10seuro --from validator --chain-id cash -y
+
+sleep 5
 
 echo "Querying balances for users"
 cosmos-cashd query bank balances $(cosmos-cashd keys show user1 -a) --output json | jq
 cosmos-cashd query bank balances $(cosmos-cashd keys show user2 -a) --output json | jq
 
+echo "Pause tokens for issuer: validator"
+cosmos-cashd tx issuer pause-token did:cosmos:net:cash:vasp did:cosmos:net:cash:eurolicense-credential --from validator --chain-id cash -y
+
+sleep 5
+
+echo "Sending paused issuer tokens to user from validator: should fail"
+cosmos-cashd tx bank send $(cosmos-cashd keys show validator -a) $(cosmos-cashd keys show user2 -a) 10seuro --from validator --chain-id cash -y
+
+sleep 5
+
+echo "Querying balances for user2 should be 10seuro"
+cosmos-cashd query bank balances $(cosmos-cashd keys show user2 -a) --output json | jq

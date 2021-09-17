@@ -23,3 +23,19 @@ sleep 5
 
 echo "Check that the tokens have been burned"
 cosmos-cashd query bank total --output json | jq
+
+echo "Pause tokens for issuer: validator"
+cosmos-cashd tx issuer pause-token did:cosmos:net:cash:vasp did:cosmos:net:cash:eurolicense-credential --from validator --chain-id cash -y
+
+sleep 5
+
+echo "Querying all issuers"
+cosmos-cashd query issuer issuers --output json | jq
+
+echo "Unpause tokens for issuer: validator"
+cosmos-cashd tx issuer pause-token did:cosmos:net:cash:vasp did:cosmos:net:cash:eurolicense-credential --from validator --chain-id cash -y
+
+sleep 5
+
+echo "Querying all issuers"
+cosmos-cashd query issuer issuers --output json | jq

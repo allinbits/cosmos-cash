@@ -10,6 +10,7 @@ const (
 	TypeMsgCreateIssuer = "create-issuer"
 	TypeMsgBurnToken    = "burn-token"
 	TypeMsgMintToken    = "mint-token"
+	TypeMsgPauseToken   = "pause-token"
 )
 
 var _ sdk.Msg = &MsgCreateIssuer{}
@@ -56,7 +57,7 @@ func (msg MsgCreateIssuer) ValidateBasic() error {
 }
 
 func (msg MsgCreateIssuer) GetSignBytes() []byte {
-	panic("IBC messages do not support amino")
+	panic("Issuer messages do not support amino")
 }
 
 // GetSigners implements sdk.Msg
@@ -118,7 +119,7 @@ func (msg MsgBurnToken) GetSigners() []sdk.AccAddress {
 }
 
 func (msg MsgBurnToken) GetSignBytes() []byte {
-	panic("IBC messages do not support amino")
+	panic("Issuer messages do not support amino")
 }
 
 // Mint token
@@ -162,10 +163,63 @@ func (msg MsgMintToken) ValidateBasic() error {
 }
 
 func (msg MsgMintToken) GetSignBytes() []byte {
-	panic("IBC messages do not support amino")
+	panic("Issuer messages do not support amino")
 }
 
 func (msg MsgMintToken) GetSigners() []sdk.AccAddress {
+	accAddr, err := sdk.AccAddressFromBech32(msg.Owner)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{accAddr}
+}
+
+// Pause Token
+var _ sdk.Msg = &MsgPauseToken{}
+
+// NewMsgPauseToken creates a new MsgPauseToken instance
+func NewMsgPauseToken(
+	issuerDid string,
+	licenseCredID string,
+	owner string,
+) *MsgPauseToken {
+	return &MsgPauseToken{
+		IssuerDid:     issuerDid,
+		LicenseCredId: licenseCredID,
+		Owner:         owner,
+	}
+}
+
+// Route implements sdk.Msg
+func (MsgPauseToken) Route() string {
+	return RouterKey
+}
+
+// Type implements sdk.Msg
+func (MsgPauseToken) Type() string {
+	return TypeMsgPauseToken
+}
+
+// ValidateBasic performs a basic check of the MsgPauseToken fields.
+func (msg MsgPauseToken) ValidateBasic() error {
+	if msg.IssuerDid == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "issuerDid is empty")
+	}
+
+	if msg.LicenseCredId == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "licenseCredID is empty")
+	}
+
+	return nil
+
+}
+
+func (msg MsgPauseToken) GetSignBytes() []byte {
+	panic("Issuer messages do not support amino")
+}
+
+// GetSigners implements sdk.Msg
+func (msg MsgPauseToken) GetSigners() []sdk.AccAddress {
 	accAddr, err := sdk.AccAddressFromBech32(msg.Owner)
 	if err != nil {
 		panic(err)

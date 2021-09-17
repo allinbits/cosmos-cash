@@ -5,6 +5,8 @@ var (
 	DidDocumentKey = []byte{0x61}
 	// DidMetadataKey prefix for each key of a DidMetadata
 	DidMetadataKey = []byte{0x62}
+	// DidPublicKey prefix for each key of a DidMetadata
+	DidPublicKey = []byte{0x62}
 )
 
 const (

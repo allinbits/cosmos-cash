@@ -22,15 +22,14 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateIssuer() {
 		{
 			"PASS: issuer can be created",
 			func() {
-				did := "did:cosmos:cash:subject"
-				vcID := "did:cosmos:cash:issuercred"
+				did := fmt.Sprint("did:cosmos:net:", suite.ctx.ChainID(), ":"+suite.GetAliceAddress().String())
+				vmID := fmt.Sprint(did, "#", suite.GetAliceAddress().String())
 				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
 					didtypes.NewVerification(
 						didtypes.NewVerificationMethod(
-							"did:cosmos:cash:subject#key-1",
-							"did:cosmos:cash:subject",
-							didtypes.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215},
-								didtypes.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
+							vmID,
+							didtypes.DID(did),
+							didtypes.NewBlockchainAccountID(suite.ctx.ChainID(), suite.GetAliceAddress().String()),
 						),
 						[]string{didtypes.Authentication},
 						nil,
@@ -47,13 +46,15 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateIssuer() {
 				)
 
 				vc := vctypes.NewLicenseVerifiableCredential(
-					vcID,
+					"issuer-licence-credential",
 					didDoc.Id,
 					time.Now(),
 					cs,
 				)
-				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+
 				suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+				signedVC, _ := vc.Sign(suite.keyring, suite.GetAliceAddress(), did)
+				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), signedVC)
 				req = *types.NewMsgCreateIssuer(
 					didDoc.Id,
 					vc.Id,
@@ -291,12 +292,10 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateIssuer() {
 	for _, tc := range testCases {
 		suite.Run(fmt.Sprintf("Case %s", tc.msg), func() {
 			tc.malleate()
-
 			didResp, err := server.CreateIssuer(sdk.WrapSDKContext(suite.ctx), &req)
 			if tc.expPass {
 				suite.NoError(err)
 				suite.NotNil(didResp)
-
 			} else {
 				suite.Require().Error(err)
 			}

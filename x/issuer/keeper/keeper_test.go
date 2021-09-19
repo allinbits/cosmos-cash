@@ -2,13 +2,17 @@ package keeper
 
 import (
 	"fmt"
+	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
+	"testing"
+
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/suite"
-	"testing"
 
 	"github.com/allinbits/cosmos-cash/x/issuer/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	ct "github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/cosmos/cosmos-sdk/crypto/hd"
+	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
@@ -38,6 +42,20 @@ type KeeperTestSuite struct {
 	queryClient types.QueryClient
 	didkeeper   didkeeper.Keeper
 	vckeeper    vckeeper.Keeper
+	keyring     keyring.Keyring
+}
+
+func (suite KeeperTestSuite) GetAliceAddress() sdk.Address {
+	return suite.GetKeyAddress("alice")
+}
+
+func (suite KeeperTestSuite) GetBobAddress() sdk.Address {
+	return suite.GetKeyAddress("bob")
+}
+
+func (suite KeeperTestSuite) GetKeyAddress(uid string) sdk.Address {
+	i, _ := suite.keyring.Key(uid)
+	return i.GetAddress()
 }
 
 // SetupTest creates a test suite to test the issuer
@@ -71,6 +89,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 
 	interfaceRegistry := ct.NewInterfaceRegistry()
 	authtypes.RegisterInterfaces(interfaceRegistry)
+	cryptocodec.RegisterInterfaces(interfaceRegistry)
 	marshaler := codec.NewProtoCodec(interfaceRegistry)
 
 	maccPerms := map[string][]string{
@@ -114,6 +133,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 		keyVc,
 		memKeyVc,
 		didKeeper,
+		AccountKeeper,
 	)
 
 	k := NewKeeper(
@@ -129,7 +149,21 @@ func (suite *KeeperTestSuite) SetupTest() {
 	types.RegisterQueryServer(queryHelper, k)
 	queryClient := types.NewQueryClient(queryHelper)
 
-	suite.ctx, suite.keeper, suite.queryClient, suite.didkeeper, suite.vckeeper = ctx, *k, queryClient, *didKeeper, *vcKeeper
+	kr := keyring.NewInMemory()
+	var i keyring.Info
+	var a authtypes.AccountI
+	// alice address
+	i, _, _ = kr.NewMnemonic("alice", keyring.English, sdk.FullFundraiserPath, keyring.DefaultBIP39Passphrase, hd.Secp256k1)
+	a = AccountKeeper.NewAccountWithAddress(ctx, i.GetAddress())
+	a.SetPubKey(i.GetPubKey())
+	AccountKeeper.SetAccount(ctx, AccountKeeper.NewAccount(ctx, a))
+	// bob address
+	i, _, _ = kr.NewMnemonic("bob", keyring.English, sdk.FullFundraiserPath, keyring.DefaultBIP39Passphrase, hd.Secp256k1)
+	a = AccountKeeper.NewAccountWithAddress(ctx, i.GetAddress())
+	a.SetPubKey(i.GetPubKey())
+	AccountKeeper.SetAccount(ctx, AccountKeeper.NewAccount(ctx, a))
+
+	suite.ctx, suite.keeper, suite.queryClient, suite.didkeeper, suite.vckeeper, suite.keyring = ctx, *k, queryClient, *didKeeper, *vcKeeper, kr
 }
 
 func TestKeeperTestSuite(t *testing.T) {

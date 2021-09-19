@@ -73,17 +73,17 @@ that activates it.`,
 			}
 
 			// assign a credential id
-			credId := fmt.Sprint("regulator-credential/", did)
+			credID := fmt.Sprint("regulator-credential/", did)
 			if activateRegulatorCredentialID != "" {
-				credId = activateRegulatorCredentialID
+				credID = activateRegulatorCredentialID
 			}
 			// credentials
 			vc := vctypes.NewRegulatorVerifiableCredential(
-				credId,
+				credID,
 				did.String(),
 				time.Now().UTC(),
 				vctypes.NewRegulatorCredentialSubject(
-					credId,
+					credID,
 					name,
 					countryCode,
 				),

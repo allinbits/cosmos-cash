@@ -131,7 +131,11 @@ func (k msgServer) Register(goCtx context.Context, msg *types.MsgActivate) (*typ
 	err := k.SetVerifiableCredential(ctx, *msg.Credentials)
 	if err != nil {
 		// TODO in this case we MUS rollback did creation, perhaps did and credentials should be
-		//
+		k.Logger(ctx).Error("error setting verifiable credential, validation failed")
+		return nil, sdkerrors.Wrapf(
+			vctypes.ErrMessageSigner,
+			didDoc.Id,
+		)
 	}
 
 	// reply

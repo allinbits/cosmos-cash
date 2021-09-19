@@ -613,7 +613,6 @@ func (didDoc DidDocument) GetVerificationRelationships(methodID string) []string
 
 // HasRelationship verifies if a controller did
 // exists for at least one of the relationships in the did document
-// the account
 func (didDoc DidDocument) HasRelationship(
 	signer BlockchainAccountID,
 	relationships ...string,

@@ -1,7 +1,6 @@
 package keeper
 
 import (
-	"encoding/base64"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -11,9 +10,8 @@ import (
 	"github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 )
 
+// SetVerifiableCredential commit a verifiable credential to the storage
 func (q Keeper) SetVerifiableCredential(ctx sdk.Context, key []byte, vc types.VerifiableCredential) (err error) {
-
-	// XXX: where to do this check
 	err = ValidateProof(ctx, q, vc)
 	if err != nil {
 		return
@@ -83,17 +81,14 @@ func (q Keeper) GetAllVerifiableCredentials(ctx sdk.Context) []types.VerifiableC
 
 // ValidateProof validate the proof of a verifiable credential
 func ValidateProof(ctx sdk.Context, k Keeper, vc types.VerifiableCredential) error {
-
-	// XXX: Paddy you are going to love this one
 	did, err := func() (did didtypes.DidDocument, err error) {
 		if strings.HasPrefix(vc.Issuer, didtypes.DidKeyPrefix) {
 			did, _, err = didtypes.ResolveAccountDID(vc.Issuer, ctx.ChainID())
-		} else {
-			var found bool
-			did, found = k.didKeeper.GetDidDocument(ctx, []byte(vc.Issuer))
-			if !found {
-				err = didtypes.ErrDidDocumentNotFound
-			}
+			return
+		}
+		did, found := k.didKeeper.GetDidDocument(ctx, []byte(vc.Issuer))
+		if !found {
+			err = didtypes.ErrDidDocumentNotFound
 		}
 		return
 	}()
@@ -105,6 +100,13 @@ func ValidateProof(ctx sdk.Context, k Keeper, vc types.VerifiableCredential) err
 	}
 
 	// verify the signature
+	if vc.Proof == nil {
+		return sdkerrors.Wrapf(
+			types.ErrMessageSigner,
+			"proof is nil %v",
+			err,
+		)
+	}
 	// get the address in the verification method
 	issuerAddress, err := did.GetVerificationMethodAddress(vc.Proof.VerificationMethod)
 	if err != nil {
@@ -115,8 +117,8 @@ func ValidateProof(ctx sdk.Context, k Keeper, vc types.VerifiableCredential) err
 		)
 	}
 	// verify the relationships
-	signerID := didtypes.NewBlockchainAccountID(ctx.ChainID(), issuerAddress)
-	if !did.HasRelationship(signerID, didtypes.Authentication, didtypes.AssertionMethod) {
+	issuerBID := didtypes.NewBlockchainAccountID(ctx.ChainID(), issuerAddress)
+	if !did.HasRelationship(issuerBID, didtypes.Authentication, didtypes.AssertionMethod) {
 		return sdkerrors.Wrapf(
 			types.ErrMessageSigner,
 			"signer is not in issuer did",
@@ -140,16 +142,8 @@ func ValidateProof(ctx sdk.Context, k Keeper, vc types.VerifiableCredential) err
 			err,
 		)
 	}
-	// verify the signature
-	signature, err := base64.StdEncoding.DecodeString(vc.Proof.Signature)
-	if err != nil {
-		return sdkerrors.Wrapf(
-			types.ErrMessageSigner,
-			"signature decoding error %v",
-			err,
-		)
-	}
-	if isValid := pk.VerifySignature(vc.GetPayload(), signature); !isValid {
+	//
+	if isValid := vc.Validate(pk); !isValid {
 		return sdkerrors.Wrapf(
 			types.ErrMessageSigner,
 			"verification error %v",

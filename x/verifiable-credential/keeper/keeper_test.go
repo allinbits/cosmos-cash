@@ -20,6 +20,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
+	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
 	dbm "github.com/tendermint/tm-db"
 )
@@ -41,6 +43,9 @@ func (suite *KeeperTestSuite) SetupTest() {
 	memKeyVc := sdk.NewKVStoreKey(types.MemStoreKey)
 	keyDidDocument := sdk.NewKVStoreKey(didtypes.StoreKey)
 	memKeyDidDocument := sdk.NewKVStoreKey(didtypes.MemStoreKey)
+	keyAcc := sdk.NewKVStoreKey(authtypes.StoreKey)
+	keyParams := sdk.NewKVStoreKey(paramtypes.StoreKey)
+	memKeyParams := sdk.NewKVStoreKey(paramtypes.TStoreKey)
 
 	db := dbm.NewMemDB()
 	ms := store.NewCommitMultiStore(db)
@@ -55,6 +60,12 @@ func (suite *KeeperTestSuite) SetupTest() {
 	interfaceRegistry := ct.NewInterfaceRegistry()
 	marshaler := codec.NewProtoCodec(interfaceRegistry)
 
+	maccPerms := map[string][]string{
+		authtypes.FeeCollectorName: nil,
+	}
+
+	paramsKeeper := paramskeeper.NewKeeper(marshaler, nil, keyParams, memKeyParams)
+
 	didKeeper := didkeeper.NewKeeper(
 		marshaler,
 		keyDidDocument,
@@ -63,10 +74,10 @@ func (suite *KeeperTestSuite) SetupTest() {
 
 	accountKeeper := authkeeper.NewAccountKeeper(
 		marshaler,
-		sdk.NewKVStoreKey(authtypes.StoreKey),
-		suite.app.GetSubspace(authtypes.ModuleName),
+		keyAcc,
+		paramsKeeper.Subspace(authtypes.ModuleName),
 		authtypes.ProtoBaseAccount,
-		map[string][]string{},
+		maccPerms,
 	)
 
 	k := NewKeeper(

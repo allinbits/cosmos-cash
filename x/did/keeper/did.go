@@ -10,7 +10,6 @@ import (
 
 func (k Keeper) SetDidDocument(ctx sdk.Context, key []byte, document types.DidDocument) {
 	k.Set(ctx, key, types.DidDocumentKey, document, k.Marshal)
-	// set document by public key
 }
 
 func (k Keeper) GetDidDocument(ctx sdk.Context, key []byte) (types.DidDocument, bool) {

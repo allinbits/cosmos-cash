@@ -11,6 +11,7 @@ service Msg {
   rpc CreateIssuer(MsgCreateIssuer) returns (MsgCreateIssuerResponse);
   rpc BurnToken(MsgBurnToken) returns (MsgBurnTokenResponse);
   rpc MintToken(MsgMintToken) returns (MsgMintTokenResponse);
+  rpc PauseToken(MsgPauseToken) returns (MsgPauseTokenResponse);
 }
 
 // MsgCreateIssuer defines an SDK message for creating an emoney token issuer.
@@ -53,6 +54,18 @@ message MsgMintToken {
 }
 
 message MsgMintTokenResponse {}
+
+// MsgPauseToken defines a SDK message for minting a token
+message MsgPauseToken {
+  option (gogoproto.equal)           = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string    issuer_did   	= 1; 
+  string    license_cred_id   	= 2; 
+  string    owner        	= 4;
+}
+
+message MsgPauseTokenResponse {}
 
 
 // this line is used by starport scaffolding # proto/tx/message

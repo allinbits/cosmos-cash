@@ -11,6 +11,7 @@ const (
 	EventTypeIssuerCreated = "issuer_created"
 	EventTypeTokenMinted   = "issuer_minted_token"
 	EventTypeTokenBurned   = "issuer_burned_token"
+	EventTypePausedBurned  = "issuer_paused_token"
 
 	AttributeKeyIssuer = "issuer"
 	AttributeKeyDenom  = "denom"
@@ -43,5 +44,14 @@ func NewTokenBurnedEvent(issuer string, denom string, amount string) sdk.Event {
 		sdk.NewAttribute(AttributeKeyIssuer, issuer),
 		sdk.NewAttribute(AttributeKeyDenom, denom),
 		sdk.NewAttribute(AttributeKeyAmount, amount),
+	)
+}
+
+// NewTokenPausedEvent constructs a new token_paused sdk.Event
+func NewTokenPausedEvent(issuer string, denom string) sdk.Event {
+	return sdk.NewEvent(
+		EventTypeTokenBurned,
+		sdk.NewAttribute(AttributeKeyIssuer, issuer),
+		sdk.NewAttribute(AttributeKeyDenom, denom),
 	)
 }

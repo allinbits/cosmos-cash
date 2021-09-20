@@ -151,11 +151,16 @@ func (baID BlockchainAccountID) Type() VerificationMaterialType {
 // MatchAddress check if a blockchain id address matches another address
 // the match ignore the chain ID
 func (baID BlockchainAccountID) MatchAddress(address string) bool {
+	return baID.GetAddress() == address
+}
+
+// GetAddress get the address from a blockchain account id
+func (baID BlockchainAccountID) GetAddress() string {
 	addrStart := strings.LastIndex(string(baID), ":")
 	if addrStart < 0 {
-		return false
+		return ""
 	}
-	return string(baID)[addrStart+1:] == address
+	return string(baID)[addrStart+1:]
 }
 
 // NewBlockchainAccountID build a new blockchain account ID struct
@@ -575,18 +580,22 @@ func (didDoc *DidDocument) setRelationships(methodID string, relationships ...Ve
 	}
 }
 
-// GetVerificationMethodAddress returns the verification method cosmos address of a verification method.
+// GetVerificationMethodBlockchainID returns the verification method cosmos blockchain ID address of a verification method.
 // it fails if the verification method is not supported or if the verification method is not found
-func (didDoc DidDocument) GetVerificationMethodAddress(methodID string) (address string, err error) {
+func (didDoc DidDocument) GetVerificationMethodBlockchainID(methodID string) (address BlockchainAccountID, err error) {
 	for _, vm := range didDoc.VerificationMethod {
 		if vm.Id == methodID {
 			switch k := vm.VerificationMaterial.(type) {
 			case *VerificationMethod_BlockchainAccountID:
-				address = k.BlockchainAccountID
+				address = BlockchainAccountID(k.BlockchainAccountID)
 			case *VerificationMethod_PublicKeyMultibase:
-				address, err = toAddress(k.PublicKeyMultibase[1:])
+				var addr string
+				addr, err = toAddress(k.PublicKeyMultibase[1:])
+				address = BlockchainAccountID(addr)
 			case *VerificationMethod_PublicKeyHex:
-				address, err = toAddress(k.PublicKeyHex)
+				var addr string
+				addr, err = toAddress(k.PublicKeyHex)
+				address = BlockchainAccountID(addr)
 			default:
 				err = ErrKeyFormatNotSupported
 			}

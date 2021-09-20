@@ -65,7 +65,9 @@ func (k msgServer) DeleteVerifiableCredential(
 	}
 	// TODO: the validate proof also accepts validation methods that are not authentication
 	if err := ValidateProof(ctx, k.Keeper, vc); err != nil {
-		return nil, err
+		return nil, sdkerrors.Wrapf(
+			err, "verifiable credential validation failed",
+		)
 	}
 
 	k.Keeper.DeleteVerifiableCredentialFromStore(ctx, []byte(vc.Id))

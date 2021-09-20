@@ -128,13 +128,13 @@ func NewLicenseCredentialSubject(
 
 // NewRegulatorCredentialSubject create a new regulator credential subject
 func NewRegulatorCredentialSubject(
-	id string,
+	subjectID string,
 	name string,
 	country string,
 ) VerifiableCredential_RegulatorCred {
 	return VerifiableCredential_RegulatorCred{
 		&RegulatorCredentialSubject{
-			Id:      id,
+			Id:      subjectID,
 			Name:    name,
 			Country: country,
 		},
@@ -184,7 +184,7 @@ func (vc VerifiableCredential) Validate(
 func (vc VerifiableCredential) Sign(
 	keyring keyring.Keyring,
 	address sdk.Address,
-	signerDid string,
+	verificationMethodID string,
 ) (VerifiableCredential, error) {
 	tm := time.Now()
 	// reset the proof
@@ -201,7 +201,7 @@ func (vc VerifiableCredential) Sign(
 		tm.Format(time.RFC3339),
 		// TODO: define proof purposes
 		"assertionMethod",
-		signerDid+"#"+address.String(),
+		verificationMethodID,
 		base64.StdEncoding.EncodeToString(signature),
 	)
 	vc.Proof = &p
@@ -221,4 +221,19 @@ func (vc VerifiableCredential) HasType(vcType string) bool {
 		}
 	}
 	return false
+}
+
+// GetSubjectDID return the credential DID subject, that is the holder
+// of the credentials
+func (vc VerifiableCredential) GetSubjectDID() string {
+	switch subj := vc.CredentialSubject.(type) {
+	case *VerifiableCredential_LicenseCred:
+		return subj.LicenseCred.Id
+	case *VerifiableCredential_UserCred:
+		return subj.UserCred.Id
+	case *VerifiableCredential_RegulatorCred:
+		return subj.RegulatorCred.Id
+	default:
+		return ""
+	}
 }

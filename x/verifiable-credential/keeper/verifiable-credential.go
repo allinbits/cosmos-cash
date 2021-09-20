@@ -12,8 +12,7 @@ import (
 
 // SetVerifiableCredential commit a verifiable credential to the storage
 func (q Keeper) SetVerifiableCredential(ctx sdk.Context, key []byte, vc types.VerifiableCredential) (err error) {
-	err = ValidateProof(ctx, q, vc)
-	if err != nil {
+	if err = ValidateProof(ctx, q, vc); err != nil {
 		return
 	}
 	q.Set(ctx, key, types.VerifiableCredentialKey, vc, q.MarshalVerifiableCredential)
@@ -81,6 +80,7 @@ func (q Keeper) GetAllVerifiableCredentials(ctx sdk.Context) []types.VerifiableC
 
 // ValidateProof validate the proof of a verifiable credential
 func ValidateProof(ctx sdk.Context, k Keeper, vc types.VerifiableCredential) error {
+	// resolve the issuer
 	did, err := func() (did didtypes.DidDocument, err error) {
 		if strings.HasPrefix(vc.Issuer, didtypes.DidKeyPrefix) {
 			did, _, err = didtypes.ResolveAccountDID(vc.Issuer, ctx.ChainID())
@@ -92,13 +92,29 @@ func ValidateProof(ctx sdk.Context, k Keeper, vc types.VerifiableCredential) err
 		}
 		return
 	}()
-
 	if err != nil {
 		return sdkerrors.Wrapf(
 			err, "issuer DID is not resolvable",
 		)
 	}
-
+	// resolve the subject
+	_, err = func() (did didtypes.DidDocument, err error) {
+		subjectDID := vc.GetSubjectDID()
+		if strings.HasPrefix(subjectDID, didtypes.DidKeyPrefix) {
+			did, _, err = didtypes.ResolveAccountDID(subjectDID, ctx.ChainID())
+			return
+		}
+		did, found := k.didKeeper.GetDidDocument(ctx, []byte(subjectDID))
+		if !found {
+			err = didtypes.ErrDidDocumentNotFound
+		}
+		return
+	}()
+	if err != nil {
+		return sdkerrors.Wrapf(
+			err, "subject DID is not resolvable",
+		)
+	}
 	// verify the signature
 	if vc.Proof == nil {
 		return sdkerrors.Wrapf(

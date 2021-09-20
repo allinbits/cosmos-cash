@@ -89,7 +89,11 @@ that activates it.`,
 				),
 			)
 			// sign the credentials
-			signedVc := vc.Sign(clientCtx.Keyring, signer, did.String())
+			signedVc, err := vc.Sign(clientCtx.Keyring, signer, did.String())
+			if err != nil {
+				return err
+			}
+
 			// compose the message
 			msg := types.NewMsgActivate(
 				signedVc,

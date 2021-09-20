@@ -116,43 +116,52 @@ func TestIsValidDIDDocument(t *testing.T) {
 		didFn func() *DidDocument
 		want  bool
 	}{
+		//	{
+		//		func() *DidDocument {
+		//			return &DidDocument{
+		//				Context: []string{contextDIDBase},
+		//				Id:      "did:cosmos:cash:1",
+		//			}
+		//		},
+		//		true, // all good
+		//	},
+		//	{
+		//		func() *DidDocument {
+		//			return &DidDocument{
+		//				Context: []string{},
+		//				Id:      "did:cosmos:cash:1",
+		//			}
+		//		},
+		//		false, // missing context
+		//	},
+		//	{
+		//		func() *DidDocument {
+		//			dd, _ := NewDidDocument("did:cosmos:cash:1")
+		//			return &dd
+		//		},
+		//		true, // all good
+		//	},
+		//	{
+		//		func() *DidDocument {
+		//			dd, _ := NewDidDocument("")
+		//			return &dd
+		//		},
+		//		false, // empty id
+		//	},
+		//	{
+		//		func() *DidDocument {
+		//			return nil
+		//		},
+		//		false, // nil pointer
+		//	},
 		{
 			func() *DidDocument {
-				return &DidDocument{
-					Context: []string{contextDIDBase},
-					Id:      "did:cosmos:cash:1",
-				}
-			},
-			true, // all good
-		},
-		{
-			func() *DidDocument {
-				return &DidDocument{
-					Context: []string{},
-					Id:      "did:cosmos:cash:1",
-				}
-			},
-			false, // missing context
-		},
-		{
-			func() *DidDocument {
-				dd, _ := NewDidDocument("did:cosmos:cash:1")
+				dd, _ := NewDidDocument("did:cosmos:key:cas:1", WithControllers(
+					"did:cash:controller-1",
+				))
 				return &dd
 			},
-			true, // all good
-		},
-		{
-			func() *DidDocument {
-				dd, _ := NewDidDocument("")
-				return &dd
-			},
-			false, // empty id
-		},
-		{
-			func() *DidDocument {
-				return nil
-			},
-			false, // nil pointer
+			true, // nil pointer
 		},
 	}
 	for i, tt := range tests {

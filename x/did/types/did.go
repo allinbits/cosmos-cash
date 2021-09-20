@@ -239,21 +239,20 @@ func IsValidDIDDocument(didDoc *DidDocument) bool {
 	if didDoc == nil {
 		return false
 	}
+
 	if !IsValidDID(didDoc.Id) {
 		return false
 	}
-	for _, c := range didDoc.Context {
-		if c == contextDIDBase {
-			return true
+
+	for _, element := range didDoc.Controller {
+		if !IsValidDIDKeyFormat(element) {
+			return false
 		}
 	}
 
-	for _, element := range didDoc.Controller {
-
-		// index is the index where we are
-		// element is the element from someSlice for where we are
-		if len(element) < 11 || element[0:11] != "did:cosmos:" {
-			return false
+	for _, c := range didDoc.Context {
+		if c == contextDIDBase {
+			return true
 		}
 	}
 

@@ -148,6 +148,7 @@ func (suite *KeeperTestSuite) TestGenericKeeperSetAndGet() {
 				"context",
 				10,
 				"did:cash:1111",
+				false,
 			},
 			true,
 		},

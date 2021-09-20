@@ -48,9 +48,18 @@ func (cicd CheckUserCredentialsDecorator) AnteHandle(
 		case *bank.MsgSend:
 			issuer, found := cicd.issuerk.GetIssuerByToken(ctx, []byte(msg.Amount[0].Denom))
 
-			// if the issuer cannot be found, is frozen or not associated with the token
-			if !found || issuer.Paused || msg.Amount[0].Denom != issuer.Token {
+			// if the issuer cannot be found or is not associated with the token; continue
+			if !found || msg.Amount[0].Denom != issuer.Token {
 				return next(ctx, tx, simulate)
+
+			}
+
+			// if the issuer has paused the token block the transaction
+			if issuer.Paused {
+				return ctx, sdkerrors.Wrapf(
+					types.ErrBankSendDisabled,
+					"the token being send has been blocked",
+				)
 			}
 
 			// get all the verifiable credential associated with the issuer
@@ -60,13 +69,13 @@ func (cicd CheckUserCredentialsDecorator) AnteHandle(
 				// validate that kyc credentials have been issued to the `ToAddress`
 				err := cicd.validateUserCredential(ctx, msg.ToAddress, vcs)
 				if err != nil {
-					return next(ctx, tx, simulate)
+					return ctx, err
 				}
 
 				// validate that kyc credentials have been issued to the `FromAddress`
 				err = cicd.validateUserCredential(ctx, msg.FromAddress, vcs)
 				if err != nil {
-					return next(ctx, tx, simulate)
+					return ctx, err
 				}
 			}
 		case *bank.MsgMultiSend:

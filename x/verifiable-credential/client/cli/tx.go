@@ -85,7 +85,10 @@ func NewCreateKYCVerifiableCredentialCmd() *cobra.Command {
 				cs,
 			)
 
-			signedVc := vc.Sign(clientCtx.Keyring, accAddr, issuerDid)
+			signedVc, err := vc.Sign(clientCtx.Keyring, accAddr, issuerDid)
+			if err != nil {
+				return err
+			}
 
 			msg := types.NewMsgCreateVerifiableCredential(
 				signedVc,
@@ -149,7 +152,10 @@ func NewCreateLicenseVerifiableCredentialCmd() *cobra.Command {
 				cs,
 			)
 
-			signedVc := vc.Sign(clientCtx.Keyring, accAddr, issuerDid)
+			signedVc, err := vc.Sign(clientCtx.Keyring, accAddr, issuerDid)
+			if err != nil {
+				return err
+			}
 
 			msg := types.NewMsgCreateVerifiableCredential(
 				signedVc,

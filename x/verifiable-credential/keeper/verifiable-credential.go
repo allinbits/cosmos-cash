@@ -108,7 +108,7 @@ func ValidateProof(ctx sdk.Context, k Keeper, vc types.VerifiableCredential) err
 		)
 	}
 	// get the address in the verification method
-	issuerAddress, err := did.GetVerificationMethodAddress(vc.Proof.VerificationMethod)
+	issuerBlockchainID, err := did.GetVerificationMethodBlockchainID(vc.Proof.VerificationMethod)
 	if err != nil {
 		return sdkerrors.Wrapf(
 			types.ErrMessageSigner,
@@ -117,15 +117,14 @@ func ValidateProof(ctx sdk.Context, k Keeper, vc types.VerifiableCredential) err
 		)
 	}
 	// verify the relationships
-	issuerBID := didtypes.NewBlockchainAccountID(ctx.ChainID(), issuerAddress)
-	if !did.HasRelationship(issuerBID, didtypes.Authentication, didtypes.AssertionMethod) {
+	if !did.HasRelationship(issuerBlockchainID, didtypes.Authentication, didtypes.AssertionMethod) {
 		return sdkerrors.Wrapf(
 			types.ErrMessageSigner,
 			"signer is not in issuer did",
 		)
 	}
 	// verify that is the same of the vc
-	issuerAccount, err := sdk.AccAddressFromBech32(issuerAddress)
+	issuerAccount, err := sdk.AccAddressFromBech32(issuerBlockchainID.GetAddress())
 	if err != nil {
 		return sdkerrors.Wrapf(
 			types.ErrMessageSigner,
@@ -135,7 +134,7 @@ func ValidateProof(ctx sdk.Context, k Keeper, vc types.VerifiableCredential) err
 	}
 	// get the public key from the account
 	pk, err := k.accountKeeper.GetPubKey(ctx, issuerAccount)
-	if err != nil {
+	if err != nil || pk == nil {
 		return sdkerrors.Wrapf(
 			types.ErrMessageSigner,
 			"issuer pubkey not found %v",

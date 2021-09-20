@@ -63,10 +63,7 @@ func (k msgServer) Activate(goCtx context.Context, msg *types.MsgActivate) (*typ
 	// store the regulator vc
 	if err := k.SetVerifiableCredential(ctx, *msg.Credentials); err != nil {
 		k.Logger(ctx).Error("regulator activation failed", "signature verification error", err)
-		return nil, sdkerrors.Wrapf(
-			vctypes.ErrMessageSigner,
-			"credential proof could not be verified",
-		)
+		return nil, sdkerrors.Wrapf(err, "credential proof could not be verified")
 	}
 	// reply
 	k.Logger(ctx).Info("regulator activation success", "did", msg.Credentials.Issuer, "address", msg.Creator)

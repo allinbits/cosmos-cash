@@ -231,6 +231,11 @@ func IsValidRFC3986Uri(input string) bool {
 // IsValidDIDDocument tells if a DID document is valid,
 // that is if it has the default context and a valid subject
 func IsValidDIDDocument(didDoc *DidDocument) bool {
+
+	//Maggs
+	//During creation and update of a did document, the node must verify that the dids in the controller are of the did:cosmos:key type to make sure they are resolvable.
+	//Hint: the control can be added to the the IsValidDidDocument function
+
 	if didDoc == nil {
 		return false
 	}
@@ -242,6 +247,16 @@ func IsValidDIDDocument(didDoc *DidDocument) bool {
 			return true
 		}
 	}
+
+	for _, element := range didDoc.Controller {
+
+		// index is the index where we are
+		// element is the element from someSlice for where we are
+		if len(element) < 11 || element[0:11] != "did:cosmos:" {
+			return false
+		}
+	}
+
 	return false
 }
 

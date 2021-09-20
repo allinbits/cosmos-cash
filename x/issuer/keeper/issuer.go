@@ -3,6 +3,7 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
 	"github.com/allinbits/cosmos-cash/x/issuer/types"
 )
 
@@ -30,13 +31,7 @@ func (k Keeper) UnmarshalIssuer(value []byte) (interface{}, bool) {
 		return types.Issuer{}, false
 	}
 
-	// FIXME: improve these checks
-	//if issuer.Fee == nil {
-	//	return types.Issuer{}, false
-	//}
-
-	// TODO: check issuer DID id is structured correctly
-	if issuer.IssuerDid == "" {
+	if !didtypes.IsValidDID(issuer.IssuerDid) {
 		return types.Issuer{}, false
 	}
 

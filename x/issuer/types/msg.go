@@ -3,6 +3,8 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
+	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
 )
 
 // msg types
@@ -44,6 +46,14 @@ func (MsgCreateIssuer) Type() string {
 
 // ValidateBasic performs a basic check of the MsgCreateIssuer fields.
 func (msg MsgCreateIssuer) ValidateBasic() error {
+	if !didtypes.IsValidDID(msg.IssuerDid) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid did ID")
+	}
+
+	if msg.LicenseCredId == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "licenseCredID is empty")
+	}
+
 	if msg.Token == "" {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "token is required")
 	}
@@ -99,6 +109,14 @@ func (MsgBurnToken) Type() string {
 
 // ValidateBasic performs a basic check of the MsgBurnToken fields.
 func (msg MsgBurnToken) ValidateBasic() error {
+	if !didtypes.IsValidDID(msg.IssuerDid) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid did ID")
+	}
+
+	if msg.LicenseCredId == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "licenseCredID is empty")
+	}
+
 	amount, err := sdk.ParseCoinNormalized(msg.Amount)
 	if err != nil {
 		return err
@@ -152,6 +170,14 @@ func (MsgMintToken) Type() string {
 
 // ValidateBasic performs a basic check of the MsgMintToken fields.
 func (msg MsgMintToken) ValidateBasic() error {
+	if !didtypes.IsValidDID(msg.IssuerDid) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid did ID")
+	}
+
+	if msg.LicenseCredId == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "licenseCredID is empty")
+	}
+
 	amount, err := sdk.ParseCoinNormalized(msg.Amount)
 	if err != nil {
 		return err
@@ -202,8 +228,8 @@ func (MsgPauseToken) Type() string {
 
 // ValidateBasic performs a basic check of the MsgPauseToken fields.
 func (msg MsgPauseToken) ValidateBasic() error {
-	if msg.IssuerDid == "" {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "issuerDid is empty")
+	if !didtypes.IsValidDID(msg.IssuerDid) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid did ID")
 	}
 
 	if msg.LicenseCredId == "" {

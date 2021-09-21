@@ -161,7 +161,7 @@ func NewMintTokenCmd() *cobra.Command {
 	return cmd
 }
 
-// NewMintTokenCmd defines the command to pause all transfers of an emoney token.
+//NewPauseTokenCmd defines the command to pause all transfers of an emoney token.
 func NewPauseTokenCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "pause-token [did] [license_cred_id]",

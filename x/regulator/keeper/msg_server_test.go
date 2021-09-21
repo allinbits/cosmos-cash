@@ -80,6 +80,7 @@ func (suite *KeeperTestSuite) TestMsgSeverActivateRegulator() {
 						"EU",
 					),
 				)
+
 				// sign the credentials
 				vmID := fmt.Sprint(regulatorDID, "#", regulator.String())
 				rvc, _ = rvc.Sign(suite.keyring, suite.GetRegulatorAddress(), vmID)

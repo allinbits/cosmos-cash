@@ -151,11 +151,16 @@ func (baID BlockchainAccountID) Type() VerificationMaterialType {
 // MatchAddress check if a blockchain id address matches another address
 // the match ignore the chain ID
 func (baID BlockchainAccountID) MatchAddress(address string) bool {
+	return baID.GetAddress() == address
+}
+
+// GetAddress get the address from a blockchain account id
+func (baID BlockchainAccountID) GetAddress() string {
 	addrStart := strings.LastIndex(string(baID), ":")
 	if addrStart < 0 {
-		return false
+		return ""
 	}
-	return string(baID)[addrStart+1:] == address
+	return string(baID)[addrStart+1:]
 }
 
 // NewBlockchainAccountID build a new blockchain account ID struct
@@ -575,6 +580,32 @@ func (didDoc *DidDocument) setRelationships(methodID string, relationships ...Ve
 	}
 }
 
+// GetVerificationMethodBlockchainID returns the verification method cosmos blockchain ID address of a verification method.
+// it fails if the verification method is not supported or if the verification method is not found
+func (didDoc DidDocument) GetVerificationMethodBlockchainID(methodID string) (address BlockchainAccountID, err error) {
+	for _, vm := range didDoc.VerificationMethod {
+		if vm.Id == methodID {
+			switch k := vm.VerificationMaterial.(type) {
+			case *VerificationMethod_BlockchainAccountID:
+				address = BlockchainAccountID(k.BlockchainAccountID)
+			case *VerificationMethod_PublicKeyMultibase:
+				var addr string
+				addr, err = toAddress(k.PublicKeyMultibase[1:])
+				address = BlockchainAccountID(addr)
+			case *VerificationMethod_PublicKeyHex:
+				var addr string
+				addr, err = toAddress(k.PublicKeyHex)
+				address = BlockchainAccountID(addr)
+			default:
+				err = ErrKeyFormatNotSupported
+			}
+			return
+		}
+	}
+	err = ErrVerificationMethodNotFound
+	return
+}
+
 // GetVerificationRelationships returns the relationships associated with the
 // verification method id.
 func (didDoc DidDocument) GetVerificationRelationships(methodID string) []string {
@@ -591,7 +622,6 @@ func (didDoc DidDocument) GetVerificationRelationships(methodID string) []string
 
 // HasRelationship verifies if a controller did
 // exists for at least one of the relationships in the did document
-// the account
 func (didDoc DidDocument) HasRelationship(
 	signer BlockchainAccountID,
 	relationships ...string,
@@ -724,6 +754,19 @@ func NewVerification(
 		Method:        &method,
 		Relationships: relationships,
 	}
+}
+
+// NewAccountVerification is a shortcut to create a verification based on comsos address
+func NewAccountVerification(did DID, chainID, accountAddress string, verificationMethods ...string) *Verification {
+	return NewVerification(
+		NewVerificationMethod(
+			fmt.Sprint(did.String(), "#", accountAddress),
+			did,
+			NewBlockchainAccountID(chainID, accountAddress),
+		),
+		verificationMethods,
+		nil,
+	)
 }
 
 // NewVerificationMethod build a new verification method

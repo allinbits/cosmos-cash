@@ -6,7 +6,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
 	"github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 )
 
@@ -36,16 +35,13 @@ func (k msgServer) CreateVerifiableCredential(
 		)
 	}
 
-	err := k.validateIssuerIsInDidDoucment(ctx, *msg.VerifiableCredential, msg.VerifiableCredential.Issuer, msg.Owner)
-	if err != nil {
-		return nil, err
-	}
-
-	k.Keeper.SetVerifiableCredential(
+	if err := k.Keeper.SetVerifiableCredential(
 		ctx,
 		[]byte(msg.VerifiableCredential.Id),
 		*msg.VerifiableCredential,
-	)
+	); err != nil {
+		return nil, err
+	}
 
 	ctx.EventManager().EmitEvent(
 		types.NewCredentialCreatedEvent(msg.Owner, msg.VerifiableCredential.Id),
@@ -67,10 +63,11 @@ func (k msgServer) DeleteVerifiableCredential(
 			"error deleting credential; credential not found",
 		)
 	}
-
-	err := k.validateIssuerIsInDidDoucment(ctx, vc, msg.IssuerDid, msg.Owner)
-	if err != nil {
-		return nil, err
+	// TODO: the validate proof also accepts validation methods that are not authentication
+	if err := ValidateProof(ctx, k.Keeper, vc); err != nil {
+		return nil, sdkerrors.Wrapf(
+			err, "verifiable credential validation failed",
+		)
 	}
 
 	k.Keeper.DeleteVerifiableCredentialFromStore(ctx, []byte(vc.Id))
@@ -80,35 +77,4 @@ func (k msgServer) DeleteVerifiableCredential(
 	)
 
 	return &types.MsgDeleteVerifiableCredentialResponse{}, nil
-}
-
-func (k msgServer) validateIssuerIsInDidDoucment(
-	ctx sdk.Context,
-	vc types.VerifiableCredential,
-	issuerDid string,
-	signer string,
-) error {
-	did, found := k.Keeper.didKeeper.GetDidDocument(ctx, []byte(issuerDid))
-	if !found {
-		return sdkerrors.Wrapf(
-			types.ErrDidDocumentDoesNotExist,
-			"did does not exists",
-		)
-	}
-	if vc.Issuer != did.Id {
-		return sdkerrors.Wrapf(
-			types.ErrVerifiableCredentialIssuer,
-			"provided vc and did issuer do not match",
-		)
-	}
-
-	signerID := didtypes.NewBlockchainAccountID(ctx.ChainID(), signer)
-	if !did.HasRelationship(signerID, didtypes.Authentication) {
-		return sdkerrors.Wrapf(
-			types.ErrMessageSigner,
-			"signer is not in issuer did",
-		)
-	}
-
-	return nil
 }

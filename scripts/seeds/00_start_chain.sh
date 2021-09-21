@@ -18,9 +18,10 @@ then
     echo "Initialising chain"
     cosmos-cashd init --chain-id=cash cash
     echo "y" | cosmos-cashd keys add validator
+    echo "y" | cosmos-cashd keys add regulator
 
     echo "Adding genesis account"
-    cosmos-cashd add-genesis-account $(cosmos-cashd keys show validator -a) 1000000000stake
+    cosmos-cashd add-genesis-account $(cosmos-cashd keys show validator -a) 1000000000stake --regulator $(cosmos-cashd keys show regulator -a) --
     cosmos-cashd gentx validator 700000000stake --chain-id cash
     cosmos-cashd collect-gentxs
 fi
@@ -28,4 +29,3 @@ fi
 
 echo "Starting cosmos cash chain"
 cosmos-cashd start
-

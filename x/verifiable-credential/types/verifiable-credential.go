@@ -68,6 +68,24 @@ func NewLicenseVerifiableCredential(
 	}
 }
 
+// NewRegulatorVerifiableCredential constructs a new VerifiableCredential instance
+func NewRegulatorVerifiableCredential(
+	id string,
+	issuer string,
+	issuanceDate time.Time,
+	credentialSubject VerifiableCredential_RegulatorCred,
+) VerifiableCredential {
+	return VerifiableCredential{
+		Context:           []string{"https://www.w3.org/TR/vc-data-model/"},
+		Id:                id,
+		Type:              []string{"VerifiableCredential", RegulatorCredential},
+		Issuer:            issuer,
+		IssuanceDate:      &issuanceDate,
+		CredentialSubject: &credentialSubject,
+		Proof:             nil,
+	}
+}
+
 // GetBytes is a helper for serializing
 func (vc VerifiableCredential) GetBytes() []byte {
 	dAtA, _ := vc.Marshal()
@@ -108,6 +126,21 @@ func NewLicenseCredentialSubject(
 	}
 }
 
+// NewRegulatorCredentialSubject create a new regulator credential subject
+func NewRegulatorCredentialSubject(
+	subjectID string,
+	name string,
+	country string,
+) VerifiableCredential_RegulatorCred {
+	return VerifiableCredential_RegulatorCred{
+		&RegulatorCredentialSubject{
+			Id:      subjectID,
+			Name:    name,
+			Country: country,
+		},
+	}
+}
+
 // NewProof create a new proof for a verifiable credential
 func NewProof(
 	proofType string,
@@ -134,9 +167,10 @@ func (vc VerifiableCredential) Validate(
 		panic(err)
 	}
 
+	// reset the proof
 	vc.Proof = nil
 
-	// TODO: this is an expesive operation, could lead to DDOS
+	// TODO: this is an expensive operation, could lead to DDOS
 	// TODO: we can hash this and make this less expensive
 	isCorrectPubKey := pk.VerifySignature(
 		vc.GetBytes(),
@@ -150,16 +184,16 @@ func (vc VerifiableCredential) Validate(
 func (vc VerifiableCredential) Sign(
 	keyring keyring.Keyring,
 	address sdk.Address,
-	signerDid string,
-) VerifiableCredential {
-	signedVc := vc
+	verificationMethodID string,
+) (VerifiableCredential, error) {
 	tm := time.Now()
-
+	// reset the proof
+	vc.Proof = nil
 	// TODO: this could be expensive review this signing method
 	// TODO: we can hash this an make this less expensive
-	signature, pubKey, err := keyring.SignByAddress(address, signedVc.GetBytes())
+	signature, pubKey, err := keyring.SignByAddress(address, vc.GetBytes())
 	if err != nil {
-		panic(err)
+		return vc, err
 	}
 
 	p := NewProof(
@@ -167,15 +201,39 @@ func (vc VerifiableCredential) Sign(
 		tm.Format(time.RFC3339),
 		// TODO: define proof purposes
 		"assertionMethod",
-		signerDid+"#"+address.String(),
+		verificationMethodID,
 		base64.StdEncoding.EncodeToString(signature),
 	)
-	signedVc.Proof = &p
-
-	return signedVc
+	vc.Proof = &p
+	return vc, nil
 }
 
 func (vc VerifiableCredential) Hash() string {
 	// TODO: implement the hashing of creds for signing
 	return "TODO"
+}
+
+// HasType tells whenever a credential has a specific type
+func (vc VerifiableCredential) HasType(vcType string) bool {
+	for _, vct := range vc.Type {
+		if vct == vcType {
+			return true
+		}
+	}
+	return false
+}
+
+// GetSubjectDID return the credential DID subject, that is the holder
+// of the credentials
+func (vc VerifiableCredential) GetSubjectDID() string {
+	switch subj := vc.CredentialSubject.(type) {
+	case *VerifiableCredential_LicenseCred:
+		return subj.LicenseCred.Id
+	case *VerifiableCredential_UserCred:
+		return subj.UserCred.Id
+	case *VerifiableCredential_RegulatorCred:
+		return subj.RegulatorCred.Id
+	default:
+		return ""
+	}
 }

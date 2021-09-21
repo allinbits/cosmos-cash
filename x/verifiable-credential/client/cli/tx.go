@@ -36,6 +36,7 @@ func GetTxCmd() *cobra.Command {
 }
 
 // NewCreateKYCVerifiableCredentialCmd defines the command to create a new verifiable credential.
+// TODO: to be moved to the issuer module
 func NewCreateKYCVerifiableCredentialCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     `create-kyc-verifiable-credential [cred_subject] [cred_id] [issuer_did] [secret] [amount_per_transaction] [total_number_of_transactions] [total_transaction_amount]`,
@@ -84,7 +85,10 @@ func NewCreateKYCVerifiableCredentialCmd() *cobra.Command {
 				cs,
 			)
 
-			signedVc := vc.Sign(clientCtx.Keyring, accAddr, issuerDid)
+			signedVc, err := vc.Sign(clientCtx.Keyring, accAddr, issuerDid)
+			if err != nil {
+				return err
+			}
 
 			msg := types.NewMsgCreateVerifiableCredential(
 				signedVc,
@@ -106,6 +110,7 @@ func NewCreateKYCVerifiableCredentialCmd() *cobra.Command {
 
 // NewCreateLicenseVerifiableCredentialCmd defines the command to create a new license verifiable credential.
 // This is used by regulators to define issuers and issuer permissions
+// TODO: to be moved to regulator module
 func NewCreateLicenseVerifiableCredentialCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     `create-license-verifiable-credential [cred_id] [issuer_did] [credential_subject_did] [type] [country] [authority] [denom] [circulation_limit]`,
@@ -147,7 +152,10 @@ func NewCreateLicenseVerifiableCredentialCmd() *cobra.Command {
 				cs,
 			)
 
-			signedVc := vc.Sign(clientCtx.Keyring, accAddr, issuerDid)
+			signedVc, err := vc.Sign(clientCtx.Keyring, accAddr, issuerDid)
+			if err != nil {
+				return err
+			}
 
 			msg := types.NewMsgCreateVerifiableCredential(
 				signedVc,
@@ -168,6 +176,7 @@ func NewCreateLicenseVerifiableCredentialCmd() *cobra.Command {
 }
 
 // NewDeleteVerifiableCredentialCmd defines the command to delete a verifiable credential.
+// TODO: to me moved to the issuer module
 func NewDeleteVerifiableCredentialCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     `delete-verifiable-credential [cred_id] [issuer_did]`,

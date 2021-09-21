@@ -62,8 +62,12 @@ func (cicd CheckUserCredentialsDecorator) AnteHandle(
 				)
 			}
 
-			// get all the verifiable credential associated with the issuer
-			vcs := cicd.vcsk.GetAllVerifiableCredentialsByIssuer(ctx, issuer.IssuerDid)
+			vcs := cicd.vcsk.GetAllVerifiableCredentialsWithCondition(ctx, []byte(issuer.IssuerDid), func(vc vctypes.VerifiableCredential) bool {
+				if vc.Issuer == issuer.IssuerDid {
+					return true
+				}
+				return false
+			})
 
 			if found {
 				// validate that kyc credentials have been issued to the `FromAddress`

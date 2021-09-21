@@ -73,7 +73,7 @@ import ( // this line is used by starport scaffolding # stargate/app/moduleImpor
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-	transfer "github.com/cosmos/ibc-go/modules/apps/transfer"
+	"github.com/cosmos/ibc-go/modules/apps/transfer"
 	ibctransferkeeper "github.com/cosmos/ibc-go/modules/apps/transfer/keeper"
 	ibctransfertypes "github.com/cosmos/ibc-go/modules/apps/transfer/types"
 	ibc "github.com/cosmos/ibc-go/modules/core"
@@ -95,6 +95,9 @@ import ( // this line is used by starport scaffolding # stargate/app/moduleImpor
 	"github.com/allinbits/cosmos-cash/x/issuer"
 	issuerkeeper "github.com/allinbits/cosmos-cash/x/issuer/keeper"
 	issuertypes "github.com/allinbits/cosmos-cash/x/issuer/types"
+	"github.com/allinbits/cosmos-cash/x/regulator"
+	regulatorkeeper "github.com/allinbits/cosmos-cash/x/regulator/keeper"
+	regulatortypes "github.com/allinbits/cosmos-cash/x/regulator/types"
 	vcs "github.com/allinbits/cosmos-cash/x/verifiable-credential"
 	vcskeeper "github.com/allinbits/cosmos-cash/x/verifiable-credential/keeper"
 	vcstypes "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
@@ -143,6 +146,7 @@ var (
 		vesting.AppModuleBasic{},
 
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
+		regulator.AppModuleBasic{},
 		issuer.AppModuleBasic{},
 		vcs.AppModuleBasic{},
 		did.AppModuleBasic{},
@@ -208,6 +212,8 @@ type App struct {
 	ScopedTransferKeeper capabilitykeeper.ScopedKeeper
 
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
+
+	RegulatorKeeper   regulatorkeeper.Keeper
 	IssuerKeeper      issuerkeeper.Keeper
 	VcsKeeper         vcskeeper.Keeper
 	DidDocumentKeeper didkeeper.Keeper
@@ -258,6 +264,7 @@ func New(
 		feegrant.StoreKey,
 		authzkeeper.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
+		regulatortypes.StoreKey,
 		issuertypes.StoreKey,
 		vcstypes.StoreKey,
 		didtypes.StoreKey,
@@ -448,11 +455,21 @@ func New(
 		keys[vcstypes.StoreKey],
 		keys[vcstypes.MemStoreKey],
 		app.DidDocumentKeeper,
+		app.AccountKeeper,
 	)
+
 	app.IssuerKeeper = *issuerkeeper.NewKeeper(
 		appCodec,
 		keys[issuertypes.StoreKey],
 		keys[issuertypes.MemStoreKey],
+		app.BankKeeper,
+		app.DidDocumentKeeper,
+		app.VcsKeeper,
+	)
+	app.RegulatorKeeper = *regulatorkeeper.NewKeeper(
+		appCodec,
+		keys[regulatortypes.StoreKey],
+		keys[regulatortypes.MemStoreKey],
 		app.BankKeeper,
 		app.DidDocumentKeeper,
 		app.VcsKeeper,
@@ -560,6 +577,10 @@ func New(
 			appCodec,
 			app.DidDocumentKeeper,
 		),
+		regulator.NewAppModule(
+			appCodec,
+			app.RegulatorKeeper,
+		),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -605,6 +626,7 @@ func New(
 		ibctransfertypes.ModuleName,
 		feegrant.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
+		regulatortypes.ModuleName,
 		issuertypes.ModuleName,
 		vcstypes.ModuleName,
 		didtypes.ModuleName,
@@ -782,6 +804,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
+	paramsKeeper.Subspace(regulatortypes.ModuleName)
 	paramsKeeper.Subspace(issuertypes.ModuleName)
 	paramsKeeper.Subspace(vcstypes.ModuleName)
 	paramsKeeper.Subspace(didtypes.ModuleName)

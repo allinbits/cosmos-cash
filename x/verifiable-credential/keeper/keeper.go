@@ -18,10 +18,11 @@ type MarshalFn func(value interface{}) []byte
 
 // Keeper holds the application data
 type Keeper struct {
-	cdc       codec.Codec
-	storeKey  sdk.StoreKey
-	memKey    sdk.StoreKey
-	didKeeper types.DidKeeper
+	cdc           codec.Codec
+	storeKey      sdk.StoreKey
+	memKey        sdk.StoreKey
+	didKeeper     types.DidKeeper
+	accountKeeper types.AccountKeeper
 }
 
 // NewKeeper create a new instance of a Keeper
@@ -30,12 +31,14 @@ func NewKeeper(
 	storeKey,
 	memKey sdk.StoreKey,
 	didKeeper types.DidKeeper,
+	accountKeeper types.AccountKeeper,
 ) *Keeper {
 	return &Keeper{
-		cdc:       cdc,
-		storeKey:  storeKey,
-		memKey:    memKey,
-		didKeeper: didKeeper,
+		cdc:           cdc,
+		storeKey:      storeKey,
+		memKey:        memKey,
+		didKeeper:     didKeeper,
+		accountKeeper: accountKeeper,
 	}
 }
 

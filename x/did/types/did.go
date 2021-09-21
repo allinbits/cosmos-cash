@@ -234,14 +234,23 @@ func IsValidDIDDocument(didDoc *DidDocument) bool {
 	if didDoc == nil {
 		return false
 	}
+
 	if !IsValidDID(didDoc.Id) {
 		return false
 	}
+
+	for _, element := range didDoc.Controller {
+		if !IsValidDIDKeyFormat(element) {
+			return false
+		}
+	}
+
 	for _, c := range didDoc.Context {
 		if c == contextDIDBase {
 			return true
 		}
 	}
+
 	return false
 }
 

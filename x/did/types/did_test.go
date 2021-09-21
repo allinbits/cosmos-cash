@@ -154,6 +154,24 @@ func TestIsValidDIDDocument(t *testing.T) {
 			},
 			false, // nil pointer
 		},
+		{
+			func() *DidDocument {
+				dd, _ := NewDidDocument("did:cosmos:key:cas:1", WithControllers(
+					"did:cosmos:key:",
+				))
+				return &dd
+			},
+			true, // nil pointer
+		},
+		{
+			func() *DidDocument {
+				dd, _ := NewDidDocument("did:cosmos:key:cas:1", WithControllers(
+					"did:cosmos:nonsense",
+				))
+				return &dd
+			},
+			false, // nil pointer
+		},
 	}
 	for i, tt := range tests {
 		t.Run(fmt.Sprint("TestIsValidDIDDocument#", i), func(t *testing.T) {

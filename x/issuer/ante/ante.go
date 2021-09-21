@@ -66,14 +66,14 @@ func (cicd CheckUserCredentialsDecorator) AnteHandle(
 			vcs := cicd.vcsk.GetAllVerifiableCredentialsByIssuer(ctx, issuer.IssuerDid)
 
 			if found {
-				// validate that kyc credentials have been issued to the `ToAddress`
-				err := cicd.validateUserCredential(ctx, msg.ToAddress, vcs)
+				// validate that kyc credentials have been issued to the `FromAddress`
+				err = cicd.validateUserCredential(ctx, msg.FromAddress, vcs)
 				if err != nil {
 					return ctx, err
 				}
 
-				// validate that kyc credentials have been issued to the `FromAddress`
-				err = cicd.validateUserCredential(ctx, msg.FromAddress, vcs)
+				// validate that kyc credentials have been issued to the `ToAddress`
+				err = cicd.validateUserCredential(ctx, msg.ToAddress, vcs)
 				if err != nil {
 					return ctx, err
 				}
@@ -95,24 +95,28 @@ func (cicd CheckUserCredentialsDecorator) validateUserCredential(
 ) error {
 	hasUserCredential := false
 
-	a, err := sdk.AccAddressFromBech32(address)
-	if err != nil {
-		return err
+	a, _ := sdk.AccAddressFromBech32(address)
+
+	account := cicd.accountk.GetAccount(ctx, a)
+	if account == nil {
+		return sdkerrors.Wrapf(
+			types.ErrPublicKeyNotFound,
+			"user has not created a did and has no public key associated with their account",
+		)
 	}
 
-	// NOTE: test on account with no pubkey
-	account := cicd.accountk.GetAccount(ctx, a)
 	pubkey := account.GetPubKey()
-
 	dids := cicd.ik.GetDidDocumentsByPubKey(ctx, pubkey)
 
 	// TODO: this is brute force, find a better way
-	for _, vc := range vcs {
-		for _, did := range dids {
-			switch key := vc.CredentialSubject.(type) {
-			case *vctypes.VerifiableCredential_UserCred:
-				if key.UserCred.Id == did.Id {
-					hasUserCredential = true
+	if len(dids) > 0 {
+		for _, vc := range vcs {
+			for _, did := range dids {
+				switch key := vc.CredentialSubject.(type) {
+				case *vctypes.VerifiableCredential_UserCred:
+					if key.UserCred.Id == did.Id {
+						hasUserCredential = true
+					}
 				}
 			}
 		}

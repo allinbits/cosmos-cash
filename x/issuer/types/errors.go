@@ -21,4 +21,5 @@ var (
 	ErrIncorrectLicenseCredential       = sdkerrors.Register(ModuleName, 1311, "issuer does not have the correct license credential")
 	ErrLicenseCredentialNotFound        = sdkerrors.Register(ModuleName, 1312, "cannot find issuer credential in the store")
 	ErrBankSendDisabled                 = sdkerrors.Register(ModuleName, 1313, "sending of emoney tokens not allowed")
+	ErrPublicKeyNotFound                = sdkerrors.Register(ModuleName, 1314, "attempting to send tokens to an account not associated with a DID")
 )

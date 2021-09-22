@@ -27,21 +27,10 @@ func (k msgServer) DeleteVerifiableCredential(
 	msg *types.MsgDeleteVerifiableCredential,
 ) (*types.MsgDeleteVerifiableCredentialResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	vc, found := k.Keeper.GetVerifiableCredential(ctx, []byte(msg.VerifiableCredentialId))
-	if !found {
-		return nil, sdkerrors.Wrapf(
-			types.ErrVerifiableCredentialNotFound,
-			"error deleting credential; credential not found",
-		)
-	}
-	// TODO: the validate proof also accepts validation methods that are not authentication
-	if err := ValidateProof(ctx, k.Keeper, vc); err != nil {
-		return nil, sdkerrors.Wrapf(
-			err, "verifiable credential validation failed",
-		)
-	}
 
-	if err := k.Keeper.DeleteVerifiableCredentialFromStore(ctx, []byte(vc.Id)); err != nil {
+	// TODO: there is something missing here
+
+	if err := k.Keeper.DeleteVerifiableCredentialFromStore(ctx, []byte(msg.VerifiableCredentialId)); err != nil {
 		return nil, sdkerrors.Wrapf(
 			err, "verifiable credential validation failed",
 		)

@@ -33,6 +33,8 @@ func GetTxCmd() *cobra.Command {
 		NewBurnTokenCmd(),
 		NewMintTokenCmd(),
 		NewPauseTokenCmd(),
+		NewIssueUserVerifiableCredentialCmd(),
+		RevokeCredentialCmd(),
 	)
 
 	return cmd
@@ -82,7 +84,7 @@ func NewCreateIssuerCmd() *cobra.Command {
 // NewIssueUserVerifiableCredentialCmd defines the command to create a new verifiable credential.
 func NewIssueUserVerifiableCredentialCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     `issue-user-verifiable-credential [cred_subject] [cred_id] [issuer_did] [secret] [amount_per_transaction] [total_number_of_transactions] [total_transaction_amount]`,
+		Use:     `issue-user-credential [cred_subject] [cred_id] [issuer_did] [secret] [amount_per_transaction] [total_number_of_transactions] [total_transaction_amount]`,
 		Short:   "create decentralized verifiable-credential",
 		Example: "creates a verifiable credential for users",
 		Args:    cobra.ExactArgs(7),
@@ -270,6 +272,39 @@ func NewPauseTokenCmd() *cobra.Command {
 
 	flags.AddTxFlagsToCmd(cmd)
 
+	return cmd
+}
+
+// RevokeCredentialCmd defines the command to create a new license verifiable credential.
+// This is used by regulators to define issuers and issuer permissions
+func RevokeCredentialCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     `revoke-credential [cred_id] [issuer_did]`,
+		Short:   "revoke a verifiable credential",
+		Example: "",
+		Args:    cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			accAddr := clientCtx.GetFromAddress()
+			accAddrBech32 := accAddr.String()
+
+			credentialID := args[0]
+			//issuerDid := args[1]
+
+			msg := types.NewMsgRevokeCredential(credentialID, accAddrBech32)
+
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
 	return cmd
 }
 

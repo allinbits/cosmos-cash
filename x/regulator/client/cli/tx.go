@@ -47,7 +47,7 @@ var _ = strconv.Itoa(0)
 
 func ActivateCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "activate [name] [countryCode]",
+		Use:   "activate-regulator-credential [name] [countryCode]",
 		Short: "Broadcast message to activate a regulator did",
 		Long: `Regulators addresses are stored in the regulator genesis parameters, 
 a did for each regulator is generated at genesis time but is not active, that is, 
@@ -120,7 +120,7 @@ that activates it.`,
 func IssueLicenseCredentialCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     `issue-license-credential [cred_id] [issuer_did] [credential_subject_did] [type] [country] [authority] [denom] [circulation_limit]`,
-		Short:   "create decentralized  verifiable-credential",
+		Short:   "issues a license credential",
 		Example: "creates a license verifiable credential for issuers",
 		Args:    cobra.ExactArgs(8),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -181,8 +181,8 @@ func IssueLicenseCredentialCmd() *cobra.Command {
 // This is used by regulators to define issuers and issuer permissions
 func IssueRegistrationCredentialCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     `issue-registration-verifiable-credential [cred_id] [issuer_did] [credential_subject_did] [country] [short_name] [long_name]`,
-		Short:   "create decentralized  verifiable-credential",
+		Use:     `issue-registration-credential [cred_id] [issuer_did] [credential_subject_did] [country] [short_name] [long_name]`,
+		Short:   "issue a registration credential for a DID",
 		Example: "creates a registration verifiable credential for e-money issuers",
 		Args:    cobra.ExactArgs(8),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -239,8 +239,8 @@ func IssueRegistrationCredentialCmd() *cobra.Command {
 func RevokeCredentialCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     `revoke-credential [cred_id] [issuer_did]`,
-		Short:   "create decentralized  verifiable-credential",
-		Example: "creates a registration verifiable credential for e-money issuers",
+		Short:   "revoke a verifiable credential",
+		Example: "",
 		Args:    cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)

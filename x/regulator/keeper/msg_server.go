@@ -80,7 +80,18 @@ func (k msgServer) IssueRegistrationCredential(goCtx context.Context, msg *types
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	k.Logger(ctx).Info("issue registration request", "did", msg.Credential.Issuer, "address", msg.Owner)
 
-	if err := issueCredential(ctx, k.Keeper, *msg.Credential); err != nil {
+	// check that the issuer has a regulator license
+	vcs := k.vcKeeper.GetVerifiableCredentialWithType(ctx, msg.Credential.Issuer, vctypes.RegulatorCredential)
+	if len(vcs) != 1 { // there must be exactly one
+		err := sdkerrors.Wrapf(types.ErrNotARegulator, "issuer is not a recgulator")
+		k.Logger(ctx).Error(err.Error())
+		return nil, err
+	}
+
+	// store the credentials
+	if vcErr := k.SetVerifiableCredential(ctx, *msg.Credential); vcErr != nil {
+		err := sdkerrors.Wrapf(vcErr, "credential proof cannot be verified")
+		k.Logger(ctx).Error(err.Error())
 		return nil, err
 	}
 
@@ -96,7 +107,24 @@ func (k msgServer) IssueLicenseCredential(goCtx context.Context, msg *types.MsgI
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	k.Logger(ctx).Info("issue license request", "did", msg.Credential.Issuer, "address", msg.Owner)
 
-	if err := issueCredential(ctx, k.Keeper, *msg.Credential); err != nil {
+	// check that the issuer has a regulator license
+	if vcs := k.vcKeeper.GetVerifiableCredentialWithType(ctx, msg.Credential.Issuer, vctypes.RegulatorCredential); len(vcs) != 1 { // there must be exactly one
+		err := sdkerrors.Wrapf(types.ErrNotARegulator, "issuer is not a recgulator")
+		k.Logger(ctx).Error(err.Error())
+		return nil, err
+	}
+
+	// check that the subject has a regulator license
+	if vcs := k.vcKeeper.GetVerifiableCredentialWithType(ctx, msg.Credential.GetSubjectDID(), vctypes.RegistrationCredential); len(vcs) != 1 { // there must be exactly one
+		err := sdkerrors.Wrapf(types.ErrNotARegulator, "subject is not registered: a registration credential is required to obtain a license")
+		k.Logger(ctx).Error(err.Error())
+		return nil, err
+	}
+
+	// store the credentials
+	if vcErr := k.SetVerifiableCredential(ctx, *msg.Credential); vcErr != nil {
+		err := sdkerrors.Wrapf(vcErr, "credential proof cannot be verified")
+		k.Logger(ctx).Error(err.Error())
 		return nil, err
 	}
 
@@ -105,23 +133,6 @@ func (k msgServer) IssueLicenseCredential(goCtx context.Context, msg *types.MsgI
 	)
 
 	return &types.MsgIssueLicenseCredentialResponse{}, nil
-}
-
-func issueCredential(ctx sdk.Context, k Keeper, vc vctypes.VerifiableCredential) error {
-	// check that the issuer has a regulator license
-	vcs := k.vcKeeper.GetVerifiableCredentialWithType(ctx, vc.Issuer, vctypes.RegulatorCredential)
-	if len(vcs) != 1 { // there must be exactly one
-		err := sdkerrors.Wrapf(types.ErrNotARegulator, "issuer is not a recgulator")
-		k.Logger(ctx).Error(err.Error())
-		return err
-	}
-	// store the credentials
-	if vcErr := k.SetVerifiableCredential(ctx, vc); vcErr != nil {
-		err := sdkerrors.Wrapf(vcErr, "credential proof cannot be verified")
-		k.Logger(ctx).Error(err.Error())
-		return err
-	}
-	return nil
 }
 
 // Revoke activates a regulator

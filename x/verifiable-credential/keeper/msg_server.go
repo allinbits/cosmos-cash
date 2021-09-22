@@ -41,7 +41,11 @@ func (k msgServer) DeleteVerifiableCredential(
 		)
 	}
 
-	k.Keeper.DeleteVerifiableCredentialFromStore(ctx, []byte(vc.Id))
+	if err := k.Keeper.DeleteVerifiableCredentialFromStore(ctx, []byte(vc.Id)); err != nil {
+		return nil, sdkerrors.Wrapf(
+			err, "verifiable credential validation failed",
+		)
+	}
 
 	ctx.EventManager().EmitEvent(
 		types.NewCredentialDeletedEvent(msg.Owner, msg.VerifiableCredentialId),

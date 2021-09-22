@@ -77,7 +77,7 @@ func (msg *MsgIssueLicenseCredential) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{owner}
 }
 
-// GetSignedBytes returns the bytes of the signed message
+// GetSignBytes returns the bytes of the signed message
 func (msg *MsgIssueLicenseCredential) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
 	return sdk.MustSortJSON(bz)
@@ -119,7 +119,7 @@ func (msg *MsgIssueRegistrationCredential) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{owner}
 }
 
-// GetSignedBytes returns the bytes of the signed message
+// GetSignBytes returns the bytes of the signed message
 func (msg *MsgIssueRegistrationCredential) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
 	return sdk.MustSortJSON(bz)
@@ -161,7 +161,7 @@ func (msg *MsgRevokeCredential) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{owner}
 }
 
-// GetSignedBytes returns the bytes of the signed message
+// GetSignBytes returns the bytes of the signed message
 func (msg *MsgRevokeCredential) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
 	return sdk.MustSortJSON(bz)

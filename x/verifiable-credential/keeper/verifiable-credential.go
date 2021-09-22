@@ -89,8 +89,8 @@ func (q Keeper) GetAllVerifiableCredentialsWithCondition(
 
 // GetVerifiableCredentialWithType returns the list of verifiable credential of a certain type
 // for an holder (the subject of the credential)
-func (k Keeper) GetVerifiableCredentialWithType(ctx sdk.Context, subjectDID, vcType string) (vcs []types.VerifiableCredential) {
-	return k.GetAllVerifiableCredentialsWithCondition(ctx, types.VerifiableCredentialKey, func(vc types.VerifiableCredential) bool {
+func (q Keeper) GetVerifiableCredentialWithType(ctx sdk.Context, subjectDID, vcType string) (vcs []types.VerifiableCredential) {
+	return q.GetAllVerifiableCredentialsWithCondition(ctx, types.VerifiableCredentialKey, func(vc types.VerifiableCredential) bool {
 		if vc.GetSubjectDID() == subjectDID && vc.HasType(vcType) {
 			return true
 		}

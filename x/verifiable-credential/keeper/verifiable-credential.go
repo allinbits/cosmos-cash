@@ -19,13 +19,30 @@ func (q Keeper) SetVerifiableCredential(ctx sdk.Context, key []byte, vc types.Ve
 	return
 }
 
+// GetVerifiableCredential regurns the verifiable credentials associated with an key
 func (q Keeper) GetVerifiableCredential(ctx sdk.Context, key []byte) (types.VerifiableCredential, bool) {
 	val, found := q.Get(ctx, key, types.VerifiableCredentialKey, q.UnmarshalVerifiableCredential)
 	return val.(types.VerifiableCredential), found
 }
 
-func (q Keeper) DeleteVerifiableCredentialFromStore(ctx sdk.Context, key []byte) {
+// DeleteVerifiableCredentialFromStore deletes a verifiable credential from the store,
+// it performs the necessary proof validation before executing the deletion
+func (q Keeper) DeleteVerifiableCredentialFromStore(ctx sdk.Context, key []byte) error {
+	vc, found := q.GetVerifiableCredential(ctx, key)
+	if !found {
+		return sdkerrors.Wrapf(
+			types.ErrVerifiableCredentialNotFound,
+			"error deleting credential; credential not found",
+		)
+	}
+	// TODO: the validate proof also accepts validation methods that are not authentication
+	if err := ValidateProof(ctx, q, vc); err != nil {
+		return sdkerrors.Wrapf(
+			err, "verifiable credential validation failed",
+		)
+	}
 	q.Delete(ctx, key, types.VerifiableCredentialKey)
+	return nil
 }
 
 func (q Keeper) UnmarshalVerifiableCredential(value []byte) (interface{}, bool) {
@@ -68,6 +85,17 @@ func (q Keeper) GetAllVerifiableCredentialsWithCondition(
 	}
 
 	return vcs
+}
+
+// GetVerifiableCredentialWithType returns the list of verifiable credential of a certain type
+// for an holder (the subject of the credential)
+func (k Keeper) GetVerifiableCredentialWithType(ctx sdk.Context, subjectDID, vcType string) (vcs []types.VerifiableCredential) {
+	return k.GetAllVerifiableCredentialsWithCondition(ctx, types.VerifiableCredentialKey, func(vc types.VerifiableCredential) bool {
+		if vc.GetSubjectDID() == subjectDID && vc.HasType(vcType) {
+			return true
+		}
+		return false
+	})
 }
 
 func (q Keeper) GetAllVerifiableCredentials(ctx sdk.Context) []types.VerifiableCredential {

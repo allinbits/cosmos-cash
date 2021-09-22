@@ -2,16 +2,25 @@ syntax = "proto3";
 package allinbits.cosmoscash.issuer;
 
 import "gogoproto/gogo.proto";
+import "verifiable-credential/verifiable-credential.proto";
 // this line is used by starport scaffolding # proto/tx/import
 
 option go_package = "github.com/allinbits/cosmos-cash/x/issuer/types";
 
 // Msg defines the Msg service.
 service Msg {
+  // CreateIssuer creates a token issuer 
   rpc CreateIssuer(MsgCreateIssuer) returns (MsgCreateIssuerResponse);
+  // BurnToken allows to burn an amount of tokens
   rpc BurnToken(MsgBurnToken) returns (MsgBurnTokenResponse);
+  // MintToken allows to mint an amount of tokens
   rpc MintToken(MsgMintToken) returns (MsgMintTokenResponse);
+  // PauseToken allows to pause issuance/minting/transacting with a token
   rpc PauseToken(MsgPauseToken) returns (MsgPauseTokenResponse);
+  // IssueUserCredential issue user credential to allow an account to transact
+  rpc IssueUserCredential(MsgIssueUserCredential) returns (MsgIssueUserCredentialResponse);
+  // RevokeCredential a credential
+  rpc RevokeCredential(MsgRevokeCredential) returns (MsgRevokeCredentialResponse);   
 }
 
 // MsgCreateIssuer defines an SDK message for creating an emoney token issuer.
@@ -68,4 +77,28 @@ message MsgPauseToken {
 message MsgPauseTokenResponse {}
 
 
+// MsgIssueUserCredential defines sdk message to issue user credentials
+message MsgIssueUserCredential {
+  option (gogoproto.equal)           = false;
+  option (gogoproto.goproto_getters) = false;
+
+  allinbits.cosmoscash.verifiablecredential.VerifiableCredential credential = 1;
+  string    owner        	= 2;
+}
+
+message MsgIssueUserCredentialResponse {}
+
+// MsgRevokeCredential
+message MsgRevokeCredential {
+  option (gogoproto.equal)           = false;
+  option (gogoproto.goproto_getters) = false;
+  string credential_id   = 1;
+  string owner           = 2;
+}
+
+// MsgRevokeCredentialResponse
+message MsgRevokeCredentialResponse {}
+
 // this line is used by starport scaffolding # proto/tx/message
+
+

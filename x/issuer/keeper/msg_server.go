@@ -337,3 +337,49 @@ func (k msgServer) validateMintingAmount(
 
 	return nil
 }
+
+// IssueUserCredential activates a regulator
+func (k msgServer) IssueUserCredential(goCtx context.Context, msg *types.MsgIssueUserCredential) (*types.MsgIssueUserCredentialResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	k.Logger(ctx).Info("issue license request", "did", msg.Credential.Issuer, "address", msg.Owner)
+
+	// check that the issuer is a holder of LicenseCredential
+	// TODO: need to go a bit deeper about the type of the license
+	vcs := k.vcKeeper.GetVerifiableCredentialWithType(ctx, msg.Credential.GetIssuer(), vctypes.LicenseCredential)
+	if len(vcs) != 1 { // there must be exactly one
+		err := sdkerrors.Wrapf(types.ErrLicenseCredentialNotFound, "credential issuer is not a VASP")
+		k.Logger(ctx).Error(err.Error())
+		return nil, err
+	}
+	// store the credentials
+	if vcErr := k.vcKeeper.SetVerifiableCredential(ctx, []byte(msg.Credential.Id), *msg.Credential); vcErr != nil {
+		err := sdkerrors.Wrapf(vcErr, "credential proof cannot be verified")
+		k.Logger(ctx).Error(err.Error())
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvent(
+		vctypes.NewCredentialCreatedEvent(msg.Owner, msg.Credential.Id),
+	)
+
+	return &types.MsgIssueUserCredentialResponse{}, nil
+}
+
+// Revoke activates a regulator
+func (k msgServer) RevokeCredential(goCtx context.Context, msg *types.MsgRevokeCredential) (*types.MsgRevokeCredentialResponse, error) {
+	_ = sdk.UnwrapSDKContext(goCtx)
+
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if vcErr := k.Keeper.vcKeeper.DeleteVerifiableCredentialFromStore(ctx, []byte(msg.CredentialId)); vcErr != nil {
+		err := sdkerrors.Wrapf(vcErr, "credential proof cannot be verified")
+		k.Logger(ctx).Error(err.Error())
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvent(
+		vctypes.NewCredentialDeletedEvent(msg.Owner, msg.CredentialId),
+	)
+
+	return &types.MsgRevokeCredentialResponse{}, nil
+}

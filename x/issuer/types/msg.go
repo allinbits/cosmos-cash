@@ -5,6 +5,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
+	vctypes "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 )
 
 // msg types
@@ -251,4 +252,93 @@ func (msg MsgPauseToken) GetSigners() []sdk.AccAddress {
 		panic(err)
 	}
 	return []sdk.AccAddress{accAddr}
+}
+
+// User credential
+var _ sdk.Msg = &MsgIssueUserCredential{}
+
+// NewMsgIssueUserCredential builds a new instance of a IssuerLicenceCredential message
+func NewMsgIssueUserCredential(credential vctypes.VerifiableCredential, signerAccount string) *MsgIssueUserCredential {
+	return &MsgIssueUserCredential{
+		Credential: &credential,
+		Owner:      signerAccount,
+	}
+}
+
+// Route returns the module router key
+func (msg *MsgIssueUserCredential) Route() string {
+	return RouterKey
+}
+
+// Type returns the string name of the message
+func (msg *MsgIssueUserCredential) Type() string {
+	return "IssueLicense"
+}
+
+// GetSigners returns the account addresses singing the message
+func (msg *MsgIssueUserCredential) GetSigners() []sdk.AccAddress {
+	owner, err := sdk.AccAddressFromBech32(msg.Owner)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{owner}
+}
+
+// GetSignBytes returns the bytes of the signed message
+func (msg *MsgIssueUserCredential) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+// ValidateBasic performs basic validation of the message
+func (msg *MsgIssueUserCredential) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Owner)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	return nil
+}
+
+var _ sdk.Msg = &MsgRevokeCredential{}
+
+// NewMsgRevokeCredential builds a new instance of a the message
+func NewMsgRevokeCredential(credentialID, signerAccount string) *MsgRevokeCredential {
+	return &MsgRevokeCredential{
+		CredentialId: credentialID,
+		Owner:        signerAccount,
+	}
+}
+
+// Route returns the module router key
+func (msg *MsgRevokeCredential) Route() string {
+	return RouterKey
+}
+
+// Type returns the string name of the message
+func (msg *MsgRevokeCredential) Type() string {
+	return "Revoke"
+}
+
+// GetSigners returns the account addresses singing the message
+func (msg *MsgRevokeCredential) GetSigners() []sdk.AccAddress {
+	owner, err := sdk.AccAddressFromBech32(msg.Owner)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{owner}
+}
+
+// GetSignBytes returns the bytes of the signed message
+func (msg *MsgRevokeCredential) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+// ValidateBasic performs basic validation of the message
+func (msg *MsgRevokeCredential) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Owner)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	return nil
 }

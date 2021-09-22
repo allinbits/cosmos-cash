@@ -11,11 +11,12 @@ import (
 
 // Defines the accepted credential types
 const (
-	IdentityCredential  = "IdentityCredential"
-	KYCCredential       = "KYCCredential"
-	IssuerCredential    = "IssuerCredential"
-	RegulatorCredential = "RegulatorCredential"
-	LicenseCredential   = "LicenseCredential"
+	IdentityCredential     = "IdentityCredential"
+	KYCCredential          = "KYCCredential"
+	IssuerCredential       = "IssuerCredential"
+	RegulatorCredential    = "RegulatorCredential"
+	RegistrationCredential = "RegistrationCredential"
+	LicenseCredential      = "LicenseCredential"
 )
 
 // IsValidCredentialType tells if a credential type is valid (accepted)
@@ -43,6 +44,24 @@ func NewUserVerifiableCredential(
 		Context:           []string{"https://www.w3.org/TR/vc-data-model/"},
 		Id:                id,
 		Type:              []string{"VerifiableCredential", KYCCredential},
+		Issuer:            issuer,
+		IssuanceDate:      &issuanceDate,
+		CredentialSubject: &credentialSubject,
+		Proof:             nil,
+	}
+}
+
+// NewRegistrationVerifiableCredential constructs a new VerifiableCredential instance
+func NewRegistrationVerifiableCredential(
+	id string,
+	issuer string,
+	issuanceDate time.Time,
+	credentialSubject VerifiableCredential_RegistrationCred,
+) VerifiableCredential {
+	return VerifiableCredential{
+		Context:           []string{"https://www.w3.org/TR/vc-data-model/"},
+		Id:                id,
+		Type:              []string{"VerifiableCredential", RegistrationCredential},
 		Issuer:            issuer,
 		IssuanceDate:      &issuanceDate,
 		CredentialSubject: &credentialSubject,
@@ -122,6 +141,38 @@ func NewLicenseCredentialSubject(
 			Country:          country,
 			Authority:        authority,
 			CirculationLimit: circulationLimit,
+		},
+	}
+}
+
+// NewRegistrationCredentialSubject create a new license credential subject
+// TODO: placeholder implementation, refactor it
+func NewRegistrationCredentialSubject(
+	id string,
+	country string,
+	shortName string,
+	longName string,
+) VerifiableCredential_RegistrationCred {
+	return VerifiableCredential_RegistrationCred{
+		&RegistrationCredentialSubject{
+			Id: id,
+			Address: &Address{
+				Country: country,
+			},
+			LegalPerson: map[string]*LegalPerson{
+				"0": {
+					LegalPerson: map[string]*Names{
+						"0": {
+							Type: "SN",
+							Name: shortName,
+						},
+						"1": {
+							Type: "LN",
+							Name: longName,
+						},
+					},
+				},
+			},
 		},
 	}
 }

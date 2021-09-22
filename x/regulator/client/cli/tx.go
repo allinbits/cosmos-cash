@@ -24,10 +24,6 @@ var (
 	activateRegulatorCredentialID         string
 )
 
-// const (
-// 	flagPacketTimeoutTimestamp = "packet-timeout-timestamp"
-// )
-
 // GetTxCmd returns the transaction commands for this module
 func GetTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
@@ -39,14 +35,17 @@ func GetTxCmd() *cobra.Command {
 	}
 
 	// this line is used by starport scaffolding # 1
-	cmd.AddCommand(CmdActivate())
+	cmd.AddCommand(ActivateCmd())
+	cmd.AddCommand(IssueLicenseCredentialCmd())
+	cmd.AddCommand(IssueRegistrationCredentialCmd())
+	cmd.AddCommand(RevokeCredentialCmd())
 
 	return cmd
 }
 
 var _ = strconv.Itoa(0)
 
-func CmdActivate() *cobra.Command {
+func ActivateCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "activate [name] [countryCode]",
 		Short: "Broadcast message to activate a regulator did",
@@ -116,11 +115,11 @@ that activates it.`,
 	return cmd
 }
 
-// NewIssueLicenseVerifiableCredentialCmd defines the command to create a new license verifiable credential.
-// This is used by regulators to define issuers and issuer permissions
-func NewIssueLicenseVerifiableCredentialCmd() *cobra.Command {
+// IssueLicenseCredentialCmd defines the command to create a new license verifiable credential.
+// This is used by ulatorsreg to define issuers and issuer permissions
+func IssueLicenseCredentialCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     `issue-license-verifiable-credential [cred_id] [issuer_did] [credential_subject_did] [type] [country] [authority] [denom] [circulation_limit]`,
+		Use:     `issue-license-credential [cred_id] [issuer_did] [credential_subject_did] [type] [country] [authority] [denom] [circulation_limit]`,
 		Short:   "create decentralized  verifiable-credential",
 		Example: "creates a license verifiable credential for issuers",
 		Args:    cobra.ExactArgs(8),
@@ -175,6 +174,95 @@ func NewIssueLicenseVerifiableCredentialCmd() *cobra.Command {
 	}
 
 	flags.AddTxFlagsToCmd(cmd)
+	return cmd
+}
 
+// IssueRegistrationCredentialCmd defines the command to create a new license verifiable credential.
+// This is used by regulators to define issuers and issuer permissions
+func IssueRegistrationCredentialCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     `issue-registration-verifiable-credential [cred_id] [issuer_did] [credential_subject_did] [country] [short_name] [long_name]`,
+		Short:   "create decentralized  verifiable-credential",
+		Example: "creates a registration verifiable credential for e-money issuers",
+		Args:    cobra.ExactArgs(8),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			accAddr := clientCtx.GetFromAddress()
+			accAddrBech32 := accAddr.String()
+
+			credentialID := args[0]
+			issuerDid := args[1]
+			credentialSubject := args[2]
+			country := args[3]
+			shortName := args[4]
+			longName := args[5]
+
+			cs := vctypes.NewRegistrationCredentialSubject(
+				credentialSubject,
+				country,
+				shortName,
+				longName,
+			)
+			tm := time.Now()
+
+			vc := vctypes.NewRegistrationVerifiableCredential(
+				credentialID,
+				issuerDid,
+				tm.UTC(),
+				cs,
+			)
+
+			signedVc, err := vc.Sign(clientCtx.Keyring, accAddr, issuerDid)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgIssueRegistrationCredential(signedVc, accAddrBech32)
+
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+	return cmd
+}
+
+// RevokeCredentialCmd defines the command to create a new license verifiable credential.
+// This is used by regulators to define issuers and issuer permissions
+func RevokeCredentialCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     `revoke-credential [cred_id] [issuer_did]`,
+		Short:   "create decentralized  verifiable-credential",
+		Example: "creates a registration verifiable credential for e-money issuers",
+		Args:    cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			accAddr := clientCtx.GetFromAddress()
+			accAddrBech32 := accAddr.String()
+
+			credentialID := args[0]
+			//issuerDid := args[1]
+
+			msg := types.NewMsgRevokeCredential(credentialID, accAddrBech32)
+
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
 	return cmd
 }

@@ -36,107 +36,109 @@ func contains(what string, list []string) bool {
 // Activate activates a regulator
 func (k msgServer) Activate(goCtx context.Context, msg *types.MsgActivate) (*types.MsgActivateResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	k.Logger(ctx).Info("regulator activation request", "did", msg.Credentials.Issuer, "address", msg.Creator)
+	k.Logger(ctx).Info("regulator activation request", "did", msg.Credential.Issuer, "address", msg.Owner)
 	// fetch the regulator address lists
 	// err: not found
 	addrs := k.Keeper.GetRegulatorsAddresses(ctx)
 	k.Logger(ctx).Info("regulators are ", "regulator addresses", addrs)
 
 	// if the address is not one of the regulators
-	if !contains(msg.Creator, addrs) {
+	if !contains(msg.Owner, addrs) {
 		k.Logger(ctx).Error("regulator activation failed", "msg", types.ErrNotARegulator)
 		return nil, sdkerrors.Wrapf(
 			types.ErrNotARegulator,
-			msg.Creator,
+			msg.Owner,
 		)
 	}
 
 	// verify that is a valid did
-	if !didtypes.IsValidDID(msg.Credentials.Issuer) {
+	if !didtypes.IsValidDID(msg.Credential.Issuer) {
 		k.Logger(ctx).Error("regulator activation failed", "issuer did", didtypes.ErrInvalidDIDFormat)
 		return nil, sdkerrors.Wrapf(
 			didtypes.ErrInvalidDIDFormat,
-			msg.Credentials.Issuer,
+			msg.Credential.Issuer,
 		)
 	}
 
 	// store the regulator vc
-	if err := k.SetVerifiableCredential(ctx, *msg.Credentials); err != nil {
+	if err := k.SetVerifiableCredential(ctx, *msg.Credential); err != nil {
 		k.Logger(ctx).Error("regulator activation failed", "signature verification error", err)
 		return nil, sdkerrors.Wrapf(err, "credential proof could not be verified")
 	}
+
+	ctx.EventManager().EmitEvent(
+		vctypes.NewCredentialCreatedEvent(msg.Owner, msg.Credential.Id),
+	)
 	// reply
-	k.Logger(ctx).Info("regulator activation success", "did", msg.Credentials.Issuer, "address", msg.Creator)
+	k.Logger(ctx).Info("regulator activation success", "did", msg.Credential.Issuer, "address", msg.Owner)
 
 	return &types.MsgActivateResponse{}, nil
 }
 
-// Activate activates a regulator
-func (k msgServer) Register(goCtx context.Context, msg *types.MsgActivate) (*types.MsgActivateResponse, error) {
+// IssueRegistrationCredential activates a regulator
+func (k msgServer) IssueRegistrationCredential(goCtx context.Context, msg *types.MsgIssueRegistrationCredential) (*types.MsgIssueRegistrationCredentialResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	k.Logger(ctx).Info("business entity registration request", "did", msg.Credentials.Issuer, "signer", msg.Creator)
-	// fetch the regulator address lists
-	// err: not found
-	addrs := k.Keeper.GetRegulatorsAddresses(ctx)
-	k.Logger(ctx).Info("regulators are ", "reg", addrs)
+	k.Logger(ctx).Info("issue registration request", "did", msg.Credential.Issuer, "address", msg.Owner)
 
-	// if the address is not one of the regulators
-	if !contains(msg.Creator, addrs) {
-		return nil, sdkerrors.Wrapf(
-			types.ErrNotARegulator,
-			msg.Creator,
-		)
+	if err := issueCredential(ctx, k.Keeper, *msg.Credential); err != nil {
+		return nil, err
 	}
 
-	// verify that is a valid did
-	if !didtypes.IsValidDID(msg.Credentials.Issuer) {
-		return nil, sdkerrors.Wrapf(
-			didtypes.ErrInvalidDIDFormat,
-			msg.Credentials.Issuer,
-		)
-	}
-	// verify that a credential with the same id does not exists
-	_, found := k.GetVerifiableCredential(ctx, msg.Credentials.Id)
-	if found {
-		return nil, sdkerrors.Wrapf(
-			vctypes.ErrVerifiableCredentialFound,
-			"vc already exists",
-		)
-	}
-	// verify regulator DOESN't have regulator credential
-	vcs := k.GetVerifiableCredentialWithType(ctx, msg.Credentials.Issuer, vctypes.RegulatorCredential)
-	if len(vcs) > 0 {
-		return nil, sdkerrors.Wrapf(
-			types.ErrAlreadyActive,
-			msg.Creator,
-		)
-	}
-
-	// build the did document and metadata
-	did := didtypes.NewKeyDID(msg.Creator)
-	didDoc, _ := didtypes.NewDidDocument(
-		msg.Credentials.Issuer,
-		didtypes.WithControllers(did.String()),
-		didtypes.WithVerifications(
-			didtypes.NewAccountVerification(did, ctx.ChainID(), msg.Creator, didtypes.AssertionMethod),
-		),
+	ctx.EventManager().EmitEvent(
+		vctypes.NewCredentialCreatedEvent(msg.Owner, msg.Credential.Id),
 	)
-	didMeta := didtypes.NewDidMetadata(ctx.TxBytes(), ctx.BlockTime())
-	// save the didDoc and the Meta
-	k.SetDidDocumentWithMeta(ctx, didDoc, didMeta)
-	// store the regulator vc
-	err := k.SetVerifiableCredential(ctx, *msg.Credentials)
-	if err != nil {
-		// TODO in this case we MUS rollback did creation, perhaps did and credentials should be
-		k.Logger(ctx).Error("error setting verifiable credential, validation failed")
-		return nil, sdkerrors.Wrapf(
-			vctypes.ErrMessageSigner,
-			didDoc.Id,
-		)
+
+	return &types.MsgIssueRegistrationCredentialResponse{}, nil
+}
+
+// IssueLicenseCredential activates a regulator
+func (k msgServer) IssueLicenseCredential(goCtx context.Context, msg *types.MsgIssueLicenseCredential) (*types.MsgIssueLicenseCredentialResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	k.Logger(ctx).Info("issue license request", "did", msg.Credential.Issuer, "address", msg.Owner)
+
+	if err := issueCredential(ctx, k.Keeper, *msg.Credential); err != nil {
+		return nil, err
 	}
 
-	// reply
-	k.Logger(ctx).Info("regulator activation success", "did", msg.Credentials.Issuer, "address", msg.Creator)
+	ctx.EventManager().EmitEvent(
+		vctypes.NewCredentialCreatedEvent(msg.Owner, msg.Credential.Id),
+	)
 
-	return &types.MsgActivateResponse{}, nil
+	return &types.MsgIssueLicenseCredentialResponse{}, nil
+}
+
+func issueCredential(ctx sdk.Context, k Keeper, vc vctypes.VerifiableCredential) error {
+	// check that the issuer has a regulator license
+	vcs := k.vcKeeper.GetVerifiableCredentialWithType(ctx, vc.Issuer, vctypes.RegulatorCredential)
+	if len(vcs) != 1 { // there must be exactly one
+		err := sdkerrors.Wrapf(types.ErrNotARegulator, "issuer is not a recgulator")
+		k.Logger(ctx).Error(err.Error())
+		return err
+	}
+	// store the credentials
+	if vcErr := k.SetVerifiableCredential(ctx, vc); vcErr != nil {
+		err := sdkerrors.Wrapf(vcErr, "credential proof cannot be verified")
+		k.Logger(ctx).Error(err.Error())
+		return err
+	}
+	return nil
+}
+
+// Revoke activates a regulator
+func (k msgServer) RevokeCredential(goCtx context.Context, msg *types.MsgRevokeCredential) (*types.MsgRevokeCredentialResponse, error) {
+	_ = sdk.UnwrapSDKContext(goCtx)
+
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if vcErr := k.Keeper.DeleteVerifiableCredential(ctx, msg.CredentialId); vcErr != nil {
+		err := sdkerrors.Wrapf(vcErr, "credential proof cannot be verified")
+		k.Logger(ctx).Error(err.Error())
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvent(
+		vctypes.NewCredentialDeletedEvent(msg.Owner, msg.CredentialId),
+	)
+
+	return &types.MsgRevokeCredentialResponse{}, nil
 }

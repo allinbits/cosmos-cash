@@ -99,13 +99,7 @@ func (k Keeper) GetVerifiableCredential(ctx sdk.Context, vcID string) (vctypes.V
 	return k.vcKeeper.GetVerifiableCredential(ctx, []byte(vcID))
 }
 
-// GetVerifiableCredentialWithType returns the list of verifiable credential of a certain type
-// issued by a did issuer
-func (k Keeper) GetVerifiableCredentialWithType(ctx sdk.Context, did, vcType string) (vcs []vctypes.VerifiableCredential) {
-	return k.vcKeeper.GetAllVerifiableCredentialsWithCondition(ctx, vctypes.VerifiableCredentialKey, func(vc vctypes.VerifiableCredential) bool {
-		if vc.Issuer == did && vc.HasType(vcType) {
-			return true
-		}
-		return false
-	})
+// DeleteVerifiableCredential invokes the verifiable credential keeper to execute the deletion of credentials
+func (k Keeper) DeleteVerifiableCredential(ctx sdk.Context, credentialID string) error {
+	return k.vcKeeper.DeleteVerifiableCredentialFromStore(ctx, []byte(credentialID))
 }

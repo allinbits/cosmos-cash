@@ -2,11 +2,12 @@ package keeper
 
 import (
 	"fmt"
+	"time"
+
 	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
 	"github.com/allinbits/cosmos-cash/x/regulator/types"
 	vctypes "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"time"
 )
 
 func (suite *KeeperTestSuite) TestMsgSeverActivateRegulator() {
@@ -41,8 +42,8 @@ func (suite *KeeperTestSuite) TestMsgSeverActivateRegulator() {
 				rvc, _ = rvc.Sign(suite.keyring, suite.GetRegulatorAddress(), vmID)
 				// send the message
 				req = types.MsgActivate{
-					Credentials: &rvc,
-					Creator:     regulator.String(),
+					Credential: &rvc,
+					Owner:      regulator.String(),
 				}
 			},
 		},
@@ -86,8 +87,8 @@ func (suite *KeeperTestSuite) TestMsgSeverActivateRegulator() {
 				rvc, _ = rvc.Sign(suite.keyring, suite.GetRegulatorAddress(), vmID)
 				// send the message
 				req = types.MsgActivate{
-					Credentials: &rvc,
-					Creator:     regulator.String(),
+					Credential: &rvc,
+					Owner:      regulator.String(),
 				}
 			},
 			nil,
@@ -114,8 +115,8 @@ func (suite *KeeperTestSuite) TestMsgSeverActivateRegulator() {
 				rvc, _ = rvc.Sign(suite.keyring, suite.GetRegulatorAddress(), vmID)
 				// send the message
 				req = types.MsgActivate{
-					Credentials: &rvc,
-					Creator:     regulator.String(),
+					Credential: &rvc,
+					Owner:      regulator.String(),
 				}
 			},
 			vctypes.ErrMessageSigner,
@@ -144,8 +145,8 @@ func (suite *KeeperTestSuite) TestMsgSeverActivateRegulator() {
 				rvc, _ = rvc.Sign(suite.keyring, suite.GetRegulatorAddress(), vmID)
 				// send the message
 				req = types.MsgActivate{
-					Credentials: &rvc,
-					Creator:     regulator.String(),
+					Credential: &rvc,
+					Owner:      regulator.String(),
 				}
 			},
 			didtypes.ErrDidDocumentNotFound,
@@ -172,8 +173,8 @@ func (suite *KeeperTestSuite) TestMsgSeverActivateRegulator() {
 				rvc, _ = rvc.Sign(suite.keyring, suite.GetRegulatorAddress(), vmID)
 				// send the message
 				req = types.MsgActivate{
-					Credentials: &rvc,
-					Creator:     regulator.String(),
+					Credential: &rvc,
+					Owner:      regulator.String(),
 				}
 			},
 			types.ErrNotARegulator,

@@ -5,22 +5,66 @@ package allinbits.cosmoscash.regulator;
 
 option go_package = "github.com/allinbits/cosmos-cash/x/regulator/types";
 
+import "gogoproto/gogo.proto";
 import "verifiable-credential/verifiable-credential.proto";
 
 // Msg defines the Msg service.
 service Msg {
-    // this line is used by starport scaffolding # proto/tx/rpc
+  // this line is used by starport scaffolding # proto/tx/rpc
+  // Activate issue regulator credential to activate a regulator on chain
   rpc Activate(MsgActivate) returns (MsgActivateResponse);
+  // IssueRegistrationCredential issue a new registration credential for a public entity
+  rpc IssueRegistrationCredential(MsgIssueRegistrationCredential) returns (MsgIssueRegistrationCredentialResponse);
+  // IssueLicenseCredential issue a license to to a registered entity
+  rpc IssueLicenseCredential(MsgIssueLicenseCredential) returns (MsgIssueLicenseCredentialResponse);
+  // RevokeCredential a credential
+  rpc RevokeCredential(MsgRevokeCredential) returns (MsgRevokeCredentialResponse);   
 }
 
 // this line is used by starport scaffolding # proto/tx/message
 
 // MsgActivate is used to activate a regulator on chain
 message MsgActivate {
-  allinbits.cosmoscash.verifiablecredential.VerifiableCredential credentials = 1;
-  string creator          = 2;
+  option (gogoproto.equal)           = false;
+  option (gogoproto.goproto_getters) = false;
+  allinbits.cosmoscash.verifiablecredential.VerifiableCredential credential = 1;
+  string owner          = 2;
 }
 
 // MsgActivateResponse contains the reponse for a successful activation
 // of a regulator on chain
 message MsgActivateResponse {}
+
+// MsgIssueRegistrationCredential is used to issue new registration credential
+message MsgIssueRegistrationCredential {
+  option (gogoproto.equal)           = false;
+  option (gogoproto.goproto_getters) = false;
+  allinbits.cosmoscash.verifiablecredential.VerifiableCredential credential = 1;
+  string owner          = 2;
+}
+
+// MsgIssueRegistrationCredentialResponse reply for the IssueRegistartion call
+message MsgIssueRegistrationCredentialResponse {}
+
+// MsgIssueLicenseCredential message contains data for license credential
+message MsgIssueLicenseCredential {
+  option (gogoproto.equal)           = false;
+  option (gogoproto.goproto_getters) = false;
+  allinbits.cosmoscash.verifiablecredential.VerifiableCredential credential = 1;
+  string owner          = 2;
+}
+
+// MsgIssueLicenseCredentialResponse reply for the issue license call 
+message MsgIssueLicenseCredentialResponse {}
+
+// MsgRevokeCredential
+message MsgRevokeCredential {
+  option (gogoproto.equal)           = false;
+  option (gogoproto.goproto_getters) = false;
+  string credential_id   = 1;
+  string owner           = 2;
+}
+
+// MsgRevokeCredentialResponse
+message MsgRevokeCredentialResponse {}
+

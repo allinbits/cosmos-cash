@@ -18,10 +18,6 @@ type DidKeeper interface {
 type VcKeeper interface {
 	GetVerifiableCredential(ctx sdk.Context, key []byte) (vctypes.VerifiableCredential, bool)
 	SetVerifiableCredential(ctx sdk.Context, key []byte, vc vctypes.VerifiableCredential) error
-	//GetVerifiableCredentialByIssuer(ctx sdk.Context, issuerDID string) []vctypes.VerifiableCredential
-	GetAllVerifiableCredentialsWithCondition(
-		ctx sdk.Context,
-		key []byte,
-		vcSelector func(votes vctypes.VerifiableCredential) bool,
-	) (vcs []vctypes.VerifiableCredential)
+	GetVerifiableCredentialWithType(ctx sdk.Context, subjectDID, vcType string) []vctypes.VerifiableCredential
+	DeleteVerifiableCredentialFromStore(ctx sdk.Context, key []byte) error
 }

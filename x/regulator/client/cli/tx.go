@@ -8,6 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
 
 	// "github.com/cosmos/cosmos-sdk/client/flags"
@@ -109,6 +110,69 @@ that activates it.`,
 
 	cmd.Flags().StringVar(&activateRegulatorDID, "did", "", "the DID id to use for the regulator DID, otherwise the adddress of the regulator will be used")
 	cmd.Flags().StringVar(&activateRegulatorCredentialID, "credential-id", "", "the credential id to use for the regulator credential, randomly generated if not present")
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// NewIssueLicenseVerifiableCredentialCmd defines the command to create a new license verifiable credential.
+// This is used by regulators to define issuers and issuer permissions
+func NewIssueLicenseVerifiableCredentialCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     `issue-license-verifiable-credential [cred_id] [issuer_did] [credential_subject_did] [type] [country] [authority] [denom] [circulation_limit]`,
+		Short:   "create decentralized  verifiable-credential",
+		Example: "creates a license verifiable credential for issuers",
+		Args:    cobra.ExactArgs(8),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			accAddr := clientCtx.GetFromAddress()
+			accAddrBech32 := accAddr.String()
+
+			credentialID := args[0]
+			issuerDid := args[1]
+			credentialSubject := args[2]
+			licenseType := args[3]
+			country := args[4]
+			authority := args[5]
+			denom := args[6]
+			circulationLimitString := args[7]
+			circulationLimit, _ := sdk.NewIntFromString(circulationLimitString)
+			coin := sdk.NewCoin(denom, circulationLimit)
+
+			cs := vctypes.NewLicenseCredentialSubject(
+				credentialSubject,
+				licenseType,
+				country,
+				authority,
+				coin,
+			)
+			tm := time.Now()
+
+			vc := vctypes.NewLicenseVerifiableCredential(
+				credentialID,
+				issuerDid,
+				tm.UTC(),
+				cs,
+			)
+
+			signedVc, err := vc.Sign(clientCtx.Keyring, accAddr, issuerDid)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgIssueLicenseCredential(signedVc, accAddrBech32)
+
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
 
 	flags.AddTxFlagsToCmd(cmd)
 

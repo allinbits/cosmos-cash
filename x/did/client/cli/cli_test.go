@@ -379,7 +379,7 @@ func (s *IntegrationTestSuite) TestNewAddServiceCmd() {
 			[]string{
 				"123456789abcdefghijk",
 				"service:seuro",
-				"KYCCredential",
+				"UserCredential",
 				"service:euro/SIGNATURE",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),

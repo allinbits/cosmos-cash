@@ -589,7 +589,7 @@ func (suite *KeeperTestSuite) TestHandleMsgAddService() {
 			func() {
 				service := types.NewService(
 					"service-id",
-					"NonKYCCredential",
+					"NonUserCredential",
 					"cash/multihash",
 				)
 				req = *types.NewMsgAddService("did:cosmos:cash:subject", service, "subject")
@@ -624,7 +624,7 @@ func (suite *KeeperTestSuite) TestHandleMsgAddService() {
 
 				service := types.NewService(
 					"service-id",
-					"KYCCredential",
+					"UserCredential",
 					"cash/multihash",
 				)
 
@@ -654,7 +654,7 @@ func (suite *KeeperTestSuite) TestHandleMsgAddService() {
 
 				service := types.NewService(
 					"service-id",
-					"NonKYCCredential",
+					"NonUserCredential",
 					"cash/multihash",
 				)
 
@@ -683,7 +683,7 @@ func (suite *KeeperTestSuite) TestHandleMsgAddService() {
 					types.WithServices(
 						types.NewService(
 							"service-id",
-							"KYCCredential",
+							"UserCredential",
 							"cash/multihash",
 						),
 					),
@@ -691,7 +691,7 @@ func (suite *KeeperTestSuite) TestHandleMsgAddService() {
 
 				service := types.NewService(
 					"service-id",
-					"KYCCredential",
+					"UserCredential",
 					"cash/multihash",
 				)
 
@@ -725,7 +725,7 @@ func (suite *KeeperTestSuite) TestHandleMsgAddService() {
 
 				service := types.NewService(
 					"service-id",
-					"KYCCredential",
+					"UserCredential",
 					"cash/multihash",
 				)
 
@@ -787,7 +787,7 @@ func (suite *KeeperTestSuite) TestHandleMsgDeleteService() {
 					types.WithServices(
 						types.NewService(
 							"service-id",
-							"KYCCredential",
+							"UserCredential",
 							"cash/multihash",
 						),
 					),

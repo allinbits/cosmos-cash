@@ -90,7 +90,7 @@ To create and publish a DID document use the message
 MsgCreateDidDocument(id string, signerPubKey string)
 ```
 
-The message parameters are the DID to be created and the `signerPubKey`. The `signerPubKey` MUST be the public key of the account that signs the transaction. The public key MUST be used to attach a verification method of type `EcdsaSecp256k1VerificationKey2019` with the value of `publicKeyMultibase` that contains the public key encoded according to the [hexadecimal multibase format](https://datatracker.ietf.org/doc/html/draft-multiformats-multibase#appendix-B.1).
+The message parameters are the DID to be created and the `signerPubKey`. The `signerPubKey` MUST be the public key of the account that signs the transaction. The public key MUST be used to attach a verification method of type `EcdsaSecp256k1VerificationKey2019` with the value of `publicKeyMultibase` that contains the public key encoded according to the Multibase Data Format [Hexadecimal upper-case encoding](https://datatracker.ietf.org/doc/html/draft-multiformats-multibase#appendix-B.1).
 
 The verification method controller MUST be one of the following:
 
@@ -357,9 +357,9 @@ The format for the queries is:
 
 ## Privacy Considerations
 
-When any data (e.g. W3C Verifiable Credentials) is associated with Cosmos DIDs, sharing that data would also impose sharing the onchain data graph (e.g. transaction history) of the blockchain account that controls the DID.
+When any data (for example, W3C Verifiable Credentials) is associated with Cosmos DIDs, sharing that data would also impose sharing the on-chain data graph (for example, transaction history) of the blockchain account that controls the DID.
 
-Using personal identifiable information as DID Method specific identifiers (e.g. alice) discloses personal information every time the DID is shared with a counter party. This specification DOES NOT endorse the use of identifiers that correlates to human beings or other sensible subjects.
+Using personally identifiable information as DID Method-specific identifiers (for example, account name alice) discloses personal information every time the DID is shared with a counterparty. This specification DOES NOT endorse the use of identifiers that correlates to human beings or other sensible subjects.
 
 ## Security Considerations
 

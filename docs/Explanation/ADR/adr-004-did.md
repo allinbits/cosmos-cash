@@ -363,7 +363,7 @@ Using personally identifiable information as DID Method-specific identifiers (fo
 
 ## Security Considerations
 
-Ephemeral DIDs (`did:cosmos:key` type) are generated based on a blockchain address, if access to the authoritative keys for an account are lost, the control of the DID and verifiable data issued by the DID is lost as well. 
+Ephemeral DIDs (`did:cosmos:key` type) are generated based on a blockchain address. If access to the authoritative keys for an account are lost, the control of the DID and verifiable data issued by the DID is lost as well. 
 
 ## Consequences
 

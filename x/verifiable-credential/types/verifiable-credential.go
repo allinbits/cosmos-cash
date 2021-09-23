@@ -12,7 +12,7 @@ import (
 // Defines the accepted credential types
 const (
 	IdentityCredential     = "IdentityCredential"
-	KYCCredential          = "KYCCredential"
+	UserCredential         = "UserCredential"
 	IssuerCredential       = "IssuerCredential"
 	RegulatorCredential    = "RegulatorCredential"
 	RegistrationCredential = "RegistrationCredential"
@@ -23,7 +23,7 @@ const (
 func IsValidCredentialType(credential string) bool {
 	switch credential {
 	case IdentityCredential,
-		KYCCredential,
+		UserCredential,
 		IssuerCredential,
 		RegulatorCredential,
 		LicenseCredential:
@@ -43,7 +43,7 @@ func NewUserVerifiableCredential(
 	return VerifiableCredential{
 		Context:           []string{"https://www.w3.org/TR/vc-data-model/"},
 		Id:                id,
-		Type:              []string{"VerifiableCredential", KYCCredential},
+		Type:              []string{"VerifiableCredential", UserCredential},
 		Issuer:            issuer,
 		IssuanceDate:      &issuanceDate,
 		CredentialSubject: &credentialSubject,

@@ -1,9 +1,7 @@
 package cli
 
 import (
-	"errors"
 	"fmt"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -14,7 +12,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/allinbits/cosmos-cash/x/did/types"
-	vcstypes "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 )
 
 // GetTxCmd returns the transaction commands for this module
@@ -77,7 +74,7 @@ func NewCreateDidDocumentCmd() *cobra.Command {
 			}
 			pubKey := info.GetPubKey()
 			// verification method id
-			vmID := fmt.Sprint(did, "#", sdk.MustBech32ifyAddressBytes(sdk.GetConfig().GetBech32AccountAddrPrefix(), pubKey.Address().Bytes()))
+			vmID := types.NewVerificationMethodIdFromAddress(signer.String())
 			// understand the vmType
 			vmType, err := deriveVMType(pubKey)
 			if err != nil {
@@ -141,12 +138,10 @@ func NewAddVerificationCmd() *cobra.Command {
 			// document did
 			did := types.NewChainDID(clientCtx.ChainID, args[0])
 			// verification method id
-			vmID := fmt.Sprint(did, "#",
-				sdk.MustBech32ifyAddressBytes(
-					sdk.GetConfig().GetBech32AccountAddrPrefix(),
-					pk.Address().Bytes(),
-				),
-			)
+			vmID := types.NewVerificationMethodIdFromAddress(sdk.MustBech32ifyAddressBytes(
+				sdk.GetConfig().GetBech32AccountAddrPrefix(),
+				pk.Address().Bytes(),
+			))
 
 			verification := types.NewVerification(
 				types.NewVerificationMethod(
@@ -189,9 +184,6 @@ func NewAddServiceCmd() *cobra.Command {
 				return err
 			}
 
-			if !vcstypes.IsValidCredentialType(args[2]) {
-				return errors.New("invalid credential type")
-			}
 			// tx signer
 			signer := clientCtx.GetFromAddress()
 			// service parameters
@@ -226,7 +218,7 @@ func NewAddServiceCmd() *cobra.Command {
 
 func NewRevokeVerificationCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "revoke-verification-method [id] [verification-method-id]",
+		Use:     "revoke-verification-method [id] [verificationMethodAddress]",
 		Short:   "revoke a verification method from a decentralized did (did) document",
 		Example: "revoke a verification method for a did document",
 		Args:    cobra.ExactArgs(2),
@@ -240,12 +232,11 @@ func NewRevokeVerificationCmd() *cobra.Command {
 			// signer
 			signer := clientCtx.GetFromAddress()
 			// verification method id
-			// XXX: any vmID could be passed at this point
-			vmID := types.NewChainDID(clientCtx.ChainID, args[1])
+			vmID := types.NewVerificationMethodIdFromAddress(args[1])
 			// build the message
 			msg := types.NewMsgRevokeVerification(
 				did.String(),
-				vmID.String(),
+				vmID,
 				signer.String(),
 			)
 			// validate
@@ -303,7 +294,7 @@ func NewDeleteServiceCmd() *cobra.Command {
 // NewUpdateDidDocumentCmd adds a controller to a did document
 func NewUpdateDidDocumentCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "update-did-document [id] [id-key]",
+		Use:     "update-did-document [id] [controllerAddress]",
 		Short:   "updates a decentralized identifier (did) document to contain a controller",
 		Example: "update-did-document vasp cosmos1kslgpxklq75aj96cz3qwsczr95vdtrd3p0fslp",
 		Args:    cobra.ExactArgs(2),
@@ -351,7 +342,7 @@ func NewSetVerificationRelationshipCmd() *cobra.Command {
 	var unsafe bool
 
 	cmd := &cobra.Command{
-		Use:     "set-verification-relationship [id] [method-id] --relationship NAME [--relationship NAME ...]",
+		Use:     "set-verification-relationship [id] [address] --relationship NAME [--relationship NAME ...]",
 		Short:   "sets one or more verification relationships to a key on a decentralized identifier (did) document.",
 		Example: "set-verification-relationship vasp vasp#6f1e0700-6c86-41b6-9e05-ae3cf839cdd0 --relationship capabilityInvocation",
 		Args:    cobra.ExactArgs(2),
@@ -365,14 +356,14 @@ func NewSetVerificationRelationshipCmd() *cobra.Command {
 			did := types.NewChainDID(clientCtx.ChainID, args[0])
 
 			// method id
-			methodID := types.NewChainDID(clientCtx.ChainID, args[1])
+			vmID := types.NewVerificationMethodIdFromAddress(args[1])
 
 			// signer
 			signer := clientCtx.GetFromAddress()
 
 			msg := types.NewMsgSetVerificationRelationships(
 				did.String(),
-				methodID.String(),
+				vmID,
 				relationships,
 				signer.String(),
 			)

@@ -215,6 +215,12 @@ func (did DID) String() string {
 	return string(did)
 }
 
+// NewVerificationMethodIdFromAddress compose a verification method id
+// from an account address
+func NewVerificationMethodIdFromAddress(address string) string {
+	return fmt.Sprint(NewKeyDID(address), "#", address)
+}
+
 // IsValidDID validate the input string according to the
 // did specification (cfr. https://www.w3.org/TR/did-core/#did-syntax ).
 func IsValidDID(input string) bool {
@@ -580,22 +586,18 @@ func (didDoc *DidDocument) setRelationships(methodID string, relationships ...Ve
 	}
 }
 
-// GetVerificationMethodBlockchainID returns the verification method cosmos blockchain ID address of a verification method.
+// GetVerificationMethodBlockchainAddress returns the verification method cosmos blockchain address of a verification method.
 // it fails if the verification method is not supported or if the verification method is not found
-func (didDoc DidDocument) GetVerificationMethodBlockchainID(methodID string) (address BlockchainAccountID, err error) {
+func (didDoc DidDocument) GetVerificationMethodBlockchainAddress(methodID string) (address string, err error) {
 	for _, vm := range didDoc.VerificationMethod {
 		if vm.Id == methodID {
 			switch k := vm.VerificationMaterial.(type) {
 			case *VerificationMethod_BlockchainAccountID:
-				address = BlockchainAccountID(k.BlockchainAccountID)
+				address = BlockchainAccountID(k.BlockchainAccountID).GetAddress()
 			case *VerificationMethod_PublicKeyMultibase:
-				var addr string
-				addr, err = toAddress(k.PublicKeyMultibase[1:])
-				address = BlockchainAccountID(addr)
+				address, err = toAddress(k.PublicKeyMultibase[1:])
 			case *VerificationMethod_PublicKeyHex:
-				var addr string
-				addr, err = toAddress(k.PublicKeyHex)
-				address = BlockchainAccountID(addr)
+				address, err = toAddress(k.PublicKeyHex)
 			default:
 				err = ErrKeyFormatNotSupported
 			}
@@ -621,7 +623,7 @@ func (didDoc DidDocument) GetVerificationRelationships(methodID string) []string
 }
 
 // HasRelationship verifies if a controller did
-// exists for at least one of the relationships in the did document
+// exist for at least one of the relationships in the did document
 func (didDoc DidDocument) HasRelationship(
 	signer BlockchainAccountID,
 	relationships ...string,

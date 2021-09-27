@@ -2,9 +2,6 @@ package keeper
 
 import (
 	"context"
-	"fmt"
-	"strings"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -37,27 +34,12 @@ func (k Keeper) DidDocument(
 	}
 
 	ctx := sdk.UnwrapSDKContext(c)
-	did, found := k.GetDidDocument(ctx, []byte(req.Id))
-	if !found {
-		// if it isn't a key did, return error
-		if !strings.HasPrefix(req.Id, types.DidKeyPrefix) {
-			return nil, status.Error(codes.NotFound, fmt.Sprint("resolution failed for did: ", req.Id))
-		}
-		// auto-resolve the address
-		doc, meta, err := types.ResolveAccountDID(req.Id, ctx.ChainID())
-		if err != nil {
-			return nil, status.Error(codes.Unavailable, "cosmos address account resolution error")
-		}
-		return &types.QueryDidDocumentResponse{
-			DidDocument: doc,
-			DidMetadata: meta,
-		}, nil
+	doc, meta, err := k.ResolveDid(ctx, types.DID(req.Id))
+	if err != nil {
+		return nil, status.Error(codes.NotFound, err.Error())
 	}
-	// now fetch the metadata
-	didM, _ := k.GetDidMetadata(ctx, []byte(req.Id))
-
 	return &types.QueryDidDocumentResponse{
-		DidDocument: did,
-		DidMetadata: didM,
+		DidDocument: doc,
+		DidMetadata: meta,
 	}, nil
 }

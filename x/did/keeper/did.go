@@ -4,6 +4,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"strings"
 
 	"github.com/allinbits/cosmos-cash/x/did/types"
 )
@@ -38,6 +39,21 @@ func (k Keeper) UnmarshalDidMetadata(value []byte) (interface{}, bool) {
 	data := types.DidMetadata{}
 	k.Unmarshal(value, &data)
 	return data, types.IsValidDIDMetadata(&data)
+}
+
+// ResolveDid returning the did document and associated metadata
+func (k Keeper) ResolveDid(ctx sdk.Context, did types.DID) (doc types.DidDocument, meta types.DidMetadata, err error) {
+	if strings.HasPrefix(did.String(), types.DidKeyPrefix) {
+		doc, meta, err = types.ResolveAccountDID(did.String(), ctx.ChainID())
+		return
+	}
+	doc, found := k.GetDidDocument(ctx, []byte(did.String()))
+	if !found {
+		err = types.ErrDidDocumentNotFound
+		return
+	}
+	meta, _ = k.GetDidMetadata(ctx, []byte(did.String()))
+	return
 }
 
 func (k Keeper) Marshal(value interface{}) (bytes []byte) {
@@ -94,6 +110,7 @@ func (k Keeper) GetAllDidDocuments(ctx sdk.Context) []types.DidDocument {
 	)
 }
 
+// GetDidDocumentsByPubKey retrieve a did document using a pubkey associated to the DID
 func (k Keeper) GetDidDocumentsByPubKey(ctx sdk.Context, pubkey cryptotypes.PubKey) []types.DidDocument {
 	return k.GetAllDidDocumentsWithCondition(
 		ctx,

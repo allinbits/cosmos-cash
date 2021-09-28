@@ -30,7 +30,7 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 // DidDocument represents a dencentralised identifer.
 type DidDocument struct {
 	// @context is spec for did document.
-	Context []string `protobuf:"bytes,1,rep,name=context,proto3,json=@context" json:"@context,omitempty"`
+	Context []string `protobuf:"bytes,1,rep,name=context,proto3" json:"@context,omitempty"`
 	// id represents the id for the did document.
 	Id string `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
 	// A DID controller is an entity that is authorized to make changes to a DID document.

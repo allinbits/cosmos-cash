@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"time"
@@ -83,16 +84,22 @@ that activates it.`,
 				did.String(),
 				time.Now().UTC(),
 				vctypes.NewRegulatorCredentialSubject(
-					credID,
+					did.String(),
 					name,
 					countryCode,
 				),
 			)
+			// signer is the vmID
+			vmID := didtypes.NewVerificationMethodIdFromAddress(signer.String())
+
 			// sign the credentials
-			signedVc, err := vc.Sign(clientCtx.Keyring, signer, did.String())
+			signedVc, err := vc.Sign(clientCtx.Keyring, signer, vmID)
 			if err != nil {
 				return err
 			}
+
+			v, _ := json.Marshal(signedVc)
+			fmt.Printf("%s", v)
 
 			// compose the message
 			msg := types.NewMsgActivate(
@@ -164,11 +171,6 @@ func IssueLicenseCredentialCmd() *cobra.Command {
 			}
 
 			msg := types.NewMsgIssueLicenseCredential(signedVc, accAddrBech32)
-
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
-
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
@@ -184,7 +186,7 @@ func IssueRegistrationCredentialCmd() *cobra.Command {
 		Use:     `issue-registration-credential [cred_id] [issuer_did] [credential_subject_did] [country] [short_name] [long_name]`,
 		Short:   "issue a registration credential for a DID",
 		Example: "creates a registration verifiable credential for e-money issuers",
-		Args:    cobra.ExactArgs(8),
+		Args:    cobra.ExactArgs(6),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {

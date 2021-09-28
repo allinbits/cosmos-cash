@@ -115,7 +115,7 @@ func (k msgServer) IssueLicenseCredential(goCtx context.Context, msg *types.MsgI
 	}
 
 	// check that the subject has a regulator license
-	if vcs := k.vcKeeper.GetVerifiableCredentialWithType(ctx, msg.Credential.GetSubjectDID(), vctypes.RegistrationCredential); len(vcs) != 1 { // there must be exactly one
+	if vcs := k.vcKeeper.GetVerifiableCredentialWithType(ctx, msg.Credential.GetSubjectDID().String(), vctypes.RegistrationCredential); len(vcs) != 1 { // there must be exactly one
 		err := sdkerrors.Wrapf(types.ErrNotARegulator, "subject is not registered: a registration credential is required to obtain a license")
 		k.Logger(ctx).Error(err.Error())
 		return nil, err
@@ -135,7 +135,7 @@ func (k msgServer) IssueLicenseCredential(goCtx context.Context, msg *types.MsgI
 	return &types.MsgIssueLicenseCredentialResponse{}, nil
 }
 
-// Revoke activates a regulator
+// RevokeCredential revoke a credential
 func (k msgServer) RevokeCredential(goCtx context.Context, msg *types.MsgRevokeCredential) (*types.MsgRevokeCredentialResponse, error) {
 	_ = sdk.UnwrapSDKContext(goCtx)
 

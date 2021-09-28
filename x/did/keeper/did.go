@@ -1,10 +1,11 @@
 package keeper
 
 import (
+	"strings"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"strings"
 
 	"github.com/allinbits/cosmos-cash/x/did/types"
 )

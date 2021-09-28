@@ -1,18 +1,33 @@
 #!/bin/bash
 
-echo "Creating verifiable credential for user :validator"
-cosmos-cashd tx verifiablecredential create-license-verifiable-credential \
-	did:cosmos:net:cash:eurolicense-credential did:cosmos:net:cash:vasp did:cosmos:net:cash:vasp \
-	MICAEMI IRL "Another Financial Services Body (AFFB)" sEUR 10000 \
-	--from validator --chain-id cash -y
+
+echo "Create Regulator VC to activate the Regulator did"
+cosmos-cashd tx regulator activate-regulator-credential TheAuthority EU --did did:cosmos:net:cash:regulator \
+--from regulator --chain-id cash -y
 
 sleep 5
 
-echo "Creating verifiable credential for user :issuer"
+echo "Create Registration VC for EMTi did"
+cosmos-cashd tx regulator issue-registration-credential \
+did:cosmos:net:cash:emti-registration-credential did:cosmos:net:cash:regulator did:cosmos:net:cash:emti \
+EU "First Galactic Bank" "FGB" \
+--from regulator --chain-id cash -y
+
+sleep 5
+
+echo "Create License VC for EMTi did (sEUR)"
+cosmos-cashd tx regulator issue-license-credential \
+did:cosmos:net:cash:emti-eurolicense-credential did:cosmos:net:cash:regulator did:cosmos:net:cash:emti \
+MICAEMI IRL "Another Financial Services Body (AFFB)" sEUR 10000 \
+--from regulator --chain-id cash -y
+
+sleep 5
+
+echo "Create License VC for EMTi did (sUSD)"
 cosmos-cashd tx verifiablecredential create-license-verifiable-credential \
-	did:cosmos:net:cash:dollarlicense-credential did:cosmos:net:cash:vasp did:cosmos:net:cash:issuer \
-	MICAEMI IRL "Another Financial Services Body (AFFB)" sUSD 10000 \
-	--from validator --chain-id cash -y
+did:cosmos:net:cash:emti-dollarlicense-credential did:cosmos:net:cash:vasp did:cosmos:net:cash:issuer \
+MICAEMI IRL "Another Financial Services Body (AFFB)" sUSD 10000 \
+--from regulator --chain-id cash -y
 
 sleep 5
 

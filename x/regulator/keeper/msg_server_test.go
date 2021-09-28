@@ -195,3 +195,66 @@ func (suite *KeeperTestSuite) TestMsgSeverActivateRegulator() {
 		})
 	}
 }
+
+func (suite *KeeperTestSuite) TestMsgSeverIssueRegistrationCredential() {
+	server := NewMsgServerImpl(suite.keeper)
+	var req types.MsgIssueRegistrationCredential
+
+	// activate a regulator
+
+	testCases := []struct {
+		msg       string
+		malleate  func()
+		expectErr error
+	}{
+
+		{
+			msg: "PASS: issuer can be registered",
+			malleate: func() {
+
+			},
+		},
+		{
+			"PASS: regulator can be activated (persisted did)",
+			func() {
+
+			},
+			nil,
+		},
+		{
+			"FAIL: pubkey not found (ephemeral did)",
+			func() {
+
+			},
+			vctypes.ErrMessageSigner,
+		},
+		{
+			"FAIL: did not found (persistent did)",
+			func() {
+
+			},
+			didtypes.ErrDidDocumentNotFound,
+		},
+		{
+			"FAIL: not a regulator account",
+			func() {
+
+			},
+			types.ErrNotARegulator,
+		},
+	}
+
+	for _, tc := range testCases {
+		suite.Run(fmt.Sprintf("Case %s", tc.msg), func() {
+			tc.malleate()
+			didResp, err := server.IssueRegistrationCredential(sdk.WrapSDKContext(suite.ctx), &req)
+			if tc.expectErr == nil {
+				suite.NoError(err)
+				suite.NotNil(didResp)
+			} else {
+				suite.Require().Error(err)
+				suite.Assert().Contains(err.Error(), tc.expectErr.Error())
+			}
+		})
+	}
+}

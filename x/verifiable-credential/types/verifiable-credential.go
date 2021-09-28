@@ -2,6 +2,7 @@ package types
 
 import (
 	"encoding/base64"
+	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
@@ -105,12 +106,6 @@ func NewRegulatorVerifiableCredential(
 	}
 }
 
-// GetBytes is a helper for serializing
-func (vc VerifiableCredential) GetBytes() []byte {
-	dAtA, _ := vc.Marshal()
-	return dAtA
-}
-
 // NewUserCredentialSubject create a new credential subject
 func NewUserCredentialSubject(
 	id string,
@@ -161,7 +156,7 @@ func NewRegistrationCredentialSubject(
 			},
 			LegalPerson: map[string]*LegalPerson{
 				"0": {
-					LegalPerson: map[string]*Names{
+					LegalPersonNames: map[string]*Names{
 						"0": {
 							Type: "SN",
 							Name: shortName,
@@ -276,15 +271,27 @@ func (vc VerifiableCredential) HasType(vcType string) bool {
 
 // GetSubjectDID return the credential DID subject, that is the holder
 // of the credentials
-func (vc VerifiableCredential) GetSubjectDID() string {
+func (vc VerifiableCredential) GetSubjectDID() didtypes.DID {
 	switch subj := vc.CredentialSubject.(type) {
 	case *VerifiableCredential_LicenseCred:
-		return subj.LicenseCred.Id
+		return didtypes.DID(subj.LicenseCred.Id)
 	case *VerifiableCredential_UserCred:
-		return subj.UserCred.Id
+		return didtypes.DID(subj.UserCred.Id)
 	case *VerifiableCredential_RegulatorCred:
-		return subj.RegulatorCred.Id
+		return didtypes.DID(subj.RegulatorCred.Id)
 	default:
-		return ""
+		// TODO, not great
+		return didtypes.DID("")
 	}
+}
+
+// GetIssuerDID returns the did of the issuer
+func (vc VerifiableCredential) GetIssuerDID() didtypes.DID {
+	return didtypes.DID(vc.Issuer)
+}
+
+// GetBytes is a helper for serializing
+func (vc VerifiableCredential) GetBytes() []byte {
+	dAtA, _ := vc.Marshal()
+	return dAtA
 }

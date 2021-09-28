@@ -12,7 +12,7 @@ import (
 
 // SetVerifiableCredential commit a verifiable credential to the storage
 func (q Keeper) SetVerifiableCredential(ctx sdk.Context, key []byte, vc types.VerifiableCredential) (err error) {
-	if err = ValidateProof(ctx, q, vc); err != nil {
+	if err = ValidateProof(ctx, q, vc, didtypes.Authentication, didtypes.AssertionMethod); err != nil {
 		return
 	}
 	q.Set(ctx, key, types.VerifiableCredentialKey, vc, q.MarshalVerifiableCredential)
@@ -35,8 +35,7 @@ func (q Keeper) DeleteVerifiableCredentialFromStore(ctx sdk.Context, key []byte)
 			"error deleting credential; credential not found",
 		)
 	}
-	// TODO: the validate proof also accepts validation methods that are not authentication
-	if err := ValidateProof(ctx, q, vc); err != nil {
+	if err := ValidateProof(ctx, q, vc, didtypes.Authentication); err != nil {
 		return sdkerrors.Wrapf(
 			err, "verifiable credential validation failed",
 		)
@@ -91,7 +90,7 @@ func (q Keeper) GetAllVerifiableCredentialsWithCondition(
 // for an holder (the subject of the credential)
 func (q Keeper) GetVerifiableCredentialWithType(ctx sdk.Context, subjectDID, vcType string) (vcs []types.VerifiableCredential) {
 	return q.GetAllVerifiableCredentialsWithCondition(ctx, types.VerifiableCredentialKey, func(vc types.VerifiableCredential) bool {
-		if vc.GetSubjectDID() == subjectDID && vc.HasType(vcType) {
+		if vc.GetSubjectDID().String() == subjectDID && vc.HasType(vcType) {
 			return true
 		}
 		return false
@@ -106,41 +105,33 @@ func (q Keeper) GetAllVerifiableCredentials(ctx sdk.Context) []types.VerifiableC
 	)
 }
 
-// ValidateProof validate the proof of a verifiable credential
-func ValidateProof(ctx sdk.Context, k Keeper, vc types.VerifiableCredential) error {
-	// resolve the issuer
-	did, err := func() (did didtypes.DidDocument, err error) {
-		if strings.HasPrefix(vc.Issuer, didtypes.DidKeyPrefix) {
-			did, _, err = didtypes.ResolveAccountDID(vc.Issuer, ctx.ChainID())
-			return
-		}
-		did, found := k.didKeeper.GetDidDocument(ctx, []byte(vc.Issuer))
-		if !found {
-			err = didtypes.ErrDidDocumentNotFound
-		}
+// getDIDDoc resolves a did document
+func getDIDDoc(ctx sdk.Context, k Keeper, did string) (didDoc didtypes.DidDocument, err error) {
+	if strings.HasPrefix(did, didtypes.DidKeyPrefix) {
+		didDoc, _, err = didtypes.ResolveAccountDID(did, ctx.ChainID())
 		return
-	}()
-	if err != nil {
-		return sdkerrors.Wrapf(
-			err, "issuer DID is not resolvable",
-		)
 	}
+	didDoc, found := k.didKeeper.GetDidDocument(ctx, []byte(did))
+	if !found {
+		err = didtypes.ErrDidDocumentNotFound
+	}
+	return
+}
+
+// ValidateProof validate the proof of a verifiable credential
+func ValidateProof(ctx sdk.Context, k Keeper, vc types.VerifiableCredential, verificationRelationships ...string) error {
 	// resolve the subject
-	_, err = func() (did didtypes.DidDocument, err error) {
-		subjectDID := vc.GetSubjectDID()
-		if strings.HasPrefix(subjectDID, didtypes.DidKeyPrefix) {
-			did, _, err = didtypes.ResolveAccountDID(subjectDID, ctx.ChainID())
-			return
-		}
-		did, found := k.didKeeper.GetDidDocument(ctx, []byte(subjectDID))
-		if !found {
-			err = didtypes.ErrDidDocumentNotFound
-		}
-		return
-	}()
+	_, _, err := k.didKeeper.ResolveDid(ctx, vc.GetSubjectDID())
 	if err != nil {
 		return sdkerrors.Wrapf(
 			err, "subject DID is not resolvable",
+		)
+	}
+	// resolve the issuer
+	doc, _, err := k.didKeeper.ResolveDid(ctx, vc.GetIssuerDID())
+	if err != nil {
+		return sdkerrors.Wrapf(
+			err, "issuer DID is not resolvable",
 		)
 	}
 	// verify the signature
@@ -151,8 +142,27 @@ func ValidateProof(ctx sdk.Context, k Keeper, vc types.VerifiableCredential) err
 			err,
 		)
 	}
+	//check relationships
+	authorized := false
+	methodRelationships := doc.GetVerificationRelationships(vc.Proof.VerificationMethod)
+Outer:
+	for _, gotR := range methodRelationships {
+		for _, wantR := range verificationRelationships {
+			if gotR == wantR {
+				authorized = true
+				break Outer
+			}
+		}
+	}
+	// verify the relationships
+	if !authorized {
+		return sdkerrors.Wrapf(
+			types.ErrMessageSigner,
+			"unauthorized, verification method ID not listed in any of the required relationships in the issuer did (want %v, got %v) ", verificationRelationships, methodRelationships,
+		)
+	}
 	// get the address in the verification method
-	issuerBlockchainID, err := did.GetVerificationMethodBlockchainID(vc.Proof.VerificationMethod)
+	issuerAddress, err := doc.GetVerificationMethodBlockchainAddress(vc.Proof.VerificationMethod)
 	if err != nil {
 		return sdkerrors.Wrapf(
 			types.ErrMessageSigner,
@@ -160,19 +170,13 @@ func ValidateProof(ctx sdk.Context, k Keeper, vc types.VerifiableCredential) err
 			err,
 		)
 	}
-	// verify the relationships
-	if !did.HasRelationship(issuerBlockchainID, didtypes.Authentication, didtypes.AssertionMethod) {
-		return sdkerrors.Wrapf(
-			types.ErrMessageSigner,
-			"signer is not in issuer did",
-		)
-	}
+
 	// verify that is the same of the vc
-	issuerAccount, err := sdk.AccAddressFromBech32(issuerBlockchainID.GetAddress())
+	issuerAccount, err := sdk.AccAddressFromBech32(issuerAddress)
 	if err != nil {
 		return sdkerrors.Wrapf(
 			types.ErrMessageSigner,
-			"failed to convert the issuer address to account %v",
+			"failed to convert the issuer address to account %v: %v", issuerAddress,
 			err,
 		)
 	}
@@ -181,7 +185,7 @@ func ValidateProof(ctx sdk.Context, k Keeper, vc types.VerifiableCredential) err
 	if err != nil || pk == nil {
 		return sdkerrors.Wrapf(
 			types.ErrMessageSigner,
-			"issuer pubkey not found %v",
+			"issuer public key not found %v",
 			err,
 		)
 	}

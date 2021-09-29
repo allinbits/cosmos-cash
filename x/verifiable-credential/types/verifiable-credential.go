@@ -279,6 +279,8 @@ func (vc VerifiableCredential) HasType(vcType string) bool {
 // of the credentials
 func (vc VerifiableCredential) GetSubjectDID() didtypes.DID {
 	switch subj := vc.CredentialSubject.(type) {
+	case *VerifiableCredential_RegistrationCred:
+		return didtypes.DID(subj.RegistrationCred.Id)
 	case *VerifiableCredential_LicenseCred:
 		return didtypes.DID(subj.LicenseCred.Id)
 	case *VerifiableCredential_UserCred:

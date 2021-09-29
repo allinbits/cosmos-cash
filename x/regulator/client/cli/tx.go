@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"encoding/json"
 	"fmt"
 	"strconv"
 	"time"
@@ -98,18 +97,12 @@ that activates it.`,
 				return err
 			}
 
-			v, _ := json.Marshal(signedVc)
-			fmt.Printf("%s", v)
-
 			// compose the message
 			msg := types.NewMsgActivate(
 				signedVc,
 				signer.String(),
 			)
 
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
@@ -165,7 +158,8 @@ func IssueLicenseCredentialCmd() *cobra.Command {
 				cs,
 			)
 
-			signedVc, err := vc.Sign(clientCtx.Keyring, accAddr, issuerDid)
+			vmId := didtypes.NewVerificationMethodIdFromAddress(accAddr.String())
+			signedVc, err := vc.Sign(clientCtx.Keyring, accAddr, vmId)
 			if err != nil {
 				return err
 			}
@@ -217,16 +211,13 @@ func IssueRegistrationCredentialCmd() *cobra.Command {
 				cs,
 			)
 
-			signedVc, err := vc.Sign(clientCtx.Keyring, accAddr, issuerDid)
+			vmId := didtypes.NewVerificationMethodIdFromAddress(accAddr.String())
+			signedVc, err := vc.Sign(clientCtx.Keyring, accAddr, vmId)
 			if err != nil {
 				return err
 			}
 
 			msg := types.NewMsgIssueRegistrationCredential(signedVc, accAddrBech32)
-
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
 
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},

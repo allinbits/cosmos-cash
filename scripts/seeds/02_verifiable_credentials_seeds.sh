@@ -30,7 +30,7 @@ MICAEMI PG "Yet Another Financial Services Body (YAFFB)" sUSD 10000 \
 --from regulator --chain-id cash -y
 
 echo "Revoke the (sUSD) license"
-cosmos-cashd tx regulator revoke-credential \
+cosmos-cashd tx verifiablecredential revoke-credential \
 did:cosmos:net:cash:emti-dollarlicense-credential \
 --from regulator --chain-id cash -y
 
@@ -52,7 +52,7 @@ echo "Querying verifiable credentials"
 cosmos-cashd query verifiablecredential verifiable-credentials --output json | jq
 
 echo "Revoke Bob's user credential"
-cosmos-cashd tx issuer revoke-credential did:cosmos:cred:emti-user-bob \
+cosmos-cashd tx verifiablecredential revoke-credential did:cosmos:cred:emti-user-bob \
 --from emti --chain-id cash -y
 
 sleep 5

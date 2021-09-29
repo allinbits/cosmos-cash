@@ -44,6 +44,10 @@ type KeeperTestSuite struct {
 	keyring     keyring.Keyring
 }
 
+func (suite KeeperTestSuite) GetEMTiAddress() sdk.Address {
+	return suite.GetKeyAddress("emti")
+}
+
 func (suite KeeperTestSuite) GetAliceAddress() sdk.Address {
 	return suite.GetKeyAddress("alice")
 }
@@ -172,6 +176,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	registerAccount("alice", true)
 	registerAccount("regulator-anon", false)
 	registerAccount("bob", false)
+	registerAccount("emti", false) // e-money token issuer
 
 	// genesis regulator params
 	r := types.NewRegulators(

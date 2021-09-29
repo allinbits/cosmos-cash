@@ -10,7 +10,6 @@ import (
 	bank "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	"github.com/tendermint/tendermint/libs/log"
 
-	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
 	"github.com/allinbits/cosmos-cash/x/regulator/types"
 	vctypes "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 )
@@ -81,25 +80,7 @@ func (k Keeper) GetRegulatorsAddresses(ctx sdk.Context) []string {
 	return r.Addresses
 }
 
-// SetDidDocumentWithMeta commit a did document and the metadata to the persistent store. The DID of the
-// document and the metadata is read from the did document
-func (k Keeper) SetDidDocumentWithMeta(ctx sdk.Context, document didtypes.DidDocument, meta didtypes.DidMetadata) {
-	key := []byte(document.Id)
-	k.didKeeper.SetDidDocument(ctx, key, document)
-	k.didKeeper.SetDidMetadata(ctx, key, meta)
-}
-
 // SetVerifiableCredential store verifiable credentials
 func (k Keeper) SetVerifiableCredential(ctx sdk.Context, vc vctypes.VerifiableCredential) error {
 	return k.vcKeeper.SetVerifiableCredential(ctx, []byte(vc.Id), vc)
-}
-
-// GetVerifiableCredential return a verifiable credential if exists
-func (k Keeper) GetVerifiableCredential(ctx sdk.Context, vcID string) (vctypes.VerifiableCredential, bool) {
-	return k.vcKeeper.GetVerifiableCredential(ctx, []byte(vcID))
-}
-
-// DeleteVerifiableCredential invokes the verifiable credential keeper to execute the deletion of credentials
-func (k Keeper) DeleteVerifiableCredential(ctx sdk.Context, credentialID, address string) error {
-	return k.vcKeeper.DeleteVerifiableCredentialFromStore(ctx, []byte(credentialID), address)
 }

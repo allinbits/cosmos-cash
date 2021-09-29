@@ -21,24 +21,23 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 
 var _ types.MsgServer = msgServer{}
 
-// DeleteVerifiableCredential deletes a verifiable credential
-func (k msgServer) DeleteVerifiableCredential(
-	goCtx context.Context,
-	msg *types.MsgDeleteVerifiableCredential,
-) (*types.MsgDeleteVerifiableCredentialResponse, error) {
+// RevokeCredential revoke a credential
+func (k msgServer) RevokeCredential(goCtx context.Context, msg *types.MsgRevokeCredential) (*types.MsgRevokeCredentialResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// TODO: there is something missing here
+	k.Logger(ctx).Info("revoke credential request", "credential", msg.CredentialId, "address", msg.Owner)
 
-	if err := k.Keeper.DeleteVerifiableCredentialFromStore(ctx, []byte(msg.VerifiableCredentialId), msg.Owner); err != nil {
-		return nil, sdkerrors.Wrapf(
-			err, "verifiable credential validation failed",
-		)
+	if vcErr := k.DeleteVerifiableCredentialFromStore(ctx, []byte(msg.CredentialId), msg.Owner); vcErr != nil {
+		err := sdkerrors.Wrapf(vcErr, "credential proof cannot be verified")
+		k.Logger(ctx).Error(err.Error())
+		return nil, err
 	}
 
+	k.Logger(ctx).Info("revoke license request successful", "credential", msg.CredentialId, "address", msg.Owner)
+
 	ctx.EventManager().EmitEvent(
-		types.NewCredentialDeletedEvent(msg.Owner, msg.VerifiableCredentialId),
+		types.NewCredentialDeletedEvent(msg.Owner, msg.CredentialId),
 	)
 
-	return &types.MsgDeleteVerifiableCredentialResponse{}, nil
+	return &types.MsgRevokeCredentialResponse{}, nil
 }

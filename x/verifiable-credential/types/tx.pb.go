@@ -28,26 +28,24 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// MsgDeleteVerifiableCredential defines a SDK message for updating a credential.
-type MsgDeleteVerifiableCredential struct {
-	VerifiableCredentialId string `protobuf:"bytes,1,opt,name=verifiable_credential_id,json=verifiableCredentialId,proto3" json:"verifiable_credential_id,omitempty"`
-	IssuerDid              string `protobuf:"bytes,2,opt,name=issuer_did,json=issuerDid,proto3" json:"issuer_did,omitempty"`
-	// owner represents the user creating the message
-	Owner string `protobuf:"bytes,3,opt,name=owner,proto3" json:"owner,omitempty"`
+// MsgRevokeCredential
+type MsgRevokeCredential struct {
+	CredentialId string `protobuf:"bytes,1,opt,name=credential_id,json=credentialId,proto3" json:"credential_id,omitempty"`
+	Owner        string `protobuf:"bytes,2,opt,name=owner,proto3" json:"owner,omitempty"`
 }
 
-func (m *MsgDeleteVerifiableCredential) Reset()         { *m = MsgDeleteVerifiableCredential{} }
-func (m *MsgDeleteVerifiableCredential) String() string { return proto.CompactTextString(m) }
-func (*MsgDeleteVerifiableCredential) ProtoMessage()    {}
-func (*MsgDeleteVerifiableCredential) Descriptor() ([]byte, []int) {
+func (m *MsgRevokeCredential) Reset()         { *m = MsgRevokeCredential{} }
+func (m *MsgRevokeCredential) String() string { return proto.CompactTextString(m) }
+func (*MsgRevokeCredential) ProtoMessage()    {}
+func (*MsgRevokeCredential) Descriptor() ([]byte, []int) {
 	return fileDescriptor_aec3b9f9fce58894, []int{0}
 }
-func (m *MsgDeleteVerifiableCredential) XXX_Unmarshal(b []byte) error {
+func (m *MsgRevokeCredential) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgDeleteVerifiableCredential) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgRevokeCredential) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgDeleteVerifiableCredential.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgRevokeCredential.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -57,33 +55,34 @@ func (m *MsgDeleteVerifiableCredential) XXX_Marshal(b []byte, deterministic bool
 		return b[:n], nil
 	}
 }
-func (m *MsgDeleteVerifiableCredential) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgDeleteVerifiableCredential.Merge(m, src)
+func (m *MsgRevokeCredential) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRevokeCredential.Merge(m, src)
 }
-func (m *MsgDeleteVerifiableCredential) XXX_Size() int {
+func (m *MsgRevokeCredential) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgDeleteVerifiableCredential) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgDeleteVerifiableCredential.DiscardUnknown(m)
+func (m *MsgRevokeCredential) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRevokeCredential.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgDeleteVerifiableCredential proto.InternalMessageInfo
+var xxx_messageInfo_MsgRevokeCredential proto.InternalMessageInfo
 
-type MsgDeleteVerifiableCredentialResponse struct {
+// MsgRevokeCredentialResponse
+type MsgRevokeCredentialResponse struct {
 }
 
-func (m *MsgDeleteVerifiableCredentialResponse) Reset()         { *m = MsgDeleteVerifiableCredentialResponse{} }
-func (m *MsgDeleteVerifiableCredentialResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgDeleteVerifiableCredentialResponse) ProtoMessage()    {}
-func (*MsgDeleteVerifiableCredentialResponse) Descriptor() ([]byte, []int) {
+func (m *MsgRevokeCredentialResponse) Reset()         { *m = MsgRevokeCredentialResponse{} }
+func (m *MsgRevokeCredentialResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgRevokeCredentialResponse) ProtoMessage()    {}
+func (*MsgRevokeCredentialResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_aec3b9f9fce58894, []int{1}
 }
-func (m *MsgDeleteVerifiableCredentialResponse) XXX_Unmarshal(b []byte) error {
+func (m *MsgRevokeCredentialResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgDeleteVerifiableCredentialResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgRevokeCredentialResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgDeleteVerifiableCredentialResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgRevokeCredentialResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -93,47 +92,44 @@ func (m *MsgDeleteVerifiableCredentialResponse) XXX_Marshal(b []byte, determinis
 		return b[:n], nil
 	}
 }
-func (m *MsgDeleteVerifiableCredentialResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgDeleteVerifiableCredentialResponse.Merge(m, src)
+func (m *MsgRevokeCredentialResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRevokeCredentialResponse.Merge(m, src)
 }
-func (m *MsgDeleteVerifiableCredentialResponse) XXX_Size() int {
+func (m *MsgRevokeCredentialResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgDeleteVerifiableCredentialResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgDeleteVerifiableCredentialResponse.DiscardUnknown(m)
+func (m *MsgRevokeCredentialResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRevokeCredentialResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgDeleteVerifiableCredentialResponse proto.InternalMessageInfo
+var xxx_messageInfo_MsgRevokeCredentialResponse proto.InternalMessageInfo
 
 func init() {
-	proto.RegisterType((*MsgDeleteVerifiableCredential)(nil), "allinbits.cosmoscash.verifiablecredential.MsgDeleteVerifiableCredential")
-	proto.RegisterType((*MsgDeleteVerifiableCredentialResponse)(nil), "allinbits.cosmoscash.verifiablecredential.MsgDeleteVerifiableCredentialResponse")
+	proto.RegisterType((*MsgRevokeCredential)(nil), "allinbits.cosmoscash.verifiablecredential.MsgRevokeCredential")
+	proto.RegisterType((*MsgRevokeCredentialResponse)(nil), "allinbits.cosmoscash.verifiablecredential.MsgRevokeCredentialResponse")
 }
 
 func init() { proto.RegisterFile("verifiable-credential/tx.proto", fileDescriptor_aec3b9f9fce58894) }
 
 var fileDescriptor_aec3b9f9fce58894 = []byte{
-	// 308 bytes of a gzipped FileDescriptorProto
+	// 266 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x92, 0x2b, 0x4b, 0x2d, 0xca,
 	0x4c, 0xcb, 0x4c, 0x4c, 0xca, 0x49, 0xd5, 0x4d, 0x2e, 0x4a, 0x4d, 0x49, 0xcd, 0x2b, 0xc9, 0x4c,
 	0xcc, 0xd1, 0x2f, 0xa9, 0xd0, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0xd2, 0x4c, 0xcc, 0xc9, 0xc9,
 	0xcc, 0x4b, 0xca, 0x2c, 0x29, 0xd6, 0x4b, 0xce, 0x2f, 0xce, 0xcd, 0x2f, 0x4e, 0x4e, 0x2c, 0xce,
 	0xd0, 0x43, 0x68, 0x42, 0xe8, 0x91, 0x12, 0x49, 0xcf, 0x4f, 0xcf, 0x07, 0xeb, 0xd2, 0x07, 0xb1,
-	0x20, 0x06, 0x48, 0x19, 0x62, 0xb7, 0x00, 0xab, 0x28, 0x44, 0x8b, 0xd2, 0x0c, 0x46, 0x2e, 0x59,
-	0xdf, 0xe2, 0x74, 0x97, 0xd4, 0x9c, 0xd4, 0x92, 0xd4, 0x30, 0xb8, 0x42, 0x67, 0xb8, 0x3a, 0x21,
-	0x0b, 0x2e, 0x09, 0x84, 0x01, 0xf1, 0x08, 0x03, 0xe2, 0x33, 0x53, 0x24, 0x18, 0x15, 0x18, 0x35,
-	0x38, 0x83, 0xc4, 0xca, 0xb0, 0xe8, 0xf3, 0x4c, 0x11, 0x92, 0xe5, 0xe2, 0xca, 0x2c, 0x2e, 0x2e,
-	0x4d, 0x2d, 0x8a, 0x4f, 0xc9, 0x4c, 0x91, 0x60, 0x02, 0xab, 0xe5, 0x84, 0x88, 0xb8, 0x64, 0xa6,
-	0x08, 0x89, 0x70, 0xb1, 0xe6, 0x97, 0xe7, 0xa5, 0x16, 0x49, 0x30, 0x83, 0x65, 0x20, 0x1c, 0x2b,
-	0x8e, 0x8e, 0x05, 0xf2, 0x0c, 0x2f, 0x16, 0xc8, 0x33, 0x28, 0xa9, 0x73, 0xa9, 0xe2, 0x75, 0x59,
-	0x50, 0x6a, 0x71, 0x41, 0x7e, 0x5e, 0x71, 0xaa, 0xd1, 0x01, 0x46, 0x2e, 0x66, 0xdf, 0xe2, 0x74,
-	0xa1, 0x1d, 0x8c, 0x5c, 0x52, 0x78, 0x3c, 0xe2, 0xa1, 0x47, 0x74, 0xf8, 0xea, 0xe1, 0xb5, 0x58,
-	0x2a, 0x80, 0x5a, 0x26, 0xc1, 0xbc, 0xe0, 0x14, 0x71, 0xe2, 0x91, 0x1c, 0xe3, 0x85, 0x47, 0x72,
-	0x8c, 0x0f, 0x1e, 0xc9, 0x31, 0x4e, 0x78, 0x2c, 0xc7, 0x70, 0xe1, 0xb1, 0x1c, 0xc3, 0x8d, 0xc7,
-	0x72, 0x0c, 0x51, 0x76, 0xe9, 0x99, 0x25, 0x19, 0xa5, 0x49, 0x7a, 0xc9, 0xf9, 0xb9, 0xfa, 0x70,
-	0x5b, 0xf5, 0x21, 0xb6, 0xea, 0x82, 0xac, 0xd5, 0xaf, 0xd0, 0xc7, 0x91, 0xae, 0x2a, 0x0b, 0x52,
-	0x8b, 0x93, 0xd8, 0xc0, 0xf1, 0x6c, 0x0c, 0x08, 0x00, 0x00, 0xff, 0xff, 0x3b, 0xc3, 0x29, 0x76,
-	0x7d, 0x02, 0x00, 0x00,
+	0x20, 0x06, 0x28, 0x45, 0x71, 0x09, 0xfb, 0x16, 0xa7, 0x07, 0xa5, 0x96, 0xe5, 0x67, 0xa7, 0x3a,
+	0xc3, 0x15, 0x0b, 0x29, 0x73, 0xf1, 0x22, 0xb4, 0xc6, 0x67, 0xa6, 0x48, 0x30, 0x2a, 0x30, 0x6a,
+	0x70, 0x06, 0xf1, 0x20, 0x04, 0x3d, 0x53, 0x84, 0x44, 0xb8, 0x58, 0xf3, 0xcb, 0xf3, 0x52, 0x8b,
+	0x24, 0x98, 0xc0, 0x92, 0x10, 0x8e, 0x15, 0x47, 0xc7, 0x02, 0x79, 0x86, 0x17, 0x0b, 0xe4, 0x19,
+	0x94, 0x64, 0xb9, 0xa4, 0xb1, 0x98, 0x1d, 0x94, 0x5a, 0x5c, 0x90, 0x9f, 0x57, 0x9c, 0x6a, 0xb4,
+	0x88, 0x91, 0x8b, 0xd9, 0xb7, 0x38, 0x5d, 0x68, 0x16, 0x23, 0x97, 0x00, 0x86, 0x03, 0xec, 0xf4,
+	0x88, 0xf6, 0x99, 0x1e, 0x16, 0x4b, 0xa4, 0xdc, 0x28, 0xd3, 0x0f, 0x73, 0xa4, 0x53, 0xc4, 0x89,
+	0x47, 0x72, 0x8c, 0x17, 0x1e, 0xc9, 0x31, 0x3e, 0x78, 0x24, 0xc7, 0x38, 0xe1, 0xb1, 0x1c, 0xc3,
+	0x85, 0xc7, 0x72, 0x0c, 0x37, 0x1e, 0xcb, 0x31, 0x44, 0xd9, 0xa5, 0x67, 0x96, 0x64, 0x94, 0x26,
+	0xe9, 0x25, 0xe7, 0xe7, 0xea, 0xc3, 0xed, 0xd2, 0x87, 0xd8, 0xa5, 0x0b, 0xb2, 0x4c, 0xbf, 0x42,
+	0x1f, 0x47, 0xec, 0x55, 0x16, 0xa4, 0x16, 0x27, 0xb1, 0x81, 0x23, 0xc0, 0x18, 0x10, 0x00, 0x00,
+	0xff, 0xff, 0xbb, 0x90, 0x3f, 0x7d, 0xe3, 0x01, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -148,7 +144,8 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MsgClient interface {
-	DeleteVerifiableCredential(ctx context.Context, in *MsgDeleteVerifiableCredential, opts ...grpc.CallOption) (*MsgDeleteVerifiableCredentialResponse, error)
+	// RevokeCredential a credential
+	RevokeCredential(ctx context.Context, in *MsgRevokeCredential, opts ...grpc.CallOption) (*MsgRevokeCredentialResponse, error)
 }
 
 type msgClient struct {
@@ -159,9 +156,9 @@ func NewMsgClient(cc grpc1.ClientConn) MsgClient {
 	return &msgClient{cc}
 }
 
-func (c *msgClient) DeleteVerifiableCredential(ctx context.Context, in *MsgDeleteVerifiableCredential, opts ...grpc.CallOption) (*MsgDeleteVerifiableCredentialResponse, error) {
-	out := new(MsgDeleteVerifiableCredentialResponse)
-	err := c.cc.Invoke(ctx, "/allinbits.cosmoscash.verifiablecredential.Msg/DeleteVerifiableCredential", in, out, opts...)
+func (c *msgClient) RevokeCredential(ctx context.Context, in *MsgRevokeCredential, opts ...grpc.CallOption) (*MsgRevokeCredentialResponse, error) {
+	out := new(MsgRevokeCredentialResponse)
+	err := c.cc.Invoke(ctx, "/allinbits.cosmoscash.verifiablecredential.Msg/RevokeCredential", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -170,35 +167,36 @@ func (c *msgClient) DeleteVerifiableCredential(ctx context.Context, in *MsgDelet
 
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
-	DeleteVerifiableCredential(context.Context, *MsgDeleteVerifiableCredential) (*MsgDeleteVerifiableCredentialResponse, error)
+	// RevokeCredential a credential
+	RevokeCredential(context.Context, *MsgRevokeCredential) (*MsgRevokeCredentialResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
 type UnimplementedMsgServer struct {
 }
 
-func (*UnimplementedMsgServer) DeleteVerifiableCredential(ctx context.Context, req *MsgDeleteVerifiableCredential) (*MsgDeleteVerifiableCredentialResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteVerifiableCredential not implemented")
+func (*UnimplementedMsgServer) RevokeCredential(ctx context.Context, req *MsgRevokeCredential) (*MsgRevokeCredentialResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RevokeCredential not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
 	s.RegisterService(&_Msg_serviceDesc, srv)
 }
 
-func _Msg_DeleteVerifiableCredential_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgDeleteVerifiableCredential)
+func _Msg_RevokeCredential_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgRevokeCredential)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServer).DeleteVerifiableCredential(ctx, in)
+		return srv.(MsgServer).RevokeCredential(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/allinbits.cosmoscash.verifiablecredential.Msg/DeleteVerifiableCredential",
+		FullMethod: "/allinbits.cosmoscash.verifiablecredential.Msg/RevokeCredential",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).DeleteVerifiableCredential(ctx, req.(*MsgDeleteVerifiableCredential))
+		return srv.(MsgServer).RevokeCredential(ctx, req.(*MsgRevokeCredential))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -208,15 +206,15 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*MsgServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "DeleteVerifiableCredential",
-			Handler:    _Msg_DeleteVerifiableCredential_Handler,
+			MethodName: "RevokeCredential",
+			Handler:    _Msg_RevokeCredential_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "verifiable-credential/tx.proto",
 }
 
-func (m *MsgDeleteVerifiableCredential) Marshal() (dAtA []byte, err error) {
+func (m *MsgRevokeCredential) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -226,12 +224,12 @@ func (m *MsgDeleteVerifiableCredential) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgDeleteVerifiableCredential) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgRevokeCredential) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgDeleteVerifiableCredential) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgRevokeCredential) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -241,26 +239,19 @@ func (m *MsgDeleteVerifiableCredential) MarshalToSizedBuffer(dAtA []byte) (int, 
 		copy(dAtA[i:], m.Owner)
 		i = encodeVarintTx(dAtA, i, uint64(len(m.Owner)))
 		i--
-		dAtA[i] = 0x1a
-	}
-	if len(m.IssuerDid) > 0 {
-		i -= len(m.IssuerDid)
-		copy(dAtA[i:], m.IssuerDid)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.IssuerDid)))
-		i--
 		dAtA[i] = 0x12
 	}
-	if len(m.VerifiableCredentialId) > 0 {
-		i -= len(m.VerifiableCredentialId)
-		copy(dAtA[i:], m.VerifiableCredentialId)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.VerifiableCredentialId)))
+	if len(m.CredentialId) > 0 {
+		i -= len(m.CredentialId)
+		copy(dAtA[i:], m.CredentialId)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.CredentialId)))
 		i--
 		dAtA[i] = 0xa
 	}
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgDeleteVerifiableCredentialResponse) Marshal() (dAtA []byte, err error) {
+func (m *MsgRevokeCredentialResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -270,12 +261,12 @@ func (m *MsgDeleteVerifiableCredentialResponse) Marshal() (dAtA []byte, err erro
 	return dAtA[:n], nil
 }
 
-func (m *MsgDeleteVerifiableCredentialResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgRevokeCredentialResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgDeleteVerifiableCredentialResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgRevokeCredentialResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -294,17 +285,13 @@ func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (m *MsgDeleteVerifiableCredential) Size() (n int) {
+func (m *MsgRevokeCredential) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	l = len(m.VerifiableCredentialId)
-	if l > 0 {
-		n += 1 + l + sovTx(uint64(l))
-	}
-	l = len(m.IssuerDid)
+	l = len(m.CredentialId)
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
@@ -315,7 +302,7 @@ func (m *MsgDeleteVerifiableCredential) Size() (n int) {
 	return n
 }
 
-func (m *MsgDeleteVerifiableCredentialResponse) Size() (n int) {
+func (m *MsgRevokeCredentialResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -330,7 +317,7 @@ func sovTx(x uint64) (n int) {
 func sozTx(x uint64) (n int) {
 	return sovTx(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
-func (m *MsgDeleteVerifiableCredential) Unmarshal(dAtA []byte) error {
+func (m *MsgRevokeCredential) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -353,15 +340,15 @@ func (m *MsgDeleteVerifiableCredential) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgDeleteVerifiableCredential: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgRevokeCredential: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgDeleteVerifiableCredential: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgRevokeCredential: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field VerifiableCredentialId", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field CredentialId", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -389,41 +376,9 @@ func (m *MsgDeleteVerifiableCredential) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.VerifiableCredentialId = string(dAtA[iNdEx:postIndex])
+			m.CredentialId = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field IssuerDid", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.IssuerDid = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Owner", wireType)
 			}
@@ -479,7 +434,7 @@ func (m *MsgDeleteVerifiableCredential) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgDeleteVerifiableCredentialResponse) Unmarshal(dAtA []byte) error {
+func (m *MsgRevokeCredentialResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -502,10 +457,10 @@ func (m *MsgDeleteVerifiableCredentialResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgDeleteVerifiableCredentialResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgRevokeCredentialResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgDeleteVerifiableCredentialResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgRevokeCredentialResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:

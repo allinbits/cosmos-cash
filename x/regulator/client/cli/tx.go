@@ -38,7 +38,6 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(ActivateCmd())
 	cmd.AddCommand(IssueLicenseCredentialCmd())
 	cmd.AddCommand(IssueRegistrationCredentialCmd())
-	cmd.AddCommand(RevokeCredentialCmd())
 
 	return cmd
 }
@@ -98,7 +97,7 @@ that activates it.`,
 			}
 
 			// compose the message
-			msg := types.NewMsgActivate(
+			msg := types.NewMsgIssueCredential(
 				signedVc,
 				signer.String(),
 			)
@@ -164,7 +163,7 @@ func IssueLicenseCredentialCmd() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgIssueLicenseCredential(signedVc, accAddrBech32)
+			msg := types.NewMsgIssueCredential(signedVc, accAddrBech32)
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
@@ -217,35 +216,7 @@ func IssueRegistrationCredentialCmd() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgIssueRegistrationCredential(signedVc, accAddrBech32)
-
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-		},
-	}
-
-	flags.AddTxFlagsToCmd(cmd)
-	return cmd
-}
-
-// RevokeCredentialCmd defines the command to create a new license verifiable credential.
-// This is used by regulators to define issuers and issuer permissions
-func RevokeCredentialCmd() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:     `revoke-credential [cred_id]`,
-		Short:   "revoke a verifiable credential",
-		Example: "",
-		Args:    cobra.ExactArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx, err := client.GetClientTxContext(cmd)
-			if err != nil {
-				return err
-			}
-			accAddr := clientCtx.GetFromAddress()
-			accAddrBech32 := accAddr.String()
-
-			credentialID := args[0]
-
-			msg := types.NewMsgRevokeCredential(credentialID, accAddrBech32)
+			msg := types.NewMsgIssueCredential(signedVc, accAddrBech32)
 
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},

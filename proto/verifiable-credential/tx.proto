@@ -6,6 +6,7 @@ package allinbits.cosmoscash.verifiablecredential;
 option go_package = "github.com/allinbits/cosmos-cash/x/verifiable-credential/types";
 
 import "gogoproto/gogo.proto";
+import "verifiable-credential/verifiable-credential.proto";
 
 
 // Msg defines the identity Msg service.
@@ -25,3 +26,17 @@ message MsgRevokeCredential {
 
 // MsgRevokeCredentialResponse
 message MsgRevokeCredentialResponse {}
+
+// MsgIssueCredential is used to issue new registration credential
+// this message is used by other modules
+message MsgIssueCredential {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+  VerifiableCredential credential = 1;
+  string owner = 2;
+}
+
+// MsgIssueCredentialResponse reply for the issue credential call
+message MsgIssueCredentialResponse {}
+
+

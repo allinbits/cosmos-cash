@@ -20,7 +20,7 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 
 		switch msg := msg.(type) {
 		// this line is used by starport scaffolding # 1
-		case *types.MsgIssueCredential:
+		case *vctypes.MsgIssueCredential:
 			switch msg.Credential.CredentialSubject.(type) {
 			case *vctypes.VerifiableCredential_RegulatorCred:
 				res, err := msgServer.Activate(sdk.WrapSDKContext(ctx), msg)

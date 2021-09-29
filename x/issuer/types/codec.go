@@ -24,8 +24,6 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgBurnToken{},
 		&MsgMintToken{},
 		&MsgPauseToken{},
-		&MsgIssueUserCredential{},
-		&MsgRevokeCredential{},
 	)
 }
 

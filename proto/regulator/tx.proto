@@ -6,33 +6,23 @@ package allinbits.cosmoscash.regulator;
 option go_package = "github.com/allinbits/cosmos-cash/x/regulator/types";
 
 import "gogoproto/gogo.proto";
-import "verifiable-credential/verifiable-credential.proto";
+import "verifiable-credential/tx.proto";
+
 
 // Msg defines the Msg service.
 service Msg {
   // this line is used by starport scaffolding # proto/tx/rpc
   // Activate issue regulator credential to activate a regulator on chain
-  rpc Activate(MsgIssueCredential) returns (MsgIssueCredentialResponse);
+  rpc Activate(allinbits.cosmoscash.verifiablecredential.MsgIssueCredential) returns (allinbits.cosmoscash.verifiablecredential.MsgIssueCredentialResponse);
   // IssueRegistrationCredential issue a new registration credential for a public entity
-  rpc IssueRegistrationCredential(MsgIssueCredential) returns (MsgIssueCredentialResponse);
+  rpc IssueRegistrationCredential(allinbits.cosmoscash.verifiablecredential.MsgIssueCredential) returns (allinbits.cosmoscash.verifiablecredential.MsgIssueCredentialResponse);
   // IssueLicenseCredential issue a license to to a registered entity
-  rpc IssueLicenseCredential(MsgIssueCredential) returns (MsgIssueCredentialResponse);
+  rpc IssueLicenseCredential(allinbits.cosmoscash.verifiablecredential.MsgIssueCredential) returns (allinbits.cosmoscash.verifiablecredential.MsgIssueCredentialResponse);
+  //
 
 }
 
 // this line is used by starport scaffolding # proto/tx/message
-
-
-// MsgIssueCredential is used to issue new registration credential
-message MsgIssueCredential {
-  option (gogoproto.equal) = false;
-  option (gogoproto.goproto_getters) = false;
-  allinbits.cosmoscash.verifiablecredential.VerifiableCredential credential = 1;
-  string owner = 2;
-}
-
-// MsgIssueCredentialResponse reply for the IssueRegistartion call
-message MsgIssueCredentialResponse {}
 
 
 

@@ -75,7 +75,7 @@ func NewCreateDidDocumentCmd() *cobra.Command {
 			}
 			pubKey := info.GetPubKey()
 			// verification method id
-			vmID := types.NewVerificationMethodIdFromAddress(signer.String())
+			vmID := types.NewVerificationMethodIDFromAddress(signer.String())
 			// understand the vmType
 			vmType, err := deriveVMType(pubKey)
 			if err != nil {
@@ -139,7 +139,7 @@ func NewAddVerificationCmd() *cobra.Command {
 			// document did
 			did := types.NewChainDID(clientCtx.ChainID, args[0])
 			// verification method id
-			vmID := types.NewVerificationMethodIdFromAddress(sdk.MustBech32ifyAddressBytes(
+			vmID := types.NewVerificationMethodIDFromAddress(sdk.MustBech32ifyAddressBytes(
 				sdk.GetConfig().GetBech32AccountAddrPrefix(),
 				pk.Address().Bytes(),
 			))
@@ -233,7 +233,7 @@ func NewRevokeVerificationCmd() *cobra.Command {
 			// signer
 			signer := clientCtx.GetFromAddress()
 			// verification method id
-			vmID := types.NewVerificationMethodIdFromAddress(args[1])
+			vmID := types.NewVerificationMethodIDFromAddress(args[1])
 			// build the message
 			msg := types.NewMsgRevokeVerification(
 				did.String(),
@@ -357,7 +357,7 @@ func NewSetVerificationRelationshipCmd() *cobra.Command {
 			did := types.NewChainDID(clientCtx.ChainID, args[0])
 
 			// method id
-			vmID := types.NewVerificationMethodIdFromAddress(args[1])
+			vmID := types.NewVerificationMethodIDFromAddress(args[1])
 
 			// signer
 			signer := clientCtx.GetFromAddress()

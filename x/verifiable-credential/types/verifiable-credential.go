@@ -154,18 +154,24 @@ func NewRegistrationCredentialSubject(
 			Address: &Address{
 				Country: country,
 			},
-			LegalPerson: map[string]*LegalPerson{
-				"0": {
-					LegalPersonNames: map[string]*Names{
-						"0": {
+			LegalPersons: []*LegalPerson{
+				{
+					Names: []*Name{
+						{
 							Type: "SN",
 							Name: shortName,
 						},
-						"1": {
+						{
 							Type: "LN",
 							Name: longName,
 						},
 					},
+				},
+			},
+			Ids: []*Id{
+				{
+					Id:   "529900W6B9NEA233DS71",
+					Type: "LEIX",
 				},
 			},
 		},

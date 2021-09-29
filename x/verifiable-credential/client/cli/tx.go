@@ -24,6 +24,7 @@ func GetTxCmd() *cobra.Command {
 	// this line is used by starport scaffolding # 1
 	cmd.AddCommand(
 		NewDeleteVerifiableCredentialCmd(),
+		NewRevokeCredentialCmd(),
 	)
 
 	return cmd
@@ -37,32 +38,40 @@ func NewDeleteVerifiableCredentialCmd() *cobra.Command {
 		Short:   "delete a decentralized verifiable-credential",
 		Example: "deletes a license verifiable credential for issuers",
 		Args:    cobra.ExactArgs(2),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx, err := client.GetClientTxContext(cmd)
-			if err != nil {
-				return err
-			}
-			accAddr := clientCtx.GetFromAddress()
-			accAddrBech32 := accAddr.String()
-
-			credentialID := args[0]
-			issuerDid := args[1]
-
-			msg := types.NewMsgDeleteVerifiableCredential(
-				credentialID,
-				issuerDid,
-				accAddrBech32,
-			)
-
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
-
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-		},
+		RunE:    revokeCredential,
 	}
 
 	flags.AddTxFlagsToCmd(cmd)
 
 	return cmd
+}
+
+// NewRevokeCredentialCmd defines the command to create a new license verifiable credential.
+// This is used by regulators to define issuers and issuer permissions
+func NewRevokeCredentialCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     `revoke-credential [cred_id]`,
+		Short:   "revoke a verifiable credential",
+		Example: "",
+		Args:    cobra.ExactArgs(1),
+		RunE:    revokeCredential,
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+	return cmd
+}
+
+func revokeCredential(cmd *cobra.Command, args []string) error {
+	clientCtx, err := client.GetClientTxContext(cmd)
+	if err != nil {
+		return err
+	}
+	accAddr := clientCtx.GetFromAddress()
+	accAddrBech32 := accAddr.String()
+
+	credentialID := args[0]
+
+	msg := types.NewMsgRevokeVerifiableCredential(credentialID, accAddrBech32)
+
+	return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 }

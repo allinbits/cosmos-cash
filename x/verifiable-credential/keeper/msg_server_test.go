@@ -11,7 +11,7 @@ import (
 
 func (suite *KeeperTestSuite) TestMsgSeverDeleteVerifableCredential() {
 	server := NewMsgServerImpl(suite.keeper)
-	var req types.MsgDeleteVerifiableCredential
+	var req types.MsgRevokeCredential
 
 	testCases := []struct {
 		msg      string
@@ -82,7 +82,7 @@ func (suite *KeeperTestSuite) TestMsgSeverDeleteVerifableCredential() {
 				suite.keeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
 				suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
 
-				req = *types.NewMsgDeleteVerifiableCredential(vc.Id, vc.Issuer, "cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a")
+				req = *types.NewMsgRevokeVerifiableCredential(vc.Id, "cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a")
 			},
 			false,
 		},
@@ -108,9 +108,8 @@ func (suite *KeeperTestSuite) TestMsgSeverDeleteVerifableCredential() {
 		{
 			"FAIL: did does not exists",
 			func() {
-				req = *types.NewMsgDeleteVerifiableCredential(
+				req = *types.NewMsgRevokeVerifiableCredential(
 					"new-verifiable-cred-3",
-					"did:cosmos:cash:issuer",
 					"did:cash:1111",
 				)
 			},
@@ -121,7 +120,7 @@ func (suite *KeeperTestSuite) TestMsgSeverDeleteVerifableCredential() {
 		suite.Run(fmt.Sprintf("Case %s", tc.msg), func() {
 			tc.malleate()
 
-			vcResp, err := server.DeleteVerifiableCredential(sdk.WrapSDKContext(suite.ctx), &req)
+			vcResp, err := server.RevokeCredential(sdk.WrapSDKContext(suite.ctx), &req)
 			if tc.expPass {
 				suite.NoError(err)
 				suite.NotNil(vcResp)

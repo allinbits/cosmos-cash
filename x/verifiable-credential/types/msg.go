@@ -3,61 +3,53 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-
-	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
 )
 
-// msg types
+// Message types types
 const (
 	TypeMsgDeleteVerifiableCredential = "delete-verifiable-credential"
 )
 
 var (
-	_ sdk.Msg = &MsgDeleteVerifiableCredential{}
+	_ sdk.Msg = &MsgRevokeCredential{}
 )
 
-// NewMsgDeleteVerifiableCredential creates a new MsgDeleteVerifiableCredential instance
-func NewMsgDeleteVerifiableCredential(
+// NewMsgRevokeVerifiableCredential creates a new MsgDeleteVerifiableCredential instance
+func NewMsgRevokeVerifiableCredential(
 	id string,
-	issuerDid string,
 	owner string,
-) *MsgDeleteVerifiableCredential {
-	return &MsgDeleteVerifiableCredential{
-		VerifiableCredentialId: id,
-		IssuerDid:              issuerDid,
-		Owner:                  owner,
+) *MsgRevokeCredential {
+	return &MsgRevokeCredential{
+		CredentialId: id,
+		Owner:        owner,
 	}
 }
 
 // Route implements sdk.Msg
-func (msg MsgDeleteVerifiableCredential) Route() string {
+func (m MsgRevokeCredential) Route() string {
 	return RouterKey
 }
 
 // Type implements sdk.Msg
-func (msg MsgDeleteVerifiableCredential) Type() string {
+func (m MsgRevokeCredential) Type() string {
 	return TypeMsgDeleteVerifiableCredential
 }
 
 // ValidateBasic performs a basic check of the MsgDeleteVerifiableCredential fields.
-func (msg MsgDeleteVerifiableCredential) ValidateBasic() error {
-	if msg.VerifiableCredentialId == "" {
+func (m MsgRevokeCredential) ValidateBasic() error {
+	if m.CredentialId == "" {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "empty verifiable cred")
 	}
-	if !didtypes.IsValidDID(msg.IssuerDid) {
-		return sdkerrors.Wrap(didtypes.ErrInvalidDIDFormat, msg.IssuerDid)
-	}
-
 	return nil
 }
 
-func (msg MsgDeleteVerifiableCredential) GetSignBytes() []byte {
+func (m MsgRevokeCredential) GetSignBytes() []byte {
 	panic("VerifiableCredential messages do not support amino")
 }
 
 // GetSigners implements sdk.Msg
-func (msg MsgDeleteVerifiableCredential) GetSigners() []sdk.AccAddress {
-	accAddr, err := sdk.AccAddressFromBech32(msg.Owner)
+func (m MsgRevokeCredential) GetSigners() []sdk.AccAddress {
+	accAddr, err := sdk.AccAddressFromBech32(m.Owner)
 	if err != nil {
 		panic(err)
 	}

@@ -215,9 +215,9 @@ func (did DID) String() string {
 	return string(did)
 }
 
-// NewVerificationMethodIdFromAddress compose a verification method id
+// NewVerificationMethodIDFromAddress compose a verification method id
 // from an account address
-func NewVerificationMethodIdFromAddress(address string) string {
+func NewVerificationMethodIDFromAddress(address string) string {
 	return fmt.Sprint(NewKeyDID(address), "#", address)
 }
 

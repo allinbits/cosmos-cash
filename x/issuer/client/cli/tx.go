@@ -13,6 +13,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/wealdtech/go-merkletree"
 
+	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
 	"github.com/allinbits/cosmos-cash/x/issuer/types"
 	vctypes "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 )
@@ -130,7 +131,9 @@ func NewIssueUserVerifiableCredentialCmd() *cobra.Command {
 				cs,
 			)
 
-			signedVc, err := vc.Sign(clientCtx.Keyring, accAddr, issuerDid)
+			vmID := didtypes.NewVerificationMethodIDFromAddress(accAddrBech32)
+
+			signedVc, err := vc.Sign(clientCtx.Keyring, accAddr, vmID)
 			if err != nil {
 				return err
 			}
@@ -139,10 +142,6 @@ func NewIssueUserVerifiableCredentialCmd() *cobra.Command {
 				signedVc,
 				accAddrBech32,
 			)
-
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
 
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},

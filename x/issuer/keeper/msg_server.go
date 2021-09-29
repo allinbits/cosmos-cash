@@ -341,7 +341,7 @@ func (k msgServer) validateMintingAmount(
 // IssueUserCredential activates a regulator
 func (k msgServer) IssueUserCredential(goCtx context.Context, msg *types.MsgIssueUserCredential) (*types.MsgIssueUserCredentialResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	k.Logger(ctx).Info("issue license request", "did", msg.Credential.Issuer, "address", msg.Owner)
+	k.Logger(ctx).Info("issue license request", "credential", msg.Credential, "address", msg.Owner)
 
 	// check that the issuer is a holder of LicenseCredential
 	// TODO: need to go a bit deeper about the type of the license
@@ -358,6 +358,8 @@ func (k msgServer) IssueUserCredential(goCtx context.Context, msg *types.MsgIssu
 		return nil, err
 	}
 
+	k.Logger(ctx).Info("issue license request successful", "credentialID", msg.Credential.Id)
+
 	ctx.EventManager().EmitEvent(
 		vctypes.NewCredentialCreatedEvent(msg.Owner, msg.Credential.Id),
 	)
@@ -367,15 +369,17 @@ func (k msgServer) IssueUserCredential(goCtx context.Context, msg *types.MsgIssu
 
 // RevokeCredential revoke a verifiable credential
 func (k msgServer) RevokeCredential(goCtx context.Context, msg *types.MsgRevokeCredential) (*types.MsgRevokeCredentialResponse, error) {
-	_ = sdk.UnwrapSDKContext(goCtx)
-
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if vcErr := k.Keeper.vcKeeper.DeleteVerifiableCredentialFromStore(ctx, []byte(msg.CredentialId), msg.Owner); vcErr != nil {
+	k.Logger(ctx).Info("revoke license request", "credential", msg.CredentialId, "address", msg.Owner)
+
+	if vcErr := k.vcKeeper.DeleteVerifiableCredentialFromStore(ctx, []byte(msg.CredentialId), msg.Owner); vcErr != nil {
 		err := sdkerrors.Wrapf(vcErr, "credential proof cannot be verified")
 		k.Logger(ctx).Error(err.Error())
 		return nil, err
 	}
+
+	k.Logger(ctx).Info("revoke license request successful", "credential", msg.CredentialId, "address", msg.Owner)
 
 	ctx.EventManager().EmitEvent(
 		vctypes.NewCredentialDeletedEvent(msg.Owner, msg.CredentialId),

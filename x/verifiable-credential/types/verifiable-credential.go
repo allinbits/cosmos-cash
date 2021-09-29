@@ -2,12 +2,13 @@ package types
 
 import (
 	"encoding/base64"
-	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
 )
 
 // Defines the accepted credential types

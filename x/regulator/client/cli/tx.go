@@ -89,7 +89,7 @@ that activates it.`,
 				),
 			)
 			// signer is the vmID
-			vmID := didtypes.NewVerificationMethodIdFromAddress(signer.String())
+			vmID := didtypes.NewVerificationMethodIDFromAddress(signer.String())
 
 			// sign the credentials
 			signedVc, err := vc.Sign(clientCtx.Keyring, signer, vmID)
@@ -158,8 +158,8 @@ func IssueLicenseCredentialCmd() *cobra.Command {
 				cs,
 			)
 
-			vmId := didtypes.NewVerificationMethodIdFromAddress(accAddr.String())
-			signedVc, err := vc.Sign(clientCtx.Keyring, accAddr, vmId)
+			vmID := didtypes.NewVerificationMethodIDFromAddress(accAddr.String())
+			signedVc, err := vc.Sign(clientCtx.Keyring, accAddr, vmID)
 			if err != nil {
 				return err
 			}
@@ -211,8 +211,8 @@ func IssueRegistrationCredentialCmd() *cobra.Command {
 				cs,
 			)
 
-			vmId := didtypes.NewVerificationMethodIdFromAddress(accAddr.String())
-			signedVc, err := vc.Sign(clientCtx.Keyring, accAddr, vmId)
+			vmID := didtypes.NewVerificationMethodIDFromAddress(accAddr.String())
+			signedVc, err := vc.Sign(clientCtx.Keyring, accAddr, vmID)
 			if err != nil {
 				return err
 			}

@@ -1,8 +1,6 @@
 package keeper
 
 import (
-	"strings"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
@@ -124,19 +122,6 @@ func (q Keeper) GetAllVerifiableCredentials(ctx sdk.Context) []types.VerifiableC
 		types.VerifiableCredentialKey,
 		func(vc types.VerifiableCredential) bool { return true },
 	)
-}
-
-// getDIDDoc resolves a did document
-func getDIDDoc(ctx sdk.Context, k Keeper, did string) (didDoc didtypes.DidDocument, err error) {
-	if strings.HasPrefix(did, didtypes.DidKeyPrefix) {
-		didDoc, _, err = didtypes.ResolveAccountDID(did, ctx.ChainID())
-		return
-	}
-	didDoc, found := k.didKeeper.GetDidDocument(ctx, []byte(did))
-	if !found {
-		err = didtypes.ErrDidDocumentNotFound
-	}
-	return
 }
 
 // ValidateProof validate the proof of a verifiable credential

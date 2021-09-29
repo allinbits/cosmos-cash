@@ -19,6 +19,8 @@ import (
 
 	didkeeper "github.com/allinbits/cosmos-cash/x/did/keeper"
 	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
+	regkeeper "github.com/allinbits/cosmos-cash/x/regulator/keeper"
+	regtypes "github.com/allinbits/cosmos-cash/x/regulator/types"
 	vckeeper "github.com/allinbits/cosmos-cash/x/verifiable-credential/keeper"
 	vctypes "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -45,12 +47,24 @@ type KeeperTestSuite struct {
 	keyring     keyring.Keyring
 }
 
+func (suite KeeperTestSuite) GetEMTiAddress() sdk.Address {
+	return suite.GetKeyAddress("emti")
+}
+
 func (suite KeeperTestSuite) GetAliceAddress() sdk.Address {
 	return suite.GetKeyAddress("alice")
 }
 
 func (suite KeeperTestSuite) GetBobAddress() sdk.Address {
 	return suite.GetKeyAddress("bob")
+}
+
+func (suite KeeperTestSuite) GetRegulatorAddress() sdk.Address {
+	return suite.GetKeyAddress("regulator")
+}
+
+func (suite KeeperTestSuite) GetRegulatorUnknownAddress() sdk.Address {
+	return suite.GetKeyAddress("regulator-anon")
 }
 
 func (suite KeeperTestSuite) GetKeyAddress(uid string) sdk.Address {
@@ -70,6 +84,8 @@ func (suite *KeeperTestSuite) SetupTest() {
 	memKeyVc := sdk.NewKVStoreKey(vctypes.MemStoreKey)
 	keyDidDocument := sdk.NewKVStoreKey(didtypes.StoreKey)
 	memKeyDidDocument := sdk.NewKVStoreKey(didtypes.MemStoreKey)
+	keyRegulator := sdk.NewKVStoreKey(regtypes.StoreKey)
+	memKeyRegulator := sdk.NewKVStoreKey(regtypes.MemStoreKey)
 
 	db := dbm.NewMemDB()
 	ms := store.NewCommitMultiStore(db)
@@ -83,6 +99,8 @@ func (suite *KeeperTestSuite) SetupTest() {
 	ms.MountStoreWithDB(memKeyVc, sdk.StoreTypeIAVL, db)
 	ms.MountStoreWithDB(keyDidDocument, sdk.StoreTypeIAVL, db)
 	ms.MountStoreWithDB(memKeyDidDocument, sdk.StoreTypeIAVL, db)
+	ms.MountStoreWithDB(keyRegulator, sdk.StoreTypeIAVL, db)
+	ms.MountStoreWithDB(memKeyRegulator, sdk.StoreTypeIAVL, db)
 	_ = ms.LoadLatestVersion()
 
 	ctx := sdk.NewContext(ms, tmproto.Header{ChainID: "foochainid"}, true, server.ZeroLogWrapper{log.Logger})
@@ -136,6 +154,15 @@ func (suite *KeeperTestSuite) SetupTest() {
 		AccountKeeper,
 	)
 
+	regKeeper := regkeeper.NewKeeper(
+		marshaler,
+		keyRegulator,
+		memKeyRegulator,
+		BankKeeper,
+		didKeeper,
+		vcKeeper,
+	)
+
 	k := NewKeeper(
 		marshaler,
 		keyIssuer,
@@ -149,21 +176,32 @@ func (suite *KeeperTestSuite) SetupTest() {
 	types.RegisterQueryServer(queryHelper, k)
 	queryClient := types.NewQueryClient(queryHelper)
 
-	kr := keyring.NewInMemory()
-	var i keyring.Info
-	var a authtypes.AccountI
-	// alice address
-	i, _, _ = kr.NewMnemonic("alice", keyring.English, sdk.FullFundraiserPath, keyring.DefaultBIP39Passphrase, hd.Secp256k1)
-	a = AccountKeeper.NewAccountWithAddress(ctx, i.GetAddress())
-	a.SetPubKey(i.GetPubKey())
-	AccountKeeper.SetAccount(ctx, AccountKeeper.NewAccount(ctx, a))
-	// bob address
-	i, _, _ = kr.NewMnemonic("bob", keyring.English, sdk.FullFundraiserPath, keyring.DefaultBIP39Passphrase, hd.Secp256k1)
-	a = AccountKeeper.NewAccountWithAddress(ctx, i.GetAddress())
-	a.SetPubKey(i.GetPubKey())
-	AccountKeeper.SetAccount(ctx, AccountKeeper.NewAccount(ctx, a))
+	suite.keyring = keyring.NewInMemory()
 
-	suite.ctx, suite.keeper, suite.queryClient, suite.didkeeper, suite.vckeeper, suite.keyring = ctx, *k, queryClient, *didKeeper, *vcKeeper, kr
+	// helper func to register accounts in the keychain and the account keeper
+	registerAccount := func(uid string, withPubKey bool) {
+		i, _, _ := suite.keyring.NewMnemonic(uid, keyring.English, sdk.FullFundraiserPath, keyring.DefaultBIP39Passphrase, hd.Secp256k1)
+		a := AccountKeeper.NewAccountWithAddress(ctx, i.GetAddress())
+		if withPubKey {
+			a.SetPubKey(i.GetPubKey())
+		}
+		AccountKeeper.SetAccount(ctx, AccountKeeper.NewAccount(ctx, a))
+	}
+
+	registerAccount("regulator", true)
+	registerAccount("alice", true)
+	registerAccount("regulator-anon", false)
+	registerAccount("bob", true)
+	registerAccount("emti", true) // e-money token issuer
+
+	// genesis regulator params
+	r := regtypes.NewRegulators(
+		suite.GetKeyAddress("regulator").String(),
+		suite.GetKeyAddress("regulator-anon").String(),
+	)
+	regKeeper.SetRegulators(ctx, &r)
+
+	suite.ctx, suite.keeper, suite.queryClient, suite.didkeeper, suite.vckeeper = ctx, *k, queryClient, *didKeeper, *vcKeeper
 }
 
 func TestKeeperTestSuite(t *testing.T) {

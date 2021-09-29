@@ -837,9 +837,9 @@ func ResolveAccountDID(did, chainID string) (didDoc DidDocument, didMeta DidMeta
 	didDoc, err = NewDidDocument(did, WithVerifications(
 		NewVerification(
 			NewVerificationMethod(
-				fmt.Sprint(did, "#", account),
+				NewVerificationMethodIDFromAddress(account),
 				DID(did), // the controller is the same as the did subject
-				NewBlockchainAccountID(chainID, did),
+				NewBlockchainAccountID(chainID, account),
 			),
 			[]string{
 				Authentication,

@@ -284,8 +284,8 @@ func (k msgServer) validateIssuerCredential(
 	signer string,
 ) error {
 	// Check to see if the provided did is in the store
-	did, found := k.Keeper.didKeeper.GetDidDocument(ctx, []byte(issuerDid))
-	if !found {
+	did, _, err := k.Keeper.didKeeper.ResolveDid(ctx, didtypes.DID(issuerDid))
+	if err != nil {
 		return sdkerrors.Wrapf(
 			types.ErrDidDocumentDoesNotExist,
 			"did does not exists",
@@ -339,7 +339,7 @@ func (k msgServer) validateMintingAmount(
 }
 
 // IssueUserCredential activates a regulator
-func (k msgServer) IssueUserCredential(goCtx context.Context, msg *types.MsgIssueUserCredential) (*types.MsgIssueUserCredentialResponse, error) {
+func (k msgServer) IssueUserCredential(goCtx context.Context, msg *vctypes.MsgIssueCredential) (*vctypes.MsgIssueCredentialResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	k.Logger(ctx).Info("issue user credential request", "credential", msg.Credential, "address", msg.Owner)
 
@@ -364,26 +364,5 @@ func (k msgServer) IssueUserCredential(goCtx context.Context, msg *types.MsgIssu
 		vctypes.NewCredentialCreatedEvent(msg.Owner, msg.Credential.Id),
 	)
 
-	return &types.MsgIssueUserCredentialResponse{}, nil
-}
-
-// RevokeCredential revoke a verifiable credential
-func (k msgServer) RevokeCredential(goCtx context.Context, msg *types.MsgRevokeCredential) (*types.MsgRevokeCredentialResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	k.Logger(ctx).Info("revoke license request", "credential", msg.CredentialId, "address", msg.Owner)
-
-	if vcErr := k.vcKeeper.DeleteVerifiableCredentialFromStore(ctx, []byte(msg.CredentialId), msg.Owner); vcErr != nil {
-		err := sdkerrors.Wrapf(vcErr, "credential proof cannot be verified")
-		k.Logger(ctx).Error(err.Error())
-		return nil, err
-	}
-
-	k.Logger(ctx).Info("revoke license request successful", "credential", msg.CredentialId, "address", msg.Owner)
-
-	ctx.EventManager().EmitEvent(
-		vctypes.NewCredentialDeletedEvent(msg.Owner, msg.CredentialId),
-	)
-
-	return &types.MsgRevokeCredentialResponse{}, nil
+	return &vctypes.MsgIssueCredentialResponse{}, nil
 }

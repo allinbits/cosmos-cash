@@ -21,34 +21,20 @@ func (suite *KeeperTestSuite) TestMsgSeverDeleteVerifableCredential() {
 		//{
 		//	"PASS: correctly deletes vc",
 		//	func() {
-		//		did := "did:cosmos:cash:subject"
-		//		didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
-		//			didtypes.NewVerification(
-		//				didtypes.NewVerificationMethod(
-		//					"did:cosmos:cash:subject#key-1",
-		//					"did:cosmos:cash:subject",
-		//					didtypes.NewBlockchainAccountID(suite.ctx.ChainID(), "cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a"),
-		//				),
-		//				[]string{didtypes.Authentication},
-		//				nil,
-		//			),
-		//		))
-		//		cs := types.NewUserCredentialSubject(
-		//			"accAddr",
-		//			"root",
-		//			true,
-		//		)
-		//
+		//		// NEED ACCOUNTS HERE
 		//		vc := types.NewUserVerifiableCredential(
 		//			"new-verifiable-cred-3",
 		//			didDoc.Id,
 		//			time.Now(),
-		//			cs,
+		//			types.NewUserCredentialSubject(
+		//				"accAddr",
+		//				"root",
+		//				true,
+		//			),
 		//		)
 		//		suite.keeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
-		//		suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
 		//
-		//		req = *types.NewMsgDeleteVerifiableCredential(vc.Id, vc.Issuer, "cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a")
+		//		req = *types.NewMsgRevokeVerifiableCredential(vc.Id, "cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a")
 		//	},
 		//	true,
 		//},

@@ -2,9 +2,11 @@ package ante
 
 import (
 	"fmt"
+	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"testing"
 	"time"
 
+	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/suite"
 
@@ -42,6 +44,31 @@ type TestAccount struct {
 	priv cryptotypes.PrivKey
 }
 
+func (suite AnteTestSuite) GetEMTiAddress() sdk.Address {
+	return suite.GetKeyAddress("emti")
+}
+
+func (suite AnteTestSuite) GetAliceAddress() sdk.Address {
+	return suite.GetKeyAddress("alice")
+}
+
+func (suite AnteTestSuite) GetBobAddress() sdk.Address {
+	return suite.GetKeyAddress("bob")
+}
+
+func (suite AnteTestSuite) GetRegulatorAddress() sdk.Address {
+	return suite.GetKeyAddress("regulator")
+}
+
+func (suite AnteTestSuite) GetRegulatorUnknownAddress() sdk.Address {
+	return suite.GetKeyAddress("regulator-anon")
+}
+
+func (suite AnteTestSuite) GetKeyAddress(uid string) sdk.Address {
+	i, _ := suite.keyring.Key(uid)
+	return i.GetAddress()
+}
+
 // Keeper test suit enables the keeper package to be tested
 type AnteTestSuite struct {
 	suite.Suite
@@ -55,6 +82,7 @@ type AnteTestSuite struct {
 	bankkeeper    bankkeeper.Keeper
 	txBuilder     client.TxBuilder
 	clientCtx     client.Context
+	keyring       keyring.Keyring
 }
 
 // SetupTest creates a test suite to test the issuer
@@ -155,6 +183,24 @@ func (suite *AnteTestSuite) SetupTest() {
 		*VcsKeeper,
 	)
 
+	suite.keyring = keyring.NewInMemory()
+
+	// helper func to register accounts in the keychain and the account keeper
+	registerAccount := func(uid string, withPubKey bool) {
+		i, _, _ := suite.keyring.NewMnemonic(uid, keyring.English, sdk.FullFundraiserPath, keyring.DefaultBIP39Passphrase, hd.Secp256k1)
+		a := AccountKeeper.NewAccountWithAddress(ctx, i.GetAddress())
+		if withPubKey {
+			a.SetPubKey(i.GetPubKey())
+		}
+		AccountKeeper.SetAccount(ctx, AccountKeeper.NewAccount(ctx, a))
+	}
+
+	registerAccount("regulator", true)
+	registerAccount("alice", true)
+	registerAccount("regulator-anon", false)
+	registerAccount("bob", true)
+	registerAccount("emti", true) // e-money token issuer
+
 	suite.clientCtx = client.Context{}.
 		WithTxConfig(simapp.MakeTestEncodingConfig().TxConfig)
 	suite.ctx, suite.cucd = ctx, cucd
@@ -181,35 +227,24 @@ func (suite *AnteTestSuite) CreateTestAccounts(numAccs int) []TestAccount {
 	return accounts
 }
 
-func (suite *AnteTestSuite) CreateTestCredentials(testaccount TestAccount, userID, credID, issuerDID string) {
-	didUser := "did:cosmos:cash:" + userID
-	vcIDUser := "did:cosmos:cash:" + credID
-	didDocUser, _ := didtypes.NewDidDocument(didUser, didtypes.WithVerifications(
-		didtypes.NewVerification(
-			didtypes.NewVerificationMethod(
-				"did:cosmos:cash:"+userID+"#key-1",
-				"did:cosmos:cash:any",
-				didtypes.NewPublicKeyMultibase(testaccount.acc.GetPubKey().Bytes(),
-					didtypes.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
-			),
-			[]string{didtypes.Authentication},
-			nil,
-		),
-	))
-	csUser := vctypes.NewUserCredentialSubject(
-		didDocUser.Id,
-		"root",
-		true,
-	)
-
-	vcUser := vctypes.NewUserVerifiableCredential(
-		vcIDUser,
+func (suite *AnteTestSuite) CreateTestCredentials(testaccount TestAccount, kr keyring.Keyring, credID, issuerDID string) {
+	address := testaccount.acc.GetAddress()
+	did := didtypes.NewKeyDID(address.String())
+	vc := vctypes.NewUserVerifiableCredential(
+		credID,
 		issuerDID,
 		time.Now(),
-		csUser,
+		vctypes.NewUserCredentialSubject(
+			did.String(),
+			"root",
+			true,
+		),
 	)
-	suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vcUser.Id), vcUser)
-	suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDocUser.Id), didDocUser)
+	vc, _ = vc.Sign(nil,
+		address,
+		didtypes.NewVerificationMethodIDFromAddress(address.String()),
+	)
+	suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
 }
 
 // KeyTestPubAddr generates a new secp256k1 keypair.
@@ -227,7 +262,7 @@ func TestAnteTestSuite(t *testing.T) {
 func (suite *AnteTestSuite) TestCheckUserCredentialDecorator() {
 	var tx sdk.Tx
 	var simulate bool
-	//var msgs []sdk.Msg //TODO: uncomment
+	var msgs []sdk.Msg
 	var errExp error
 
 	testCases := []struct {
@@ -235,90 +270,114 @@ func (suite *AnteTestSuite) TestCheckUserCredentialDecorator() {
 		malleate func()
 		expPass  bool
 	}{
-		// {
-		// 	"PASS: issuer is not associated with the token",
-		// 	func() {
+		{
+			"PASS: issuer is not associated with the token",
+			func() {
 
-		// 		accounts := suite.CreateTestAccounts(2)
-		// 		coins, _ := sdk.ParseCoinsNormalized("1000sEUR")
-		// 		msg := banktypes.NewMsgSend(accounts[0].acc.GetAddress(), accounts[1].acc.GetAddress(), coins)
+				accounts := suite.CreateTestAccounts(2)
+				coins, _ := sdk.ParseCoinsNormalized("1000sEUR")
+				msg := banktypes.NewMsgSend(accounts[0].acc.GetAddress(), accounts[1].acc.GetAddress(), coins)
 
-		// 		msgs = []sdk.Msg{msg}
-		// 		suite.txBuilder = suite.clientCtx.TxConfig.NewTxBuilder()
+				msgs = []sdk.Msg{msg}
+				suite.txBuilder = suite.clientCtx.TxConfig.NewTxBuilder()
 
-		// 		suite.txBuilder.SetMsgs(msgs...)
-		// 		tx = suite.txBuilder.GetTx()
-		// 		simulate = false
-		// 		errExp = nil
-		// 	},
-		// 	true,
-		// },
-		// {
-		// 	"PASS: two kyc'd users can exchange emoney tokens",
-		// 	func() {
-		// 		did := "did:cosmos:cash:subject"
-		// 		vcID := "did:cosmos:cash:issuercred"
-		// 		issuerAddress, _ := sdk.AccAddressFromBech32("cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
-		// 		didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
-		// 			didtypes.NewVerification(
-		// 				didtypes.NewVerificationMethod(
-		// 					"did:cosmos:cash:subject#key-1",
-		// 					"did:cosmos:cash:subject",
-		// 					didtypes.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215},
-		// 						didtypes.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
-		// 				),
-		// 				[]string{didtypes.Authentication},
-		// 				nil,
-		// 			),
-		// 		))
-		// 		circulationLimit, _ := sdk.NewIntFromString("1000")
-		// 		coin := sdk.NewCoin("seuro", circulationLimit)
-		// 		cs := vctypes.NewLicenseCredentialSubject(
-		// 			didDoc.Id,
-		// 			"MICAEMI",
-		// 			"IRL",
-		// 			"Another Financial Services Body (AFFB)",
-		// 			coin,
-		// 		)
+				suite.txBuilder.SetMsgs(msgs...)
+				tx = suite.txBuilder.GetTx()
+				simulate = false
+				errExp = nil
+			},
+			true,
+		},
+		{
+			"PASS: two kyc'd users can exchange emoney tokens",
+			func() {
+				var vc vctypes.VerifiableCredential
+				var err error
+				// require issuer credential
+				vc = vctypes.NewLicenseVerifiableCredential(
+					"license-credential-for-emti",
+					didtypes.NewKeyDID(suite.GetEMTiAddress().String()).String(),
+					time.Now(),
+					vctypes.NewLicenseCredentialSubject(
+						didtypes.NewKeyDID(suite.GetEMTiAddress().String()).String(),
+						"MICAEMI",
+						"IRL",
+						"Another Financial Services Body (AFFB)",
+						sdk.NewCoin("sEUR", sdk.NewInt(100000000)),
+					),
+				)
+				vc, err = vc.Sign(
+					suite.keyring, suite.GetEMTiAddress(),
+					didtypes.NewVerificationMethodIDFromAddress(suite.GetEMTiAddress().String()),
+				)
+				suite.Require().NoError(err)
+				err = suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				suite.Require().NoError(err)
+				// require emti user credential
+				vc = vctypes.NewUserVerifiableCredential(
+					"emti-user-cred",
+					didtypes.NewKeyDID(suite.GetEMTiAddress().String()).String(),
+					time.Now(),
+					vctypes.NewUserCredentialSubject(
+						didtypes.NewKeyDID(suite.GetEMTiAddress().String()).String(),
+						"root",
+						true,
+					),
+				)
+				vc, err = vc.Sign(suite.keyring,
+					suite.GetEMTiAddress(),
+					didtypes.NewVerificationMethodIDFromAddress(suite.GetEMTiAddress().String()),
+				)
+				suite.Require().NoError(err)
+				err = suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				suite.Require().NoError(err)
+				// require bob credential
+				vc = vctypes.NewUserVerifiableCredential(
+					"bob-user-cred",
+					didtypes.NewKeyDID(suite.GetEMTiAddress().String()).String(),
+					time.Now(),
+					vctypes.NewUserCredentialSubject(
+						didtypes.NewKeyDID(suite.GetBobAddress().String()).String(),
+						"root",
+						true,
+					),
+				)
+				vc, err = vc.Sign(suite.keyring,
+					suite.GetEMTiAddress(),
+					didtypes.NewVerificationMethodIDFromAddress(suite.GetEMTiAddress().String()),
+				)
+				suite.Require().NoError(err)
+				err = suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				suite.Require().NoError(err)
+				// create the issuer
+				issuer := issuertypes.Issuer{
+					Token:     "sEUR",
+					Fee:       1,
+					IssuerDid: didtypes.NewKeyDID(suite.GetEMTiAddress().String()).String(),
+					Paused:    false,
+				}
+				suite.issuerkeeper.SetIssuer(suite.ctx, issuer)
+				// mint coins
+				coins, _ := sdk.ParseCoinsNormalized("10000sEUR")
+				suite.bankkeeper.MintCoins(suite.ctx, banktypes.ModuleName, coins)
 
-		// 		vc := vctypes.NewLicenseVerifiableCredential(
-		// 			vcID,
-		// 			didDoc.Id,
-		// 			time.Now(),
-		// 			cs,
-		// 		)
-		// 		suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
-		// 		suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+				emti, _ := sdk.AccAddressFromBech32(suite.GetEMTiAddress().String())
+				suite.bankkeeper.SendCoinsFromModuleToAccount(suite.ctx, banktypes.ModuleName, emti, coins)
 
-		// 		accounts := suite.CreateTestAccounts(2)
-		// 		suite.CreateTestCredentials(accounts[0], "user1", "kyccred1", didDoc.Id)
-		// 		suite.CreateTestCredentials(accounts[1], "user2", "kyccred2", didDoc.Id)
+				bob, _ := sdk.AccAddressFromBech32(suite.GetBobAddress().String())
 
-		// 		issuer := issuertypes.Issuer{
-		// 			Token:     "sEUR",
-		// 			Fee:       1,
-		// 			IssuerDid: didDoc.Id,
-		// 			Paused:    false,
-		// 		}
+				msg := banktypes.NewMsgSend(emti, bob, coins)
 
-		// 		suite.issuerkeeper.SetIssuer(suite.ctx, issuer)
+				msgs = []sdk.Msg{msg}
+				suite.txBuilder = suite.clientCtx.TxConfig.NewTxBuilder()
 
-		// 		coins, _ := sdk.ParseCoinsNormalized("10000sEUR")
-		// 		suite.bankkeeper.MintCoins(suite.ctx, banktypes.ModuleName, coins)
-		// 		suite.bankkeeper.SendCoinsFromModuleToAccount(suite.ctx, banktypes.ModuleName, issuerAddress, coins)
-
-		// 		msg := banktypes.NewMsgSend(accounts[0].acc.GetAddress(), accounts[1].acc.GetAddress(), coins)
-
-		// 		msgs = []sdk.Msg{msg}
-		// 		suite.txBuilder = suite.clientCtx.TxConfig.NewTxBuilder()
-
-		// 		suite.txBuilder.SetMsgs(msgs...)
-		// 		tx = suite.txBuilder.GetTx()
-		// 		simulate = false
-		// 		errExp = nil
-		// 	},
-		// 	true,
-		// },
+				suite.txBuilder.SetMsgs(msgs...)
+				tx = suite.txBuilder.GetTx()
+				simulate = false
+				errExp = nil
+			},
+			true,
+		},
 		//{
 		//	"FAIL: user has paused emoney token",
 		//	func() {

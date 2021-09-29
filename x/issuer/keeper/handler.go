@@ -2,12 +2,12 @@ package keeper
 
 import (
 	"fmt"
-	vctypes "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/allinbits/cosmos-cash/x/issuer/types"
+	vctypes "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 )
 
 // NewHandler ...

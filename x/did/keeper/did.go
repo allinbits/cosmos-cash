@@ -112,12 +112,26 @@ func (k Keeper) GetAllDidDocuments(ctx sdk.Context) []types.DidDocument {
 }
 
 // GetDidDocumentsByPubKey retrieve a did document using a pubkey associated to the DID
-func (k Keeper) GetDidDocumentsByPubKey(ctx sdk.Context, pubkey cryptotypes.PubKey) []types.DidDocument {
-	return k.GetAllDidDocumentsWithCondition(
+func (k Keeper) GetDidDocumentsByPubKey(ctx sdk.Context, pubkey cryptotypes.PubKey) (dids []types.DidDocument) {
+
+	dids = k.GetAllDidDocumentsWithCondition(
 		ctx,
 		types.DidDocumentKey,
 		func(did types.DidDocument) bool {
 			return did.HasPublicKey(pubkey)
 		},
 	)
+	// compute the key did
+
+	// generate the address
+	addr, err := sdk.Bech32ifyAddressBytes(sdk.GetConfig().GetBech32AccountAddrPrefix(), pubkey.Address())
+	if err != nil {
+		return
+	}
+	doc, _, err := types.ResolveAccountDID(types.NewKeyDID(addr).String(), ctx.ChainID())
+	if err != nil {
+		return
+	}
+	dids = append(dids, doc)
+	return
 }

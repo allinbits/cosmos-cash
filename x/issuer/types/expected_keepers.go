@@ -17,5 +17,5 @@ type VcKeeper interface {
 	GetVerifiableCredential(ctx sdk.Context, key []byte) (vctypes.VerifiableCredential, bool)
 	SetVerifiableCredential(ctx sdk.Context, key []byte, vc vctypes.VerifiableCredential) error
 	GetVerifiableCredentialWithType(ctx sdk.Context, subjectDID, vcType string) []vctypes.VerifiableCredential
-	DeleteVerifiableCredentialFromStore(ctx sdk.Context, key []byte) error
+	DeleteVerifiableCredentialFromStore(ctx sdk.Context, credentialID []byte, address string) error
 }

@@ -100,6 +100,6 @@ func (k Keeper) GetVerifiableCredential(ctx sdk.Context, vcID string) (vctypes.V
 }
 
 // DeleteVerifiableCredential invokes the verifiable credential keeper to execute the deletion of credentials
-func (k Keeper) DeleteVerifiableCredential(ctx sdk.Context, credentialID string) error {
-	return k.vcKeeper.DeleteVerifiableCredentialFromStore(ctx, []byte(credentialID))
+func (k Keeper) DeleteVerifiableCredential(ctx sdk.Context, credentialID, address string) error {
+	return k.vcKeeper.DeleteVerifiableCredentialFromStore(ctx, []byte(credentialID), address)
 }

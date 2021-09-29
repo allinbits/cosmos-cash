@@ -240,7 +240,7 @@ func IssueRegistrationCredentialCmd() *cobra.Command {
 // This is used by regulators to define issuers and issuer permissions
 func RevokeCredentialCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     `revoke-credential [cred_id] [issuer_did]`,
+		Use:     `revoke-credential [cred_id]`,
 		Short:   "revoke a verifiable credential",
 		Example: "",
 		Args:    cobra.ExactArgs(1),
@@ -253,13 +253,8 @@ func RevokeCredentialCmd() *cobra.Command {
 			accAddrBech32 := accAddr.String()
 
 			credentialID := args[0]
-			//issuerDid := args[1]
 
 			msg := types.NewMsgRevokeCredential(credentialID, accAddrBech32)
-
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
 
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},

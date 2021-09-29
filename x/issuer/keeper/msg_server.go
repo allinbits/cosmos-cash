@@ -365,13 +365,13 @@ func (k msgServer) IssueUserCredential(goCtx context.Context, msg *types.MsgIssu
 	return &types.MsgIssueUserCredentialResponse{}, nil
 }
 
-// Revoke activates a regulator
+// RevokeCredential revoke a verifiable credential
 func (k msgServer) RevokeCredential(goCtx context.Context, msg *types.MsgRevokeCredential) (*types.MsgRevokeCredentialResponse, error) {
 	_ = sdk.UnwrapSDKContext(goCtx)
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if vcErr := k.Keeper.vcKeeper.DeleteVerifiableCredentialFromStore(ctx, []byte(msg.CredentialId)); vcErr != nil {
+	if vcErr := k.Keeper.vcKeeper.DeleteVerifiableCredentialFromStore(ctx, []byte(msg.CredentialId), msg.Owner); vcErr != nil {
 		err := sdkerrors.Wrapf(vcErr, "credential proof cannot be verified")
 		k.Logger(ctx).Error(err.Error())
 		return nil, err

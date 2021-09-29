@@ -30,7 +30,7 @@ func (k msgServer) DeleteVerifiableCredential(
 
 	// TODO: there is something missing here
 
-	if err := k.Keeper.DeleteVerifiableCredentialFromStore(ctx, []byte(msg.VerifiableCredentialId)); err != nil {
+	if err := k.Keeper.DeleteVerifiableCredentialFromStore(ctx, []byte(msg.VerifiableCredentialId), msg.Owner); err != nil {
 		return nil, sdkerrors.Wrapf(
 			err, "verifiable credential validation failed",
 		)

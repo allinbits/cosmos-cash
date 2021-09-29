@@ -27,20 +27,41 @@ func (q Keeper) GetVerifiableCredential(ctx sdk.Context, key []byte) (types.Veri
 
 // DeleteVerifiableCredentialFromStore deletes a verifiable credential from the store,
 // it performs the necessary proof validation before executing the deletion
-func (q Keeper) DeleteVerifiableCredentialFromStore(ctx sdk.Context, key []byte) error {
-	vc, found := q.GetVerifiableCredential(ctx, key)
+func (q Keeper) DeleteVerifiableCredentialFromStore(ctx sdk.Context, credentialID []byte, issuerAddress string) error {
+	vc, found := q.GetVerifiableCredential(ctx, credentialID)
 	if !found {
 		return sdkerrors.Wrapf(
 			types.ErrVerifiableCredentialNotFound,
 			"error deleting credential; credential not found",
 		)
 	}
-	if err := ValidateProof(ctx, q, vc, didtypes.Authentication); err != nil {
+	// verify that is the same of the vc
+	issuerAccount, err := sdk.AccAddressFromBech32(issuerAddress)
+	if err != nil {
 		return sdkerrors.Wrapf(
-			err, "verifiable credential validation failed",
+			types.ErrMessageSigner,
+			"failed to convert the issuer address to account %v: %v", issuerAddress,
+			err,
 		)
 	}
-	q.Delete(ctx, key, types.VerifiableCredentialKey)
+	// get the public key from the account
+	pk, err := q.accountKeeper.GetPubKey(ctx, issuerAccount)
+	if err != nil || pk == nil {
+		return sdkerrors.Wrapf(
+			types.ErrMessageSigner,
+			"issuer public key not found %v",
+			err,
+		)
+	}
+	//
+	if isValid := vc.Validate(pk); !isValid {
+		return sdkerrors.Wrapf(
+			types.ErrMessageSigner,
+			"verification error %v",
+			err,
+		)
+	}
+	q.Delete(ctx, credentialID, types.VerifiableCredentialKey)
 	return nil
 }
 

@@ -339,7 +339,7 @@ func (k msgServer) validateMintingAmount(
 }
 
 // IssueUserCredential activates a regulator
-func (k msgServer) IssueUserCredential(goCtx context.Context, msg *vctypes.MsgIssueCredential) (*vctypes.MsgIssueCredentialResponse, error) {
+func (k msgServer) IssueUserCredential(goCtx context.Context, msg *types.MsgIssueUserCredential) (*types.MsgIssueUserCredentialResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	k.Logger(ctx).Info("issue user credential request", "credential", msg.Credential, "address", msg.Owner)
 
@@ -364,5 +364,5 @@ func (k msgServer) IssueUserCredential(goCtx context.Context, msg *vctypes.MsgIs
 		vctypes.NewCredentialCreatedEvent(msg.Owner, msg.Credential.Id),
 	)
 
-	return &vctypes.MsgIssueCredentialResponse{}, nil
+	return &types.MsgIssueUserCredentialResponse{}, nil
 }

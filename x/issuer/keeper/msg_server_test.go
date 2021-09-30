@@ -1113,7 +1113,7 @@ func (suite *KeeperTestSuite) Test_msgServer_PauseToken() {
 func (suite *KeeperTestSuite) Test_msgServer_IssueUserCredential() {
 	// create the keeper
 	server := NewMsgServerImpl(suite.keeper)
-	var req vctypes.MsgIssueCredential
+	var req types.MsgIssueUserCredential
 	ctx := sdk.WrapSDKContext(suite.ctx)
 
 	testCases := []struct {
@@ -1204,7 +1204,7 @@ func (suite *KeeperTestSuite) Test_msgServer_IssueUserCredential() {
 					didtypes.NewVerificationMethodIDFromAddress(userCredentialIssuerAccount.String()),
 				)
 				// ACTUAL TEST
-				req = *vctypes.NewMsgIssueCredential(
+				req = *types.NewMsgIssueUserCredential(
 					vc,
 					userCredentialIssuerAccount.String(),
 				)
@@ -1233,7 +1233,7 @@ func (suite *KeeperTestSuite) Test_msgServer_IssueUserCredential() {
 					didtypes.NewVerificationMethodIDFromAddress(bobAccount.String()),
 				)
 				// ACTUAL TEST
-				req = *vctypes.NewMsgIssueCredential(
+				req = *types.NewMsgIssueUserCredential(
 					vc,
 					bobAccount.String(),
 				)

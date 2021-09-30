@@ -7,7 +7,6 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/allinbits/cosmos-cash/x/issuer/types"
-	vctypes "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 )
 
 // NewHandler ...
@@ -31,11 +30,7 @@ func NewHandler(k Keeper) sdk.Handler {
 		case *types.MsgPauseToken:
 			res, err := msgServer.PauseToken(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
-		case *vctypes.MsgIssueCredential:
-			if _, ok := msg.Credential.CredentialSubject.(*vctypes.VerifiableCredential_UserCred); !ok {
-				errMsg := fmt.Sprintf("unsupported credential type %s message type: %T", types.ModuleName, msg)
-				return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
-			}
+		case *types.MsgIssueUserCredential:
 			res, err := msgServer.IssueUserCredential(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 		// this line is used by starport scaffolding # 1

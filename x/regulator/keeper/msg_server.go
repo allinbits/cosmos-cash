@@ -32,8 +32,8 @@ func contains(what string, list []string) bool {
 	return false
 }
 
-// Activate activates a regulator
-func (k msgServer) Activate(goCtx context.Context, msg *vctypes.MsgIssueCredential) (*vctypes.MsgIssueCredentialResponse, error) {
+// IssueRegulatorCredential activates a regulator
+func (k msgServer) IssueRegulatorCredential(goCtx context.Context, msg *types.MsgIssueRegulatorCredential) (*types.MsgIssueRegulatorCredentialResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	k.Logger(ctx).Info("regulator activation request", "did", msg.Credential.Issuer, "address", msg.Owner)
 	// fetch the regulator address lists
@@ -62,11 +62,11 @@ func (k msgServer) Activate(goCtx context.Context, msg *vctypes.MsgIssueCredenti
 	// reply
 	k.Logger(ctx).Info("regulator activation success", "did", msg.Credential.Issuer, "address", msg.Owner)
 
-	return &vctypes.MsgIssueCredentialResponse{}, nil
+	return &types.MsgIssueRegulatorCredentialResponse{}, nil
 }
 
 // IssueRegistrationCredential activates a regulator
-func (k msgServer) IssueRegistrationCredential(goCtx context.Context, msg *vctypes.MsgIssueCredential) (*vctypes.MsgIssueCredentialResponse, error) {
+func (k msgServer) IssueRegistrationCredential(goCtx context.Context, msg *types.MsgIssueRegistrationCredential) (*types.MsgIssueRegistrationCredentialResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	k.Logger(ctx).Info("issue registration request", "address", msg.Owner, "credential", msg.Credential)
 
@@ -91,11 +91,11 @@ func (k msgServer) IssueRegistrationCredential(goCtx context.Context, msg *vctyp
 		vctypes.NewCredentialCreatedEvent(msg.Owner, msg.Credential.Id),
 	)
 
-	return &vctypes.MsgIssueCredentialResponse{}, nil
+	return &types.MsgIssueRegistrationCredentialResponse{}, nil
 }
 
 // IssueLicenseCredential activates a regulator
-func (k msgServer) IssueLicenseCredential(goCtx context.Context, msg *vctypes.MsgIssueCredential) (*vctypes.MsgIssueCredentialResponse, error) {
+func (k msgServer) IssueLicenseCredential(goCtx context.Context, msg *types.MsgIssueLicenseCredential) (*types.MsgIssueLicenseCredentialResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	k.Logger(ctx).Info("issue license request", "credential", msg.Credential, "address", msg.Owner)
 
@@ -126,5 +126,5 @@ func (k msgServer) IssueLicenseCredential(goCtx context.Context, msg *vctypes.Ms
 		vctypes.NewCredentialCreatedEvent(msg.Owner, msg.Credential.Id),
 	)
 
-	return &vctypes.MsgIssueCredentialResponse{}, nil
+	return &types.MsgIssueLicenseCredentialResponse{}, nil
 }

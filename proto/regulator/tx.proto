@@ -6,21 +6,57 @@ package allinbits.cosmoscash.regulator;
 option go_package = "github.com/allinbits/cosmos-cash/x/regulator/types";
 
 import "gogoproto/gogo.proto";
-import "verifiable-credential/tx.proto";
+import "verifiable-credential/verifiable-credential.proto";
 
 
 // Msg defines the Msg service.
 service Msg {
   // this line is used by starport scaffolding # proto/tx/rpc
   // Activate issue regulator credential to activate a regulator on chain
-  rpc Activate(allinbits.cosmoscash.verifiablecredential.MsgIssueCredential) returns (allinbits.cosmoscash.verifiablecredential.MsgIssueCredentialResponse);
+  rpc IssueRegulatorCredential(MsgIssueRegulatorCredential) returns (MsgIssueRegulatorCredentialResponse);
   // IssueRegistrationCredential issue a new registration credential for a public entity
-  rpc IssueRegistrationCredential(allinbits.cosmoscash.verifiablecredential.MsgIssueCredential) returns (allinbits.cosmoscash.verifiablecredential.MsgIssueCredentialResponse);
+  rpc IssueRegistrationCredential(MsgIssueRegistrationCredential) returns (MsgIssueRegistrationCredentialResponse);
   // IssueLicenseCredential issue a license to to a registered entity
-  rpc IssueLicenseCredential(allinbits.cosmoscash.verifiablecredential.MsgIssueCredential) returns (allinbits.cosmoscash.verifiablecredential.MsgIssueCredentialResponse);
-  //
+  rpc IssueLicenseCredential(MsgIssueLicenseCredential) returns (MsgIssueLicenseCredentialResponse);
 
 }
+
+// this line is used by starport scaffolding # proto/tx/message
+
+// MsgIssueRegulatorCredential is used to activate a regulator on chain
+message MsgIssueRegulatorCredential {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+  allinbits.cosmoscash.verifiablecredential.VerifiableCredential credential = 1;
+  string owner = 2;
+}
+
+// MsgActivateResponse contains the reponse for a successful activation
+// of a regulator on chain
+message MsgIssueRegulatorCredentialResponse {}
+
+// MsgIssueRegistrationCredential is used to issue new registration credential
+
+message MsgIssueRegistrationCredential {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+  allinbits.cosmoscash.verifiablecredential.VerifiableCredential credential = 1;
+  string owner = 2;
+}
+
+// MsgIssueRegistrationCredentialResponse reply for the IssueRegistartion call
+message MsgIssueRegistrationCredentialResponse {}
+
+// MsgIssueLicenseCredential message contains data for license credential
+message MsgIssueLicenseCredential {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+  allinbits.cosmoscash.verifiablecredential.VerifiableCredential credential = 1;
+  string owner = 2;
+}
+
+// MsgIssueLicenseCredentialResponse reply for the issue license call
+message MsgIssueLicenseCredentialResponse {}
 
 // this line is used by starport scaffolding # proto/tx/message
 

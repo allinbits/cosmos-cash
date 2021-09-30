@@ -137,7 +137,7 @@ func NewIssueUserVerifiableCredentialCmd() *cobra.Command {
 				return err
 			}
 
-			msg := vctypes.NewMsgIssueCredential(
+			msg := types.NewMsgIssueUserCredential(
 				signedVc,
 				accAddrBech32,
 			)

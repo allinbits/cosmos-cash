@@ -12,7 +12,7 @@ import (
 
 func (suite *KeeperTestSuite) TestMsgSeverActivateRegulator() {
 	server := NewMsgServerImpl(suite.keeper)
-	var req vctypes.MsgIssueCredential
+	var req types.MsgIssueRegulatorCredential
 
 	testCases := []struct {
 		msg       string
@@ -41,7 +41,7 @@ func (suite *KeeperTestSuite) TestMsgSeverActivateRegulator() {
 				vmID := fmt.Sprint(regulatorDID, "#", regulator.String())
 				rvc, _ = rvc.Sign(suite.keyring, suite.GetRegulatorAddress(), vmID)
 				// send the message
-				req = vctypes.MsgIssueCredential{
+				req = types.MsgIssueRegulatorCredential{
 					Credential: &rvc,
 					Owner:      regulator.String(),
 				}
@@ -86,7 +86,7 @@ func (suite *KeeperTestSuite) TestMsgSeverActivateRegulator() {
 				vmID := fmt.Sprint(regulatorDID, "#", regulator.String())
 				rvc, _ = rvc.Sign(suite.keyring, suite.GetRegulatorAddress(), vmID)
 				// send the message
-				req = vctypes.MsgIssueCredential{
+				req = types.MsgIssueRegulatorCredential{
 					Credential: &rvc,
 					Owner:      regulator.String(),
 				}
@@ -114,7 +114,7 @@ func (suite *KeeperTestSuite) TestMsgSeverActivateRegulator() {
 				vmID := fmt.Sprint(regulatorDID, "#", regulator.String())
 				rvc, _ = rvc.Sign(suite.keyring, suite.GetRegulatorAddress(), vmID)
 				// send the message
-				req = vctypes.MsgIssueCredential{
+				req = types.MsgIssueRegulatorCredential{
 					Credential: &rvc,
 					Owner:      regulator.String(),
 				}
@@ -144,7 +144,7 @@ func (suite *KeeperTestSuite) TestMsgSeverActivateRegulator() {
 				vmID := fmt.Sprint(regulatorDID, "#", regulator.String())
 				rvc, _ = rvc.Sign(suite.keyring, suite.GetRegulatorAddress(), vmID)
 				// send the message
-				req = vctypes.MsgIssueCredential{
+				req = types.MsgIssueRegulatorCredential{
 					Credential: &rvc,
 					Owner:      regulator.String(),
 				}
@@ -172,7 +172,7 @@ func (suite *KeeperTestSuite) TestMsgSeverActivateRegulator() {
 				vmID := fmt.Sprint(regulatorDID, "#", regulator.String())
 				rvc, _ = rvc.Sign(suite.keyring, suite.GetRegulatorAddress(), vmID)
 				// send the message
-				req = vctypes.MsgIssueCredential{
+				req = types.MsgIssueRegulatorCredential{
 					Credential: &rvc,
 					Owner:      regulator.String(),
 				}
@@ -200,7 +200,7 @@ func (suite *KeeperTestSuite) TestMsgSeverActivateRegulator() {
 				vmID := fmt.Sprint(regulatorDID, "#", regulator.String())
 				rvc, _ = rvc.Sign(suite.keyring, suite.GetRegulatorUnknownAddress(), vmID)
 				// send the message
-				req = vctypes.MsgIssueCredential{
+				req = types.MsgIssueRegulatorCredential{
 					Credential: &rvc,
 					Owner:      regulator.String(),
 				}
@@ -212,7 +212,7 @@ func (suite *KeeperTestSuite) TestMsgSeverActivateRegulator() {
 	for _, tc := range testCases {
 		suite.Run(fmt.Sprintf("Case %s", tc.msg), func() {
 			tc.malleate()
-			didResp, err := server.Activate(sdk.WrapSDKContext(suite.ctx), &req)
+			didResp, err := server.IssueRegulatorCredential(sdk.WrapSDKContext(suite.ctx), &req)
 			if tc.expectErr == nil {
 				suite.NoError(err)
 				suite.NotNil(didResp)
@@ -226,7 +226,7 @@ func (suite *KeeperTestSuite) TestMsgSeverActivateRegulator() {
 
 func (suite *KeeperTestSuite) TestMsgSeverIssueRegistrationCredential() {
 	server := NewMsgServerImpl(suite.keeper)
-	var req vctypes.MsgIssueCredential
+	var req types.MsgIssueRegistrationCredential
 
 	testCases := []struct {
 		msg       string
@@ -274,7 +274,7 @@ func (suite *KeeperTestSuite) TestMsgSeverIssueRegistrationCredential() {
 					suite.keyring, suite.GetRegulatorAddress(),
 					didtypes.NewVerificationMethodIDFromAddress(regulator.String()),
 				)
-				req = vctypes.MsgIssueCredential{
+				req = types.MsgIssueRegistrationCredential{
 					Credential: &vc,
 					Owner:      regulator.String(),
 				}
@@ -303,7 +303,7 @@ func (suite *KeeperTestSuite) TestMsgSeverIssueRegistrationCredential() {
 					suite.keyring, suite.GetRegulatorAddress(),
 					didtypes.NewVerificationMethodIDFromAddress(regulator.String()),
 				)
-				req = vctypes.MsgIssueCredential{
+				req = types.MsgIssueRegistrationCredential{
 					Credential: &vc,
 					Owner:      regulator.String(),
 				}
@@ -328,7 +328,7 @@ func (suite *KeeperTestSuite) TestMsgSeverIssueRegistrationCredential() {
 
 func (suite *KeeperTestSuite) TestMsgSeverIssueLicenseCredential() {
 	server := NewMsgServerImpl(suite.keeper)
-	var req vctypes.MsgIssueCredential
+	var req types.MsgIssueLicenseCredential
 
 	//
 	//
@@ -398,7 +398,7 @@ func (suite *KeeperTestSuite) TestMsgSeverIssueLicenseCredential() {
 					didtypes.NewVerificationMethodIDFromAddress(regulator.String()),
 				)
 
-				req = vctypes.MsgIssueCredential{
+				req = types.MsgIssueLicenseCredential{
 					Credential: &vc,
 					Owner:      regulator.String(),
 				}
@@ -447,7 +447,7 @@ func (suite *KeeperTestSuite) TestMsgSeverIssueLicenseCredential() {
 					didtypes.NewVerificationMethodIDFromAddress(regulator.String()),
 				)
 
-				req = vctypes.MsgIssueCredential{
+				req = types.MsgIssueLicenseCredential{
 					Credential: &vc,
 					Owner:      regulator.String(),
 				}
@@ -512,7 +512,7 @@ func (suite *KeeperTestSuite) TestMsgSeverIssueLicenseCredential() {
 					didtypes.NewVerificationMethodIDFromAddress(regulator.String()),
 				)
 
-				req = vctypes.MsgIssueCredential{
+				req = types.MsgIssueLicenseCredential{
 					Credential: &vc,
 					Owner:      regulator.String(),
 				}

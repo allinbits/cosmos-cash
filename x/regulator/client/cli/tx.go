@@ -97,7 +97,7 @@ that activates it.`,
 			}
 
 			// compose the message
-			msg := vctypes.NewMsgIssueCredential(
+			msg := types.NewMsgIssueRegulatorCredential(
 				signedVc,
 				signer.String(),
 			)
@@ -163,7 +163,7 @@ func IssueLicenseCredentialCmd() *cobra.Command {
 				return err
 			}
 
-			msg := vctypes.NewMsgIssueCredential(signedVc, accAddrBech32)
+			msg := types.NewMsgIssueLicenseCredential(signedVc, accAddrBech32)
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
@@ -216,7 +216,7 @@ func IssueRegistrationCredentialCmd() *cobra.Command {
 				return err
 			}
 
-			msg := vctypes.NewMsgIssueCredential(signedVc, accAddrBech32)
+			msg := types.NewMsgIssueRegistrationCredential(signedVc, accAddrBech32)
 
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},

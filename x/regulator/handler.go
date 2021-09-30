@@ -8,7 +8,6 @@ import (
 
 	"github.com/allinbits/cosmos-cash/x/regulator/keeper"
 	"github.com/allinbits/cosmos-cash/x/regulator/types"
-	vctypes "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 )
 
 // NewHandler ...
@@ -20,21 +19,15 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 
 		switch msg := msg.(type) {
 		// this line is used by starport scaffolding # 1
-		case *vctypes.MsgIssueCredential:
-			switch msg.Credential.CredentialSubject.(type) {
-			case *vctypes.VerifiableCredential_RegulatorCred:
-				res, err := msgServer.Activate(sdk.WrapSDKContext(ctx), msg)
-				return sdk.WrapServiceResult(ctx, res, err)
-			case *vctypes.VerifiableCredential_RegistrationCred:
-				res, err := msgServer.IssueRegistrationCredential(sdk.WrapSDKContext(ctx), msg)
-				return sdk.WrapServiceResult(ctx, res, err)
-			case *vctypes.VerifiableCredential_LicenseCred:
-				res, err := msgServer.IssueLicenseCredential(sdk.WrapSDKContext(ctx), msg)
-				return sdk.WrapServiceResult(ctx, res, err)
-			default:
-				errMsg := fmt.Sprintf("unrecognized credential %s message type: %T", types.ModuleName, msg)
-				return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
-			}
+		case *types.MsgIssueRegulatorCredential:
+			res, err := msgServer.IssueRegulatorCredential(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+		case *types.MsgIssueRegistrationCredential:
+			res, err := msgServer.IssueRegistrationCredential(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+		case *types.MsgIssueLicenseCredential:
+			res, err := msgServer.IssueLicenseCredential(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
 		default:
 			errMsg := fmt.Sprintf("unrecognized %s message type: %T", types.ModuleName, msg)
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)

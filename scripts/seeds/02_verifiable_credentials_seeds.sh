@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 echo "Create Regulator VC to activate the Regulator did"
 cosmos-cashd tx regulator activate-regulator-credential TheAuthority EU --did did:cosmos:net:cash:regulator \
 --from regulator --chain-id cash -y
@@ -29,6 +28,8 @@ did:cosmos:net:cash:emti-dollarlicense-credential did:cosmos:net:cash:regulator 
 MICAEMI PG "Yet Another Financial Services Body (YAFFB)" sUSD 10000 \
 --from regulator --chain-id cash -y
 
+sleep 5
+
 echo "Revoke the (sUSD) license"
 cosmos-cashd tx verifiablecredential revoke-credential \
 did:cosmos:net:cash:emti-dollarlicense-credential \
@@ -47,6 +48,8 @@ echo "Creating User VC for user bob"
 cosmos-cashd tx issuer issue-user-credential \
 did:cosmos:key:$(cosmos-cashd keys show bob -a) did:cosmos:cred:emti-user-bob did:cosmos:net:cash:emti zkp_secret 1000 1000 1000  \
 --from emti --chain-id cash -y
+
+sleep 5
 
 echo "Querying verifiable credentials"
 cosmos-cashd query verifiablecredential verifiable-credentials --output json | jq

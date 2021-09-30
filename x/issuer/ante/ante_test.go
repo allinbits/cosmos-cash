@@ -20,6 +20,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	authante "github.com/cosmos/cosmos-sdk/x/auth/ante"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -227,24 +228,35 @@ func (suite *AnteTestSuite) CreateTestAccounts(numAccs int) []TestAccount {
 	return accounts
 }
 
-func (suite *AnteTestSuite) CreateTestCredentials(testaccount TestAccount, kr keyring.Keyring, credID, issuerDID string) {
-	address := testaccount.acc.GetAddress()
-	did := didtypes.NewKeyDID(address.String())
-	vc := vctypes.NewUserVerifiableCredential(
-		credID,
+func (suite *AnteTestSuite) CreateTestCredentials(testaccount TestAccount, userID, credID, issuerDID string) {
+	didUser := "did:cosmos:cash:" + userID
+	vcIDUser := "did:cosmos:cash:" + credID
+	didDocUser, _ := didtypes.NewDidDocument(didUser, didtypes.WithVerifications(
+		didtypes.NewVerification(
+			didtypes.NewVerificationMethod(
+				"did:cosmos:cash:"+userID+"#key-1",
+				"did:cosmos:cash:any",
+				didtypes.NewPublicKeyMultibase(testaccount.acc.GetPubKey().Bytes(),
+					didtypes.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
+			),
+			[]string{didtypes.Authentication},
+			nil,
+		),
+	))
+	csUser := vctypes.NewUserCredentialSubject(
+		didDocUser.Id,
+		"root",
+		true,
+	)
+
+	vcUser := vctypes.NewUserVerifiableCredential(
+		vcIDUser,
 		issuerDID,
 		time.Now(),
-		vctypes.NewUserCredentialSubject(
-			did.String(),
-			"root",
-			true,
-		),
+		csUser,
 	)
-	vc, _ = vc.Sign(nil,
-		address,
-		didtypes.NewVerificationMethodIDFromAddress(address.String()),
-	)
-	suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+	suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vcUser.Id), vcUser)
+	suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDocUser.Id), didDocUser)
 }
 
 // KeyTestPubAddr generates a new secp256k1 keypair.
@@ -378,288 +390,218 @@ func (suite *AnteTestSuite) TestCheckUserCredentialDecorator() {
 			},
 			true,
 		},
-		//{
-		//	"FAIL: user has paused emoney token",
-		//	func() {
-		//		did := "did:cosmos:cash:subject"
-		//		vcID := "did:cosmos:cash:issuercred"
-		//		issuerAddress, _ := sdk.AccAddressFromBech32("cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
-		//		didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
-		//			didtypes.NewVerification(
-		//				didtypes.NewVerificationMethod(
-		//					"did:cosmos:cash:subject#key-1",
-		//					"did:cosmos:cash:subject",
-		//					didtypes.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215},
-		//						didtypes.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
-		//				),
-		//				[]string{didtypes.Authentication},
-		//				nil,
-		//			),
-		//		))
-		//		circulationLimit, _ := sdk.NewIntFromString("1000")
-		//		coin := sdk.NewCoin("seuro", circulationLimit)
-		//		cs := vctypes.NewLicenseCredentialSubject(
-		//			didDoc.Id,
-		//			"MICAEMI",
-		//			"IRL",
-		//			"Another Financial Services Body (AFFB)",
-		//			coin,
-		//		)
-		//
-		//		vc := vctypes.NewLicenseVerifiableCredential(
-		//			vcID,
-		//			didDoc.Id,
-		//			time.Now(),
-		//			cs,
-		//		)
-		//		suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
-		//		suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
-		//
-		//		accounts := suite.CreateTestAccounts(2)
-		//		suite.CreateTestCredentials(accounts[0], "user1", "kyccred1", didDoc.Id)
-		//		suite.CreateTestCredentials(accounts[1], "user2", "kyccred2", didDoc.Id)
-		//
-		//		issuer := issuertypes.Issuer{
-		//			Token:     "sEUR",
-		//			Fee:       1,
-		//			IssuerDid: didDoc.Id,
-		//			Paused:    true,
-		//		}
-		//
-		//		suite.issuerkeeper.SetIssuer(suite.ctx, issuer)
-		//
-		//		coins, _ := sdk.ParseCoinsNormalized("10000sEUR")
-		//		suite.bankkeeper.MintCoins(suite.ctx, banktypes.ModuleName, coins)
-		//		suite.bankkeeper.SendCoinsFromModuleToAccount(suite.ctx, banktypes.ModuleName, issuerAddress, coins)
-		//
-		//		sendingCoins, _ := sdk.ParseCoinsNormalized("10sEUR")
-		//		msg := banktypes.NewMsgSend(accounts[0].acc.GetAddress(), accounts[1].acc.GetAddress(), sendingCoins)
-		//
-		//		msgs = []sdk.Msg{msg}
-		//		suite.txBuilder = suite.clientCtx.TxConfig.NewTxBuilder()
-		//
-		//		suite.txBuilder.SetMsgs(msgs...)
-		//		tx = suite.txBuilder.GetTx()
-		//		simulate = false
-		//		errExp = sdkerrors.Wrapf(
-		//			issuertypes.ErrBankSendDisabled,
-		//			"the token being send has been blocked",
-		//		)
-		//
-		//	},
-		//	false,
-		//},
-		//{
-		//	"FAIL: from address does not have required did and credential",
-		//	func() {
-		//		did := "did:cosmos:cash:subject"
-		//		vcID := "did:cosmos:cash:issuercred"
-		//		issuerAddress, _ := sdk.AccAddressFromBech32("cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
-		//		didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
-		//			didtypes.NewVerification(
-		//				didtypes.NewVerificationMethod(
-		//					"did:cosmos:cash:subject#key-1",
-		//					"did:cosmos:cash:subject",
-		//					didtypes.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215},
-		//						didtypes.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
-		//				),
-		//				[]string{didtypes.Authentication},
-		//				nil,
-		//			),
-		//		))
-		//		circulationLimit, _ := sdk.NewIntFromString("1000")
-		//		coin := sdk.NewCoin("seuro", circulationLimit)
-		//		cs := vctypes.NewLicenseCredentialSubject(
-		//			didDoc.Id,
-		//			"MICAEMI",
-		//			"IRL",
-		//			"Another Financial Services Body (AFFB)",
-		//			coin,
-		//		)
-		//
-		//		vc := vctypes.NewLicenseVerifiableCredential(
-		//			vcID,
-		//			didDoc.Id,
-		//			time.Now(),
-		//			cs,
-		//		)
-		//		suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
-		//		suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
-		//
-		//		accounts := suite.CreateTestAccounts(2)
-		//		suite.CreateTestCredentials(accounts[1], "user2", "kyccred2", didDoc.Id)
-		//
-		//		issuer := issuertypes.Issuer{
-		//			Token:     "sEUR",
-		//			Fee:       1,
-		//			IssuerDid: didDoc.Id,
-		//			Paused:    false,
-		//		}
-		//
-		//		suite.issuerkeeper.SetIssuer(suite.ctx, issuer)
-		//
-		//		coins, _ := sdk.ParseCoinsNormalized("10000sEUR")
-		//		suite.bankkeeper.MintCoins(suite.ctx, banktypes.ModuleName, coins)
-		//		suite.bankkeeper.SendCoinsFromModuleToAccount(suite.ctx, banktypes.ModuleName, issuerAddress, coins)
-		//
-		//		sendingCoins, _ := sdk.ParseCoinsNormalized("10sEUR")
-		//		msg := banktypes.NewMsgSend(accounts[0].acc.GetAddress(), accounts[1].acc.GetAddress(), sendingCoins)
-		//
-		//		msgs = []sdk.Msg{msg}
-		//		suite.txBuilder = suite.clientCtx.TxConfig.NewTxBuilder()
-		//
-		//		suite.txBuilder.SetMsgs(msgs...)
-		//		tx = suite.txBuilder.GetTx()
-		//		simulate = false
-		//		errExp = sdkerrors.Wrapf(
-		//			issuertypes.ErrIncorrectUserCredential,
-		//			"did document does not have a User credential to send e-money tokens",
-		//		)
-		//
-		//	},
-		//	false,
-		//},
-		//{
-		//	"FAIL: to address does not have required did and credential",
-		//	func() {
-		//		did := "did:cosmos:cash:subject"
-		//		vcID := "did:cosmos:cash:issuercred"
-		//		issuerAddress, _ := sdk.AccAddressFromBech32("cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
-		//		didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
-		//			didtypes.NewVerification(
-		//				didtypes.NewVerificationMethod(
-		//					"did:cosmos:cash:subject#key-1",
-		//					"did:cosmos:cash:subject",
-		//					didtypes.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215},
-		//						didtypes.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
-		//				),
-		//				[]string{didtypes.Authentication},
-		//				nil,
-		//			),
-		//		))
-		//		circulationLimit, _ := sdk.NewIntFromString("1000")
-		//		coin := sdk.NewCoin("seuro", circulationLimit)
-		//		cs := vctypes.NewLicenseCredentialSubject(
-		//			didDoc.Id,
-		//			"MICAEMI",
-		//			"IRL",
-		//			"Another Financial Services Body (AFFB)",
-		//			coin,
-		//		)
-		//
-		//		vc := vctypes.NewLicenseVerifiableCredential(
-		//			vcID,
-		//			didDoc.Id,
-		//			time.Now(),
-		//			cs,
-		//		)
-		//		suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
-		//		suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
-		//
-		//		accounts := suite.CreateTestAccounts(2)
-		//		suite.CreateTestCredentials(accounts[0], "user1", "kyccred1", didDoc.Id)
-		//
-		//		issuer := issuertypes.Issuer{
-		//			Token:     "sEUR",
-		//			Fee:       1,
-		//			IssuerDid: didDoc.Id,
-		//			Paused:    false,
-		//		}
-		//
-		//		suite.issuerkeeper.SetIssuer(suite.ctx, issuer)
-		//
-		//		coins, _ := sdk.ParseCoinsNormalized("10000sEUR")
-		//		suite.bankkeeper.MintCoins(suite.ctx, banktypes.ModuleName, coins)
-		//		suite.bankkeeper.SendCoinsFromModuleToAccount(suite.ctx, banktypes.ModuleName, issuerAddress, coins)
-		//
-		//		sendingCoins, _ := sdk.ParseCoinsNormalized("10sEUR")
-		//		msg := banktypes.NewMsgSend(accounts[0].acc.GetAddress(), accounts[1].acc.GetAddress(), sendingCoins)
-		//
-		//		msgs = []sdk.Msg{msg}
-		//		suite.txBuilder = suite.clientCtx.TxConfig.NewTxBuilder()
-		//
-		//		suite.txBuilder.SetMsgs(msgs...)
-		//		tx = suite.txBuilder.GetTx()
-		//		simulate = false
-		//		errExp = sdkerrors.Wrapf(
-		//			issuertypes.ErrIncorrectUserCredential,
-		//			"did document does not have a User credential to send e-money tokens",
-		//		)
-		//
-		//	},
-		//	false,
-		//},
-		//{
-		//	"FAIL: to address does not have a public key in the account store",
-		//	func() {
-		//		did := "did:cosmos:cash:subject"
-		//		vcID := "did:cosmos:cash:issuercred"
-		//		issuerAddress, _ := sdk.AccAddressFromBech32("cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
-		//		didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
-		//			didtypes.NewVerification(
-		//				didtypes.NewVerificationMethod(
-		//					"did:cosmos:cash:subject#key-1",
-		//					"did:cosmos:cash:subject",
-		//					didtypes.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215},
-		//						didtypes.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
-		//				),
-		//				[]string{didtypes.Authentication},
-		//				nil,
-		//			),
-		//		))
-		//		circulationLimit, _ := sdk.NewIntFromString("1000")
-		//		coin := sdk.NewCoin("seuro", circulationLimit)
-		//		cs := vctypes.NewLicenseCredentialSubject(
-		//			didDoc.Id,
-		//			"MICAEMI",
-		//			"IRL",
-		//			"Another Financial Services Body (AFFB)",
-		//			coin,
-		//		)
-		//
-		//		vc := vctypes.NewLicenseVerifiableCredential(
-		//			vcID,
-		//			didDoc.Id,
-		//			time.Now(),
-		//			cs,
-		//		)
-		//		suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
-		//		suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
-		//
-		//		accounts := suite.CreateTestAccounts(1)
-		//		suite.CreateTestCredentials(accounts[0], "user1", "kyccred1", didDoc.Id)
-		//
-		//		issuer := issuertypes.Issuer{
-		//			Token:     "sEUR",
-		//			Fee:       1,
-		//			IssuerDid: didDoc.Id,
-		//			Paused:    false,
-		//		}
-		//
-		//		suite.issuerkeeper.SetIssuer(suite.ctx, issuer)
-		//
-		//		coins, _ := sdk.ParseCoinsNormalized("10000sEUR")
-		//		suite.bankkeeper.MintCoins(suite.ctx, banktypes.ModuleName, coins)
-		//		suite.bankkeeper.SendCoinsFromModuleToAccount(suite.ctx, banktypes.ModuleName, issuerAddress, coins)
-		//
-		//		sendingCoins, _ := sdk.ParseCoinsNormalized("10sEUR")
-		//		acc, _ := sdk.AccAddressFromBech32("cosmos1c3dmkzyjyj2gs7zcp5qjq40js963a0q7sxrtxj")
-		//		msg := banktypes.NewMsgSend(accounts[0].acc.GetAddress(), acc, sendingCoins)
-		//
-		//		msgs = []sdk.Msg{msg}
-		//		suite.txBuilder = suite.clientCtx.TxConfig.NewTxBuilder()
-		//
-		//		suite.txBuilder.SetMsgs(msgs...)
-		//		tx = suite.txBuilder.GetTx()
-		//		simulate = false
-		//		errExp = sdkerrors.Wrapf(
-		//			issuertypes.ErrPublicKeyNotFound,
-		//			"user has not created a did and has no public key associated with their account",
-		//		)
-		//
-		//	},
-		//	false,
-		//},
+		{
+			"FAIL: user has paused emoney token",
+			func() {
+				did := "did:cosmos:cash:subject"
+				vcID := "did:cosmos:cash:issuercred"
+				issuerAddress, _ := sdk.AccAddressFromBech32("cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
+					didtypes.NewVerification(
+						didtypes.NewVerificationMethod(
+							"did:cosmos:cash:subject#key-1",
+							"did:cosmos:cash:subject",
+							didtypes.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215},
+								didtypes.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
+						),
+						[]string{didtypes.Authentication},
+						nil,
+					),
+				))
+				circulationLimit, _ := sdk.NewIntFromString("1000")
+				coin := sdk.NewCoin("seuro", circulationLimit)
+				cs := vctypes.NewLicenseCredentialSubject(
+					didDoc.Id,
+					"MICAEMI",
+					"IRL",
+					"Another Financial Services Body (AFFB)",
+					coin,
+				)
+
+				vc := vctypes.NewLicenseVerifiableCredential(
+					vcID,
+					didDoc.Id,
+					time.Now(),
+					cs,
+				)
+				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+
+				accounts := suite.CreateTestAccounts(2)
+				suite.CreateTestCredentials(accounts[0], "user1", "kyccred1", didDoc.Id)
+				suite.CreateTestCredentials(accounts[1], "user2", "kyccred2", didDoc.Id)
+
+				issuer := issuertypes.Issuer{
+					Token:     "sEUR",
+					Fee:       1,
+					IssuerDid: didDoc.Id,
+					Paused:    true,
+				}
+
+				suite.issuerkeeper.SetIssuer(suite.ctx, issuer)
+
+				coins, _ := sdk.ParseCoinsNormalized("10000sEUR")
+				suite.bankkeeper.MintCoins(suite.ctx, banktypes.ModuleName, coins)
+				suite.bankkeeper.SendCoinsFromModuleToAccount(suite.ctx, banktypes.ModuleName, issuerAddress, coins)
+
+				sendingCoins, _ := sdk.ParseCoinsNormalized("10sEUR")
+				msg := banktypes.NewMsgSend(accounts[0].acc.GetAddress(), accounts[1].acc.GetAddress(), sendingCoins)
+
+				msgs = []sdk.Msg{msg}
+				suite.txBuilder = suite.clientCtx.TxConfig.NewTxBuilder()
+
+				suite.txBuilder.SetMsgs(msgs...)
+				tx = suite.txBuilder.GetTx()
+				simulate = false
+				errExp = sdkerrors.Wrapf(
+					issuertypes.ErrBankSendDisabled,
+					"the token being send has been blocked",
+				)
+
+			},
+			false,
+		},
+		{
+			"FAIL: from address does not have required did and credential",
+			func() {
+				did := "did:cosmos:cash:subject"
+				vcID := "did:cosmos:cash:issuercred"
+				issuerAddress, _ := sdk.AccAddressFromBech32("cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
+					didtypes.NewVerification(
+						didtypes.NewVerificationMethod(
+							"did:cosmos:cash:subject#key-1",
+							"did:cosmos:cash:subject",
+							didtypes.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215},
+								didtypes.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
+						),
+						[]string{didtypes.Authentication},
+						nil,
+					),
+				))
+				circulationLimit, _ := sdk.NewIntFromString("1000")
+				coin := sdk.NewCoin("seuro", circulationLimit)
+				cs := vctypes.NewLicenseCredentialSubject(
+					didDoc.Id,
+					"MICAEMI",
+					"IRL",
+					"Another Financial Services Body (AFFB)",
+					coin,
+				)
+
+				vc := vctypes.NewLicenseVerifiableCredential(
+					vcID,
+					didDoc.Id,
+					time.Now(),
+					cs,
+				)
+				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+
+				accounts := suite.CreateTestAccounts(2)
+				suite.CreateTestCredentials(accounts[1], "user2", "kyccred2", didDoc.Id)
+
+				issuer := issuertypes.Issuer{
+					Token:     "sEUR",
+					Fee:       1,
+					IssuerDid: didDoc.Id,
+					Paused:    false,
+				}
+
+				suite.issuerkeeper.SetIssuer(suite.ctx, issuer)
+
+				coins, _ := sdk.ParseCoinsNormalized("10000sEUR")
+				suite.bankkeeper.MintCoins(suite.ctx, banktypes.ModuleName, coins)
+				suite.bankkeeper.SendCoinsFromModuleToAccount(suite.ctx, banktypes.ModuleName, issuerAddress, coins)
+
+				sendingCoins, _ := sdk.ParseCoinsNormalized("10sEUR")
+				msg := banktypes.NewMsgSend(accounts[0].acc.GetAddress(), accounts[1].acc.GetAddress(), sendingCoins)
+
+				msgs = []sdk.Msg{msg}
+				suite.txBuilder = suite.clientCtx.TxConfig.NewTxBuilder()
+
+				suite.txBuilder.SetMsgs(msgs...)
+				tx = suite.txBuilder.GetTx()
+				simulate = false
+				errExp = sdkerrors.Wrapf(
+					issuertypes.ErrIncorrectUserCredential,
+					"did document does not have a User credential to send e-money tokens",
+				)
+
+			},
+			false,
+		},
+		{
+			"FAIL: to address does not have a public key in the account store",
+			func() {
+				did := "did:cosmos:cash:subject"
+				vcID := "did:cosmos:cash:issuercred"
+				issuerAddress, _ := sdk.AccAddressFromBech32("cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
+					didtypes.NewVerification(
+						didtypes.NewVerificationMethod(
+							"did:cosmos:cash:subject#key-1",
+							"did:cosmos:cash:subject",
+							didtypes.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215},
+								didtypes.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
+						),
+						[]string{didtypes.Authentication},
+						nil,
+					),
+				))
+				circulationLimit, _ := sdk.NewIntFromString("1000")
+				coin := sdk.NewCoin("seuro", circulationLimit)
+				cs := vctypes.NewLicenseCredentialSubject(
+					didDoc.Id,
+					"MICAEMI",
+					"IRL",
+					"Another Financial Services Body (AFFB)",
+					coin,
+				)
+
+				vc := vctypes.NewLicenseVerifiableCredential(
+					vcID,
+					didDoc.Id,
+					time.Now(),
+					cs,
+				)
+				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+
+				accounts := suite.CreateTestAccounts(1)
+				suite.CreateTestCredentials(accounts[0], "user1", "kyccred1", didDoc.Id)
+
+				issuer := issuertypes.Issuer{
+					Token:     "sEUR",
+					Fee:       1,
+					IssuerDid: didDoc.Id,
+					Paused:    false,
+				}
+
+				suite.issuerkeeper.SetIssuer(suite.ctx, issuer)
+
+				coins, _ := sdk.ParseCoinsNormalized("10000sEUR")
+				suite.bankkeeper.MintCoins(suite.ctx, banktypes.ModuleName, coins)
+				suite.bankkeeper.SendCoinsFromModuleToAccount(suite.ctx, banktypes.ModuleName, issuerAddress, coins)
+
+				sendingCoins, _ := sdk.ParseCoinsNormalized("10sEUR")
+				acc, _ := sdk.AccAddressFromBech32("cosmos1gqwg45tlnss3t6u29pjf2tjjl77gxerj8f3llp")
+				msg := banktypes.NewMsgSend(acc, accounts[0].acc.GetAddress(), sendingCoins)
+
+				msgs = []sdk.Msg{msg}
+				suite.txBuilder = suite.clientCtx.TxConfig.NewTxBuilder()
+
+				suite.txBuilder.SetMsgs(msgs...)
+				tx = suite.txBuilder.GetTx()
+				simulate = false
+				errExp = sdkerrors.Wrapf(
+					issuertypes.ErrPublicKeyNotFound,
+					"user has not created a did and has no public key associated with their account",
+				)
+
+			},
+			false,
+		},
 	}
 	for _, tc := range testCases {
 		tc.malleate()

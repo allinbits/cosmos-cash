@@ -62,12 +62,9 @@ func (cicd CheckUserCredentialsDecorator) AnteHandle(
 				)
 			}
 
-			vcs := cicd.vcsk.GetAllVerifiableCredentialsWithCondition(ctx, []byte(issuer.IssuerDid), func(vc vctypes.VerifiableCredential) bool {
-				if vc.Issuer == issuer.IssuerDid {
-					return true
-				}
-				return false
-			})
+			// get all the verifiable credential associated with the issuer
+			// TODO: return a map of credential subject id to issued credential to use on L#113
+			vcs := cicd.vcsk.GetAllVerifiableCredentialsByIssuer(ctx, issuer.IssuerDid)
 
 			if found {
 				// validate that kyc credentials have been issued to the `FromAddress`
@@ -112,7 +109,7 @@ func (cicd CheckUserCredentialsDecorator) validateUserCredential(
 	pubkey := account.GetPubKey()
 	dids := cicd.ik.GetDidDocumentsByPubKey(ctx, pubkey)
 
-	// TODO: this is brute force, find a better way
+	// TODO: this is brute force, find a better way, see L#66
 	if len(dids) > 0 {
 		for _, vc := range vcs {
 			for _, did := range dids {

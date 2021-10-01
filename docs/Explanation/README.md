@@ -32,7 +32,7 @@ To contribute, create a folder in [topics](./topics) with a self-descriptive nam
 
 ### Presentations
 
-The [Presentations](PRESENTATIONS.md) file describes and links to presentations about Cosmos Cash at various events. Presentations also include YouTube videos,  podcasts, interviews, and so on. 
+The [Presentations](presentations.md) file describes and links to presentations about Cosmos Cash at various events. Presentations also include YouTube videos,  podcasts, interviews, and so on. 
 
 
 ### Architecture Decisions Records (ADRs)

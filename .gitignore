@@ -44,3 +44,6 @@ cscope.out
 
 # build directory
 build
+
+# generated docs
+site

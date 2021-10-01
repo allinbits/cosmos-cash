@@ -30,7 +30,7 @@ Reference Documentation will come in various forms:
 * [Module specifications and designs](./MODULES.md) - By convention, module documentation in the Cosmos SDK is stored with the module itself. However, we propose that the easiest way for a new user to find documentation is to store the documentation at the root `docs` folder. To accomodate this module, the documentation will follow the existing convention, but the content will be reference from this section.
 * **Code-level documentation** - The text that is part of the code and is used to auto-generate the documentation from the code.
 * **API reference** - Including REST and gRPC endpoints.
-* [Glossary](,.GLOSSARY.md) - a dictionary of domain-relevant terms. This glossary can be used in conjunction with the [Cosmos Network Glossary](https://v1.cosmos.network/glossary).
+* [Glossary](GLOSSARY.md) - a dictionary of domain-relevant terms. This glossary can be used in conjunction with the [Cosmos Network Glossary](https://v1.cosmos.network/glossary).
 
 ## Reference
 

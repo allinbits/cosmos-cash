@@ -59,7 +59,7 @@ In the case of the EU, regulation can extend across multiple jurisdiction, speci
 
 ### Terminology
 
-See [Glossary](../../reference/Glossary.md) for specific terms.
+See [Glossary](../../Reference/GLOSSARY.md) for specific terms.
 
 > **NOTES:** 
 > In this ADR we SHALL USE `legal person` rather than `legal entity`. The terms are interchangeable, but `legal person` has a legal meaning. Note that W3C documentation uses `legal entity` when it refers to `legal person`

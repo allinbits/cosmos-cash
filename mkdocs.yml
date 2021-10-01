@@ -1,0 +1,18 @@
+site_name: Cosmos Cash Documentation
+repo_url: https://github.com/allinbits/cosmos-cash
+theme: material
+# nav:
+#     - Home: README.md
+#     - ADRs:
+#         - 'ADR-002: Documentation structure': Explanation/ADR/adr-002-docs-structure.md
+#         - 'ADR-003: E-Money Token Issuer': Explanation/ADR/adr-003-issuer.md
+#         - 'ADR-004: Decentralized Identifier (DID)': Explanation/ADR/adr-004-did.md
+#         - 'ADR-005: Registration Credential': Explanation/ADR/adr-005-registration-credential.md
+#         - 'ADR-006: License Credential': Explanation/ADR/adr-006-license-credential.md
+#     - Modules:
+#         - 'DID': ../x/did/README.md
+#         - 'Issuer': ../x/did/README.md
+#         - 'Regulator': ../x/did/README.md
+#     - 'Contributing': '../CONTRIBUTING.md'
+#     - 'Bug Tracker': 'https://github.com/allinbits/cosmos-cash/'
+

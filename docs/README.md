@@ -2,10 +2,10 @@
 
 How to use the Cosmos Cash Documentation.
 
-* [Documentation](#documentation)
-   * [Overview](#overview)
-   * [Contributing](#contributing)
-   * [Reference](#reference)
+- [Documentation](#documentation)
+  - [Overview](#overview)
+  - [Contributing](#contributing)
+  - [Reference](#reference)
 
 ## Overview
 
@@ -18,7 +18,7 @@ This approach outlines four specific use cases for documentation:
 * [Explanation](./Explanation/README.md)
 * [Reference](./Reference/README.md)
 
-For further background please see [the ADR relating to the documentation structure](./ADR/adr-002-docs-structure.md). 
+For further background please see [the ADR relating to the documentation structure](./Explanation/ADR/adr-002-docs-structure.md). 
 
 ## Contributing
 

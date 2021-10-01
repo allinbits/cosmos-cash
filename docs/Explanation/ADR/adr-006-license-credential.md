@@ -49,7 +49,7 @@ In the case of the EU, regulation can extend across multiple jurisdictions throu
 
 ### Terminology
 
-See [Glossary](../../reference/Glossary.md) for specific terms.
+See [Glossary](../../Reference/GLOSSARY.md) for specific terms.
 
 > **DISCUSSION NOTES:** 
 > - Need to decide between 'legal person' and `legal entity`. `legal person` has a legal meaning, but `legal entity` is closer to W3C documentation where it refers to "entities"

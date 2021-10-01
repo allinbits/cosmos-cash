@@ -87,13 +87,13 @@ In addition to legislation, the EU Commission has also been promoting a digital 
 
 Financial legislation is guided and implemented through a network of international and national level bodies. The scope of each body defined as as per the table below [@Judge:CryptoLandscape]:
 
-![Authorities involved in the legal and regulatory framework](./imgs/CosmosCashRegs/RegulatorTable.png)
+![Authorities involved in the legal and regulatory framework](../imgs/CosmosCashRegs/RegulatorTable.png)
 
 A number of supranational and intergovernmental bodies such as Bank of International Settlements (BIS), and the Financial Action Task Force (FATF), with respect to their role and responsibilities, advise on best practice, policy and standards. For BIS this is central bank and monetary policy; for FATF this is money laundering and terrorism financing.
 
 Within the European Union (EU) the commission turn policy and guidelines - like FATF recommendations - into draft legislation which is then approved by the European Parliament and the Council of Minsters.
 
-![Organigram of the European political system. The seven organs of the Union are in blue, national / intergovernmental elements in orange. (Source: Wikipedia)](./imgs/CosmosCashRegs/EuOmnigram.png)
+![Organigram of the European political system. The seven organs of the Union are in blue, national / intergovernmental elements in orange. (Source: Wikipedia)](../imgs/CosmosCashRegs/EuOmnigram.png)
 
 The commission drafts legislation in two forms: regulation and directives. As per the [Europa.org](https://europa.eu/european-union/law/legal-acts_en) website, they are defined as follows:
 
@@ -150,7 +150,7 @@ Which, unsurprisingly, is close to the definition of stablecoins (and by extensi
 
 MiCA addresses crypto-assets. In particular it focuses on a number of sub-types that represent either a claim on an economic asset, method of payment or for another utility (permissions etc.):
 
-![Crypto-Asset class definitions as per MiCA](./imgs/CosmosCashRegs/TokenTaxonomy.png)
+![Crypto-Asset class definitions as per MiCA](../imgs/CosmosCashRegs/TokenTaxonomy.png)
 
 **Economic assets**
 
@@ -342,7 +342,7 @@ FATF[@FATF:G20Guidance] recommendations have a similar concept called VASPs (Vir
 
 This definition is relevant because it imposes AML/CFT requirements. The table below maps roles in a centralised stablecoin network to AML/CFT obligations. 
 
-![Functions subject to AML/CFT obligations in known centralised so-called stablecoin arrangements [@FATF:G20Guidance]](./imgs/CosmosCashRegs/StablecoinRoleMap.png)
+![Functions subject to AML/CFT obligations in known centralised so-called stablecoin arrangements [@FATF:G20Guidance]](../imgs/CosmosCashRegs/StablecoinRoleMap.png)
 
 From the above it is clear that where there is a "gateway" into the network there is a AML/CFT responsibility, which implies
 
@@ -482,7 +482,7 @@ First question: Does MiCA apply? According to Article 43(1), last paragraph, an 
 
 Given Cosmos Cash references a Union currency then the following will apply:
 
-![Regulations relevant for E-Money tokens](./imgs/CosmosCashRegs/RelevantRegulation.png){width=50%}
+![Regulations relevant for E-Money tokens](../imgs/CosmosCashRegs/RelevantRegulation.png){width=50%}
 
 ### Issuers
 
@@ -596,7 +596,7 @@ This framework on the blockchain is designed to allow the creation of a communit
 
 Once the community of institutions is established, they can then begin the process of creating instruments to trade, which are restricted to the registered institutions to ensure compliance.In this respect, an open point of MiCA deals with exchanges and trading venues supporting E-Money Tokens: one question to ask is if they will require a specific license as payment service providers or EMI to support such transactions! It is the view of Amagis and this paper that this is the most likely in view of the approach adopted in MiCA.
 
-![On-chain framework to facilitate compliance with national regulations (courtesy: Martin Worner)](./imgs/CosmosCashRegs/SelfSovereignGardenWalls.png)
+![On-chain framework to facilitate compliance with national regulations (courtesy: Martin Worner)](../imgs/CosmosCashRegs/SelfSovereignGardenWalls.png)
 
 ## Potential users
 
@@ -651,7 +651,7 @@ Through the analysis over the course of this paper, the identified actors needed
 
 This represents a preliminary architecture diagram to illustrate the segmentation of the protocol from the holistic application.
 
-![Initial Protocol Architecture](./imgs/CosmosCashRegs/ComsosCashArchitecture.png)
+![Initial Protocol Architecture](../imgs/CosmosCashRegs/ComsosCashArchitecture.png)
 
 ## "Known knowns" and "Known unknowns"
 
@@ -671,7 +671,7 @@ Decentralised identifiers[@Sporny:20:DI] and verifiable credentials[@Sporny:19:V
 
 Another aspect that has been identified for regulatory compliance is the risk based approach to AML. The initial idea developed with Confio consists of mapping to an AML profile. Each profile represents a different risk profile and corresponds to increased checks. So, for example, a politically exposed person or company in a high risk industry would have a higher classification than a low risk user. 
 
-![AML Process with AML profiles (courtesy: Martin Worner)](./imgs/CosmosCashRegs/AMLProfiler.png)
+![AML Process with AML profiles (courtesy: Martin Worner)](../imgs/CosmosCashRegs/AMLProfiler.png)
 
 This leads to the second point, which is the proposal to remove send transations. This is handled by an AML function that reviews the transaction against the users' AML profile. Non-acknowledgements are referred to the regulator (or other actor) for intervention.
 

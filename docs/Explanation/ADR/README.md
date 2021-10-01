@@ -35,4 +35,4 @@ When writing ADRs, follow the same best practices for writing RFCs. When writing
 
 ## ADR Table of Contents
 
-- [ADR XXX: Self Sovereign Identity](./adr-001-self-sovereign-identity.md)
+- [ADR XXX: Self Sovereign Identity](./adr-002-docs-structure.md)

@@ -2,8 +2,51 @@
 ## [Unreleased]
 
 
-<a name="1.0.0"></a>
-## [1.0.0] - 2021-08-18
+<a name="v2.0.0"></a>
+## [v2.0.0] - 2021-10-01
+### Chore
+- upgrade cosmos-sdk to version v0.44 ([#237](https://github.com/allinbits/cosmos-cash/issues/237))
+- use EcdsaSecp256k1VerificationKey2019 as vm type ([#221](https://github.com/allinbits/cosmos-cash/issues/221))
+
+### Docs
+- add links to how-to readme page ([#217](https://github.com/allinbits/cosmos-cash/issues/217))
+- ADR for the DID module ([#175](https://github.com/allinbits/cosmos-cash/issues/175))
+- link documentation in the root README ([#203](https://github.com/allinbits/cosmos-cash/issues/203))
+
+### Feat
+- verfiable credential proof verification ([#258](https://github.com/allinbits/cosmos-cash/issues/258))
+- add regulator module  ([#247](https://github.com/allinbits/cosmos-cash/issues/247))
+- validate controller did ([#252](https://github.com/allinbits/cosmos-cash/issues/252))
+- ADR License and registration credential design ([#177](https://github.com/allinbits/cosmos-cash/issues/177))
+- add license credential to verifiable credential module ([#200](https://github.com/allinbits/cosmos-cash/issues/200))
+- improve support for the DID module (according to adr) ([#230](https://github.com/allinbits/cosmos-cash/issues/230))
+- support cosmos-sdk-v0.43 key format ([#220](https://github.com/allinbits/cosmos-cash/issues/220))
+- **creds:** restructure vc module to make refactoring easier ([#235](https://github.com/allinbits/cosmos-cash/issues/235))
+- **creds:** adding functionality to delete verifiable credentials fr… ([#224](https://github.com/allinbits/cosmos-cash/issues/224))
+- **docs:** READMEs for docs, Explanation and Reference Documentation ([#148](https://github.com/allinbits/cosmos-cash/issues/148)) ([#168](https://github.com/allinbits/cosmos-cash/issues/168))
+- **issuer:** issuer can pause their emoney token ([#251](https://github.com/allinbits/cosmos-cash/issues/251))
+- **issuer:** credential checks for  sending/minting/burning tokens ([#246](https://github.com/allinbits/cosmos-cash/issues/246))
+
+### Fix
+- ensure safe and consistent updates for verification relationships ([#219](https://github.com/allinbits/cosmos-cash/issues/219))
+
+### Test
+- fix compiler error ([#226](https://github.com/allinbits/cosmos-cash/issues/226))
+- **ante:** adding ante handler tests ([#254](https://github.com/allinbits/cosmos-cash/issues/254))
+
+### BREAKING CHANGE
+
+the did method schema has changed according to the ADR
+
+replace verification method type EcdsaSecp256k1RecoveryMethod2020 with EcdsaSecp256k1VerificationKey2019
+
+replace the cli command add-verification-relationship with set-verification-relationships
+
+remove support for legacy key format
+
+
+<a name="v1.0.0"></a>
+## [v1.0.0] - 2021-08-18
 ### Chore
 - rename verifiable-cerdential module ([#167](https://github.com/allinbits/cosmos-cash/issues/167))
 - comment formatting in cli transaction ([#161](https://github.com/allinbits/cosmos-cash/issues/161))
@@ -126,7 +169,8 @@
 - **integration-test:** restructure app.go and fix RegisterTxService
 
 
-[Unreleased]: https://github.com/allinbits/cosmos-cash/compare/1.0.0...HEAD
-[1.0.0]: https://github.com/allinbits/cosmos-cash/compare/v0.2.0...1.0.0
+[Unreleased]: https://github.com/allinbits/cosmos-cash/compare/v2.0.0...HEAD
+[v2.0.0]: https://github.com/allinbits/cosmos-cash/compare/v1.0.0...v2.0.0
+[v1.0.0]: https://github.com/allinbits/cosmos-cash/compare/v0.2.0...v1.0.0
 [v0.2.0]: https://github.com/allinbits/cosmos-cash/compare/v0.2.0-pre...v0.2.0
 [v0.2.0-pre]: https://github.com/allinbits/cosmos-cash/compare/v21.06.03...v0.2.0-pre

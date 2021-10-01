@@ -23,11 +23,11 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgCreateIssuer{},
 		&MsgBurnToken{},
 		&MsgMintToken{},
+		&MsgPauseToken{},
 	)
 }
 
 var (
-	amino = codec.NewLegacyAmino()
-	// ModuleCdc the Amino codec
-	ModuleCdc = codec.NewAminoCodec(amino)
+	// ModuleCdc codec used by the module (protobuf)
+	ModuleCdc = codec.NewProtoCodec(cdctypes.NewInterfaceRegistry())
 )

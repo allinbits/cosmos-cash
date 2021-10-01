@@ -19,125 +19,148 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateIssuer() {
 		malleate func()
 		expPass  bool
 	}{
-		//{
-		//	"PASS: issuer can be created",
-		//	func() {
-		//		did := fmt.Sprint("did:cosmos:net:", suite.ctx.ChainID(), ":"+suite.GetAliceAddress().String())
-		//		vmID := fmt.Sprint(did, "#", suite.GetAliceAddress().String())
-		//		didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
-		//			didtypes.NewVerification(
-		//				didtypes.NewVerificationMethod(
-		//					vmID,
-		//					didtypes.DID(did),
-		//					didtypes.NewBlockchainAccountID(suite.ctx.ChainID(), suite.GetAliceAddress().String()),
-		//				),
-		//				[]string{didtypes.Authentication},
-		//				nil,
-		//			),
-		//		))
-		//		circulationLimit, _ := sdk.NewIntFromString("1000")
-		//		coin := sdk.NewCoin("seuro", circulationLimit)
-		//		cs := vctypes.NewLicenseCredentialSubject(
-		//			didDoc.Id,
-		//			"MICAEMI",
-		//			"IRL",
-		//			"Another Financial Services Body (AFFB)",
-		//			coin,
-		//		)
-		//
-		//		vc := vctypes.NewLicenseVerifiableCredential(
-		//			"issuer-licence-credential",
-		//			didDoc.Id,
-		//			time.Now(),
-		//			cs,
-		//		)
-		//
-		//		suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
-		//		signedVC, _ := vc.Sign(suite.keyring, suite.GetAliceAddress(), did)
-		//		suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), signedVC)
-		//		req = *types.NewMsgCreateIssuer(
-		//			didDoc.Id,
-		//			vc.Id,
-		//			"seuro",
-		//			100,
-		//			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
-		//		)
-		//	},
-		//	true,
-		//},
-		//{
-		//	"FAIL: signer not in provided did document",
-		//	func() {
-		//		did := "did:cosmos:cash:subject"
-		//		vcID := "did:cosmos:cash:issuercred"
-		//		didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
-		//			didtypes.NewVerification(
-		//				didtypes.NewVerificationMethod(
-		//					"did:cosmos:cash:subject#key-1",
-		//					"did:cosmos:cash:subject",
-		//					didtypes.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215},
-		//						didtypes.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
-		//				),
-		//				[]string{didtypes.Authentication},
-		//				nil,
-		//			),
-		//		))
-		//		circulationLimit, _ := sdk.NewIntFromString("1000")
-		//		coin := sdk.NewCoin("seuro", circulationLimit)
-		//		cs := vctypes.NewLicenseCredentialSubject(
-		//			didDoc.Id,
-		//			"MICAEMI",
-		//			"IRL",
-		//			"Another Financial Services Body (AFFB)",
-		//			coin,
-		//		)
-		//
-		//		vc := vctypes.NewLicenseVerifiableCredential(
-		//			vcID,
-		//			didDoc.Id,
-		//			time.Now(),
-		//			cs,
-		//		)
-		//		suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
-		//		suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
-		//		req = *types.NewMsgCreateIssuer(
-		//			didDoc.Id,
-		//			vcID,
-		//			"seuro",
-		//			100,
-		//			"fail",
-		//		)
-		//	},
-		//	false,
-		//},
-		//{
-		//	"FAIL: verifiable credential not found in store",
-		//	func() {
-		//		did := "did:cosmos:cash:subject"
-		//		vcID := "did:cosmos:cash:issuercred:2"
-		//		didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
-		//			didtypes.NewVerification(
-		//				didtypes.NewVerificationMethod(
-		//					"did:cosmos:cash:subject#key-1",
-		//					"did:cosmos:cash:subject",
-		//					didtypes.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215},
-		//						didtypes.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
-		//				),
-		//				[]string{didtypes.Authentication},
-		//				nil,
-		//			),
-		//		))
-		//		suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
-		//		req = *types.NewMsgCreateIssuer(
-		//			didDoc.Id,
-		//			vcID,
-		//			"seuro",
-		//			100,
-		//			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
-		//		)
-		//	},
-		//	false,
-		//},
+		{
+			"PASS: issuer can be created",
+			func() {
+				var vc vctypes.VerifiableCredential
+				// Requires an active regulator
+				regulator := suite.GetRegulatorAddress()
+				regulatorDID := didtypes.NewKeyDID(regulator.String())
+				// regulator verifiable credentials
+				vc = vctypes.NewRegulatorVerifiableCredential(
+					"regulator-credential",
+					regulatorDID.String(),
+					time.Now(),
+					vctypes.NewRegulatorCredentialSubject(
+						regulatorDID.String(),
+						"The Regulator",
+						"EU",
+					),
+				)
+				vc, _ = vc.Sign(
+					suite.keyring, suite.GetRegulatorAddress(),
+					didtypes.NewVerificationMethodIDFromAddress(regulator.String()),
+				)
+				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				// Require a registration credential
+				vc = vctypes.NewRegistrationVerifiableCredential(
+					"registration-credential-for-emti",
+					regulatorDID.String(),
+					time.Now(),
+					vctypes.NewRegistrationCredentialSubject(
+						didtypes.NewKeyDID(suite.GetEMTiAddress().String()).String(),
+						"EU",
+						"emti",
+						"E-Money Token Issuer",
+					),
+				)
+				vc, _ = vc.Sign(
+					suite.keyring, suite.GetRegulatorAddress(),
+					didtypes.NewVerificationMethodIDFromAddress(regulator.String()),
+				)
+				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				// Require a license credential
+				vc = vctypes.NewLicenseVerifiableCredential(
+					"license-credential-for-emti",
+					regulatorDID.String(),
+					time.Now(),
+					vctypes.NewLicenseCredentialSubject(
+						didtypes.NewKeyDID(suite.GetEMTiAddress().String()).String(),
+						"MICAEMI",
+						"IRL",
+						"Another Financial Services Body (AFFB)",
+						sdk.NewCoin("seur", sdk.NewInt(1000)),
+					),
+				)
+				vc, _ = vc.Sign(
+					suite.keyring, suite.GetRegulatorAddress(),
+					didtypes.NewVerificationMethodIDFromAddress(regulator.String()),
+				)
+				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				// ACTUAL TEST
+				req = *types.NewMsgCreateIssuer(
+					vc.GetSubjectDID().String(),
+					vc.Id,
+					"seuro",
+					100,
+					suite.GetEMTiAddress().String(),
+				)
+			},
+			true,
+		},
+		{
+			"FAIL: signer not in provided did document",
+			func() {
+				did := "did:cosmos:cash:subject"
+				vcID := "did:cosmos:cash:issuercred"
+				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
+					didtypes.NewVerification(
+						didtypes.NewVerificationMethod(
+							"did:cosmos:cash:subject#key-1",
+							"did:cosmos:cash:subject",
+							didtypes.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215},
+								didtypes.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
+						),
+						[]string{didtypes.Authentication},
+						nil,
+					),
+				))
+				circulationLimit, _ := sdk.NewIntFromString("1000")
+				coin := sdk.NewCoin("seuro", circulationLimit)
+				cs := vctypes.NewLicenseCredentialSubject(
+					didDoc.Id,
+					"MICAEMI",
+					"IRL",
+					"Another Financial Services Body (AFFB)",
+					coin,
+				)
+
+				vc := vctypes.NewLicenseVerifiableCredential(
+					vcID,
+					didDoc.Id,
+					time.Now(),
+					cs,
+				)
+				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+				req = *types.NewMsgCreateIssuer(
+					didDoc.Id,
+					vcID,
+					"seuro",
+					100,
+					"fail",
+				)
+			},
+			false,
+		},
+		{
+			"FAIL: verifiable credential not found in store",
+			func() {
+				did := "did:cosmos:cash:subject"
+				vcID := "did:cosmos:cash:issuercred:2"
+				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
+					didtypes.NewVerification(
+						didtypes.NewVerificationMethod(
+							"did:cosmos:cash:subject#key-1",
+							"did:cosmos:cash:subject",
+							didtypes.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215},
+								didtypes.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
+						),
+						[]string{didtypes.Authentication},
+						nil,
+					),
+				))
+				suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+				req = *types.NewMsgCreateIssuer(
+					didDoc.Id,
+					vcID,
+					"seuro",
+					100,
+					"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+				)
+			},
+			false,
+		},
 		{
 			"FAIL: issuer id in credential not correctly matching the provided did",
 			func() {
@@ -306,75 +329,97 @@ func (suite *KeeperTestSuite) TestMsgSeverCreateIssuer() {
 func (suite *KeeperTestSuite) TestMsgSeverBurnToken() {
 	server := NewMsgServerImpl(suite.keeper)
 	var req types.MsgBurnToken
-	_ = sdk.WrapSDKContext(suite.ctx) // ctx
+	ctx := sdk.WrapSDKContext(suite.ctx) // ctx
 
 	testCases := []struct {
 		msg      string
 		malleate func()
 		expPass  bool
 	}{
-		//{
-		//	"PASS: issuer burns tokens",
-		//	func() {
-		//		did := "did:cosmos:cash:subject"
-		//		vcID := "did:cosmos:cash:issuercred"
-		//		denom := "seuro"
-		//		didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
-		//			didtypes.NewVerification(
-		//				didtypes.NewVerificationMethod(
-		//					"did:cosmos:cash:subject#key-1",
-		//					"did:cosmos:cash:subject",
-		//					didtypes.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215},
-		//						didtypes.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
-		//				),
-		//				[]string{didtypes.Authentication},
-		//				nil,
-		//			),
-		//		))
-		//		circulationLimit, _ := sdk.NewIntFromString("1000")
-		//		coin := sdk.NewCoin(denom, circulationLimit)
-		//		cs := vctypes.NewLicenseCredentialSubject(
-		//			didDoc.Id,
-		//			"MICAEMI",
-		//			"IRL",
-		//			"Another Financial Services Body (AFFB)",
-		//			coin,
-		//		)
-		//
-		//		vc := vctypes.NewLicenseVerifiableCredential(
-		//			vcID,
-		//			didDoc.Id,
-		//			time.Now(),
-		//			cs,
-		//		)
-		//		suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
-		//		suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
-		//		issuer := types.Issuer{
-		//			Token:     denom,
-		//			Fee:       1,
-		//			IssuerDid: didDoc.Id,
-		//		}
-		//
-		//		suite.keeper.SetIssuer(suite.ctx, issuer)
-		//		amount, _ := sdk.ParseCoinNormalized("10seuro")
-		//
-		//		mint := *types.NewMsgMintToken(
-		//			did,
-		//			vcID,
-		//			amount,
-		//			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
-		//		)
-		//		_, _ = server.MintToken(ctx, &mint)
-		//
-		//		req = *types.NewMsgBurnToken(
-		//			did,
-		//			vcID,
-		//			amount,
-		//			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
-		//		)
-		//	},
-		//	true,
-		//},
+		{
+			"PASS: issuer burns tokens",
+			func() {
+				var vc vctypes.VerifiableCredential
+				// Requires an active regulator
+				regulator := suite.GetRegulatorAddress()
+				regulatorDID := didtypes.NewKeyDID(regulator.String())
+				// regulator verifiable credentials
+				vc = vctypes.NewRegulatorVerifiableCredential(
+					"regulator-credential",
+					regulatorDID.String(),
+					time.Now(),
+					vctypes.NewRegulatorCredentialSubject(
+						regulatorDID.String(),
+						"The Regulator",
+						"EU",
+					),
+				)
+				vc, _ = vc.Sign(
+					suite.keyring, suite.GetRegulatorAddress(),
+					didtypes.NewVerificationMethodIDFromAddress(regulator.String()),
+				)
+				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				// Require a registration credential
+				vc = vctypes.NewRegistrationVerifiableCredential(
+					"registration-credential-for-emti",
+					regulatorDID.String(),
+					time.Now(),
+					vctypes.NewRegistrationCredentialSubject(
+						didtypes.NewKeyDID(suite.GetEMTiAddress().String()).String(),
+						"EU",
+						"emti",
+						"E-Money Token Issuer",
+					),
+				)
+				vc, _ = vc.Sign(
+					suite.keyring, suite.GetRegulatorAddress(),
+					didtypes.NewVerificationMethodIDFromAddress(regulator.String()),
+				)
+				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				// Require a license credential
+				vc = vctypes.NewLicenseVerifiableCredential(
+					"license-credential-for-emti",
+					regulatorDID.String(),
+					time.Now(),
+					vctypes.NewLicenseCredentialSubject(
+						didtypes.NewKeyDID(suite.GetEMTiAddress().String()).String(),
+						"MICAEMI",
+						"IRL",
+						"Another Financial Services Body (AFFB)",
+						sdk.NewCoin("seur", sdk.NewInt(1000)),
+					),
+				)
+				vc, _ = vc.Sign(
+					suite.keyring, suite.GetRegulatorAddress(),
+					didtypes.NewVerificationMethodIDFromAddress(regulator.String()),
+				)
+				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				// Require an Issuer
+				issuer := types.Issuer{
+					Token:     "seuro",
+					Fee:       1,
+					IssuerDid: vc.GetSubjectDID().String(),
+				}
+				suite.keeper.SetIssuer(suite.ctx, issuer)
+				// Require minted tokens
+				amount, _ := sdk.ParseCoinNormalized("10seuro")
+				mint := *types.NewMsgMintToken(
+					vc.GetSubjectDID().String(),
+					vc.Id,
+					amount,
+					suite.GetEMTiAddress().String(),
+				)
+				_, _ = server.MintToken(ctx, &mint)
+				// ACTUAL TEST
+				req = *types.NewMsgBurnToken(
+					vc.GetSubjectDID().String(),
+					vc.Id,
+					amount,
+					suite.GetEMTiAddress().String(),
+				)
+			},
+			true,
+		},
 		{
 			"FAIL: verifiable credential does not exist",
 			func() {
@@ -557,60 +602,84 @@ func (suite *KeeperTestSuite) Test_msgServer_MintToken() {
 		malleate func()
 		expPass  bool
 	}{
-		//{
-		//	"PASS: issuer mints tokens",
-		//	func() {
-		//		did := "did:cosmos:cash:subject"
-		//		vcID := "did:cosmos:cash:issuercred"
-		//		denom := "seuro"
-		//		didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
-		//			didtypes.NewVerification(
-		//				didtypes.NewVerificationMethod(
-		//					"did:cosmos:cash:subject#key-1",
-		//					"did:cosmos:cash:subject",
-		//					didtypes.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215},
-		//						didtypes.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
-		//				),
-		//				[]string{didtypes.Authentication},
-		//				nil,
-		//			),
-		//		))
-		//		circulationLimit, _ := sdk.NewIntFromString("1000")
-		//		coin := sdk.NewCoin(denom, circulationLimit)
-		//		cs := vctypes.NewLicenseCredentialSubject(
-		//			didDoc.Id,
-		//			"MICAEMI",
-		//			"IRL",
-		//			"Another Financial Services Body (AFFB)",
-		//			coin,
-		//		)
-		//
-		//		vc := vctypes.NewLicenseVerifiableCredential(
-		//			vcID,
-		//			didDoc.Id,
-		//			time.Now(),
-		//			cs,
-		//		)
-		//		suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
-		//		suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
-		//		issuer := types.Issuer{
-		//			Token:     denom,
-		//			Fee:       1,
-		//			IssuerDid: didDoc.Id,
-		//		}
-		//
-		//		suite.keeper.SetIssuer(suite.ctx, issuer)
-		//		amount, _ := sdk.ParseCoinNormalized("999seuro")
-		//
-		//		req = *types.NewMsgMintToken(
-		//			did,
-		//			vcID,
-		//			amount,
-		//			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
-		//		)
-		//	},
-		//	true,
-		//},
+		{
+			"PASS: issuer mints tokens",
+			func() {
+				var vc vctypes.VerifiableCredential
+				// Requires an active regulator
+				regulator := suite.GetRegulatorAddress()
+				regulatorDID := didtypes.NewKeyDID(regulator.String())
+				// regulator verifiable credentials
+				vc = vctypes.NewRegulatorVerifiableCredential(
+					"regulator-credential",
+					regulatorDID.String(),
+					time.Now(),
+					vctypes.NewRegulatorCredentialSubject(
+						regulatorDID.String(),
+						"The Regulator",
+						"EU",
+					),
+				)
+				vc, _ = vc.Sign(
+					suite.keyring, suite.GetRegulatorAddress(),
+					didtypes.NewVerificationMethodIDFromAddress(regulator.String()),
+				)
+				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				// Require a registration credential
+				vc = vctypes.NewRegistrationVerifiableCredential(
+					"registration-credential-for-emti",
+					regulatorDID.String(),
+					time.Now(),
+					vctypes.NewRegistrationCredentialSubject(
+						didtypes.NewKeyDID(suite.GetEMTiAddress().String()).String(),
+						"EU",
+						"emti",
+						"E-Money Token Issuer",
+					),
+				)
+				vc, _ = vc.Sign(
+					suite.keyring, suite.GetRegulatorAddress(),
+					didtypes.NewVerificationMethodIDFromAddress(regulator.String()),
+				)
+				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				// Require a license credential
+				vc = vctypes.NewLicenseVerifiableCredential(
+					"license-credential-for-emti",
+					regulatorDID.String(),
+					time.Now(),
+					vctypes.NewLicenseCredentialSubject(
+						didtypes.NewKeyDID(suite.GetEMTiAddress().String()).String(),
+						"MICAEMI",
+						"IRL",
+						"Another Financial Services Body (AFFB)",
+						sdk.NewCoin("seur", sdk.NewInt(1000)),
+					),
+				)
+				vc, _ = vc.Sign(
+					suite.keyring, suite.GetRegulatorAddress(),
+					didtypes.NewVerificationMethodIDFromAddress(regulator.String()),
+				)
+				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				// Require an Issuer
+				issuer := types.Issuer{
+					Token:     "seuro",
+					Fee:       1,
+					IssuerDid: vc.GetSubjectDID().String(),
+				}
+				suite.keeper.SetIssuer(suite.ctx, issuer)
+
+				// ACTUAL TEST
+				amount, _ := sdk.ParseCoinNormalized("999seuro")
+
+				req = *types.NewMsgMintToken(
+					vc.GetSubjectDID().String(),
+					vc.Id,
+					amount,
+					suite.GetEMTiAddress().String(),
+				)
+			},
+			true,
+		},
 		{
 			"FAIL: verifiable credential does not exist",
 			func() {
@@ -791,58 +860,80 @@ func (suite *KeeperTestSuite) Test_msgServer_PauseToken() {
 		malleate func()
 		expPass  bool
 	}{
-		//{
-		//	"PASS: issuer paused token",
-		//	func() {
-		//		did := "did:cosmos:cash:subject"
-		//		vcID := "did:cosmos:cash:issuercred"
-		//		denom := "seuro"
-		//		didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
-		//			didtypes.NewVerification(
-		//				didtypes.NewVerificationMethod(
-		//					"did:cosmos:cash:subject#key-1",
-		//					"did:cosmos:cash:subject",
-		//					didtypes.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215},
-		//						didtypes.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
-		//				),
-		//				[]string{didtypes.Authentication},
-		//				nil,
-		//			),
-		//		))
-		//		circulationLimit, _ := sdk.NewIntFromString("1000")
-		//		coin := sdk.NewCoin(denom, circulationLimit)
-		//		cs := vctypes.NewLicenseCredentialSubject(
-		//			didDoc.Id,
-		//			"MICAEMI",
-		//			"IRL",
-		//			"Another Financial Services Body (AFFB)",
-		//			coin,
-		//		)
-		//
-		//		vc := vctypes.NewLicenseVerifiableCredential(
-		//			vcID,
-		//			didDoc.Id,
-		//			time.Now(),
-		//			cs,
-		//		)
-		//		suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
-		//		suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
-		//		issuer := types.Issuer{
-		//			Token:     denom,
-		//			Fee:       1,
-		//			IssuerDid: didDoc.Id,
-		//		}
-		//
-		//		suite.keeper.SetIssuer(suite.ctx, issuer)
-		//
-		//		req = *types.NewMsgPauseToken(
-		//			did,
-		//			vcID,
-		//			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
-		//		)
-		//	},
-		//	true,
-		//},
+		{
+			"PASS: issuer paused token",
+			func() {
+				var vc vctypes.VerifiableCredential
+				// Requires an active regulator
+				regulator := suite.GetRegulatorAddress()
+				regulatorDID := didtypes.NewKeyDID(regulator.String())
+				// regulator verifiable credentials
+				vc = vctypes.NewRegulatorVerifiableCredential(
+					"regulator-credential",
+					regulatorDID.String(),
+					time.Now(),
+					vctypes.NewRegulatorCredentialSubject(
+						regulatorDID.String(),
+						"The Regulator",
+						"EU",
+					),
+				)
+				vc, _ = vc.Sign(
+					suite.keyring, suite.GetRegulatorAddress(),
+					didtypes.NewVerificationMethodIDFromAddress(regulator.String()),
+				)
+				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				// Require a registration credential
+				vc = vctypes.NewRegistrationVerifiableCredential(
+					"registration-credential-for-emti",
+					regulatorDID.String(),
+					time.Now(),
+					vctypes.NewRegistrationCredentialSubject(
+						didtypes.NewKeyDID(suite.GetEMTiAddress().String()).String(),
+						"EU",
+						"emti",
+						"E-Money Token Issuer",
+					),
+				)
+				vc, _ = vc.Sign(
+					suite.keyring, suite.GetRegulatorAddress(),
+					didtypes.NewVerificationMethodIDFromAddress(regulator.String()),
+				)
+				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				// Require a license credential
+				vc = vctypes.NewLicenseVerifiableCredential(
+					"license-credential-for-emti",
+					regulatorDID.String(),
+					time.Now(),
+					vctypes.NewLicenseCredentialSubject(
+						didtypes.NewKeyDID(suite.GetEMTiAddress().String()).String(),
+						"MICAEMI",
+						"IRL",
+						"Another Financial Services Body (AFFB)",
+						sdk.NewCoin("seur", sdk.NewInt(1000)),
+					),
+				)
+				vc, _ = vc.Sign(
+					suite.keyring, suite.GetRegulatorAddress(),
+					didtypes.NewVerificationMethodIDFromAddress(regulator.String()),
+				)
+				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				// Require an Issuer
+				issuer := types.Issuer{
+					Token:     "seuro",
+					Fee:       1,
+					IssuerDid: vc.GetSubjectDID().String(),
+				}
+				suite.keeper.SetIssuer(suite.ctx, issuer)
+				// ACTUAL TEST
+				req = *types.NewMsgPauseToken(
+					vc.GetSubjectDID().String(),
+					vc.Id,
+					suite.GetEMTiAddress().String(),
+				)
+			},
+			true,
+		},
 		{
 			"FAIL: verifiable credential does not exist",
 			func() {
@@ -927,51 +1018,80 @@ func (suite *KeeperTestSuite) Test_msgServer_PauseToken() {
 			},
 			false,
 		},
-		//{
-		//	"PASS: issuer can pause a token",
-		//	func() {
-		//		did := "did:cosmos:cash:subject"
-		//		vcID := "did:cosmos:cash:issuercred"
-		//		denom := "seuro"
-		//		didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
-		//			didtypes.NewVerification(
-		//				didtypes.NewVerificationMethod(
-		//					"did:cosmos:cash:subject#key-1",
-		//					"did:cosmos:cash:subject",
-		//					didtypes.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215},
-		//						didtypes.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
-		//				),
-		//				[]string{didtypes.Authentication},
-		//				nil,
-		//			),
-		//		))
-		//		circulationLimit, _ := sdk.NewIntFromString("1000")
-		//		coin := sdk.NewCoin(denom, circulationLimit)
-		//		cs := vctypes.NewLicenseCredentialSubject(
-		//			didDoc.Id,
-		//			"MICAEMI",
-		//			"IRL",
-		//			"Another Financial Services Body (AFFB)",
-		//			coin,
-		//		)
-		//
-		//		vc := vctypes.NewLicenseVerifiableCredential(
-		//			vcID,
-		//			didDoc.Id,
-		//			time.Now(),
-		//			cs,
-		//		)
-		//		suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
-		//		suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
-		//
-		//		req = *types.NewMsgPauseToken(
-		//			did,
-		//			vcID,
-		//			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
-		//		)
-		//	},
-		//	true,
-		//},
+		{
+			"PASS: issuer can pause a token",
+			func() {
+				var vc vctypes.VerifiableCredential
+				// Requires an active regulator
+				regulator := suite.GetRegulatorAddress()
+				regulatorDID := didtypes.NewKeyDID(regulator.String())
+				// regulator verifiable credentials
+				vc = vctypes.NewRegulatorVerifiableCredential(
+					"regulator-credential",
+					regulatorDID.String(),
+					time.Now(),
+					vctypes.NewRegulatorCredentialSubject(
+						regulatorDID.String(),
+						"The Regulator",
+						"EU",
+					),
+				)
+				vc, _ = vc.Sign(
+					suite.keyring, suite.GetRegulatorAddress(),
+					didtypes.NewVerificationMethodIDFromAddress(regulator.String()),
+				)
+				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				// Require a registration credential
+				vc = vctypes.NewRegistrationVerifiableCredential(
+					"registration-credential-for-emti",
+					regulatorDID.String(),
+					time.Now(),
+					vctypes.NewRegistrationCredentialSubject(
+						didtypes.NewKeyDID(suite.GetEMTiAddress().String()).String(),
+						"EU",
+						"emti",
+						"E-Money Token Issuer",
+					),
+				)
+				vc, _ = vc.Sign(
+					suite.keyring, suite.GetRegulatorAddress(),
+					didtypes.NewVerificationMethodIDFromAddress(regulator.String()),
+				)
+				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				// Require a license credential
+				vc = vctypes.NewLicenseVerifiableCredential(
+					"license-credential-for-emti",
+					regulatorDID.String(),
+					time.Now(),
+					vctypes.NewLicenseCredentialSubject(
+						didtypes.NewKeyDID(suite.GetEMTiAddress().String()).String(),
+						"MICAEMI",
+						"IRL",
+						"Another Financial Services Body (AFFB)",
+						sdk.NewCoin("seur", sdk.NewInt(1000)),
+					),
+				)
+				vc, _ = vc.Sign(
+					suite.keyring, suite.GetRegulatorAddress(),
+					didtypes.NewVerificationMethodIDFromAddress(regulator.String()),
+				)
+				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				// Require an Issuer
+				issuer := types.Issuer{
+					Token:     "seuro",
+					Fee:       1,
+					IssuerDid: vc.GetSubjectDID().String(),
+				}
+				suite.keeper.SetIssuer(suite.ctx, issuer)
+				// ACTUAL TEST
+				req = *types.NewMsgPauseToken(
+					vc.GetSubjectDID().String(),
+					vc.Id,
+					suite.GetEMTiAddress().String(),
+				)
+			},
+			true,
+		},
 	}
 	for _, tc := range testCases {
 		suite.Run(fmt.Sprintf("Case %s", tc.msg), func() {
@@ -985,6 +1105,153 @@ func (suite *KeeperTestSuite) Test_msgServer_PauseToken() {
 			} else {
 				suite.Require().Error(err)
 				// TODO: check errors being returned are correct
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) Test_msgServer_IssueUserCredential() {
+	// create the keeper
+	server := NewMsgServerImpl(suite.keeper)
+	var req types.MsgIssueUserCredential
+	ctx := sdk.WrapSDKContext(suite.ctx)
+
+	testCases := []struct {
+		msg      string
+		malleate func()
+		expErr   error
+	}{
+		{
+			"PASS: can issue user credential",
+			func() {
+				var vc vctypes.VerifiableCredential
+				// Requires an active regulator
+				regulator := suite.GetRegulatorAddress()
+				regulatorDID := didtypes.NewKeyDID(regulator.String())
+				// regulator verifiable credentials
+				vc = vctypes.NewRegulatorVerifiableCredential(
+					"regulator-credential",
+					regulatorDID.String(),
+					time.Now(),
+					vctypes.NewRegulatorCredentialSubject(
+						regulatorDID.String(),
+						"The Regulator",
+						"EU",
+					),
+				)
+				vc, _ = vc.Sign(
+					suite.keyring, regulator,
+					didtypes.NewVerificationMethodIDFromAddress(regulator.String()),
+				)
+				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				// Require a registration credential
+				vc = vctypes.NewRegistrationVerifiableCredential(
+					"registration-credential-for-emti",
+					regulatorDID.String(),
+					time.Now(),
+					vctypes.NewRegistrationCredentialSubject(
+						didtypes.NewKeyDID(suite.GetEMTiAddress().String()).String(),
+						"EU",
+						"emti",
+						"E-Money Token Issuer",
+					),
+				)
+				vc, _ = vc.Sign(
+					suite.keyring, regulator,
+					didtypes.NewVerificationMethodIDFromAddress(regulator.String()),
+				)
+				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				// Require a license credential
+				vc = vctypes.NewLicenseVerifiableCredential(
+					"license-credential-for-emti",
+					regulatorDID.String(),
+					time.Now(),
+					vctypes.NewLicenseCredentialSubject(
+						didtypes.NewKeyDID(suite.GetEMTiAddress().String()).String(),
+						"MICAEMI",
+						"IRL",
+						"Another Financial Services Body (AFFB)",
+						sdk.NewCoin("seur", sdk.NewInt(1000)),
+					),
+				)
+				vc, _ = vc.Sign(
+					suite.keyring, regulator,
+					didtypes.NewVerificationMethodIDFromAddress(regulator.String()),
+				)
+				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
+				// Require an Issuer (??)
+				//issuer := types.Issuer{
+				//	Token:     "seuro",
+				//	Fee:       1,
+				//	IssuerDid: vc.GetSubjectDID().String(),
+				//}
+				//suite.keeper.SetIssuer(suite.ctx, issuer)
+				// ACTUAL TEST
+				userCredentialIssuerAccount := suite.GetEMTiAddress()
+				userCredentialIssuerAccountDID := didtypes.NewKeyDID(userCredentialIssuerAccount.String())
+				vc = vctypes.NewUserVerifiableCredential(
+					"user-credential-from-emti-to-alice",
+					userCredentialIssuerAccountDID.String(),
+					time.Now(),
+					vctypes.NewUserCredentialSubject(
+						didtypes.NewKeyDID(suite.GetAliceAddress().String()).String(),
+						"some_garbled_zkp_stuff",
+						true,
+					),
+				)
+				vc, _ = vc.Sign(
+					suite.keyring, userCredentialIssuerAccount,
+					didtypes.NewVerificationMethodIDFromAddress(userCredentialIssuerAccount.String()),
+				)
+				// ACTUAL TEST
+				req = *types.NewMsgIssueUserCredential(
+					vc,
+					userCredentialIssuerAccount.String(),
+				)
+			},
+			nil,
+		},
+		{
+			"FAIL: can issue user credential (not a licensed issuer)",
+			func() {
+				var vc vctypes.VerifiableCredential
+
+				bobAccount := suite.GetBobAddress()
+				// Require a license credential
+				vc = vctypes.NewUserVerifiableCredential(
+					"user-credential-from-bob-to-alice",
+					didtypes.NewKeyDID(bobAccount.String()).String(),
+					time.Now(),
+					vctypes.NewUserCredentialSubject(
+						didtypes.NewKeyDID(suite.GetAliceAddress().String()).String(),
+						"some_garbled_zkp_stuff",
+						true,
+					),
+				)
+				vc, _ = vc.Sign(
+					suite.keyring, bobAccount,
+					didtypes.NewVerificationMethodIDFromAddress(bobAccount.String()),
+				)
+				// ACTUAL TEST
+				req = *types.NewMsgIssueUserCredential(
+					vc,
+					bobAccount.String(),
+				)
+			},
+			types.ErrLicenseCredentialNotFound,
+		},
+	}
+	for _, tc := range testCases {
+		suite.Run(fmt.Sprintf("Case %s", tc.msg), func() {
+			tc.malleate()
+
+			didResp, err := server.IssueUserCredential(ctx, &req)
+			if tc.expErr == nil {
+				suite.NoError(err)
+				suite.NotNil(didResp)
+			} else {
+				suite.Require().Error(err)
+				suite.Require().Contains(err.Error(), tc.expErr.Error())
 			}
 		})
 	}

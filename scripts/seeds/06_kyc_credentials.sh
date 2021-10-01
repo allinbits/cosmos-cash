@@ -31,7 +31,7 @@ cosmos-cashd tx verifiablecredential create-kyc-verifiable-credential \
 
 echo
 echo "Adding service to decentralized did for users"
-cosmos-cashd tx did add-service did:cash:$(cosmos-cashd keys show user1 -a) $KYC_CRED KYCCredential cash:$KYC_CRED --from user1 --chain-id cash -y
+cosmos-cashd tx did add-service did:cash:$(cosmos-cashd keys show user1 -a) $KYC_CRED UserCredential cash:$KYC_CRED --from user1 --chain-id cash -y
 
 echo
 echo "Creating verifiable credential for user :validator with issuer :validator"
@@ -41,7 +41,7 @@ cosmos-cashd tx verifiablecredential create-kyc-verifiable-credential \
 
 echo
 echo "Adding service to decentralized did for validator"
-cosmos-cashd tx did add-service did:cash:$(cosmos-cashd keys show validator -a) $ISSUER_KYC_CRED KYCCredential cash:$ISSUER_KYC_CRED --from user1 --chain-id cash -y
+cosmos-cashd tx did add-service did:cash:$(cosmos-cashd keys show validator -a) $ISSUER_KYC_CRED UserCredential cash:$ISSUER_KYC_CRED --from user1 --chain-id cash -y
 
 echo
 echo "Querying verifiable credentials"

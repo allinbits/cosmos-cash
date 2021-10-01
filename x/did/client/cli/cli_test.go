@@ -270,7 +270,24 @@ func (s *IntegrationTestSuite) TestNewSetVerificationRelationshipsCmd() {
 			"invalid transaction",
 			[]string{
 				"123456789abcdefghijk",
-				"did:cosmos:net:cash:123456789abcdefghijk#key1",
+				"cosmos1qsu9djdhcp052vyr44vax0ku99s86h85xu8n7r",
+				fmt.Sprintf("--relationship=%s", types.CapabilityDelegation),
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
+				fmt.Sprintf(
+					"--%s=%s",
+					flags.FlagFees,
+					sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String(),
+				),
+			},
+			false, &sdk.TxResponse{}, 0,
+		},
+		{
+			"can add transaction",
+			[]string{
+				"123456789abcdefghijk",
+				"cosmos1qsu9djdhcp052vyr44vax0ku99s86h85xu8n7r",
 				fmt.Sprintf("--relationship=%s", types.CapabilityDelegation),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
@@ -325,7 +342,7 @@ func (s *IntegrationTestSuite) TestNewRevokeVerificationCmd() {
 			"invalid transaction",
 			[]string{
 				"123456789abcdefghijk",
-				"did:cash:subject#uid", // TODO when using generated ids this is difficult to test
+				"cosmos1qsu9djdhcp052vyr44vax0ku99s86h85xu8n7r", // TODO when using generated ids this is difficult to test
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
@@ -379,7 +396,7 @@ func (s *IntegrationTestSuite) TestNewAddServiceCmd() {
 			[]string{
 				"123456789abcdefghijk",
 				"service:seuro",
-				"KYCCredential",
+				"DIDComm",
 				"service:euro/SIGNATURE",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),

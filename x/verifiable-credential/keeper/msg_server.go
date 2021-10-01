@@ -21,60 +21,23 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 
 var _ types.MsgServer = msgServer{}
 
-// CreateVerifiableCredential creates a new verifiable credential
-func (k msgServer) CreateVerifiableCredential(
-	goCtx context.Context,
-	msg *types.MsgCreateVerifiableCredential,
-) (*types.MsgCreateVerifiableCredentialResponse, error) {
+// RevokeCredential revoke a credential
+func (k msgServer) RevokeCredential(goCtx context.Context, msg *types.MsgRevokeCredential) (*types.MsgRevokeCredentialResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	_, found := k.Keeper.GetVerifiableCredential(ctx, []byte(msg.VerifiableCredential.Id))
-	if found {
-		return nil, sdkerrors.Wrapf(
-			types.ErrVerifiableCredentialFound,
-			"vc already exists",
-		)
-	}
 
-	if err := k.Keeper.SetVerifiableCredential(
-		ctx,
-		[]byte(msg.VerifiableCredential.Id),
-		*msg.VerifiableCredential,
-	); err != nil {
+	k.Logger(ctx).Info("revoke credential request", "credential", msg.CredentialId, "address", msg.Owner)
+
+	if vcErr := k.DeleteVerifiableCredentialFromStore(ctx, []byte(msg.CredentialId), msg.Owner); vcErr != nil {
+		err := sdkerrors.Wrapf(vcErr, "credential proof cannot be verified")
+		k.Logger(ctx).Error(err.Error())
 		return nil, err
 	}
 
-	ctx.EventManager().EmitEvent(
-		types.NewCredentialCreatedEvent(msg.Owner, msg.VerifiableCredential.Id),
-	)
-
-	return &types.MsgCreateVerifiableCredentialResponse{}, nil
-}
-
-// DeleteVerifiableCredential deletes a verifiable credential
-func (k msgServer) DeleteVerifiableCredential(
-	goCtx context.Context,
-	msg *types.MsgDeleteVerifiableCredential,
-) (*types.MsgDeleteVerifiableCredentialResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-	vc, found := k.Keeper.GetVerifiableCredential(ctx, []byte(msg.VerifiableCredentialId))
-	if !found {
-		return nil, sdkerrors.Wrapf(
-			types.ErrVerifiableCredentialNotFound,
-			"error deleting credential; credential not found",
-		)
-	}
-	// TODO: the validate proof also accepts validation methods that are not authentication
-	if err := ValidateProof(ctx, k.Keeper, vc); err != nil {
-		return nil, sdkerrors.Wrapf(
-			err, "verifiable credential validation failed",
-		)
-	}
-
-	k.Keeper.DeleteVerifiableCredentialFromStore(ctx, []byte(vc.Id))
+	k.Logger(ctx).Info("revoke license request successful", "credential", msg.CredentialId, "address", msg.Owner)
 
 	ctx.EventManager().EmitEvent(
-		types.NewCredentialDeletedEvent(msg.Owner, msg.VerifiableCredentialId),
+		types.NewCredentialDeletedEvent(msg.Owner, msg.CredentialId),
 	)
 
-	return &types.MsgDeleteVerifiableCredentialResponse{}, nil
+	return &types.MsgRevokeCredentialResponse{}, nil
 }

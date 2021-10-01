@@ -58,14 +58,15 @@ type VerifiableCredential struct {
 	// to a subject of the verifiable credential.
 	//
 	// Types that are valid to be assigned to CredentialSubject:
-	//	*VerifiableCredential_UserCred
-	//	*VerifiableCredential_LicenseCred
 	//	*VerifiableCredential_RegulatorCred
+	//	*VerifiableCredential_RegistrationCred
+	//	*VerifiableCredential_LicenseCred
+	//	*VerifiableCredential_UserCred
 	CredentialSubject isVerifiableCredential_CredentialSubject `protobuf_oneof:"credential_subject"`
 	// One or more cryptographic proofs that can be used to detect tampering
 	// and verify the authorship of a credential or presentation. The specific
 	// method used for an embedded proof MUST be included using the type property.
-	Proof *Proof `protobuf:"bytes,9,opt,name=proof,proto3" json:"proof,omitempty"`
+	Proof *Proof `protobuf:"bytes,10,opt,name=proof,proto3" json:"proof,omitempty"`
 }
 
 func (m *VerifiableCredential) Reset()         { *m = VerifiableCredential{} }
@@ -107,19 +108,23 @@ type isVerifiableCredential_CredentialSubject interface {
 	Size() int
 }
 
-type VerifiableCredential_UserCred struct {
-	UserCred *UserCredentialSubject `protobuf:"bytes,6,opt,name=user_cred,json=userCred,proto3,oneof" json:"user_cred,omitempty"`
+type VerifiableCredential_RegulatorCred struct {
+	RegulatorCred *RegulatorCredentialSubject `protobuf:"bytes,6,opt,name=regulator_cred,json=regulatorCred,proto3,oneof" json:"regulator_cred,omitempty"`
+}
+type VerifiableCredential_RegistrationCred struct {
+	RegistrationCred *RegistrationCredentialSubject `protobuf:"bytes,7,opt,name=registration_cred,json=registrationCred,proto3,oneof" json:"registration_cred,omitempty"`
 }
 type VerifiableCredential_LicenseCred struct {
-	LicenseCred *LicenseCredentialSubject `protobuf:"bytes,7,opt,name=license_cred,json=licenseCred,proto3,oneof" json:"license_cred,omitempty"`
+	LicenseCred *LicenseCredentialSubject `protobuf:"bytes,8,opt,name=license_cred,json=licenseCred,proto3,oneof" json:"license_cred,omitempty"`
 }
-type VerifiableCredential_RegulatorCred struct {
-	RegulatorCred *RegulatorCredentialSubject `protobuf:"bytes,8,opt,name=regulator_cred,json=regulatorCred,proto3,oneof" json:"regulator_cred,omitempty"`
+type VerifiableCredential_UserCred struct {
+	UserCred *UserCredentialSubject `protobuf:"bytes,9,opt,name=user_cred,json=userCred,proto3,oneof" json:"user_cred,omitempty"`
 }
 
-func (*VerifiableCredential_UserCred) isVerifiableCredential_CredentialSubject()      {}
-func (*VerifiableCredential_LicenseCred) isVerifiableCredential_CredentialSubject()   {}
-func (*VerifiableCredential_RegulatorCred) isVerifiableCredential_CredentialSubject() {}
+func (*VerifiableCredential_RegulatorCred) isVerifiableCredential_CredentialSubject()    {}
+func (*VerifiableCredential_RegistrationCred) isVerifiableCredential_CredentialSubject() {}
+func (*VerifiableCredential_LicenseCred) isVerifiableCredential_CredentialSubject()      {}
+func (*VerifiableCredential_UserCred) isVerifiableCredential_CredentialSubject()         {}
 
 func (m *VerifiableCredential) GetCredentialSubject() isVerifiableCredential_CredentialSubject {
 	if m != nil {
@@ -163,9 +168,16 @@ func (m *VerifiableCredential) GetIssuanceDate() *time.Time {
 	return nil
 }
 
-func (m *VerifiableCredential) GetUserCred() *UserCredentialSubject {
-	if x, ok := m.GetCredentialSubject().(*VerifiableCredential_UserCred); ok {
-		return x.UserCred
+func (m *VerifiableCredential) GetRegulatorCred() *RegulatorCredentialSubject {
+	if x, ok := m.GetCredentialSubject().(*VerifiableCredential_RegulatorCred); ok {
+		return x.RegulatorCred
+	}
+	return nil
+}
+
+func (m *VerifiableCredential) GetRegistrationCred() *RegistrationCredentialSubject {
+	if x, ok := m.GetCredentialSubject().(*VerifiableCredential_RegistrationCred); ok {
+		return x.RegistrationCred
 	}
 	return nil
 }
@@ -177,9 +189,9 @@ func (m *VerifiableCredential) GetLicenseCred() *LicenseCredentialSubject {
 	return nil
 }
 
-func (m *VerifiableCredential) GetRegulatorCred() *RegulatorCredentialSubject {
-	if x, ok := m.GetCredentialSubject().(*VerifiableCredential_RegulatorCred); ok {
-		return x.RegulatorCred
+func (m *VerifiableCredential) GetUserCred() *UserCredentialSubject {
+	if x, ok := m.GetCredentialSubject().(*VerifiableCredential_UserCred); ok {
+		return x.UserCred
 	}
 	return nil
 }
@@ -194,9 +206,10 @@ func (m *VerifiableCredential) GetProof() *Proof {
 // XXX_OneofWrappers is for the internal use of the proto package.
 func (*VerifiableCredential) XXX_OneofWrappers() []interface{} {
 	return []interface{}{
-		(*VerifiableCredential_UserCred)(nil),
-		(*VerifiableCredential_LicenseCred)(nil),
 		(*VerifiableCredential_RegulatorCred)(nil),
+		(*VerifiableCredential_RegistrationCred)(nil),
+		(*VerifiableCredential_LicenseCred)(nil),
+		(*VerifiableCredential_UserCred)(nil),
 	}
 }
 
@@ -351,6 +364,7 @@ func (m *LicenseCredentialSubject) GetCirculationLimit() types.Coin {
 	return types.Coin{}
 }
 
+// RegulatorCredentialSubject is used to identify regulators
 type RegulatorCredentialSubject struct {
 	// The value of id represents the ID of the credential_subject
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -414,6 +428,247 @@ func (m *RegulatorCredentialSubject) GetCountry() string {
 	return ""
 }
 
+// RegistrationCredentialSubject is used to identify a business entity
+// https://github.com/allinbits/cosmos-cash/blob/main/docs/Explanation/ADR/adr-005-registration-credential.md
+type RegistrationCredentialSubject struct {
+	// The value of id represents the ID of the credential_subject
+	Id           string         `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Address      *Address       `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
+	Ids          []*Id          `protobuf:"bytes,3,rep,name=ids,proto3" json:"ids,omitempty"`
+	LegalPersons []*LegalPerson `protobuf:"bytes,4,rep,name=legal_persons,json=legalPersons,proto3" json:"legal_persons,omitempty"`
+}
+
+func (m *RegistrationCredentialSubject) Reset()         { *m = RegistrationCredentialSubject{} }
+func (m *RegistrationCredentialSubject) String() string { return proto.CompactTextString(m) }
+func (*RegistrationCredentialSubject) ProtoMessage()    {}
+func (*RegistrationCredentialSubject) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cf6469f22440938e, []int{4}
+}
+func (m *RegistrationCredentialSubject) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *RegistrationCredentialSubject) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_RegistrationCredentialSubject.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *RegistrationCredentialSubject) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RegistrationCredentialSubject.Merge(m, src)
+}
+func (m *RegistrationCredentialSubject) XXX_Size() int {
+	return m.Size()
+}
+func (m *RegistrationCredentialSubject) XXX_DiscardUnknown() {
+	xxx_messageInfo_RegistrationCredentialSubject.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RegistrationCredentialSubject proto.InternalMessageInfo
+
+func (m *RegistrationCredentialSubject) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
+
+func (m *RegistrationCredentialSubject) GetAddress() *Address {
+	if m != nil {
+		return m.Address
+	}
+	return nil
+}
+
+func (m *RegistrationCredentialSubject) GetIds() []*Id {
+	if m != nil {
+		return m.Ids
+	}
+	return nil
+}
+
+func (m *RegistrationCredentialSubject) GetLegalPersons() []*LegalPerson {
+	if m != nil {
+		return m.LegalPersons
+	}
+	return nil
+}
+
+type LegalPerson struct {
+	Names   []*Name `protobuf:"bytes,1,rep,name=names,proto3" json:"names,omitempty"`
+	CtryReg string  `protobuf:"bytes,2,opt,name=ctry_reg,json=ctryReg,proto3" json:"ctry_reg,omitempty"`
+}
+
+func (m *LegalPerson) Reset()         { *m = LegalPerson{} }
+func (m *LegalPerson) String() string { return proto.CompactTextString(m) }
+func (*LegalPerson) ProtoMessage()    {}
+func (*LegalPerson) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cf6469f22440938e, []int{5}
+}
+func (m *LegalPerson) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *LegalPerson) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_LegalPerson.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *LegalPerson) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_LegalPerson.Merge(m, src)
+}
+func (m *LegalPerson) XXX_Size() int {
+	return m.Size()
+}
+func (m *LegalPerson) XXX_DiscardUnknown() {
+	xxx_messageInfo_LegalPerson.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_LegalPerson proto.InternalMessageInfo
+
+type Name struct {
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Type string `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
+}
+
+func (m *Name) Reset()         { *m = Name{} }
+func (m *Name) String() string { return proto.CompactTextString(m) }
+func (*Name) ProtoMessage()    {}
+func (*Name) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cf6469f22440938e, []int{6}
+}
+func (m *Name) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Name) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Name.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *Name) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Name.Merge(m, src)
+}
+func (m *Name) XXX_Size() int {
+	return m.Size()
+}
+func (m *Name) XXX_DiscardUnknown() {
+	xxx_messageInfo_Name.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Name proto.InternalMessageInfo
+
+type Address struct {
+	AddrType string `protobuf:"bytes,1,opt,name=addr_type,json=addrType,proto3" json:"addr_type,omitempty"`
+	Thfare   string `protobuf:"bytes,2,opt,name=thfare,proto3" json:"thfare,omitempty"`
+	Premise  string `protobuf:"bytes,3,opt,name=premise,proto3" json:"premise,omitempty"`
+	Postcode string `protobuf:"bytes,4,opt,name=postcode,proto3" json:"postcode,omitempty"`
+	Locality string `protobuf:"bytes,5,opt,name=locality,proto3" json:"locality,omitempty"`
+	Country  string `protobuf:"bytes,6,opt,name=country,proto3" json:"country,omitempty"`
+}
+
+func (m *Address) Reset()         { *m = Address{} }
+func (m *Address) String() string { return proto.CompactTextString(m) }
+func (*Address) ProtoMessage()    {}
+func (*Address) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cf6469f22440938e, []int{7}
+}
+func (m *Address) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Address) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Address.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *Address) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Address.Merge(m, src)
+}
+func (m *Address) XXX_Size() int {
+	return m.Size()
+}
+func (m *Address) XXX_DiscardUnknown() {
+	xxx_messageInfo_Address.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Address proto.InternalMessageInfo
+
+type Id struct {
+	Id   string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Type string `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
+}
+
+func (m *Id) Reset()         { *m = Id{} }
+func (m *Id) String() string { return proto.CompactTextString(m) }
+func (*Id) ProtoMessage()    {}
+func (*Id) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cf6469f22440938e, []int{8}
+}
+func (m *Id) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Id) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Id.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *Id) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Id.Merge(m, src)
+}
+func (m *Id) XXX_Size() int {
+	return m.Size()
+}
+func (m *Id) XXX_DiscardUnknown() {
+	xxx_messageInfo_Id.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Id proto.InternalMessageInfo
+
+func (m *Id) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
+
+func (m *Id) GetType() string {
+	if m != nil {
+		return m.Type
+	}
+	return ""
+}
+
 // The Proof message represents a cryptographic proof that the
 // credential has not been tampered with or changed without the issuersi
 // knowledge. This can be used to verify the verifiable credential.
@@ -429,7 +684,7 @@ func (m *Proof) Reset()         { *m = Proof{} }
 func (m *Proof) String() string { return proto.CompactTextString(m) }
 func (*Proof) ProtoMessage()    {}
 func (*Proof) Descriptor() ([]byte, []int) {
-	return fileDescriptor_cf6469f22440938e, []int{4}
+	return fileDescriptor_cf6469f22440938e, []int{9}
 }
 func (m *Proof) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -498,6 +753,11 @@ func init() {
 	proto.RegisterType((*UserCredentialSubject)(nil), "allinbits.cosmoscash.verifiablecredential.UserCredentialSubject")
 	proto.RegisterType((*LicenseCredentialSubject)(nil), "allinbits.cosmoscash.verifiablecredential.LicenseCredentialSubject")
 	proto.RegisterType((*RegulatorCredentialSubject)(nil), "allinbits.cosmoscash.verifiablecredential.RegulatorCredentialSubject")
+	proto.RegisterType((*RegistrationCredentialSubject)(nil), "allinbits.cosmoscash.verifiablecredential.RegistrationCredentialSubject")
+	proto.RegisterType((*LegalPerson)(nil), "allinbits.cosmoscash.verifiablecredential.LegalPerson")
+	proto.RegisterType((*Name)(nil), "allinbits.cosmoscash.verifiablecredential.Name")
+	proto.RegisterType((*Address)(nil), "allinbits.cosmoscash.verifiablecredential.Address")
+	proto.RegisterType((*Id)(nil), "allinbits.cosmoscash.verifiablecredential.Id")
 	proto.RegisterType((*Proof)(nil), "allinbits.cosmoscash.verifiablecredential.Proof")
 }
 
@@ -506,50 +766,66 @@ func init() {
 }
 
 var fileDescriptor_cf6469f22440938e = []byte{
-	// 677 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x54, 0xdd, 0x6a, 0xd4, 0x40,
-	0x14, 0xde, 0xb4, 0xdb, 0x9f, 0x4c, 0x7f, 0xd0, 0xb1, 0x96, 0xb8, 0x48, 0x76, 0x5d, 0x6f, 0x56,
-	0xb0, 0x49, 0xab, 0xf7, 0x52, 0xb6, 0x56, 0xbc, 0xa8, 0x50, 0x62, 0x2d, 0x52, 0x84, 0x30, 0xc9,
-	0x4e, 0xb3, 0x23, 0x49, 0x26, 0xcc, 0x4c, 0x4a, 0xf7, 0x2d, 0xfa, 0x1a, 0xbe, 0x49, 0x2f, 0x0b,
-	0xde, 0x78, 0x55, 0xa5, 0xf5, 0xca, 0xa7, 0x90, 0xf9, 0xc9, 0x66, 0xc1, 0x14, 0xec, 0xdd, 0x99,
-	0x73, 0xf2, 0x9d, 0x8f, 0xf3, 0x9d, 0xef, 0x04, 0xec, 0x9c, 0x61, 0x46, 0x4e, 0x09, 0x8a, 0x52,
-	0xbc, 0x15, 0x33, 0x3c, 0xc2, 0xb9, 0x20, 0x28, 0xf5, 0x1b, 0xb3, 0x5e, 0xc1, 0xa8, 0xa0, 0xf0,
-	0x05, 0x4a, 0x53, 0x92, 0x47, 0x44, 0x70, 0x2f, 0xa6, 0x3c, 0xa3, 0x3c, 0x46, 0x7c, 0xec, 0xd5,
-	0x88, 0x1a, 0xd0, 0xd9, 0x48, 0x68, 0x42, 0x15, 0xca, 0x97, 0x91, 0x6e, 0xd0, 0xe9, 0x26, 0x94,
-	0x26, 0x29, 0xf6, 0xd5, 0x2b, 0x2a, 0x4f, 0x7d, 0x41, 0x32, 0xcc, 0x05, 0xca, 0x0a, 0xf3, 0x81,
-	0xab, 0xfb, 0xfa, 0x11, 0xe2, 0xd8, 0x3f, 0xdb, 0x89, 0xb0, 0x40, 0x3b, 0x7e, 0x4c, 0x49, 0xae,
-	0xeb, 0xfd, 0xdf, 0x6d, 0xb0, 0x71, 0x3c, 0xe5, 0xdb, 0x9b, 0xf2, 0xc1, 0x6d, 0xb0, 0x14, 0xd3,
-	0x5c, 0xe0, 0x73, 0xe1, 0x58, 0xbd, 0xf9, 0x81, 0x3d, 0xdc, 0xfc, 0x73, 0xdd, 0x85, 0xbb, 0x26,
-	0xf7, 0x92, 0x66, 0x44, 0xe0, 0xac, 0x10, 0x93, 0xa0, 0xfa, 0x0c, 0xae, 0x83, 0x39, 0x32, 0x72,
-	0xe6, 0x7a, 0xd6, 0xc0, 0x0e, 0xe6, 0xc8, 0x08, 0x42, 0xd0, 0x16, 0x93, 0x02, 0x3b, 0xf3, 0x12,
-	0x1e, 0xa8, 0x18, 0x6e, 0x82, 0x45, 0xc2, 0x79, 0x89, 0x99, 0xd3, 0x56, 0xdf, 0x99, 0x17, 0xdc,
-	0x07, 0x6b, 0x32, 0x42, 0x79, 0x8c, 0xc3, 0x11, 0x12, 0xd8, 0x59, 0xe8, 0x59, 0x83, 0x95, 0x57,
-	0x1d, 0x4f, 0xcf, 0xe7, 0x55, 0xf3, 0x79, 0x47, 0xd5, 0x7c, 0xc3, 0xf6, 0xc5, 0xcf, 0xae, 0x15,
-	0xac, 0x56, 0xb0, 0xb7, 0x48, 0x60, 0x18, 0x02, 0xbb, 0xe4, 0x98, 0x85, 0x52, 0x37, 0x67, 0x51,
-	0xb5, 0xd8, 0xf5, 0xfe, 0x5b, 0x63, 0xef, 0x13, 0xc7, 0xac, 0x96, 0xe0, 0x63, 0x19, 0x7d, 0xc5,
-	0xb1, 0x78, 0xdf, 0x0a, 0x96, 0x4b, 0x53, 0x80, 0x63, 0xb0, 0x9a, 0x92, 0x18, 0xe7, 0x1c, 0x6b,
-	0x8e, 0x25, 0xc5, 0xb1, 0x77, 0x0f, 0x8e, 0x03, 0x0d, 0x6f, 0xa2, 0x59, 0x49, 0xeb, 0x1a, 0xcc,
-	0xc1, 0x3a, 0xc3, 0x49, 0x99, 0x22, 0x41, 0xcd, 0x3c, 0xcb, 0x8a, 0x6b, 0xff, 0x1e, 0x5c, 0x41,
-	0xd5, 0xa0, 0x89, 0x6d, 0x8d, 0xcd, 0x56, 0xe1, 0x3b, 0xb0, 0x50, 0x30, 0x4a, 0x4f, 0x1d, 0x5b,
-	0xd1, 0x6c, 0xdf, 0x83, 0xe6, 0x50, 0xe2, 0x02, 0x0d, 0x1f, 0x6e, 0x00, 0x58, 0x97, 0x42, 0xae,
-	0xe9, 0xfa, 0x5f, 0xc0, 0xe3, 0x46, 0x71, 0x8d, 0x69, 0xac, 0x59, 0xd3, 0x30, 0x4a, 0x85, 0xb1,
-	0x91, 0x8a, 0x61, 0x17, 0xac, 0x10, 0x1e, 0x6a, 0x6a, 0x3c, 0x72, 0xe6, 0x7b, 0xd6, 0x60, 0x39,
-	0x00, 0x84, 0x1f, 0x9b, 0x4c, 0xff, 0xbb, 0x05, 0x9c, 0xbb, 0x74, 0xfd, 0x87, 0xe1, 0x59, 0xbd,
-	0x42, 0x65, 0x4f, 0xcd, 0x54, 0x69, 0x7f, 0x24, 0x5d, 0xea, 0x48, 0xef, 0x97, 0xb9, 0x60, 0x13,
-	0x45, 0x66, 0x07, 0xd5, 0x13, 0x3e, 0x05, 0x36, 0x2a, 0xc5, 0x98, 0x32, 0x22, 0x26, 0xc6, 0xc2,
-	0x75, 0x02, 0x1e, 0x80, 0x87, 0x31, 0x61, 0xb1, 0x54, 0x95, 0xd0, 0x3c, 0x4c, 0x49, 0x46, 0x84,
-	0x71, 0xf2, 0x13, 0xa3, 0xa2, 0x27, 0x0f, 0xd1, 0x33, 0x87, 0xe8, 0xed, 0x51, 0x92, 0x0f, 0xdb,
-	0x97, 0xd7, 0xdd, 0x56, 0xf0, 0x60, 0x06, 0x79, 0x20, 0x81, 0xfd, 0x13, 0xd0, 0xb9, 0x7b, 0x81,
-	0x4d, 0xc2, 0xe5, 0x28, 0xab, 0xc6, 0x51, 0xf1, 0xdd, 0x73, 0xf4, 0xbf, 0x59, 0x60, 0x41, 0xad,
-	0x6d, 0x7a, 0xa5, 0xba, 0x93, 0xbe, 0x52, 0x89, 0x63, 0x18, 0x09, 0x5c, 0x9d, 0x73, 0xf5, 0x84,
-	0xcf, 0xc1, 0x9a, 0x5a, 0x73, 0x58, 0x94, 0xac, 0xa0, 0x1c, 0x9b, 0xbe, 0xab, 0x2a, 0x79, 0xa8,
-	0x73, 0xd0, 0x07, 0x8f, 0xf4, 0xb2, 0x62, 0xad, 0x43, 0x86, 0xc5, 0x98, 0x8e, 0x8c, 0x5c, 0x70,
-	0xb6, 0xf4, 0x41, 0x55, 0xa4, 0xaa, 0x9c, 0x24, 0x39, 0x12, 0x25, 0xd3, 0x97, 0x6f, 0x07, 0x75,
-	0x62, 0xf8, 0xf9, 0xf2, 0xc6, 0xb5, 0xae, 0x6e, 0x5c, 0xeb, 0xd7, 0x8d, 0x6b, 0x5d, 0xdc, 0xba,
-	0xad, 0xab, 0x5b, 0xb7, 0xf5, 0xe3, 0xd6, 0x6d, 0x9d, 0xbc, 0x49, 0x88, 0x18, 0x97, 0x91, 0x17,
-	0xd3, 0xcc, 0x9f, 0xda, 0xd5, 0xd7, 0x42, 0x6f, 0x49, 0xbf, 0xfa, 0xe7, 0xcd, 0xbf, 0x5f, 0x5f,
-	0x8e, 0xc9, 0xa3, 0x45, 0xf5, 0x5b, 0x79, 0xfd, 0x37, 0x00, 0x00, 0xff, 0xff, 0xc9, 0x45, 0x0f,
-	0x96, 0xba, 0x05, 0x00, 0x00,
+	// 940 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x56, 0x4f, 0x6f, 0x1b, 0x45,
+	0x14, 0xf7, 0x3a, 0x76, 0x6c, 0x8f, 0x93, 0xaa, 0x1d, 0x42, 0xb5, 0x35, 0x60, 0x07, 0x73, 0x31,
+	0x12, 0xd9, 0x6d, 0x8c, 0x84, 0x10, 0x07, 0x28, 0x0e, 0x41, 0xad, 0x14, 0x50, 0xb4, 0x84, 0x0a,
+	0x15, 0x24, 0x6b, 0xbc, 0xfb, 0xb2, 0x1e, 0xb4, 0xbb, 0xb3, 0x9a, 0x99, 0x2d, 0xf5, 0x37, 0xe0,
+	0xd8, 0x3b, 0x97, 0x5e, 0xb9, 0xf3, 0x21, 0x7a, 0xac, 0xc4, 0x85, 0x0b, 0x05, 0x25, 0x17, 0xc4,
+	0xa7, 0x40, 0xf3, 0x67, 0xbd, 0xa6, 0x71, 0x10, 0xbe, 0xcd, 0x7b, 0x6f, 0x7e, 0xef, 0xb7, 0xef,
+	0xcd, 0xef, 0x3d, 0x1b, 0x1d, 0x3e, 0x06, 0x4e, 0xcf, 0x29, 0x99, 0x25, 0x70, 0x10, 0x72, 0x88,
+	0x20, 0x93, 0x94, 0x24, 0xfe, 0x5a, 0xaf, 0x97, 0x73, 0x26, 0x19, 0x7e, 0x97, 0x24, 0x09, 0xcd,
+	0x66, 0x54, 0x0a, 0x2f, 0x64, 0x22, 0x65, 0x22, 0x24, 0x62, 0xee, 0x55, 0x88, 0x0a, 0xd0, 0xdb,
+	0x8b, 0x59, 0xcc, 0x34, 0xca, 0x57, 0x27, 0x93, 0xa0, 0x37, 0x88, 0x19, 0x8b, 0x13, 0xf0, 0xb5,
+	0x35, 0x2b, 0xce, 0x7d, 0x49, 0x53, 0x10, 0x92, 0xa4, 0xb9, 0xbd, 0xd0, 0x37, 0x79, 0xfd, 0x19,
+	0x11, 0xe0, 0x3f, 0x3e, 0x9c, 0x81, 0x24, 0x87, 0x7e, 0xc8, 0x68, 0x66, 0xe2, 0xc3, 0xdf, 0x9b,
+	0x68, 0xef, 0xe1, 0x92, 0xef, 0x68, 0xc9, 0x87, 0xef, 0xa2, 0x56, 0xc8, 0x32, 0x09, 0x4f, 0xa4,
+	0xeb, 0xec, 0x6f, 0x8d, 0x3a, 0x93, 0xdb, 0x7f, 0xbf, 0x1c, 0xe0, 0x7b, 0xd6, 0xf7, 0x1e, 0x4b,
+	0xa9, 0x84, 0x34, 0x97, 0x8b, 0xa0, 0xbc, 0x86, 0x6f, 0xa0, 0x3a, 0x8d, 0xdc, 0xfa, 0xbe, 0x33,
+	0xea, 0x04, 0x75, 0x1a, 0x61, 0x8c, 0x1a, 0x72, 0x91, 0x83, 0xbb, 0xa5, 0xe0, 0x81, 0x3e, 0xe3,
+	0xdb, 0x68, 0x9b, 0x0a, 0x51, 0x00, 0x77, 0x1b, 0xfa, 0x9e, 0xb5, 0xf0, 0x31, 0xda, 0x55, 0x27,
+	0x92, 0x85, 0x30, 0x8d, 0x88, 0x04, 0xb7, 0xb9, 0xef, 0x8c, 0xba, 0xe3, 0x9e, 0x67, 0xea, 0xf3,
+	0xca, 0xfa, 0xbc, 0xb3, 0xb2, 0xbe, 0x49, 0xe3, 0xe9, 0x1f, 0x03, 0x27, 0xd8, 0x29, 0x61, 0x9f,
+	0x11, 0x09, 0x38, 0x43, 0x37, 0x38, 0xc4, 0x45, 0x42, 0x24, 0xe3, 0x53, 0xd5, 0x3c, 0x77, 0x5b,
+	0xe7, 0x39, 0xf6, 0xfe, 0x77, 0xa3, 0xbd, 0xa0, 0x4c, 0x50, 0x35, 0xe3, 0xab, 0x62, 0xf6, 0x3d,
+	0x84, 0xf2, 0x7e, 0x2d, 0xd8, 0xe5, 0xab, 0x51, 0xfc, 0x03, 0xba, 0xc5, 0x21, 0xa6, 0x42, 0x72,
+	0x22, 0x29, 0xcb, 0x0c, 0x65, 0x4b, 0x53, 0xde, 0xdf, 0x8c, 0x72, 0x99, 0x63, 0x1d, 0xeb, 0x4d,
+	0xfe, 0xca, 0x05, 0x3c, 0x47, 0x3b, 0x09, 0x0d, 0x21, 0x13, 0x60, 0x38, 0xdb, 0x9a, 0xf3, 0x68,
+	0x03, 0xce, 0x13, 0x03, 0x5f, 0x47, 0xd7, 0x4d, 0xaa, 0x18, 0x9e, 0xa2, 0x4e, 0x21, 0xc0, 0x76,
+	0xb3, 0xa3, 0x69, 0xee, 0x6d, 0x40, 0xf3, 0xb5, 0x80, 0xb5, 0x8d, 0x6c, 0x17, 0x36, 0x80, 0x3f,
+	0x47, 0xcd, 0x9c, 0x33, 0x76, 0xee, 0x22, 0x9d, 0xfc, 0xee, 0x06, 0xc9, 0x4f, 0x15, 0x2e, 0x30,
+	0xf0, 0xc9, 0x1e, 0xc2, 0x55, 0x68, 0x2a, 0x0c, 0xd3, 0xf0, 0x3b, 0xf4, 0xfa, 0xda, 0x4f, 0xb0,
+	0x6a, 0x75, 0x56, 0xd5, 0xca, 0x19, 0x93, 0x56, 0xbf, 0xfa, 0x8c, 0x07, 0xa8, 0x4b, 0xc5, 0xd4,
+	0x50, 0x43, 0xe4, 0x6e, 0xed, 0x3b, 0xa3, 0x76, 0x80, 0xa8, 0x78, 0x68, 0x3d, 0xc3, 0x5f, 0x1d,
+	0xe4, 0x5e, 0xd7, 0xc8, 0x2b, 0x0c, 0x6f, 0x57, 0x6f, 0xa6, 0xe7, 0xc2, 0x30, 0x95, 0xcd, 0x3e,
+	0x53, 0xe3, 0xe1, 0xaa, 0xa1, 0x2b, 0x32, 0xc9, 0x17, 0x9a, 0xac, 0x13, 0x94, 0x26, 0x7e, 0x13,
+	0x75, 0x48, 0x21, 0xe7, 0x8c, 0x53, 0xb9, 0xb0, 0xb3, 0x53, 0x39, 0xf0, 0x09, 0xba, 0x15, 0x52,
+	0x1e, 0x2a, 0x65, 0x2a, 0x19, 0x26, 0x34, 0xa5, 0xd2, 0x8e, 0xd0, 0x1d, 0xdb, 0x45, 0x4f, 0x6d,
+	0x00, 0xcf, 0x6e, 0x00, 0xef, 0x88, 0xd1, 0x6c, 0xd2, 0x78, 0xfe, 0x72, 0x50, 0x0b, 0x6e, 0xae,
+	0x20, 0x4f, 0x14, 0x70, 0xf8, 0x08, 0xf5, 0xae, 0x1f, 0x82, 0x75, 0x8d, 0xcb, 0x48, 0x5a, 0x96,
+	0xa3, 0xcf, 0xd7, 0xd7, 0x31, 0xfc, 0xa9, 0x8e, 0xde, 0xfa, 0x4f, 0xb9, 0x5f, 0xc9, 0x7f, 0x82,
+	0x5a, 0x24, 0x8a, 0x38, 0x08, 0xa1, 0x29, 0xba, 0xe3, 0xf1, 0x06, 0x0a, 0xf9, 0xd4, 0x20, 0x83,
+	0x32, 0x05, 0xfe, 0x04, 0x6d, 0xd1, 0x48, 0xe8, 0x9d, 0xd4, 0x1d, 0x1f, 0x6c, 0x90, 0xe9, 0x41,
+	0x14, 0x28, 0x24, 0xfe, 0x16, 0xed, 0x26, 0x10, 0x93, 0x64, 0x9a, 0x03, 0x17, 0x2c, 0x13, 0x6e,
+	0x43, 0xa7, 0xfa, 0x60, 0x93, 0xd1, 0x53, 0xf8, 0x53, 0x0d, 0x0f, 0x76, 0x92, 0xca, 0x10, 0xc3,
+	0x05, 0xea, 0xae, 0x04, 0xf1, 0x31, 0x6a, 0xaa, 0x76, 0x0a, 0xbd, 0x81, 0xbb, 0x63, 0x7f, 0x03,
+	0x8e, 0x2f, 0x49, 0x0a, 0x81, 0x41, 0xe3, 0x3b, 0xa8, 0x1d, 0x4a, 0xbe, 0x98, 0x72, 0x88, 0xed,
+	0x2b, 0xb5, 0x94, 0x1d, 0x40, 0xfc, 0x51, 0xfb, 0xc7, 0x67, 0x83, 0xda, 0x5f, 0xcf, 0x06, 0xb5,
+	0xe1, 0x87, 0xa8, 0xa1, 0x30, 0xcb, 0xe7, 0x74, 0x56, 0x9e, 0xb3, 0xdc, 0xe4, 0xf6, 0x89, 0xd5,
+	0x79, 0x05, 0xf9, 0x8b, 0x83, 0x5a, 0xb6, 0xcf, 0xf8, 0x0d, 0xd4, 0x51, 0x9d, 0x36, 0x02, 0x37,
+	0x29, 0xda, 0xca, 0x71, 0x66, 0x97, 0xbf, 0x9c, 0x9f, 0x13, 0x5e, 0x26, 0xb2, 0x96, 0x52, 0x4b,
+	0xce, 0x21, 0xa5, 0x02, 0x4a, 0xb5, 0x58, 0x13, 0xf7, 0x50, 0x3b, 0x67, 0x42, 0x86, 0x2c, 0x02,
+	0x2b, 0xfa, 0xa5, 0xad, 0x62, 0x09, 0x0b, 0x49, 0xa2, 0x06, 0xa2, 0x69, 0x62, 0xa5, 0xbd, 0xaa,
+	0xbf, 0xed, 0x7f, 0xe9, 0x6f, 0xe5, 0xb3, 0x47, 0xa8, 0xfe, 0x20, 0x5a, 0xa7, 0xe6, 0x57, 0x4b,
+	0x1d, 0xfe, 0xec, 0xa0, 0xa6, 0x5e, 0x35, 0xcb, 0xa8, 0x53, 0x45, 0x35, 0x17, 0x07, 0x22, 0x21,
+	0x5a, 0x36, 0xd7, 0x98, 0xf8, 0x1d, 0xb4, 0xab, 0x57, 0xd3, 0x34, 0x2f, 0x78, 0xce, 0x96, 0xd5,
+	0xed, 0x68, 0xe7, 0xa9, 0xf1, 0x61, 0x1f, 0xbd, 0x66, 0x1e, 0x30, 0x34, 0xb3, 0x9b, 0x82, 0x9c,
+	0xb3, 0xc8, 0x56, 0x8b, 0x57, 0x43, 0x5f, 0xe8, 0x88, 0xda, 0x04, 0x82, 0xc6, 0x19, 0x91, 0x05,
+	0x07, 0x5b, 0x78, 0xe5, 0x98, 0x7c, 0xf3, 0xfc, 0xa2, 0xef, 0xbc, 0xb8, 0xe8, 0x3b, 0x7f, 0x5e,
+	0xf4, 0x9d, 0xa7, 0x97, 0xfd, 0xda, 0x8b, 0xcb, 0x7e, 0xed, 0xb7, 0xcb, 0x7e, 0xed, 0xd1, 0xc7,
+	0x31, 0x95, 0xf3, 0x62, 0xe6, 0x85, 0x2c, 0xf5, 0x97, 0x3a, 0xf2, 0x8d, 0x8e, 0x0e, 0x94, 0x90,
+	0xfc, 0x27, 0xeb, 0xff, 0xab, 0xf8, 0xaa, 0x4c, 0x31, 0xdb, 0xd6, 0xbf, 0xc1, 0xef, 0xff, 0x13,
+	0x00, 0x00, 0xff, 0xff, 0x76, 0xfe, 0x02, 0xfb, 0xe7, 0x08, 0x00, 0x00,
 }
 
 func (m *VerifiableCredential) Marshal() (dAtA []byte, err error) {
@@ -582,7 +858,7 @@ func (m *VerifiableCredential) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 			i = encodeVarintVerifiableCredential(dAtA, i, uint64(size))
 		}
 		i--
-		dAtA[i] = 0x4a
+		dAtA[i] = 0x52
 	}
 	if m.CredentialSubject != nil {
 		{
@@ -638,16 +914,16 @@ func (m *VerifiableCredential) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *VerifiableCredential_UserCred) MarshalTo(dAtA []byte) (int, error) {
+func (m *VerifiableCredential_RegulatorCred) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *VerifiableCredential_UserCred) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *VerifiableCredential_RegulatorCred) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
-	if m.UserCred != nil {
+	if m.RegulatorCred != nil {
 		{
-			size, err := m.UserCred.MarshalToSizedBuffer(dAtA[:i])
+			size, err := m.RegulatorCred.MarshalToSizedBuffer(dAtA[:i])
 			if err != nil {
 				return 0, err
 			}
@@ -656,6 +932,27 @@ func (m *VerifiableCredential_UserCred) MarshalToSizedBuffer(dAtA []byte) (int, 
 		}
 		i--
 		dAtA[i] = 0x32
+	}
+	return len(dAtA) - i, nil
+}
+func (m *VerifiableCredential_RegistrationCred) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *VerifiableCredential_RegistrationCred) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	if m.RegistrationCred != nil {
+		{
+			size, err := m.RegistrationCred.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintVerifiableCredential(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x3a
 	}
 	return len(dAtA) - i, nil
 }
@@ -676,20 +973,20 @@ func (m *VerifiableCredential_LicenseCred) MarshalToSizedBuffer(dAtA []byte) (in
 			i = encodeVarintVerifiableCredential(dAtA, i, uint64(size))
 		}
 		i--
-		dAtA[i] = 0x3a
+		dAtA[i] = 0x42
 	}
 	return len(dAtA) - i, nil
 }
-func (m *VerifiableCredential_RegulatorCred) MarshalTo(dAtA []byte) (int, error) {
+func (m *VerifiableCredential_UserCred) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *VerifiableCredential_RegulatorCred) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *VerifiableCredential_UserCred) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
-	if m.RegulatorCred != nil {
+	if m.UserCred != nil {
 		{
-			size, err := m.RegulatorCred.MarshalToSizedBuffer(dAtA[:i])
+			size, err := m.UserCred.MarshalToSizedBuffer(dAtA[:i])
 			if err != nil {
 				return 0, err
 			}
@@ -697,7 +994,7 @@ func (m *VerifiableCredential_RegulatorCred) MarshalToSizedBuffer(dAtA []byte) (
 			i = encodeVarintVerifiableCredential(dAtA, i, uint64(size))
 		}
 		i--
-		dAtA[i] = 0x42
+		dAtA[i] = 0x4a
 	}
 	return len(dAtA) - i, nil
 }
@@ -853,6 +1150,259 @@ func (m *RegulatorCredentialSubject) MarshalToSizedBuffer(dAtA []byte) (int, err
 	return len(dAtA) - i, nil
 }
 
+func (m *RegistrationCredentialSubject) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *RegistrationCredentialSubject) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *RegistrationCredentialSubject) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.LegalPersons) > 0 {
+		for iNdEx := len(m.LegalPersons) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.LegalPersons[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintVerifiableCredential(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x22
+		}
+	}
+	if len(m.Ids) > 0 {
+		for iNdEx := len(m.Ids) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Ids[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintVerifiableCredential(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x1a
+		}
+	}
+	if m.Address != nil {
+		{
+			size, err := m.Address.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintVerifiableCredential(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Id) > 0 {
+		i -= len(m.Id)
+		copy(dAtA[i:], m.Id)
+		i = encodeVarintVerifiableCredential(dAtA, i, uint64(len(m.Id)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *LegalPerson) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *LegalPerson) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *LegalPerson) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.CtryReg) > 0 {
+		i -= len(m.CtryReg)
+		copy(dAtA[i:], m.CtryReg)
+		i = encodeVarintVerifiableCredential(dAtA, i, uint64(len(m.CtryReg)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Names) > 0 {
+		for iNdEx := len(m.Names) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Names[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintVerifiableCredential(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *Name) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Name) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Name) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Type) > 0 {
+		i -= len(m.Type)
+		copy(dAtA[i:], m.Type)
+		i = encodeVarintVerifiableCredential(dAtA, i, uint64(len(m.Type)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Name) > 0 {
+		i -= len(m.Name)
+		copy(dAtA[i:], m.Name)
+		i = encodeVarintVerifiableCredential(dAtA, i, uint64(len(m.Name)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *Address) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Address) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Address) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Country) > 0 {
+		i -= len(m.Country)
+		copy(dAtA[i:], m.Country)
+		i = encodeVarintVerifiableCredential(dAtA, i, uint64(len(m.Country)))
+		i--
+		dAtA[i] = 0x32
+	}
+	if len(m.Locality) > 0 {
+		i -= len(m.Locality)
+		copy(dAtA[i:], m.Locality)
+		i = encodeVarintVerifiableCredential(dAtA, i, uint64(len(m.Locality)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if len(m.Postcode) > 0 {
+		i -= len(m.Postcode)
+		copy(dAtA[i:], m.Postcode)
+		i = encodeVarintVerifiableCredential(dAtA, i, uint64(len(m.Postcode)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.Premise) > 0 {
+		i -= len(m.Premise)
+		copy(dAtA[i:], m.Premise)
+		i = encodeVarintVerifiableCredential(dAtA, i, uint64(len(m.Premise)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Thfare) > 0 {
+		i -= len(m.Thfare)
+		copy(dAtA[i:], m.Thfare)
+		i = encodeVarintVerifiableCredential(dAtA, i, uint64(len(m.Thfare)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.AddrType) > 0 {
+		i -= len(m.AddrType)
+		copy(dAtA[i:], m.AddrType)
+		i = encodeVarintVerifiableCredential(dAtA, i, uint64(len(m.AddrType)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *Id) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Id) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Id) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Type) > 0 {
+		i -= len(m.Type)
+		copy(dAtA[i:], m.Type)
+		i = encodeVarintVerifiableCredential(dAtA, i, uint64(len(m.Type)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Id) > 0 {
+		i -= len(m.Id)
+		copy(dAtA[i:], m.Id)
+		i = encodeVarintVerifiableCredential(dAtA, i, uint64(len(m.Id)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
 func (m *Proof) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -962,14 +1512,26 @@ func (m *VerifiableCredential) Size() (n int) {
 	return n
 }
 
-func (m *VerifiableCredential_UserCred) Size() (n int) {
+func (m *VerifiableCredential_RegulatorCred) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	if m.UserCred != nil {
-		l = m.UserCred.Size()
+	if m.RegulatorCred != nil {
+		l = m.RegulatorCred.Size()
+		n += 1 + l + sovVerifiableCredential(uint64(l))
+	}
+	return n
+}
+func (m *VerifiableCredential_RegistrationCred) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.RegistrationCred != nil {
+		l = m.RegistrationCred.Size()
 		n += 1 + l + sovVerifiableCredential(uint64(l))
 	}
 	return n
@@ -986,14 +1548,14 @@ func (m *VerifiableCredential_LicenseCred) Size() (n int) {
 	}
 	return n
 }
-func (m *VerifiableCredential_RegulatorCred) Size() (n int) {
+func (m *VerifiableCredential_UserCred) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	if m.RegulatorCred != nil {
-		l = m.RegulatorCred.Size()
+	if m.UserCred != nil {
+		l = m.UserCred.Size()
 		n += 1 + l + sovVerifiableCredential(uint64(l))
 	}
 	return n
@@ -1060,6 +1622,121 @@ func (m *RegulatorCredentialSubject) Size() (n int) {
 		n += 1 + l + sovVerifiableCredential(uint64(l))
 	}
 	l = len(m.Country)
+	if l > 0 {
+		n += 1 + l + sovVerifiableCredential(uint64(l))
+	}
+	return n
+}
+
+func (m *RegistrationCredentialSubject) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Id)
+	if l > 0 {
+		n += 1 + l + sovVerifiableCredential(uint64(l))
+	}
+	if m.Address != nil {
+		l = m.Address.Size()
+		n += 1 + l + sovVerifiableCredential(uint64(l))
+	}
+	if len(m.Ids) > 0 {
+		for _, e := range m.Ids {
+			l = e.Size()
+			n += 1 + l + sovVerifiableCredential(uint64(l))
+		}
+	}
+	if len(m.LegalPersons) > 0 {
+		for _, e := range m.LegalPersons {
+			l = e.Size()
+			n += 1 + l + sovVerifiableCredential(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *LegalPerson) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Names) > 0 {
+		for _, e := range m.Names {
+			l = e.Size()
+			n += 1 + l + sovVerifiableCredential(uint64(l))
+		}
+	}
+	l = len(m.CtryReg)
+	if l > 0 {
+		n += 1 + l + sovVerifiableCredential(uint64(l))
+	}
+	return n
+}
+
+func (m *Name) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Name)
+	if l > 0 {
+		n += 1 + l + sovVerifiableCredential(uint64(l))
+	}
+	l = len(m.Type)
+	if l > 0 {
+		n += 1 + l + sovVerifiableCredential(uint64(l))
+	}
+	return n
+}
+
+func (m *Address) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.AddrType)
+	if l > 0 {
+		n += 1 + l + sovVerifiableCredential(uint64(l))
+	}
+	l = len(m.Thfare)
+	if l > 0 {
+		n += 1 + l + sovVerifiableCredential(uint64(l))
+	}
+	l = len(m.Premise)
+	if l > 0 {
+		n += 1 + l + sovVerifiableCredential(uint64(l))
+	}
+	l = len(m.Postcode)
+	if l > 0 {
+		n += 1 + l + sovVerifiableCredential(uint64(l))
+	}
+	l = len(m.Locality)
+	if l > 0 {
+		n += 1 + l + sovVerifiableCredential(uint64(l))
+	}
+	l = len(m.Country)
+	if l > 0 {
+		n += 1 + l + sovVerifiableCredential(uint64(l))
+	}
+	return n
+}
+
+func (m *Id) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Id)
+	if l > 0 {
+		n += 1 + l + sovVerifiableCredential(uint64(l))
+	}
+	l = len(m.Type)
 	if l > 0 {
 		n += 1 + l + sovVerifiableCredential(uint64(l))
 	}
@@ -1296,7 +1973,7 @@ func (m *VerifiableCredential) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 6:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field UserCred", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field RegulatorCred", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -1323,13 +2000,48 @@ func (m *VerifiableCredential) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			v := &UserCredentialSubject{}
+			v := &RegulatorCredentialSubject{}
 			if err := v.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
-			m.CredentialSubject = &VerifiableCredential_UserCred{v}
+			m.CredentialSubject = &VerifiableCredential_RegulatorCred{v}
 			iNdEx = postIndex
 		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RegistrationCred", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowVerifiableCredential
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			v := &RegistrationCredentialSubject{}
+			if err := v.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			m.CredentialSubject = &VerifiableCredential_RegistrationCred{v}
+			iNdEx = postIndex
+		case 8:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field LicenseCred", wireType)
 			}
@@ -1364,9 +2076,9 @@ func (m *VerifiableCredential) Unmarshal(dAtA []byte) error {
 			}
 			m.CredentialSubject = &VerifiableCredential_LicenseCred{v}
 			iNdEx = postIndex
-		case 8:
+		case 9:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field RegulatorCred", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field UserCred", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -1393,13 +2105,13 @@ func (m *VerifiableCredential) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			v := &RegulatorCredentialSubject{}
+			v := &UserCredentialSubject{}
 			if err := v.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
-			m.CredentialSubject = &VerifiableCredential_RegulatorCred{v}
+			m.CredentialSubject = &VerifiableCredential_UserCred{v}
 			iNdEx = postIndex
-		case 9:
+		case 10:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Proof", wireType)
 			}
@@ -1934,6 +2646,793 @@ func (m *RegulatorCredentialSubject) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.Country = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipVerifiableCredential(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *RegistrationCredentialSubject) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowVerifiableCredential
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: RegistrationCredentialSubject: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: RegistrationCredentialSubject: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowVerifiableCredential
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Id = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Address", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowVerifiableCredential
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Address == nil {
+				m.Address = &Address{}
+			}
+			if err := m.Address.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Ids", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowVerifiableCredential
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Ids = append(m.Ids, &Id{})
+			if err := m.Ids[len(m.Ids)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field LegalPersons", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowVerifiableCredential
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.LegalPersons = append(m.LegalPersons, &LegalPerson{})
+			if err := m.LegalPersons[len(m.LegalPersons)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipVerifiableCredential(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *LegalPerson) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowVerifiableCredential
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: LegalPerson: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: LegalPerson: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Names", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowVerifiableCredential
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Names = append(m.Names, &Name{})
+			if err := m.Names[len(m.Names)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CtryReg", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowVerifiableCredential
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.CtryReg = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipVerifiableCredential(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Name) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowVerifiableCredential
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Name: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Name: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowVerifiableCredential
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Name = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Type", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowVerifiableCredential
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Type = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipVerifiableCredential(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Address) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowVerifiableCredential
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Address: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Address: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AddrType", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowVerifiableCredential
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.AddrType = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Thfare", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowVerifiableCredential
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Thfare = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Premise", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowVerifiableCredential
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Premise = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Postcode", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowVerifiableCredential
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Postcode = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Locality", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowVerifiableCredential
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Locality = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Country", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowVerifiableCredential
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Country = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipVerifiableCredential(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Id) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowVerifiableCredential
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Id: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Id: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowVerifiableCredential
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Id = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Type", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowVerifiableCredential
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthVerifiableCredential
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Type = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

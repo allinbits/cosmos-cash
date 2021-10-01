@@ -9,10 +9,12 @@ import (
 
 // DidKeeper defines the expected did keeper functions
 type DidKeeper interface {
-	GetDidDocument(ctx sdk.Context, key []byte) (didtypes.DidDocument, bool)
+	ResolveDid(ctx sdk.Context, did didtypes.DID) (doc didtypes.DidDocument, meta didtypes.DidMetadata, err error)
 }
 
 // VcKeeper defines the expected verfiable credentials keeper functions
 type VcKeeper interface {
 	GetVerifiableCredential(ctx sdk.Context, key []byte) (vctypes.VerifiableCredential, bool)
+	SetVerifiableCredential(ctx sdk.Context, key []byte, vc vctypes.VerifiableCredential) error
+	GetVerifiableCredentialWithType(ctx sdk.Context, subjectDID, vcType string) []vctypes.VerifiableCredential
 }

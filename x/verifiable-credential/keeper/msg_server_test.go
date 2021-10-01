@@ -9,135 +9,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-func (suite *KeeperTestSuite) TestMsgSeverCreateVerifableCredential() {
-	server := NewMsgServerImpl(suite.keeper)
-	var req types.MsgCreateVerifiableCredential
-
-	testCases := []struct {
-		msg      string
-		malleate func()
-		expPass  bool
-	}{
-		//{
-		//	"PASS: correctly creates vc",
-		//	func() {
-		//		did := "did:cosmos:cash:subject"
-		//		didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
-		//			didtypes.NewVerification(
-		//				didtypes.NewVerificationMethod(
-		//					"did:cosmos:cash:subject#key-1",
-		//					"did:cosmos:cash:subject",
-		//					didtypes.NewBlockchainAccountID(suite.ctx.ChainID(), "cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a"),
-		//				),
-		//				[]string{didtypes.Authentication},
-		//				nil,
-		//			),
-		//		))
-		//		cs := types.NewUserCredentialSubject(
-		//			"did:cosmos:cred:cash:kyc",
-		//			"root",
-		//			true,
-		//		)
-		//
-		//		vc := types.NewUserVerifiableCredential(
-		//			"new-verifiable-cred-3",
-		//			didDoc.Id,
-		//			time.Now(),
-		//			cs,
-		//		)
-		//		suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
-		//
-		//		req = *types.NewMsgCreateVerifiableCredential(vc, "cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a")
-		//	},
-		//	true,
-		//},
-		{
-			"FAIL: signer is not in the DID",
-			func() {
-				did := "did:cosmos:cash:subject"
-				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
-					didtypes.NewVerification(
-						didtypes.NewVerificationMethod(
-							"did:cosmos:cash:subject#key-1",
-							"did:cosmos:cash:subject",
-							didtypes.NewBlockchainAccountID(suite.ctx.ChainID(), "cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a"),
-						),
-						[]string{didtypes.Authentication},
-						nil,
-					),
-				))
-				cs := types.NewUserCredentialSubject(
-					"did:cosmos:cred:cash:kyc",
-					"root",
-					true,
-				)
-
-				vc := types.NewUserVerifiableCredential(
-					"new-verifiable-cred-3",
-					didDoc.Id,
-					time.Now(),
-					cs,
-				)
-				suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
-
-				req = *types.NewMsgCreateVerifiableCredential(vc, "did:cash:1111")
-			},
-			false,
-		},
-		{
-			"FAIL: vc already exists",
-			func() {
-				did := "did:cosmos:cash:subject"
-				didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
-					didtypes.NewVerification(
-						didtypes.NewVerificationMethod(
-							"did:cosmos:cash:subject#key-1",
-							"did:cosmos:cash:subject",
-							didtypes.NewBlockchainAccountID(suite.ctx.ChainID(), "cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a"),
-						),
-						[]string{didtypes.Authentication},
-						nil,
-					),
-				))
-				cs := types.NewUserCredentialSubject(
-					"accAddr",
-					"root",
-					true,
-				)
-
-				vc := types.NewUserVerifiableCredential(
-					"new-verifiable-cred-3",
-					didDoc.Id,
-					time.Now(),
-					cs,
-				)
-				suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
-				suite.keeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
-
-				req = *types.NewMsgCreateVerifiableCredential(vc, "cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a")
-			},
-			false,
-		},
-	}
-	for _, tc := range testCases {
-		suite.Run(fmt.Sprintf("Case %s", tc.msg), func() {
-			tc.malleate()
-
-			vcResp, err := server.CreateVerifiableCredential(sdk.WrapSDKContext(suite.ctx), &req)
-			if tc.expPass {
-				suite.NoError(err)
-				suite.NotNil(vcResp)
-
-			} else {
-				suite.Require().Error(err)
-			}
-		})
-	}
-}
-
 func (suite *KeeperTestSuite) TestMsgSeverDeleteVerifableCredential() {
 	server := NewMsgServerImpl(suite.keeper)
-	var req types.MsgDeleteVerifiableCredential
+	var req types.MsgRevokeCredential
 
 	testCases := []struct {
 		msg      string
@@ -147,34 +21,20 @@ func (suite *KeeperTestSuite) TestMsgSeverDeleteVerifableCredential() {
 		//{
 		//	"PASS: correctly deletes vc",
 		//	func() {
-		//		did := "did:cosmos:cash:subject"
-		//		didDoc, _ := didtypes.NewDidDocument(did, didtypes.WithVerifications(
-		//			didtypes.NewVerification(
-		//				didtypes.NewVerificationMethod(
-		//					"did:cosmos:cash:subject#key-1",
-		//					"did:cosmos:cash:subject",
-		//					didtypes.NewBlockchainAccountID(suite.ctx.ChainID(), "cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a"),
-		//				),
-		//				[]string{didtypes.Authentication},
-		//				nil,
-		//			),
-		//		))
-		//		cs := types.NewUserCredentialSubject(
-		//			"accAddr",
-		//			"root",
-		//			true,
-		//		)
-		//
+		//		// NEED ACCOUNTS HERE
 		//		vc := types.NewUserVerifiableCredential(
 		//			"new-verifiable-cred-3",
 		//			didDoc.Id,
 		//			time.Now(),
-		//			cs,
+		//			types.NewUserCredentialSubject(
+		//				"accAddr",
+		//				"root",
+		//				true,
+		//			),
 		//		)
 		//		suite.keeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
-		//		suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
 		//
-		//		req = *types.NewMsgDeleteVerifiableCredential(vc.Id, vc.Issuer, "cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a")
+		//		req = *types.NewMsgRevokeVerifiableCredential(vc.Id, "cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a")
 		//	},
 		//	true,
 		//},
@@ -208,7 +68,7 @@ func (suite *KeeperTestSuite) TestMsgSeverDeleteVerifableCredential() {
 				suite.keeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
 				suite.didkeeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
 
-				req = *types.NewMsgDeleteVerifiableCredential(vc.Id, vc.Issuer, "cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a")
+				req = *types.NewMsgRevokeVerifiableCredential(vc.Id, "cosmos1m26ukcnpme38enptw85w2twcr8gllnj8anfy6a")
 			},
 			false,
 		},
@@ -234,9 +94,8 @@ func (suite *KeeperTestSuite) TestMsgSeverDeleteVerifableCredential() {
 		{
 			"FAIL: did does not exists",
 			func() {
-				req = *types.NewMsgDeleteVerifiableCredential(
+				req = *types.NewMsgRevokeVerifiableCredential(
 					"new-verifiable-cred-3",
-					"did:cosmos:cash:issuer",
 					"did:cash:1111",
 				)
 			},
@@ -247,7 +106,7 @@ func (suite *KeeperTestSuite) TestMsgSeverDeleteVerifableCredential() {
 		suite.Run(fmt.Sprintf("Case %s", tc.msg), func() {
 			tc.malleate()
 
-			vcResp, err := server.DeleteVerifiableCredential(sdk.WrapSDKContext(suite.ctx), &req)
+			vcResp, err := server.RevokeCredential(sdk.WrapSDKContext(suite.ctx), &req)
 			if tc.expPass {
 				suite.NoError(err)
 				suite.NotNil(vcResp)

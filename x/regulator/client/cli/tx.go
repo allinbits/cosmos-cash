@@ -8,6 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
 
 	// "github.com/cosmos/cosmos-sdk/client/flags"
@@ -23,10 +24,6 @@ var (
 	activateRegulatorCredentialID         string
 )
 
-// const (
-// 	flagPacketTimeoutTimestamp = "packet-timeout-timestamp"
-// )
-
 // GetTxCmd returns the transaction commands for this module
 func GetTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
@@ -38,16 +35,18 @@ func GetTxCmd() *cobra.Command {
 	}
 
 	// this line is used by starport scaffolding # 1
-	cmd.AddCommand(CmdActivate())
+	cmd.AddCommand(ActivateCmd())
+	cmd.AddCommand(IssueLicenseCredentialCmd())
+	cmd.AddCommand(IssueRegistrationCredentialCmd())
 
 	return cmd
 }
 
 var _ = strconv.Itoa(0)
 
-func CmdActivate() *cobra.Command {
+func ActivateCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "activate [name] [countryCode]",
+		Use:   "activate-regulator-credential [name] [countryCode]",
 		Short: "Broadcast message to activate a regulator did",
 		Long: `Regulators addresses are stored in the regulator genesis parameters, 
 a did for each regulator is generated at genesis time but is not active, that is, 
@@ -83,26 +82,26 @@ that activates it.`,
 				did.String(),
 				time.Now().UTC(),
 				vctypes.NewRegulatorCredentialSubject(
-					credID,
+					did.String(),
 					name,
 					countryCode,
 				),
 			)
+			// signer is the vmID
+			vmID := didtypes.NewVerificationMethodIDFromAddress(signer.String())
+
 			// sign the credentials
-			signedVc, err := vc.Sign(clientCtx.Keyring, signer, did.String())
+			signedVc, err := vc.Sign(clientCtx.Keyring, signer, vmID)
 			if err != nil {
 				return err
 			}
 
 			// compose the message
-			msg := types.NewMsgActivate(
+			msg := types.NewMsgIssueRegulatorCredential(
 				signedVc,
 				signer.String(),
 			)
 
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
@@ -112,5 +111,117 @@ that activates it.`,
 
 	flags.AddTxFlagsToCmd(cmd)
 
+	return cmd
+}
+
+// IssueLicenseCredentialCmd defines the command to create a new license verifiable credential.
+// This is used by ulatorsreg to define issuers and issuer permissions
+func IssueLicenseCredentialCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     `issue-license-credential [cred_id] [issuer_did] [credential_subject_did] [type] [country] [authority] [denom] [circulation_limit]`,
+		Short:   "issues a license credential",
+		Example: "creates a license verifiable credential for issuers",
+		Args:    cobra.ExactArgs(8),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			accAddr := clientCtx.GetFromAddress()
+			accAddrBech32 := accAddr.String()
+
+			credentialID := args[0]
+			issuerDid := args[1]
+			credentialSubject := args[2]
+			licenseType := args[3]
+			country := args[4]
+			authority := args[5]
+			denom := args[6]
+			circulationLimitString := args[7]
+			circulationLimit, _ := sdk.NewIntFromString(circulationLimitString)
+			coin := sdk.NewCoin(denom, circulationLimit)
+
+			cs := vctypes.NewLicenseCredentialSubject(
+				credentialSubject,
+				licenseType,
+				country,
+				authority,
+				coin,
+			)
+			tm := time.Now()
+
+			vc := vctypes.NewLicenseVerifiableCredential(
+				credentialID,
+				issuerDid,
+				tm.UTC(),
+				cs,
+			)
+
+			vmID := didtypes.NewVerificationMethodIDFromAddress(accAddr.String())
+			signedVc, err := vc.Sign(clientCtx.Keyring, accAddr, vmID)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgIssueLicenseCredential(signedVc, accAddrBech32)
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+	return cmd
+}
+
+// IssueRegistrationCredentialCmd defines the command to create a new license verifiable credential.
+// This is used by regulators to define issuers and issuer permissions
+func IssueRegistrationCredentialCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     `issue-registration-credential [cred_id] [issuer_did] [credential_subject_did] [country] [short_name] [long_name]`,
+		Short:   "issue a registration credential for a DID",
+		Example: "creates a registration verifiable credential for e-money issuers",
+		Args:    cobra.ExactArgs(6),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			accAddr := clientCtx.GetFromAddress()
+			accAddrBech32 := accAddr.String()
+
+			credentialID := args[0]
+			issuerDid := args[1]
+			credentialSubject := args[2]
+			country := args[3]
+			shortName := args[4]
+			longName := args[5]
+
+			cs := vctypes.NewRegistrationCredentialSubject(
+				credentialSubject,
+				country,
+				shortName,
+				longName,
+			)
+			tm := time.Now()
+
+			vc := vctypes.NewRegistrationVerifiableCredential(
+				credentialID,
+				issuerDid,
+				tm.UTC(),
+				cs,
+			)
+
+			vmID := didtypes.NewVerificationMethodIDFromAddress(accAddr.String())
+			signedVc, err := vc.Sign(clientCtx.Keyring, accAddr, vmID)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgIssueRegistrationCredential(signedVc, accAddrBech32)
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
 	return cmd
 }

@@ -5,17 +5,25 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
+	vctypes "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 )
 
 // msg types
 const (
-	TypeMsgCreateIssuer = "create-issuer"
-	TypeMsgBurnToken    = "burn-token"
-	TypeMsgMintToken    = "mint-token"
-	TypeMsgPauseToken   = "pause-token"
+	TypeMsgCreateIssuer        = "create-issuer"
+	TypeMsgBurnToken           = "burn-token"
+	TypeMsgMintToken           = "mint-token"
+	TypeMsgPauseToken          = "pause-token"
+	TypeMsgIssueUserCredential = "issuer-user-credential"
 )
 
-var _ sdk.Msg = &MsgCreateIssuer{}
+var (
+	_ sdk.Msg = &MsgCreateIssuer{}
+	_ sdk.Msg = &MsgMintToken{}
+	_ sdk.Msg = &MsgBurnToken{}
+	_ sdk.Msg = &MsgPauseToken{}
+	_ sdk.Msg = &MsgIssueUserCredential{}
+)
 
 // NewMsgCreateIssuer creates a new MsgCreateIssuer instance
 func NewMsgCreateIssuer(
@@ -80,7 +88,6 @@ func (msg MsgCreateIssuer) GetSigners() []sdk.AccAddress {
 }
 
 // Token burn
-var _ sdk.Msg = &MsgBurnToken{}
 
 // NewMsgBurnToken creates a new MsgBurnToken instance
 func NewMsgBurnToken(
@@ -141,7 +148,6 @@ func (msg MsgBurnToken) GetSignBytes() []byte {
 }
 
 // Mint token
-var _ sdk.Msg = &MsgMintToken{}
 
 // NewMsgMintToken creates a new MsgMintToken instance
 func NewMsgMintToken(
@@ -201,7 +207,6 @@ func (msg MsgMintToken) GetSigners() []sdk.AccAddress {
 }
 
 // Pause Token
-var _ sdk.Msg = &MsgPauseToken{}
 
 // NewMsgPauseToken creates a new MsgPauseToken instance
 func NewMsgPauseToken(
@@ -251,4 +256,46 @@ func (msg MsgPauseToken) GetSigners() []sdk.AccAddress {
 		panic(err)
 	}
 	return []sdk.AccAddress{accAddr}
+}
+
+// NewMsgIssueUserCredential builds a new instance of a IssuerLicenceCredential message
+func NewMsgIssueUserCredential(credential vctypes.VerifiableCredential, signerAccount string) *MsgIssueUserCredential {
+	return &MsgIssueUserCredential{
+		Credential: &credential,
+		Owner:      signerAccount,
+	}
+}
+
+// Route returns the module router key
+func (msg *MsgIssueUserCredential) Route() string {
+	return RouterKey
+}
+
+// Type returns the string name of the message
+func (msg *MsgIssueUserCredential) Type() string {
+	return TypeMsgIssueUserCredential
+}
+
+// GetSigners returns the account addresses singing the message
+func (msg *MsgIssueUserCredential) GetSigners() []sdk.AccAddress {
+	owner, err := sdk.AccAddressFromBech32(msg.Owner)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{owner}
+}
+
+// GetSignBytes returns the bytes of the signed message
+func (msg *MsgIssueUserCredential) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+// ValidateBasic performs basic validation of the message
+func (msg *MsgIssueUserCredential) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Owner)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	return nil
 }

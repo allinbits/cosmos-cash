@@ -7,22 +7,25 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
 )
 
 // Defines the accepted credential types
 const (
-	IdentityCredential  = "IdentityCredential"
-	KYCCredential       = "KYCCredential"
-	IssuerCredential    = "IssuerCredential"
-	RegulatorCredential = "RegulatorCredential"
-	LicenseCredential   = "LicenseCredential"
+	IdentityCredential     = "IdentityCredential"
+	UserCredential         = "UserCredential"
+	IssuerCredential       = "IssuerCredential"
+	RegulatorCredential    = "RegulatorCredential"
+	RegistrationCredential = "RegistrationCredential"
+	LicenseCredential      = "LicenseCredential"
 )
 
 // IsValidCredentialType tells if a credential type is valid (accepted)
 func IsValidCredentialType(credential string) bool {
 	switch credential {
 	case IdentityCredential,
-		KYCCredential,
+		UserCredential,
 		IssuerCredential,
 		RegulatorCredential,
 		LicenseCredential:
@@ -42,7 +45,25 @@ func NewUserVerifiableCredential(
 	return VerifiableCredential{
 		Context:           []string{"https://www.w3.org/TR/vc-data-model/"},
 		Id:                id,
-		Type:              []string{"VerifiableCredential", KYCCredential},
+		Type:              []string{"VerifiableCredential", UserCredential},
+		Issuer:            issuer,
+		IssuanceDate:      &issuanceDate,
+		CredentialSubject: &credentialSubject,
+		Proof:             nil,
+	}
+}
+
+// NewRegistrationVerifiableCredential constructs a new VerifiableCredential instance
+func NewRegistrationVerifiableCredential(
+	id string,
+	issuer string,
+	issuanceDate time.Time,
+	credentialSubject VerifiableCredential_RegistrationCred,
+) VerifiableCredential {
+	return VerifiableCredential{
+		Context:           []string{"https://www.w3.org/TR/vc-data-model/"},
+		Id:                id,
+		Type:              []string{"VerifiableCredential", RegistrationCredential},
 		Issuer:            issuer,
 		IssuanceDate:      &issuanceDate,
 		CredentialSubject: &credentialSubject,
@@ -86,12 +107,6 @@ func NewRegulatorVerifiableCredential(
 	}
 }
 
-// GetBytes is a helper for serializing
-func (vc VerifiableCredential) GetBytes() []byte {
-	dAtA, _ := vc.Marshal()
-	return dAtA
-}
-
 // NewUserCredentialSubject create a new credential subject
 func NewUserCredentialSubject(
 	id string,
@@ -122,6 +137,44 @@ func NewLicenseCredentialSubject(
 			Country:          country,
 			Authority:        authority,
 			CirculationLimit: circulationLimit,
+		},
+	}
+}
+
+// NewRegistrationCredentialSubject create a new license credential subject
+// TODO: placeholder implementation, refactor it
+func NewRegistrationCredentialSubject(
+	id string,
+	country string,
+	shortName string,
+	longName string,
+) VerifiableCredential_RegistrationCred {
+	return VerifiableCredential_RegistrationCred{
+		&RegistrationCredentialSubject{
+			Id: id,
+			Address: &Address{
+				Country: country,
+			},
+			LegalPersons: []*LegalPerson{
+				{
+					Names: []*Name{
+						{
+							Type: "SN",
+							Name: shortName,
+						},
+						{
+							Type: "LN",
+							Name: longName,
+						},
+					},
+				},
+			},
+			Ids: []*Id{
+				{
+					Id:   "529900W6B9NEA233DS71",
+					Type: "LEIX",
+				},
+			},
 		},
 	}
 }
@@ -225,15 +278,29 @@ func (vc VerifiableCredential) HasType(vcType string) bool {
 
 // GetSubjectDID return the credential DID subject, that is the holder
 // of the credentials
-func (vc VerifiableCredential) GetSubjectDID() string {
+func (vc VerifiableCredential) GetSubjectDID() didtypes.DID {
 	switch subj := vc.CredentialSubject.(type) {
+	case *VerifiableCredential_RegistrationCred:
+		return didtypes.DID(subj.RegistrationCred.Id)
 	case *VerifiableCredential_LicenseCred:
-		return subj.LicenseCred.Id
+		return didtypes.DID(subj.LicenseCred.Id)
 	case *VerifiableCredential_UserCred:
-		return subj.UserCred.Id
+		return didtypes.DID(subj.UserCred.Id)
 	case *VerifiableCredential_RegulatorCred:
-		return subj.RegulatorCred.Id
+		return didtypes.DID(subj.RegulatorCred.Id)
 	default:
-		return ""
+		// TODO, not great
+		return didtypes.DID("")
 	}
+}
+
+// GetIssuerDID returns the did of the issuer
+func (vc VerifiableCredential) GetIssuerDID() didtypes.DID {
+	return didtypes.DID(vc.Issuer)
+}
+
+// GetBytes is a helper for serializing
+func (vc VerifiableCredential) GetBytes() []byte {
+	dAtA, _ := vc.Marshal()
+	return dAtA
 }

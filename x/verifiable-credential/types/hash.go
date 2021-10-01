@@ -1,4 +1,4 @@
-package cli
+package types
 
 import (
 	"crypto/hmac"

@@ -7,6 +7,7 @@ import (
 	context "context"
 	fmt "fmt"
 	types "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
+	_ "github.com/gogo/protobuf/gogoproto"
 	grpc1 "github.com/gogo/protobuf/grpc"
 	proto "github.com/gogo/protobuf/proto"
 	grpc "google.golang.org/grpc"
@@ -28,24 +29,24 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// MsgActivate is used to activate a regulator on chain
-type MsgActivate struct {
-	Credentials *types.VerifiableCredential `protobuf:"bytes,1,opt,name=credentials,proto3" json:"credentials,omitempty"`
-	Creator     string                      `protobuf:"bytes,2,opt,name=creator,proto3" json:"creator,omitempty"`
+// MsgIssueRegulatorCredential is used to activate a regulator on chain
+type MsgIssueRegulatorCredential struct {
+	Credential *types.VerifiableCredential `protobuf:"bytes,1,opt,name=credential,proto3" json:"credential,omitempty"`
+	Owner      string                      `protobuf:"bytes,2,opt,name=owner,proto3" json:"owner,omitempty"`
 }
 
-func (m *MsgActivate) Reset()         { *m = MsgActivate{} }
-func (m *MsgActivate) String() string { return proto.CompactTextString(m) }
-func (*MsgActivate) ProtoMessage()    {}
-func (*MsgActivate) Descriptor() ([]byte, []int) {
+func (m *MsgIssueRegulatorCredential) Reset()         { *m = MsgIssueRegulatorCredential{} }
+func (m *MsgIssueRegulatorCredential) String() string { return proto.CompactTextString(m) }
+func (*MsgIssueRegulatorCredential) ProtoMessage()    {}
+func (*MsgIssueRegulatorCredential) Descriptor() ([]byte, []int) {
 	return fileDescriptor_31269ecc11592bc3, []int{0}
 }
-func (m *MsgActivate) XXX_Unmarshal(b []byte) error {
+func (m *MsgIssueRegulatorCredential) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgActivate) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgIssueRegulatorCredential) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgActivate.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgIssueRegulatorCredential.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -55,49 +56,35 @@ func (m *MsgActivate) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) 
 		return b[:n], nil
 	}
 }
-func (m *MsgActivate) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgActivate.Merge(m, src)
+func (m *MsgIssueRegulatorCredential) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgIssueRegulatorCredential.Merge(m, src)
 }
-func (m *MsgActivate) XXX_Size() int {
+func (m *MsgIssueRegulatorCredential) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgActivate) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgActivate.DiscardUnknown(m)
+func (m *MsgIssueRegulatorCredential) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgIssueRegulatorCredential.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgActivate proto.InternalMessageInfo
-
-func (m *MsgActivate) GetCredentials() *types.VerifiableCredential {
-	if m != nil {
-		return m.Credentials
-	}
-	return nil
-}
-
-func (m *MsgActivate) GetCreator() string {
-	if m != nil {
-		return m.Creator
-	}
-	return ""
-}
+var xxx_messageInfo_MsgIssueRegulatorCredential proto.InternalMessageInfo
 
 // MsgActivateResponse contains the reponse for a successful activation
 // of a regulator on chain
-type MsgActivateResponse struct {
+type MsgIssueRegulatorCredentialResponse struct {
 }
 
-func (m *MsgActivateResponse) Reset()         { *m = MsgActivateResponse{} }
-func (m *MsgActivateResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgActivateResponse) ProtoMessage()    {}
-func (*MsgActivateResponse) Descriptor() ([]byte, []int) {
+func (m *MsgIssueRegulatorCredentialResponse) Reset()         { *m = MsgIssueRegulatorCredentialResponse{} }
+func (m *MsgIssueRegulatorCredentialResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgIssueRegulatorCredentialResponse) ProtoMessage()    {}
+func (*MsgIssueRegulatorCredentialResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_31269ecc11592bc3, []int{1}
 }
-func (m *MsgActivateResponse) XXX_Unmarshal(b []byte) error {
+func (m *MsgIssueRegulatorCredentialResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgActivateResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgIssueRegulatorCredentialResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgActivateResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgIssueRegulatorCredentialResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -107,44 +94,209 @@ func (m *MsgActivateResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte,
 		return b[:n], nil
 	}
 }
-func (m *MsgActivateResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgActivateResponse.Merge(m, src)
+func (m *MsgIssueRegulatorCredentialResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgIssueRegulatorCredentialResponse.Merge(m, src)
 }
-func (m *MsgActivateResponse) XXX_Size() int {
+func (m *MsgIssueRegulatorCredentialResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgActivateResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgActivateResponse.DiscardUnknown(m)
+func (m *MsgIssueRegulatorCredentialResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgIssueRegulatorCredentialResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgActivateResponse proto.InternalMessageInfo
+var xxx_messageInfo_MsgIssueRegulatorCredentialResponse proto.InternalMessageInfo
+
+type MsgIssueRegistrationCredential struct {
+	Credential *types.VerifiableCredential `protobuf:"bytes,1,opt,name=credential,proto3" json:"credential,omitempty"`
+	Owner      string                      `protobuf:"bytes,2,opt,name=owner,proto3" json:"owner,omitempty"`
+}
+
+func (m *MsgIssueRegistrationCredential) Reset()         { *m = MsgIssueRegistrationCredential{} }
+func (m *MsgIssueRegistrationCredential) String() string { return proto.CompactTextString(m) }
+func (*MsgIssueRegistrationCredential) ProtoMessage()    {}
+func (*MsgIssueRegistrationCredential) Descriptor() ([]byte, []int) {
+	return fileDescriptor_31269ecc11592bc3, []int{2}
+}
+func (m *MsgIssueRegistrationCredential) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgIssueRegistrationCredential) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgIssueRegistrationCredential.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgIssueRegistrationCredential) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgIssueRegistrationCredential.Merge(m, src)
+}
+func (m *MsgIssueRegistrationCredential) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgIssueRegistrationCredential) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgIssueRegistrationCredential.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgIssueRegistrationCredential proto.InternalMessageInfo
+
+// MsgIssueRegistrationCredentialResponse reply for the IssueRegistartion call
+type MsgIssueRegistrationCredentialResponse struct {
+}
+
+func (m *MsgIssueRegistrationCredentialResponse) Reset() {
+	*m = MsgIssueRegistrationCredentialResponse{}
+}
+func (m *MsgIssueRegistrationCredentialResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgIssueRegistrationCredentialResponse) ProtoMessage()    {}
+func (*MsgIssueRegistrationCredentialResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_31269ecc11592bc3, []int{3}
+}
+func (m *MsgIssueRegistrationCredentialResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgIssueRegistrationCredentialResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgIssueRegistrationCredentialResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgIssueRegistrationCredentialResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgIssueRegistrationCredentialResponse.Merge(m, src)
+}
+func (m *MsgIssueRegistrationCredentialResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgIssueRegistrationCredentialResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgIssueRegistrationCredentialResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgIssueRegistrationCredentialResponse proto.InternalMessageInfo
+
+// MsgIssueLicenseCredential message contains data for license credential
+type MsgIssueLicenseCredential struct {
+	Credential *types.VerifiableCredential `protobuf:"bytes,1,opt,name=credential,proto3" json:"credential,omitempty"`
+	Owner      string                      `protobuf:"bytes,2,opt,name=owner,proto3" json:"owner,omitempty"`
+}
+
+func (m *MsgIssueLicenseCredential) Reset()         { *m = MsgIssueLicenseCredential{} }
+func (m *MsgIssueLicenseCredential) String() string { return proto.CompactTextString(m) }
+func (*MsgIssueLicenseCredential) ProtoMessage()    {}
+func (*MsgIssueLicenseCredential) Descriptor() ([]byte, []int) {
+	return fileDescriptor_31269ecc11592bc3, []int{4}
+}
+func (m *MsgIssueLicenseCredential) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgIssueLicenseCredential) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgIssueLicenseCredential.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgIssueLicenseCredential) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgIssueLicenseCredential.Merge(m, src)
+}
+func (m *MsgIssueLicenseCredential) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgIssueLicenseCredential) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgIssueLicenseCredential.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgIssueLicenseCredential proto.InternalMessageInfo
+
+// MsgIssueLicenseCredentialResponse reply for the issue license call
+type MsgIssueLicenseCredentialResponse struct {
+}
+
+func (m *MsgIssueLicenseCredentialResponse) Reset()         { *m = MsgIssueLicenseCredentialResponse{} }
+func (m *MsgIssueLicenseCredentialResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgIssueLicenseCredentialResponse) ProtoMessage()    {}
+func (*MsgIssueLicenseCredentialResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_31269ecc11592bc3, []int{5}
+}
+func (m *MsgIssueLicenseCredentialResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgIssueLicenseCredentialResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgIssueLicenseCredentialResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgIssueLicenseCredentialResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgIssueLicenseCredentialResponse.Merge(m, src)
+}
+func (m *MsgIssueLicenseCredentialResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgIssueLicenseCredentialResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgIssueLicenseCredentialResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgIssueLicenseCredentialResponse proto.InternalMessageInfo
 
 func init() {
-	proto.RegisterType((*MsgActivate)(nil), "allinbits.cosmoscash.regulator.MsgActivate")
-	proto.RegisterType((*MsgActivateResponse)(nil), "allinbits.cosmoscash.regulator.MsgActivateResponse")
+	proto.RegisterType((*MsgIssueRegulatorCredential)(nil), "allinbits.cosmoscash.regulator.MsgIssueRegulatorCredential")
+	proto.RegisterType((*MsgIssueRegulatorCredentialResponse)(nil), "allinbits.cosmoscash.regulator.MsgIssueRegulatorCredentialResponse")
+	proto.RegisterType((*MsgIssueRegistrationCredential)(nil), "allinbits.cosmoscash.regulator.MsgIssueRegistrationCredential")
+	proto.RegisterType((*MsgIssueRegistrationCredentialResponse)(nil), "allinbits.cosmoscash.regulator.MsgIssueRegistrationCredentialResponse")
+	proto.RegisterType((*MsgIssueLicenseCredential)(nil), "allinbits.cosmoscash.regulator.MsgIssueLicenseCredential")
+	proto.RegisterType((*MsgIssueLicenseCredentialResponse)(nil), "allinbits.cosmoscash.regulator.MsgIssueLicenseCredentialResponse")
 }
 
 func init() { proto.RegisterFile("regulator/tx.proto", fileDescriptor_31269ecc11592bc3) }
 
 var fileDescriptor_31269ecc11592bc3 = []byte{
-	// 269 bytes of a gzipped FileDescriptorProto
+	// 387 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x2a, 0x4a, 0x4d, 0x2f,
 	0xcd, 0x49, 0x2c, 0xc9, 0x2f, 0xd2, 0x2f, 0xa9, 0xd0, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x92,
 	0x4b, 0xcc, 0xc9, 0xc9, 0xcc, 0x4b, 0xca, 0x2c, 0x29, 0xd6, 0x4b, 0xce, 0x2f, 0xce, 0xcd, 0x2f,
-	0x4e, 0x4e, 0x2c, 0xce, 0xd0, 0x83, 0x2b, 0x94, 0x32, 0x2c, 0x4b, 0x2d, 0xca, 0x4c, 0xcb, 0x4c,
-	0x4c, 0xca, 0x49, 0xd5, 0x4d, 0x2e, 0x4a, 0x4d, 0x49, 0xcd, 0x2b, 0xc9, 0x4c, 0xcc, 0xd1, 0xc7,
-	0x2a, 0x0a, 0x31, 0x52, 0xa9, 0x8b, 0x91, 0x8b, 0xdb, 0xb7, 0x38, 0xdd, 0x31, 0xb9, 0x24, 0xb3,
-	0x2c, 0xb1, 0x24, 0x55, 0x28, 0x91, 0x8b, 0x1b, 0xa1, 0xa6, 0x58, 0x82, 0x51, 0x81, 0x51, 0x83,
-	0xdb, 0xc8, 0x5e, 0x0f, 0xab, 0xc5, 0x08, 0x73, 0x91, 0x8c, 0x0d, 0x83, 0x0b, 0x3a, 0xc3, 0x05,
-	0x83, 0x90, 0xcd, 0x14, 0x92, 0xe0, 0x62, 0x4f, 0x2e, 0x4a, 0x05, 0x39, 0x58, 0x82, 0x49, 0x81,
-	0x51, 0x83, 0x33, 0x08, 0xc6, 0x55, 0x12, 0xe5, 0x12, 0x46, 0x72, 0x4b, 0x50, 0x6a, 0x71, 0x41,
-	0x7e, 0x5e, 0x71, 0xaa, 0x51, 0x31, 0x17, 0xb3, 0x6f, 0x71, 0xba, 0x50, 0x0e, 0x17, 0x07, 0xdc,
-	0x99, 0xda, 0x7a, 0xf8, 0x83, 0x42, 0x0f, 0xc9, 0x1c, 0x29, 0x63, 0x12, 0x14, 0xc3, 0x2c, 0x75,
-	0xf2, 0x39, 0xf1, 0x48, 0x8e, 0xf1, 0xc2, 0x23, 0x39, 0xc6, 0x07, 0x8f, 0xe4, 0x18, 0x27, 0x3c,
-	0x96, 0x63, 0xb8, 0xf0, 0x58, 0x8e, 0xe1, 0xc6, 0x63, 0x39, 0x86, 0x28, 0xa3, 0xf4, 0xcc, 0x92,
-	0x8c, 0xd2, 0x24, 0xbd, 0xe4, 0xfc, 0x5c, 0x7d, 0xb8, 0xc1, 0xfa, 0x10, 0x83, 0x75, 0x41, 0x26,
-	0xeb, 0x57, 0xe8, 0x23, 0x45, 0x5e, 0x65, 0x41, 0x6a, 0x71, 0x12, 0x1b, 0x38, 0xb4, 0x8d, 0x01,
-	0x01, 0x00, 0x00, 0xff, 0xff, 0x50, 0x5a, 0x43, 0x79, 0xd6, 0x01, 0x00, 0x00,
+	0x4e, 0x4e, 0x2c, 0xce, 0xd0, 0x83, 0x2b, 0x94, 0x12, 0x49, 0xcf, 0x4f, 0xcf, 0x07, 0x2b, 0xd5,
+	0x07, 0xb1, 0x20, 0xba, 0xa4, 0x0c, 0xcb, 0x52, 0x8b, 0x32, 0xd3, 0x32, 0x13, 0x93, 0x72, 0x52,
+	0x75, 0x93, 0x8b, 0x52, 0x53, 0x52, 0xf3, 0x4a, 0x32, 0x13, 0x73, 0xf4, 0xb1, 0x8a, 0x42, 0xb4,
+	0x28, 0xcd, 0x63, 0xe4, 0x92, 0xf6, 0x2d, 0x4e, 0xf7, 0x2c, 0x2e, 0x2e, 0x4d, 0x0d, 0x82, 0x19,
+	0xef, 0x0c, 0x57, 0x25, 0x14, 0xcf, 0xc5, 0x85, 0xd0, 0x23, 0xc1, 0xa8, 0xc0, 0xa8, 0xc1, 0x6d,
+	0x64, 0xaf, 0x87, 0xd5, 0x75, 0x08, 0x6b, 0x90, 0x6c, 0x09, 0x83, 0x0b, 0x22, 0x0c, 0x0d, 0x42,
+	0x32, 0x52, 0x48, 0x84, 0x8b, 0x35, 0xbf, 0x3c, 0x2f, 0xb5, 0x48, 0x82, 0x49, 0x81, 0x51, 0x83,
+	0x33, 0x08, 0xc2, 0xb1, 0xe2, 0xe8, 0x58, 0x20, 0xcf, 0xf0, 0x62, 0x81, 0x3c, 0x83, 0x92, 0x2a,
+	0x97, 0x32, 0x1e, 0xf7, 0x05, 0xa5, 0x16, 0x17, 0xe4, 0xe7, 0x15, 0xa7, 0x2a, 0x2d, 0x64, 0xe4,
+	0x92, 0x43, 0x52, 0x97, 0x59, 0x5c, 0x52, 0x94, 0x58, 0x92, 0x99, 0x9f, 0x37, 0x98, 0xbc, 0xa2,
+	0xc1, 0xa5, 0x86, 0xdf, 0x89, 0x70, 0xdf, 0xcc, 0x61, 0xe4, 0x92, 0x84, 0x29, 0xf5, 0xc9, 0x4c,
+	0x4e, 0xcd, 0x2b, 0x4e, 0x1d, 0x4c, 0x1e, 0x51, 0xe6, 0x52, 0xc4, 0xe9, 0x3a, 0x98, 0x1f, 0x8c,
+	0x9e, 0x32, 0x73, 0x31, 0xfb, 0x16, 0xa7, 0x0b, 0xcd, 0x61, 0xe4, 0x92, 0xc0, 0x99, 0xbc, 0xac,
+	0xf5, 0xf0, 0x27, 0x74, 0x3d, 0x3c, 0x71, 0x2f, 0xe5, 0x4c, 0x81, 0x66, 0x98, 0x33, 0x85, 0x96,
+	0x32, 0x72, 0x49, 0xe3, 0x4b, 0x35, 0x76, 0x24, 0x58, 0x82, 0x45, 0xbf, 0x94, 0x1b, 0x65, 0xfa,
+	0xe1, 0xee, 0x9c, 0xc6, 0xc8, 0x25, 0x86, 0x23, 0x3d, 0x58, 0x12, 0x6b, 0x05, 0x86, 0x56, 0x29,
+	0x47, 0xb2, 0xb5, 0xc2, 0x1c, 0xe6, 0xe4, 0x73, 0xe2, 0x91, 0x1c, 0xe3, 0x85, 0x47, 0x72, 0x8c,
+	0x0f, 0x1e, 0xc9, 0x31, 0x4e, 0x78, 0x2c, 0xc7, 0x70, 0xe1, 0xb1, 0x1c, 0xc3, 0x8d, 0xc7, 0x72,
+	0x0c, 0x51, 0x46, 0xe9, 0x99, 0x25, 0x19, 0xa5, 0x49, 0x7a, 0xc9, 0xf9, 0xb9, 0xfa, 0x70, 0x6b,
+	0xf4, 0x21, 0xd6, 0xe8, 0x82, 0xec, 0xd1, 0xaf, 0xd0, 0x47, 0x2a, 0xfb, 0x2a, 0x0b, 0x52, 0x8b,
+	0x93, 0xd8, 0xc0, 0xc5, 0x92, 0x31, 0x20, 0x00, 0x00, 0xff, 0xff, 0x0a, 0xf9, 0x70, 0x53, 0x15,
+	0x05, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -160,7 +312,12 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MsgClient interface {
 	// this line is used by starport scaffolding # proto/tx/rpc
-	Activate(ctx context.Context, in *MsgActivate, opts ...grpc.CallOption) (*MsgActivateResponse, error)
+	// Activate issue regulator credential to activate a regulator on chain
+	IssueRegulatorCredential(ctx context.Context, in *MsgIssueRegulatorCredential, opts ...grpc.CallOption) (*MsgIssueRegulatorCredentialResponse, error)
+	// IssueRegistrationCredential issue a new registration credential for a public entity
+	IssueRegistrationCredential(ctx context.Context, in *MsgIssueRegistrationCredential, opts ...grpc.CallOption) (*MsgIssueRegistrationCredentialResponse, error)
+	// IssueLicenseCredential issue a license to to a registered entity
+	IssueLicenseCredential(ctx context.Context, in *MsgIssueLicenseCredential, opts ...grpc.CallOption) (*MsgIssueLicenseCredentialResponse, error)
 }
 
 type msgClient struct {
@@ -171,9 +328,27 @@ func NewMsgClient(cc grpc1.ClientConn) MsgClient {
 	return &msgClient{cc}
 }
 
-func (c *msgClient) Activate(ctx context.Context, in *MsgActivate, opts ...grpc.CallOption) (*MsgActivateResponse, error) {
-	out := new(MsgActivateResponse)
-	err := c.cc.Invoke(ctx, "/allinbits.cosmoscash.regulator.Msg/Activate", in, out, opts...)
+func (c *msgClient) IssueRegulatorCredential(ctx context.Context, in *MsgIssueRegulatorCredential, opts ...grpc.CallOption) (*MsgIssueRegulatorCredentialResponse, error) {
+	out := new(MsgIssueRegulatorCredentialResponse)
+	err := c.cc.Invoke(ctx, "/allinbits.cosmoscash.regulator.Msg/IssueRegulatorCredential", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) IssueRegistrationCredential(ctx context.Context, in *MsgIssueRegistrationCredential, opts ...grpc.CallOption) (*MsgIssueRegistrationCredentialResponse, error) {
+	out := new(MsgIssueRegistrationCredentialResponse)
+	err := c.cc.Invoke(ctx, "/allinbits.cosmoscash.regulator.Msg/IssueRegistrationCredential", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) IssueLicenseCredential(ctx context.Context, in *MsgIssueLicenseCredential, opts ...grpc.CallOption) (*MsgIssueLicenseCredentialResponse, error) {
+	out := new(MsgIssueLicenseCredentialResponse)
+	err := c.cc.Invoke(ctx, "/allinbits.cosmoscash.regulator.Msg/IssueLicenseCredential", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -183,35 +358,82 @@ func (c *msgClient) Activate(ctx context.Context, in *MsgActivate, opts ...grpc.
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
 	// this line is used by starport scaffolding # proto/tx/rpc
-	Activate(context.Context, *MsgActivate) (*MsgActivateResponse, error)
+	// Activate issue regulator credential to activate a regulator on chain
+	IssueRegulatorCredential(context.Context, *MsgIssueRegulatorCredential) (*MsgIssueRegulatorCredentialResponse, error)
+	// IssueRegistrationCredential issue a new registration credential for a public entity
+	IssueRegistrationCredential(context.Context, *MsgIssueRegistrationCredential) (*MsgIssueRegistrationCredentialResponse, error)
+	// IssueLicenseCredential issue a license to to a registered entity
+	IssueLicenseCredential(context.Context, *MsgIssueLicenseCredential) (*MsgIssueLicenseCredentialResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
 type UnimplementedMsgServer struct {
 }
 
-func (*UnimplementedMsgServer) Activate(ctx context.Context, req *MsgActivate) (*MsgActivateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Activate not implemented")
+func (*UnimplementedMsgServer) IssueRegulatorCredential(ctx context.Context, req *MsgIssueRegulatorCredential) (*MsgIssueRegulatorCredentialResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IssueRegulatorCredential not implemented")
+}
+func (*UnimplementedMsgServer) IssueRegistrationCredential(ctx context.Context, req *MsgIssueRegistrationCredential) (*MsgIssueRegistrationCredentialResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IssueRegistrationCredential not implemented")
+}
+func (*UnimplementedMsgServer) IssueLicenseCredential(ctx context.Context, req *MsgIssueLicenseCredential) (*MsgIssueLicenseCredentialResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IssueLicenseCredential not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
 	s.RegisterService(&_Msg_serviceDesc, srv)
 }
 
-func _Msg_Activate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgActivate)
+func _Msg_IssueRegulatorCredential_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgIssueRegulatorCredential)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServer).Activate(ctx, in)
+		return srv.(MsgServer).IssueRegulatorCredential(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/allinbits.cosmoscash.regulator.Msg/Activate",
+		FullMethod: "/allinbits.cosmoscash.regulator.Msg/IssueRegulatorCredential",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).Activate(ctx, req.(*MsgActivate))
+		return srv.(MsgServer).IssueRegulatorCredential(ctx, req.(*MsgIssueRegulatorCredential))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_IssueRegistrationCredential_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgIssueRegistrationCredential)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).IssueRegistrationCredential(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/allinbits.cosmoscash.regulator.Msg/IssueRegistrationCredential",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).IssueRegistrationCredential(ctx, req.(*MsgIssueRegistrationCredential))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_IssueLicenseCredential_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgIssueLicenseCredential)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).IssueLicenseCredential(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/allinbits.cosmoscash.regulator.Msg/IssueLicenseCredential",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).IssueLicenseCredential(ctx, req.(*MsgIssueLicenseCredential))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -221,15 +443,23 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*MsgServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Activate",
-			Handler:    _Msg_Activate_Handler,
+			MethodName: "IssueRegulatorCredential",
+			Handler:    _Msg_IssueRegulatorCredential_Handler,
+		},
+		{
+			MethodName: "IssueRegistrationCredential",
+			Handler:    _Msg_IssueRegistrationCredential_Handler,
+		},
+		{
+			MethodName: "IssueLicenseCredential",
+			Handler:    _Msg_IssueLicenseCredential_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "regulator/tx.proto",
 }
 
-func (m *MsgActivate) Marshal() (dAtA []byte, err error) {
+func (m *MsgIssueRegulatorCredential) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -239,26 +469,26 @@ func (m *MsgActivate) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgActivate) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgIssueRegulatorCredential) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgActivate) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgIssueRegulatorCredential) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Creator) > 0 {
-		i -= len(m.Creator)
-		copy(dAtA[i:], m.Creator)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+	if len(m.Owner) > 0 {
+		i -= len(m.Owner)
+		copy(dAtA[i:], m.Owner)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Owner)))
 		i--
 		dAtA[i] = 0x12
 	}
-	if m.Credentials != nil {
+	if m.Credential != nil {
 		{
-			size, err := m.Credentials.MarshalToSizedBuffer(dAtA[:i])
+			size, err := m.Credential.MarshalToSizedBuffer(dAtA[:i])
 			if err != nil {
 				return 0, err
 			}
@@ -271,7 +501,7 @@ func (m *MsgActivate) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgActivateResponse) Marshal() (dAtA []byte, err error) {
+func (m *MsgIssueRegulatorCredentialResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -281,12 +511,142 @@ func (m *MsgActivateResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgActivateResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgIssueRegulatorCredentialResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgActivateResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgIssueRegulatorCredentialResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgIssueRegistrationCredential) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgIssueRegistrationCredential) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgIssueRegistrationCredential) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Owner) > 0 {
+		i -= len(m.Owner)
+		copy(dAtA[i:], m.Owner)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Owner)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.Credential != nil {
+		{
+			size, err := m.Credential.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintTx(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgIssueRegistrationCredentialResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgIssueRegistrationCredentialResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgIssueRegistrationCredentialResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgIssueLicenseCredential) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgIssueLicenseCredential) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgIssueLicenseCredential) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Owner) > 0 {
+		i -= len(m.Owner)
+		copy(dAtA[i:], m.Owner)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Owner)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.Credential != nil {
+		{
+			size, err := m.Credential.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintTx(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgIssueLicenseCredentialResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgIssueLicenseCredentialResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgIssueLicenseCredentialResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -305,24 +665,76 @@ func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (m *MsgActivate) Size() (n int) {
+func (m *MsgIssueRegulatorCredential) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	if m.Credentials != nil {
-		l = m.Credentials.Size()
+	if m.Credential != nil {
+		l = m.Credential.Size()
 		n += 1 + l + sovTx(uint64(l))
 	}
-	l = len(m.Creator)
+	l = len(m.Owner)
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
 	return n
 }
 
-func (m *MsgActivateResponse) Size() (n int) {
+func (m *MsgIssueRegulatorCredentialResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgIssueRegistrationCredential) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Credential != nil {
+		l = m.Credential.Size()
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Owner)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgIssueRegistrationCredentialResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgIssueLicenseCredential) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Credential != nil {
+		l = m.Credential.Size()
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Owner)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgIssueLicenseCredentialResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -337,7 +749,7 @@ func sovTx(x uint64) (n int) {
 func sozTx(x uint64) (n int) {
 	return sovTx(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
-func (m *MsgActivate) Unmarshal(dAtA []byte) error {
+func (m *MsgIssueRegulatorCredential) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -360,15 +772,15 @@ func (m *MsgActivate) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgActivate: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgIssueRegulatorCredential: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgActivate: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgIssueRegulatorCredential: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Credentials", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Credential", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -395,16 +807,16 @@ func (m *MsgActivate) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.Credentials == nil {
-				m.Credentials = &types.VerifiableCredential{}
+			if m.Credential == nil {
+				m.Credential = &types.VerifiableCredential{}
 			}
-			if err := m.Credentials.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.Credential.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Owner", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -432,7 +844,7 @@ func (m *MsgActivate) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Creator = string(dAtA[iNdEx:postIndex])
+			m.Owner = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -458,7 +870,7 @@ func (m *MsgActivate) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgActivateResponse) Unmarshal(dAtA []byte) error {
+func (m *MsgIssueRegulatorCredentialResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -481,10 +893,358 @@ func (m *MsgActivateResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgActivateResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgIssueRegulatorCredentialResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgActivateResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgIssueRegulatorCredentialResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgIssueRegistrationCredential) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgIssueRegistrationCredential: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgIssueRegistrationCredential: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Credential", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Credential == nil {
+				m.Credential = &types.VerifiableCredential{}
+			}
+			if err := m.Credential.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Owner", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Owner = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgIssueRegistrationCredentialResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgIssueRegistrationCredentialResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgIssueRegistrationCredentialResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgIssueLicenseCredential) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgIssueLicenseCredential: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgIssueLicenseCredential: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Credential", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Credential == nil {
+				m.Credential = &types.VerifiableCredential{}
+			}
+			if err := m.Credential.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Owner", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Owner = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgIssueLicenseCredentialResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgIssueLicenseCredentialResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgIssueLicenseCredentialResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:

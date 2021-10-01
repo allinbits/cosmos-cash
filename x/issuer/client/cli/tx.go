@@ -1,16 +1,21 @@
 package cli
 
 import (
+	"encoding/hex"
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
+	"github.com/wealdtech/go-merkletree"
 
+	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
 	"github.com/allinbits/cosmos-cash/x/issuer/types"
+	vctypes "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
 )
 
 // GetTxCmd returns the transaction commands for this module
@@ -29,6 +34,7 @@ func GetTxCmd() *cobra.Command {
 		NewBurnTokenCmd(),
 		NewMintTokenCmd(),
 		NewPauseTokenCmd(),
+		NewIssueUserVerifiableCredentialCmd(),
 	)
 
 	return cmd
@@ -65,6 +71,76 @@ func NewCreateIssuerCmd() *cobra.Command {
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// NewIssueUserVerifiableCredentialCmd defines the command to create a new verifiable credential.
+func NewIssueUserVerifiableCredentialCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     `issue-user-credential [cred_subject] [cred_id] [issuer_did] [secret] [amount_per_transaction] [total_number_of_transactions] [total_transaction_amount]`,
+		Short:   "create decentralized verifiable-credential",
+		Example: "creates a verifiable credential for users",
+		Args:    cobra.ExactArgs(7),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			accAddr := clientCtx.GetFromAddress()
+			accAddrBech32 := accAddr.String()
+
+			credentialSubject := args[0]
+			credentialID := args[1]
+			issuerDid := args[2]
+			secret := args[3]
+
+			inputs := args[4:7]
+
+			data := make([][]byte, len(inputs))
+			for i, v := range inputs {
+				data[i] = []byte(v)
+			}
+
+			tree, err := merkletree.NewUsing(data, vctypes.New(secret), nil)
+			if err != nil {
+				return err
+			}
+
+			root := tree.Root()
+			hexRoot := hex.EncodeToString(root)
+
+			cs := vctypes.NewUserCredentialSubject(
+				credentialSubject,
+				hexRoot,
+				true,
+			)
+			tm := time.Now()
+
+			vc := vctypes.NewUserVerifiableCredential(
+				credentialID,
+				issuerDid,
+				tm,
+				cs,
+			)
+
+			vmID := didtypes.NewVerificationMethodIDFromAddress(accAddrBech32)
+
+			signedVc, err := vc.Sign(clientCtx.Keyring, accAddr, vmID)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgIssueUserCredential(
+				signedVc,
+				accAddrBech32,
+			)
 
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},

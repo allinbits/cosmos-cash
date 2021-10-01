@@ -10,10 +10,8 @@ import (
 
 	"github.com/allinbits/cosmos-cash/x/verifiable-credential/client/cli"
 	"github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
-	"github.com/cosmos/cosmos-sdk/client/flags"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	"github.com/cosmos/cosmos-sdk/testutil/network"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/allinbits/cosmos-cash/app"
 	"github.com/allinbits/cosmos-cash/app/params"
@@ -152,77 +150,78 @@ func (s *IntegrationTestSuite) TestGetCmdQueryVerifiableCredential() {
 	}
 }
 
-func (s *IntegrationTestSuite) TestNewCreateVerifiableCredentialCmd() {
-	val := s.network.Validators[0]
+// TODO: move to issuer and regulator credential
+// func (s *IntegrationTestSuite) TestNewCreateVerifiableCredentialCmd() {
+// 	val := s.network.Validators[0]
 
-	testCases := []struct {
-		name         string
-		args         []string
-		expectErr    bool
-		respType     proto.Message
-		expectedCode uint32
-	}{
-		{
-			"PASS: creating a valid transaction in the verifiable credentials module",
-			[]string{
-				"did:cash:1111",
-				"test-cred-1",
-				"did:cosmos:net:cash:issuerdid",
-				"secret",
-				"businessName",
-				"businessRegistrationNumber",
-				"businessType",
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
-				fmt.Sprintf(
-					"--%s=%s",
-					flags.FlagFees,
-					sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String(),
-				),
-			},
-			false, &sdk.TxResponse{}, 0,
-		},
-		{
-			"FAIL: incorrect number of params passed into the create verifiable credentials client command",
-			[]string{
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
-				fmt.Sprintf(
-					"--%s=%s",
-					flags.FlagFees,
-					sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String(),
-				),
-			},
-			true, &sdk.TxResponse{}, 0,
-		},
-	}
+// 	testCases := []struct {
+// 		name         string
+// 		args         []string
+// 		expectErr    bool
+// 		respType     proto.Message
+// 		expectedCode uint32
+// 	}{
+// 		{
+// 			"PASS: creating a valid transaction in the verifiable credentials module",
+// 			[]string{
+// 				"did:cash:1111",
+// 				"test-cred-1",
+// 				"did:cosmos:net:cash:issuerdid",
+// 				"secret",
+// 				"businessName",
+// 				"businessRegistrationNumber",
+// 				"businessType",
+// 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+// 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+// 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
+// 				fmt.Sprintf(
+// 					"--%s=%s",
+// 					flags.FlagFees,
+// 					sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String(),
+// 				),
+// 			},
+// 			false, &sdk.TxResponse{}, 0,
+// 		},
+// 		{
+// 			"FAIL: incorrect number of params passed into the create verifiable credentials client command",
+// 			[]string{
+// 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+// 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+// 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
+// 				fmt.Sprintf(
+// 					"--%s=%s",
+// 					flags.FlagFees,
+// 					sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String(),
+// 				),
+// 			},
+// 			true, &sdk.TxResponse{}, 0,
+// 		},
+// 	}
 
-	for _, tc := range testCases {
-		s.Run(tc.name, func() {
-			cmd := cli.NewCreateKYCVerifiableCredentialCmd()
-			clientCtx := val.ClientCtx
+// 	for _, tc := range testCases {
+// 		s.Run(tc.name, func() {
+// 			cmd := cli.NewCreateKYCVerifiableCredentialCmd()
+// 			clientCtx := val.ClientCtx
 
-			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+// 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
 
-			// TODO: optimize this
-			errNet := s.network.WaitForNextBlock()
-			s.Require().NoError(errNet)
-			errNet = s.network.WaitForNextBlock()
-			s.Require().NoError(errNet)
-			if tc.expectErr {
-				s.Require().Error(err)
-			} else {
-				s.Require().NoError(err)
-				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+// 			// TODO: optimize this
+// 			errNet := s.network.WaitForNextBlock()
+// 			s.Require().NoError(errNet)
+// 			errNet = s.network.WaitForNextBlock()
+// 			s.Require().NoError(errNet)
+// 			if tc.expectErr {
+// 				s.Require().Error(err)
+// 			} else {
+// 				s.Require().NoError(err)
+// 				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
 
-				txResp := tc.respType.(*sdk.TxResponse)
-				s.Require().Equal(tc.expectedCode, txResp.Code, out.String())
-			}
-		})
-	}
-}
+// 				txResp := tc.respType.(*sdk.TxResponse)
+// 				s.Require().Equal(tc.expectedCode, txResp.Code, out.String())
+// 			}
+// 		})
+// 	}
+// }
 
 func TestIntegrationTestSuite(t *testing.T) {
 	suite.Run(t, new(IntegrationTestSuite))

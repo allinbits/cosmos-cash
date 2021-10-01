@@ -20,7 +20,7 @@ set_up_account() {
 
 	### attach credential to did document
         cosmos-cashd tx did add-service \
-		did:cash:$(cosmos-cashd keys show aml$2$1 --keyring-backend test -a) $2-cred-$1 KYCCredential cash:$2-cred-$1 \
+		did:cash:$(cosmos-cashd keys show aml$2$1 --keyring-backend test -a) $2-cred-$1 UserCredential cash:$2-cred-$1 \
 		--from aml$2$1 --keyring-backend test --chain-id cash -y
 
 

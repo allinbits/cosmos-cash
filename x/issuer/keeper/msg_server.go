@@ -284,8 +284,8 @@ func (k msgServer) validateIssuerCredential(
 	signer string,
 ) error {
 	// Check to see if the provided did is in the store
-	did, found := k.Keeper.didKeeper.GetDidDocument(ctx, []byte(issuerDid))
-	if !found {
+	did, _, err := k.Keeper.didKeeper.ResolveDid(ctx, didtypes.DID(issuerDid))
+	if err != nil {
 		return sdkerrors.Wrapf(
 			types.ErrDidDocumentDoesNotExist,
 			"did does not exists",
@@ -336,4 +336,33 @@ func (k msgServer) validateMintingAmount(
 	}
 
 	return nil
+}
+
+// IssueUserCredential activates a regulator
+func (k msgServer) IssueUserCredential(goCtx context.Context, msg *types.MsgIssueUserCredential) (*types.MsgIssueUserCredentialResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	k.Logger(ctx).Info("issue user credential request", "credential", msg.Credential, "address", msg.Owner)
+
+	// check that the issuer is a holder of LicenseCredential
+	// TODO: need to go a bit deeper about the type of the license
+	vcs := k.vcKeeper.GetVerifiableCredentialWithType(ctx, msg.Credential.GetIssuer(), vctypes.LicenseCredential)
+	if len(vcs) != 1 { // there must be exactly one
+		err := sdkerrors.Wrapf(types.ErrLicenseCredentialNotFound, "credential issuer is not a licensed e-money issuer")
+		k.Logger(ctx).Error(err.Error())
+		return nil, err
+	}
+	// store the credentials
+	if vcErr := k.vcKeeper.SetVerifiableCredential(ctx, []byte(msg.Credential.Id), *msg.Credential); vcErr != nil {
+		err := sdkerrors.Wrapf(vcErr, "credential proof cannot be verified")
+		k.Logger(ctx).Error(err.Error())
+		return nil, err
+	}
+
+	k.Logger(ctx).Info("issue user credential request successful", "credentialID", msg.Credential.Id)
+
+	ctx.EventManager().EmitEvent(
+		vctypes.NewCredentialCreatedEvent(msg.Owner, msg.Credential.Id),
+	)
+
+	return &types.MsgIssueUserCredentialResponse{}, nil
 }

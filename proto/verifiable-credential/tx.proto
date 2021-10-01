@@ -11,34 +11,32 @@ import "verifiable-credential/verifiable-credential.proto";
 
 // Msg defines the identity Msg service.
 service Msg {
-  rpc CreateVerifiableCredential(MsgCreateVerifiableCredential) returns (MsgCreateVerifiableCredentialResponse);
-  rpc DeleteVerifiableCredential(MsgDeleteVerifiableCredential) returns (MsgDeleteVerifiableCredentialResponse);
+  // RevokeCredential a credential
+  rpc RevokeCredential(MsgRevokeCredential) returns (MsgRevokeCredentialResponse);
 }
 
-// MsgCreateVerifiableCredential defines a SDK message for creating a new identifer.
-message MsgCreateVerifiableCredential {
-  option (gogoproto.equal)           = false;
+
+// MsgRevokeCredential
+message MsgRevokeCredential {
+  option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
-
-  VerifiableCredential verifiable_credential = 1;
-
-  // owner represents the user creating the message 
+  string credential_id = 1;
   string owner = 2;
 }
 
-message MsgCreateVerifiableCredentialResponse {}
+// MsgRevokeCredentialResponse
+message MsgRevokeCredentialResponse {}
 
-// MsgDeleteVerifiableCredential defines a SDK message for updating a credential.
-message MsgDeleteVerifiableCredential {
-  option (gogoproto.equal)           = false;
+// MsgIssueCredential is used to issue new registration credential
+// this message is used by other modules
+message MsgIssueCredential {
+  option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
-
-  string verifiable_credential_id = 1;
-  string issuer_did = 2;
-
-  // owner represents the user creating the message
-  string owner = 3;
+  VerifiableCredential credential = 1;
+  string owner = 2;
 }
 
-message MsgDeleteVerifiableCredentialResponse {}
+// MsgIssueCredentialResponse reply for the issue credential call
+message MsgIssueCredentialResponse {}
+
 

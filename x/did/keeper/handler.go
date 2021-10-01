@@ -15,7 +15,8 @@ func NewHandler(k Keeper) sdk.Handler {
 
 	return func(ctx sdk.Context, msg sdk.Msg) (*sdk.Result, error) {
 		ctx = ctx.WithEventManager(sdk.NewEventManager())
-
+		msgCopy := msg
+		println(msgCopy)
 		switch msg := msg.(type) {
 		case *types.MsgCreateDidDocument:
 			res, err := msgServer.CreateDidDocument(sdk.WrapSDKContext(ctx), msg)

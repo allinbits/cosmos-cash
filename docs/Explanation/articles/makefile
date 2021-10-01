@@ -26,7 +26,6 @@ buildmd:
 		--template $(template) \
 		--listings \
 		--bibliography=$(bibliography) \
-		--citeproc \
 		--toc \
 		--top-level-division=chapter \
 		--number-sections

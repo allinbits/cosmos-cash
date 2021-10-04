@@ -2,11 +2,12 @@
 
 ## Changelog
 
+- 2021-09-23: Added security and privacy considerations
 - 2021-08-02: Initial draft
 
 ## Status
 
-DRAFT
+PROPOSED
 ## Abstract
 
 [Decentralized identifiers](https://www.w3.org/TR/did-core) (DIDs) are a type of identifier that enables verifiable, decentralized digital identity. A DID refers to any subject (for example, a person, organization, thing, data model, abstract entity, and so on) as determined by the controller of the DID.
@@ -89,7 +90,7 @@ To create and publish a DID document use the message
 MsgCreateDidDocument(id string, signerPubKey string)
 ```
 
-The message parameters are the DID to be created and the `signerPubKey`. The `signerPubKey` MUST be the public key of the account that signs the transaction. The public key MUST be used to attach a verification method of type `EcdsaSecp256k1VerificationKey2019` with the value of `publicKeyHex` that contains the public key encoded in hexadecimal.
+The message parameters are the DID to be created and the `signerPubKey`. The `signerPubKey` MUST be the public key of the account that signs the transaction. The public key MUST be used to attach a verification method of type `EcdsaSecp256k1VerificationKey2019` with the value of `publicKeyMultibase` that contains the public key encoded according to the Multibase Data Format [Hexadecimal upper-case encoding](https://datatracker.ietf.org/doc/html/draft-multiformats-multibase#appendix-B.1).
 
 The verification method controller MUST be one of the following:
 
@@ -148,7 +149,7 @@ This example shows a DID document that was resolved using the gRPC interface:
       {
         "controller": "did:cosmos:net:cosmoscash-testnet:900d82bc-2bfe-45a7-ab22-a8d11773568e",
         "id": "did:cosmos:net:cosmoscash-testnet:900d82bc-2bfe-45a7-ab22-a8d11773568e#cosmos1x5hrv0hngmg8gls5cft7nphqs83njj25pwxpt0",
-        "publicKeyHex": "0248a5178d7a90ec187b3c3d533a4385db905f6fcdaac5026859ca5ef7b0b1c3b5",
+        "publicKeyMultibase": "0248a5178d7a90ec187b3c3d533a4385db905f6fcdaac5026859ca5ef7b0b1c3b5",
         "type": "EcdsaSecp256k1VerificationKey2019"
       }
     ],
@@ -189,7 +190,7 @@ This example shows a DID document that was resolved using a REST endpoint:
          {
             "controller":"did:cosmos:net:cosmoscash-testnet:900d82bc-2bfe-45a7-ab22-a8d11773568e",
             "id":"did:cosmos:net:cosmoscash-testnet:900d82bc-2bfe-45a7-ab22-a8d11773568e#cosmos1x5hrv0hngmg8gls5cft7nphqs83njj25pwxpt0",
-            "publicKeyHex":"0248a5178d7a90ec187b3c3d533a4385db905f6fcdaac5026859ca5ef7b0b1c3b5",
+            "publicKeyMultibase":"0248a5178d7a90ec187b3c3d533a4385db905f6fcdaac5026859ca5ef7b0b1c3b5",
             "type":"EcdsaSecp256k1VerificationKey2019"
          }
       ],
@@ -300,14 +301,13 @@ MsgDeactivateDid(did string, signerAccount string)
 
 The operation MUST update the DID document metadata and set the `deactivated` value to true. The operation is not reversible.
 
-
 ### Method-Specific Properties 
 
 #### DID Core Verification Material
 
 The [Verification Material](https://www.w3.org/TR/did-core/#verification-material) type MUST support:
 
-- Type `EcdsaSecp256k1VerificationKey2019` with `pubKeyHex` to encode a Cosmos account public key in hexadecimal format
+- Type `EcdsaSecp256k1VerificationKey2019` with `pubKeyMultibase` to encode a Cosmos account public key in hexadecimal format
 - Type `CosmosAccountAddress` with `blockchainAccountID` to represent a Cosmos account 
 
 
@@ -354,6 +354,17 @@ The implementation MUST support the following query parameters:
 
 The format for the queries is:
 -->
+
+## Privacy Considerations
+
+When any data (for example, W3C Verifiable Credentials) is associated with Cosmos DIDs, sharing that data would also impose sharing the on-chain data graph (for example, transaction history) of the blockchain account that controls the DID.
+
+Using personally identifiable information as DID Method-specific identifiers (for example, account name alice) discloses personal information every time the DID is shared with a counterparty. This specification DOES NOT endorse the use of identifiers that correlates to human beings or other sensible subjects.
+
+## Security Considerations
+
+Ephemeral DIDs (`did:cosmos:key` type) are generated based on a blockchain address. If access to the authoritative keys for an account are lost, the control of the DID and verifiable data issued by the DID is lost as well. 
+
 ## Consequences
 
 The Cosmos ecosystem WILL HAVE a DID module that is compatible with the W3C standard and offers a high chance of compatibility with third-party components such as cloud and edge agents, resolvers, and so on.

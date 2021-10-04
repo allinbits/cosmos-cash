@@ -301,6 +301,7 @@ func (k msgServer) validateIssuerCredential(
 	}
 
 	// Validate the credential subject ID the same as the provided did document
+	// TODO: dig deeper into the license type
 	issuerCred := licenseCred.GetLicenseCred()
 	if issuerCred.Id != did.Id {
 		return sdkerrors.Wrapf(
@@ -308,9 +309,6 @@ func (k msgServer) validateIssuerCredential(
 			"issuer id not correct",
 		)
 	}
-
-	// TODO: validate credential was issued by a regulator
-	// XXX: query the params of the issuer module for the regulator
 
 	return nil
 }
@@ -339,7 +337,10 @@ func (k msgServer) validateMintingAmount(
 }
 
 // IssueUserCredential activates a regulator
-func (k msgServer) IssueUserCredential(goCtx context.Context, msg *types.MsgIssueUserCredential) (*types.MsgIssueUserCredentialResponse, error) {
+func (k msgServer) IssueUserCredential(
+	goCtx context.Context,
+	msg *types.MsgIssueUserCredential,
+) (*types.MsgIssueUserCredentialResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	k.Logger(ctx).Info("issue user credential request", "credential", msg.Credential, "address", msg.Owner)
 

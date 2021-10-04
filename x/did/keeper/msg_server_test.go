@@ -3,6 +3,8 @@ package keeper
 import (
 	"fmt"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/allinbits/cosmos-cash/x/did/types"
 )
 
@@ -11,7 +13,7 @@ func (suite *KeeperTestSuite) TestHandleMsgCreateDidDocument() {
 		req types.MsgCreateDidDocument
 	)
 
-	handleFn := NewHandler(suite.keeper)
+	server := NewMsgServerImpl(suite.keeper)
 
 	testCases := []struct {
 		name      string
@@ -43,7 +45,7 @@ func (suite *KeeperTestSuite) TestHandleMsgCreateDidDocument() {
 	for _, tc := range testCases {
 		suite.Run(fmt.Sprintf("Case %s", tc.name), func() {
 			tc.malleate()
-			_, err := handleFn(suite.ctx, &req)
+			_, err := server.CreateDidDocument(sdk.WrapSDKContext(suite.ctx), &req)
 			if tc.expectErr {
 				suite.Require().Error(err)
 			} else {
@@ -58,7 +60,7 @@ func (suite *KeeperTestSuite) TestHandleMsgUpdateDidDocument() {
 		req types.MsgUpdateDidDocument
 	)
 
-	handleFn := NewHandler(suite.keeper)
+	server := NewMsgServerImpl(suite.keeper)
 
 	testCases := []struct {
 		name      string
@@ -136,7 +138,9 @@ func (suite *KeeperTestSuite) TestHandleMsgUpdateDidDocument() {
 	for _, tc := range testCases {
 		suite.Run(fmt.Sprintf("Case %s", tc.name), func() {
 			tc.malleate()
-			_, err := handleFn(suite.ctx, &req)
+
+			_, err := server.UpdateDidDocument(sdk.WrapSDKContext(suite.ctx), &req)
+
 			if tc.expectErr {
 				suite.Require().Error(err)
 			} else {
@@ -151,7 +155,7 @@ func (suite *KeeperTestSuite) TestHandleMsgAddVerification() {
 		req types.MsgAddVerification
 	)
 
-	handleFn := NewHandler(suite.keeper)
+	server := NewMsgServerImpl(suite.keeper)
 
 	testCases := []struct {
 		name      string
@@ -300,7 +304,9 @@ func (suite *KeeperTestSuite) TestHandleMsgAddVerification() {
 	for _, tc := range testCases {
 		suite.Run(fmt.Sprintf("Case %s", tc.name), func() {
 			tc.malleate()
-			_, err := handleFn(suite.ctx, &req)
+
+			_, err := server.AddVerification(sdk.WrapSDKContext(suite.ctx), &req)
+
 			if tc.expectErr {
 				suite.Require().Error(err)
 			} else {
@@ -315,7 +321,7 @@ func (suite *KeeperTestSuite) TestHandleMsgSetVerificationRelationships() {
 		req types.MsgSetVerificationRelationships
 	)
 
-	handleFn := NewHandler(suite.keeper)
+	server := NewMsgServerImpl(suite.keeper)
 
 	testCases := []struct {
 		name      string
@@ -454,7 +460,9 @@ func (suite *KeeperTestSuite) TestHandleMsgSetVerificationRelationships() {
 	for _, tc := range testCases {
 		suite.Run(fmt.Sprintf("Case %s", tc.name), func() {
 			tc.malleate()
-			_, err := handleFn(suite.ctx, &req)
+
+			_, err := server.SetVerificationRelationships(sdk.WrapSDKContext(suite.ctx), &req)
+
 			if tc.expectErr {
 				suite.Require().Error(err)
 			} else {
@@ -469,7 +477,7 @@ func (suite *KeeperTestSuite) TestHandleMsgRevokeVerification() {
 		req types.MsgRevokeVerification
 	)
 
-	handleFn := NewHandler(suite.keeper)
+	server := NewMsgServerImpl(suite.keeper)
 
 	testCases := []struct {
 		name      string
@@ -562,7 +570,9 @@ func (suite *KeeperTestSuite) TestHandleMsgRevokeVerification() {
 	for i, tc := range testCases {
 		suite.Run(fmt.Sprintf("TestHandleMsgRevokeVerification#%v", i), func() {
 			tc.malleate()
-			_, err := handleFn(suite.ctx, &req)
+
+			_, err := server.RevokeVerification(sdk.WrapSDKContext(suite.ctx), &req)
+
 			if tc.expectErr {
 				suite.Require().Error(err)
 			} else {
@@ -577,7 +587,7 @@ func (suite *KeeperTestSuite) TestHandleMsgAddService() {
 		req types.MsgAddService
 	)
 
-	handleFn := NewHandler(suite.keeper)
+	server := NewMsgServerImpl(suite.keeper)
 
 	testCases := []struct {
 		name      string
@@ -738,7 +748,9 @@ func (suite *KeeperTestSuite) TestHandleMsgAddService() {
 	for _, tc := range testCases {
 		suite.Run(tc.name, func() {
 			tc.malleate()
-			_, err := handleFn(suite.ctx, &req)
+
+			_, err := server.AddService(sdk.WrapSDKContext(suite.ctx), &req)
+
 			if tc.expectErr {
 				suite.Require().Error(err)
 			} else {
@@ -753,7 +765,7 @@ func (suite *KeeperTestSuite) TestHandleMsgDeleteService() {
 		req types.MsgDeleteService
 	)
 
-	handleFn := NewHandler(suite.keeper)
+	server := NewMsgServerImpl(suite.keeper)
 
 	testCases := []struct {
 		name      string
@@ -853,7 +865,9 @@ func (suite *KeeperTestSuite) TestHandleMsgDeleteService() {
 	for _, tc := range testCases {
 		suite.Run(fmt.Sprintf(tc.name), func() {
 			tc.malleate()
-			_, err := handleFn(suite.ctx, &req)
+
+			_, err := server.DeleteService(sdk.WrapSDKContext(suite.ctx), &req)
+
 			if tc.expectErr {
 				suite.Require().Error(err)
 			} else {

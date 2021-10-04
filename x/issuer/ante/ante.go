@@ -35,6 +35,8 @@ func NewCheckUserCredentialsDecorator(
 	}
 }
 
+// TODO: replace with middleware, AnteHandlers are being depecrated
+
 // AnteHandle CheckUserCredentialsDecorator is used as a hook to intercept the bank send message then
 // it will validate the User credential
 func (cicd CheckUserCredentialsDecorator) AnteHandle(
@@ -122,9 +124,6 @@ func (cicd CheckUserCredentialsDecorator) validateUserCredential(
 			}
 		}
 	}
-
-	// TODO: is this check needed
-	// hasUserCredential = vc.Validate(pubkey)
 
 	if !hasUserCredential {
 		return sdkerrors.Wrapf(

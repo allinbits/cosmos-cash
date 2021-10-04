@@ -75,7 +75,7 @@ endif
 	git tag $(APP_VERSION)
 	git-chglog --output CHANGELOG.md
 	git tag $(APP_VERSION) --delete
-	git add CHANGELOG.md && git commit -m "update changelog for v$(APP_VERSION)"
+	git add CHANGELOG.md && git commit -m "update changelog for $(APP_VERSION)"
 	@echo release complete
 
 git-tag:
@@ -85,7 +85,7 @@ endif
 ifneq ($(shell git rev-parse --abbrev-ref HEAD),main)
 	$(error you are not on the main branch. aborting)
 endif
-	git tag -s -a "v$(APP_VERSION)" -m "Changelog: https://github.com/allinbits/cosmos-cash/blob/main/CHANGELOG.md"
+	git tag -s -a "$(APP_VERSION)" -m "Changelog: https://github.com/allinbits/cosmos-cash/blob/main/CHANGELOG.md"
 
 _release-patch:
 	$(eval APP_VERSION = $(shell git describe --tags | awk -F '("|")' '{ print($$1)}' | awk -F. '{$$NF = $$NF + 1;} 1' | sed 's/ /./g'))

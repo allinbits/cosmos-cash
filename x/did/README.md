@@ -12,7 +12,7 @@ The DID module provides the functionalities to create and manage the lifecycle o
 
 ## Reference
 
-1. [State](./docs/02_state.md)
-2. [Transitions](./docs/03_state_transitions.md)
-3. [Messages](./docs/04_messages.md)
+1. [State](./spec/02_state.md)
+2. [Transitions](./spec/03_state_transitions.md)
+3. [Messages](./spec/04_messages.md)
 

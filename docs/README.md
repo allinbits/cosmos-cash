@@ -3,13 +3,14 @@
 How to use the Cosmos Cash Documentation.
 
 - [Documentation](#documentation)
-  - [Overview](#overview)
-  - [Contributing](#contributing)
-  - [Reference](#reference)
+    - [Overview](#overview)
+    - [Contributing](#contributing)
+    - [Reference](#reference)
 
 ## Overview
 
-In Cosmos Cash we use the  *Grand Unified Theory of Documentation* (David Laing) as described by [Divio](https://documentation.divio.com/) as a basis for our documentation strategy.
+In Cosmos Cash we use the  *Grand Unified Theory of Documentation* (David Laing) as described
+by [Divio](https://documentation.divio.com/) as a basis for our documentation strategy.
 
 This approach outlines four specific use cases for documentation:
 
@@ -18,14 +19,16 @@ This approach outlines four specific use cases for documentation:
 * [Explanation](./Explanation/README.md)
 * [Reference](./Reference/README.md)
 
-For further background please see [the ADR relating to the documentation structure](./Explanation/ADR/adr-002-docs-structure.md). 
+For further background please
+see [the ADR relating to the documentation structure](./Explanation/ADR/adr-002-docs-structure.md).
 
 ## Contributing
 
-* Write all documentation following [Google Documentation Best Practice](https://google.github.io/styleguide/docguide/best_practices.html)
+* Write all documentation
+  following [Google Documentation Best Practice](https://google.github.io/styleguide/docguide/best_practices.html)
 * Generate as much documentation as possible from the code.
 * Raise a PR for all documentation changes
-* Follow our [Code of Conduct](../CONTRIBUTING.md)
+* Follow our [Code of Conduct](https://github.com/allinbits/cosmos-cash/blob/main/CONTRIBUTING.md)
 
 ## Reference
 

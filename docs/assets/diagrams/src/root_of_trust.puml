@@ -1,5 +1,18 @@
 @startuml
-skinparam monochrome true
+
+title Root of Trust
+footer Cosmos Cash: https://github.com/allinbits/cosmos-cash
+
+
+
+skinparam defaultFontName arial
+skinparam StateBorderColor black
+skinparam StateBackgroundColor white
+skinparam StateArrowColor black
+
+
+skinparam monochrome false
+skinparam shadowing false
 
 state C1 <<choice>>
 state C2 <<choice>>

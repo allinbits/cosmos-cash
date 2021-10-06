@@ -1,4 +1,4 @@
-# ADR 4: Root of trust
+# ADR 007: Root of trust
 
 ## Changelog
 
@@ -29,15 +29,15 @@ In the context of Cosmos Cash we can identify for actors:
 
 ## Decision
 
-![include](../../assets/diagrams/out/root_of_trust.svg)
+![root of trust](../../assets/diagrams/out/root_of_trust.svg)
 
 ### Credential Verfication
 
-![include](../../assets/diagrams/out/credentials_validate_proof.svg)
+![credential validation](../../assets/diagrams/out/credentials_validate_proof.svg)
 
 ### Credential deletion
 
-![include](../../assets/diagrams/out/credentials_delete.svg)
+![credential deletion](../../assets/diagrams/out/credentials_delete.svg)
 
 ## Consequences
 

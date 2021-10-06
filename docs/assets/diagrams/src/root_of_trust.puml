@@ -3,82 +3,92 @@
 title Root of Trust
 footer Cosmos Cash: https://github.com/allinbits/cosmos-cash
 
-
-
-skinparam defaultFontName arial
-skinparam StateBorderColor black
-skinparam StateBackgroundColor white
-skinparam StateArrowColor black
-
-
+<style>
+activityDiagram {
+  LineColor #222
+  FontName sans
+}
+</style>
 skinparam monochrome false
 skinparam shadowing false
 
-state C1 <<choice>>
-state C2 <<choice>>
-state C3 <<choice>>
-state C4 <<choice>>
-state C5 <<choice>>
-state C6 <<choice>>
+
+start
+partition "Chain Setup" {
+    #lightgray:
+    add regulator address
+    to regulator genesis parameters,
+    these addresses are the **RootOfTrust**;
+}
 
 
-state P1 <<choice>>
-state "Accept" as OK
-state "Reject" as ERR
-state END <<end>>
+partition "Chain Startup" {
+    #white:Chain starts;
+    if (RootOfTrust is empty?) then (yes)
+        #pink:Error;
+        end
+    else (no)
+        #white:Start chain;
+        stop
+    endif
+}
 
 
-[*] --> S1
-S1 : regulators added to genesis file
-S1 : ADDR(Regulators)
-S2 : Chain started
-S3 : Sumbitted Tx(vc(regulator))
-K1 : DID is ephemeral (address)
-N1 : DID is persistent
-S1 --> S2
-S2 --> S3
-S3 --> C1
 
-C1 --> C2 : Signer in ADDR(Regulators)
-C1 --> ERR : Signer not in ADDR(Regulators)
+partition "Regulator Credential" {
+start
 
-C2 --> K1 : Issuer DID is type KEY
-C2 --> N1 : Issuer DID is type NET
+#white:Actor issues a **RegulatorCredential**;
+if (Actor.Address ∈ RootOfTrust ?) then (no)
+    #pink:Error;
+    end
+else (yes)
+    #white:Regulator credential issued;
+    stop
+endif
+}
 
-K1 --> C3
-C3 --> K2 : Address has had positive balance
-C3 --> ERR  : Address never had funds
+partition "Registration Credential" {
+start
+#white:Actor issues a **RegistrationCredential**;
+if (RegistrationCredential.Issuer holds RegulatorCredential ?) then (no)
+    #pink:Error;
+    end
+else (yes)
+    #white:Registration credential issued;
+    stop
+endif
+}
 
-K2 : pubkey is known
-K2 --> P1 : verify vc proof (issuer did + signature)
-
-
-' HERE THE NET METHOD STARTS
-
-N1 --> C4 : resolve DID
-
-C4 -> ERR : DID not resolvable
-C4 -> N2 : DID resolved 
-
-N2 --> C5 : has VR authentication | assertionMethod
-C5 --> ERR : missing did verification relationships
-
- 
-C5 --> N3 
-N3 : DID Well formed
-
-N3 --> C6 : retrieve pubkey 
-
-C6 --> ERR : pubkey not supported
-C6 --> N5 : pubkey is address or sekp256k1
-
-N5 : pubkey is known
-N5 --> P1
+partition "License Credential" {
+start
+#white:Actor issues a **LicenseCredential**;
+if (LicenseCredential.Issuer holds RegulatorCredential ?) then (no)
+    #pink:Error;
+    end
+else (yes)
+    if (LicenseCredential.Subject holds RegistrationCredential ?) then (no)
+        #pink:Error;
+        end
+    else (yes)
+        #white:License credential issued;
+        stop
+    endif
+endif
+}
 
 
-P1 --> OK : signature match
-P1 --> ERR : signature mismatch
+partition "User Credential" {
+start
+#white:Actor issues a **UserCredential**;
+if (UserCredential.Issuer holds LicenseCredential ?) then (no)
+    #pink:Error;
+    end
+else (yes)
+    #white:User credential issued;
+    stop
+endif
+}
 
-OK --> END
-ERR --> END
+
 @enduml

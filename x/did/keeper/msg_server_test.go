@@ -2,15 +2,15 @@ package keeper
 
 import (
 	"fmt"
-
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/allinbits/cosmos-cash/x/did/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 func (suite *KeeperTestSuite) TestHandleMsgCreateDidDocument() {
 	var (
-		req types.MsgCreateDidDocument
+		req    types.MsgCreateDidDocument
+		errExp error
 	)
 
 	server := NewMsgServerImpl(suite.keeper)
@@ -22,12 +22,16 @@ func (suite *KeeperTestSuite) TestHandleMsgCreateDidDocument() {
 	}{
 		{
 			"Pass: can create a an did",
-			func() { req = *types.NewMsgCreateDidDocument("did:cosmos:cash:subject", nil, nil, "subject") },
+			func() {
+				req = *types.NewMsgCreateDidDocument("did:cosmos:cash:subject", nil, nil, "subject")
+			},
 			false,
 		},
 		{
 			"FAIL: did doc validation fails",
-			func() { req = *types.NewMsgCreateDidDocument("invalid did", nil, nil, "subject") },
+			func() {
+				req = *types.NewMsgCreateDidDocument("invalid did", nil, nil, "subject")
+			},
 			true,
 		},
 		{
@@ -38,6 +42,7 @@ func (suite *KeeperTestSuite) TestHandleMsgCreateDidDocument() {
 
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
 				req = *types.NewMsgCreateDidDocument(did, nil, nil, "subject")
+				errExp = sdkerrors.Wrapf(types.ErrDidDocumentFound, "a document with did %s already exists", did)
 			},
 			true,
 		},
@@ -48,6 +53,9 @@ func (suite *KeeperTestSuite) TestHandleMsgCreateDidDocument() {
 			_, err := server.CreateDidDocument(sdk.WrapSDKContext(suite.ctx), &req)
 			if tc.expectErr {
 				suite.Require().Error(err)
+				if errExp != nil {
+					suite.Require().Equal(err.Error(), errExp.Error())
+				}
 			} else {
 				suite.Require().NoError(err)
 			}
@@ -57,7 +65,8 @@ func (suite *KeeperTestSuite) TestHandleMsgCreateDidDocument() {
 
 func (suite *KeeperTestSuite) TestHandleMsgUpdateDidDocument() {
 	var (
-		req types.MsgUpdateDidDocument
+		req    types.MsgUpdateDidDocument
+		errExp error
 	)
 
 	server := NewMsgServerImpl(suite.keeper)
@@ -71,6 +80,7 @@ func (suite *KeeperTestSuite) TestHandleMsgUpdateDidDocument() {
 			"FAIL: not found",
 			func() {
 				req = *types.NewMsgUpdateDidDocument("did:cosmos:cash:subject", nil, "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+				errExp = sdkerrors.Wrapf(types.ErrDidDocumentNotFound, "did document at %s not found", "did:cosmos:cash:subject")
 			},
 			true,
 		},
@@ -83,6 +93,8 @@ func (suite *KeeperTestSuite) TestHandleMsgUpdateDidDocument() {
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
 
 				req = *types.NewMsgUpdateDidDocument(didDoc.Id, []string{"did:cosmos:cash:controller"}, "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer %s not authorized to update the target did document at %s", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8", did)
+
 			},
 			true,
 		},
@@ -143,6 +155,9 @@ func (suite *KeeperTestSuite) TestHandleMsgUpdateDidDocument() {
 
 			if tc.expectErr {
 				suite.Require().Error(err)
+				if errExp != nil {
+					suite.Require().Equal(err.Error(), errExp.Error())
+				}
 			} else {
 				suite.Require().NoError(err)
 			}
@@ -152,7 +167,8 @@ func (suite *KeeperTestSuite) TestHandleMsgUpdateDidDocument() {
 
 func (suite *KeeperTestSuite) TestHandleMsgAddVerification() {
 	var (
-		req types.MsgAddVerification
+		req    types.MsgAddVerification
+		errExp error
 	)
 
 	server := NewMsgServerImpl(suite.keeper)
@@ -164,7 +180,10 @@ func (suite *KeeperTestSuite) TestHandleMsgAddVerification() {
 	}{
 		{
 			"FAIL: can not add verification, did does not exist",
-			func() { req = *types.NewMsgAddVerification("did:cosmos:cash:subject", nil, "subject") },
+			func() {
+				req = *types.NewMsgAddVerification("did:cosmos:cash:subject", nil, "subject")
+				errExp = sdkerrors.Wrapf(types.ErrDidDocumentNotFound, "did document at %s not found", "did:cosmos:cash:subject")
+			},
 			true,
 		},
 		{
@@ -197,6 +216,7 @@ func (suite *KeeperTestSuite) TestHandleMsgAddVerification() {
 					nil,
 				)
 				req = *types.NewMsgAddVerification(didDoc.Id, v, "not a key")
+				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer %s not authorized to update the target did document at %s", "not a key", didDoc.Id)
 			},
 			true,
 		},
@@ -230,6 +250,7 @@ func (suite *KeeperTestSuite) TestHandleMsgAddVerification() {
 					nil,
 				)
 				req = *types.NewMsgAddVerification(didDoc.Id, v, "cash1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2")
+				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer %s not authorized to update the target did document at %s", "cash1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2", didDoc.Id)
 			},
 			true,
 		},
@@ -309,6 +330,9 @@ func (suite *KeeperTestSuite) TestHandleMsgAddVerification() {
 
 			if tc.expectErr {
 				suite.Require().Error(err)
+				if errExp != nil {
+					suite.Require().Equal(err.Error(), errExp.Error())
+				}
 			} else {
 				suite.Require().NoError(err)
 			}
@@ -318,7 +342,8 @@ func (suite *KeeperTestSuite) TestHandleMsgAddVerification() {
 
 func (suite *KeeperTestSuite) TestHandleMsgSetVerificationRelationships() {
 	var (
-		req types.MsgSetVerificationRelationships
+		req    types.MsgSetVerificationRelationships
+		errExp error
 	)
 
 	server := NewMsgServerImpl(suite.keeper)
@@ -337,6 +362,7 @@ func (suite *KeeperTestSuite) TestHandleMsgSetVerificationRelationships() {
 					[]string{types.Authentication},
 					"subject",
 				)
+				errExp = sdkerrors.Wrapf(types.ErrDidDocumentNotFound, "did document at %s not found", "did:cosmos:cash:subject")
 			},
 			true,
 		},
@@ -366,6 +392,7 @@ func (suite *KeeperTestSuite) TestHandleMsgSetVerificationRelationships() {
 					[]string{types.Authentication},
 					"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 				)
+				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer %s not authorized to update the target did document at %s", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8", "did:cosmos:cash:subject")
 			},
 			true,
 		},
@@ -465,6 +492,9 @@ func (suite *KeeperTestSuite) TestHandleMsgSetVerificationRelationships() {
 
 			if tc.expectErr {
 				suite.Require().Error(err)
+				if errExp != nil {
+					suite.Require().Equal(err.Error(), errExp.Error())
+				}
 			} else {
 				suite.Require().NoError(err)
 			}
@@ -474,7 +504,8 @@ func (suite *KeeperTestSuite) TestHandleMsgSetVerificationRelationships() {
 
 func (suite *KeeperTestSuite) TestHandleMsgRevokeVerification() {
 	var (
-		req types.MsgRevokeVerification
+		req    types.MsgRevokeVerification
+		errExp error
 	)
 
 	server := NewMsgServerImpl(suite.keeper)
@@ -488,6 +519,7 @@ func (suite *KeeperTestSuite) TestHandleMsgRevokeVerification() {
 			"FAIL: can not revoke verification, did does not exist",
 			func() {
 				req = *types.NewMsgRevokeVerification("did:cosmos:cash:2222", "service-id", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+				errExp = sdkerrors.Wrapf(types.ErrDidDocumentNotFound, "did document at %s not found", "did:cosmos:cash:2222")
 			},
 			true,
 		},
@@ -537,6 +569,7 @@ func (suite *KeeperTestSuite) TestHandleMsgRevokeVerification() {
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
 				// controller-1 does not exists
 				req = *types.NewMsgRevokeVerification(didDoc.Id, vmID, signer)
+				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer %s not authorized to update the target did document at %s", signer, didDoc.Id)
 			},
 			true,
 		},
@@ -575,6 +608,9 @@ func (suite *KeeperTestSuite) TestHandleMsgRevokeVerification() {
 
 			if tc.expectErr {
 				suite.Require().Error(err)
+				if errExp != nil {
+					suite.Require().Equal(err.Error(), errExp.Error())
+				}
 			} else {
 				suite.Require().NoError(err)
 			}
@@ -584,7 +620,8 @@ func (suite *KeeperTestSuite) TestHandleMsgRevokeVerification() {
 
 func (suite *KeeperTestSuite) TestHandleMsgAddService() {
 	var (
-		req types.MsgAddService
+		req    types.MsgAddService
+		errExp error
 	)
 
 	server := NewMsgServerImpl(suite.keeper)
@@ -603,11 +640,12 @@ func (suite *KeeperTestSuite) TestHandleMsgAddService() {
 					"cash/multihash",
 				)
 				req = *types.NewMsgAddService("did:cosmos:cash:subject", service, "subject")
+				errExp = sdkerrors.Wrapf(types.ErrDidDocumentNotFound, "did document at %s not found", "did:cosmos:cash:subject")
 			},
 			true,
 		},
 		{
-			"FAIL: can not add service, did does not exist",
+			"FAIL: can not add service, service does not exist",
 			func() {
 				req = *types.NewMsgAddService("did:cosmos:cash:subject", nil, "subject")
 			},
@@ -640,6 +678,7 @@ func (suite *KeeperTestSuite) TestHandleMsgAddService() {
 
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
 				req = *types.NewMsgAddService(didDoc.Id, service, signer)
+				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer %s not authorized to update the target did document at %s", signer, didDoc.Id)
 			},
 			true,
 		},
@@ -753,6 +792,9 @@ func (suite *KeeperTestSuite) TestHandleMsgAddService() {
 
 			if tc.expectErr {
 				suite.Require().Error(err)
+				if errExp != nil {
+					suite.Require().Equal(err.Error(), errExp.Error())
+				}
 			} else {
 				suite.Require().NoError(err)
 			}
@@ -762,7 +804,8 @@ func (suite *KeeperTestSuite) TestHandleMsgAddService() {
 
 func (suite *KeeperTestSuite) TestHandleMsgDeleteService() {
 	var (
-		req types.MsgDeleteService
+		req    types.MsgDeleteService
+		errExp error
 	)
 
 	server := NewMsgServerImpl(suite.keeper)
@@ -776,6 +819,7 @@ func (suite *KeeperTestSuite) TestHandleMsgDeleteService() {
 			"FAIL: can not delete service, did does not exist",
 			func() {
 				req = *types.NewMsgDeleteService("did:cosmos:cash:2222", "service-id", "cash1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+				errExp = sdkerrors.Wrapf(types.ErrDidDocumentNotFound, "did document at %s not found", "did:cosmos:cash:2222")
 			},
 			true,
 		},
@@ -833,6 +877,7 @@ func (suite *KeeperTestSuite) TestHandleMsgDeleteService() {
 
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
 				req = *types.NewMsgDeleteService(didDoc.Id, serviceID, "cash1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+				errExp = sdkerrors.Wrapf(types.ErrInvalidState, "the did document doesn't have services associated")
 			},
 			true,
 		},
@@ -858,6 +903,7 @@ func (suite *KeeperTestSuite) TestHandleMsgDeleteService() {
 
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
 				req = *types.NewMsgDeleteService(didDoc.Id, serviceID, "cash1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer %s not authorized to update the target did document at %s", "cash1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8", didDoc.Id)
 			},
 			true,
 		},
@@ -870,6 +916,9 @@ func (suite *KeeperTestSuite) TestHandleMsgDeleteService() {
 
 			if tc.expectErr {
 				suite.Require().Error(err)
+				if errExp != nil {
+					suite.Require().Equal(err.Error(), errExp.Error())
+				}
 			} else {
 				suite.Require().NoError(err)
 			}

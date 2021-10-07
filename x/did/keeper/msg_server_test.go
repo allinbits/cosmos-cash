@@ -231,7 +231,7 @@ func (suite *KeeperTestSuite) TestHandleMsgAddVerification() {
 					types.NewVerificationMethod(
 						"did:cosmos:cash:subject#key-2",
 						"did:cosmos:cash:subject",
-						types.NewBlockchainAccountID("foochainid", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"), //??????
+						types.NewBlockchainAccountID("foochainid", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"),
 					),
 					[]string{types.Authentication},
 					nil,

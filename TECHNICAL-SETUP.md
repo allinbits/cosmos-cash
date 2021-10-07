@@ -87,7 +87,7 @@ The portal will be built in the `site` directory
 To run the documentation portal, execute the following command from the project root:
 
 ```sh
-mkdocs run
+mkdocs serve
 ```
 
 The portal will be served on 'http://127.0.0.1:8000/'

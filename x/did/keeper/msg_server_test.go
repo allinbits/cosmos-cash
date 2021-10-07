@@ -659,7 +659,7 @@ func (suite *KeeperTestSuite) TestHandleMsgAddService() {
 			},
 		},
 		{
-			"FAIL: cannot add service to did document with an incorrect type",
+			"FAIL: cannot add service to did document with an empty type",
 			func() {
 				signer := "subject"
 				didDoc, _ := types.NewDidDocument(
@@ -679,7 +679,6 @@ func (suite *KeeperTestSuite) TestHandleMsgAddService() {
 
 				service := types.NewService(
 					"service-id",
-					//"NonUserCredential",
 					"",
 					"cash/multihash",
 				)

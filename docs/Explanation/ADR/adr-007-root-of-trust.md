@@ -20,22 +20,50 @@ implement a public [verifiable credential](https://verifiablecredential.io/) sch
 
 ## Context
 
-In the context of Cosmos Cash we can identify for actors:
+In the context of Cosmos Cash there are three roles on chain:
 
 - Regulator
-- Identity Provider (eIDAS)
 - EMT/ART (crypto asset issuer)
 - Account holder
 
+The roles form a chain of trust illustrated in the following diagram:
+
+![chain of trust](../../assets/diagrams/out/chain_of_trust.svg)
+
+The chain of trust reliability is determined by the root of trust.
+
 ## Decision
+
+To provide a reliable determination of the root of trust the chain initialization follows the procedure described in the
+following diagram:
 
 ![root of trust](../../assets/diagrams/out/root_of_trust.svg)
 
-### Credential Verfication
+The details of the off-chain ceremony where the root of trust addresses are collected are outside the scope of this ADR.
+
+> Note: an improvement to this process is the introduction of root of trust governance model.
+
+Once the root of trust is defined, we define a set of verification credentials, compliant wit the W3C verifiable
+credential specification, that implements the chain of trust.
+
+The credentials and their issuance constraints are represented in the following diagram:
+
+![credentials](../../assets/diagrams/out/credentials.svg)
+
+### Issuing credentials
+
+Since the verifiable credential mechanism is independent of the blockchain transaction verification process, a 
+separate verification process MUST be provided for issuing credentials. Such process is described in the following 
+diagram:
 
 ![credential validation](../../assets/diagrams/out/credentials_validate_proof.svg)
 
-### Credential deletion
+The consequence of the verification process is that in line of principle the actor issuing credentials doesn't have 
+to be the same actor that sign, pays and broadcasts the transaction containing the verifiable credentials.
+
+### Deleting (Revoking) credentials
+
+The credential revocation verification process is described in the following diagram:
 
 ![credential deletion](../../assets/diagrams/out/credentials_delete.svg)
 
@@ -47,14 +75,12 @@ This is a new module so backward compatibility is not a concern.
 
 ### Positive
 
-- The implementation of the ADR provides the foundation for interoperability with the DID standard and the SSI identity
-  approach.
-- Closely following the W3C standard gives the best chances of successful interoperability with third-party components.
+- The root of trust and the chain of trust models are compatible with the SSI verifiable credential process, and 
+  therefore compatible with 3rd party applicaitons
 
 ### Negative
 
-- The implementation rigidly follows the W3C specification which leaves little room for extensibility. This approach
-  might become an issue for wider adoption.
+- The root of trust model is somewhat centralised
 
 ### Neutral
 
@@ -62,14 +88,7 @@ N/A
 
 ## Further Discussions
 
-While an ADR is in the DRAFT or PROPOSED stage, this section contains a summary of issues to be solved in future
-iterations. The issues summarized here can reference comments from a pull request discussion. Later, this section can
-optionally list ideas or improvements the author or reviewers found during the analysis of this ADR.
-
-- The `did:key` method specifies a key format that is different from the one used in this ADR. This ADR needs to be
-  amended or follow a different approach.
-- The approach proposed is somewhat locked into the current implementation and will have to be revised in successive
-  iterations.
+N/A
 
 ## Test Cases [optional]
 
@@ -77,8 +96,7 @@ N/A
 
 ## References
 
-- [DID Core](https://www.w3.org/TR/did-core)
-- [DID Specification Registries](https://w3c.github.io/did-spec-registries)
+N/A
 
 
 

@@ -15,9 +15,9 @@ skinparam shadowing false
 
 start
 partition "Chain Setup" {
-    #lightgray:
-    add regulator address
-    to regulator genesis parameters,
+    #lightgray:An offline ceremony between the network initial stakeholder
+    collects the list of addresses that are added
+    to the regulator module genesis parameters:
     these addresses are the **RootOfTrust**;
 }
 
@@ -34,61 +34,6 @@ partition "Chain Startup" {
 }
 
 
-
-partition "Regulator Credential" {
-start
-
-#white:Actor issues a **RegulatorCredential**;
-if (Actor.Address ∈ RootOfTrust ?) then (no)
-    #pink:Error;
-    end
-else (yes)
-    #white:Regulator credential issued;
-    stop
-endif
-}
-
-partition "Registration Credential" {
-start
-#white:Actor issues a **RegistrationCredential**;
-if (RegistrationCredential.Issuer holds RegulatorCredential ?) then (no)
-    #pink:Error;
-    end
-else (yes)
-    #white:Registration credential issued;
-    stop
-endif
-}
-
-partition "License Credential" {
-start
-#white:Actor issues a **LicenseCredential**;
-if (LicenseCredential.Issuer holds RegulatorCredential ?) then (no)
-    #pink:Error;
-    end
-else (yes)
-    if (LicenseCredential.Subject holds RegistrationCredential ?) then (no)
-        #pink:Error;
-        end
-    else (yes)
-        #white:License credential issued;
-        stop
-    endif
-endif
-}
-
-
-partition "User Credential" {
-start
-#white:Actor issues a **UserCredential**;
-if (UserCredential.Issuer holds LicenseCredential ?) then (no)
-    #pink:Error;
-    end
-else (yes)
-    #white:User credential issued;
-    stop
-endif
-}
 
 
 @enduml

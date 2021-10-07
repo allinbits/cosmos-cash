@@ -5,6 +5,7 @@ import (
 	"github.com/allinbits/cosmos-cash/x/did/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"reflect"
 )
 
 func (suite *KeeperTestSuite) TestHandleMsgCreateDidDocument() {
@@ -24,6 +25,7 @@ func (suite *KeeperTestSuite) TestHandleMsgCreateDidDocument() {
 			"Pass: can create a an did",
 			func() {
 				req = *types.NewMsgCreateDidDocument("did:cosmos:cash:subject", nil, nil, "subject")
+				errExp = nil
 			},
 			false,
 		},
@@ -31,6 +33,7 @@ func (suite *KeeperTestSuite) TestHandleMsgCreateDidDocument() {
 			"FAIL: did doc validation fails",
 			func() {
 				req = *types.NewMsgCreateDidDocument("invalid did", nil, nil, "subject")
+				errExp = sdkerrors.Wrapf(types.ErrInvalidDIDFormat, "did %s", "invalid did")
 			},
 			true,
 		},
@@ -53,8 +56,10 @@ func (suite *KeeperTestSuite) TestHandleMsgCreateDidDocument() {
 			_, err := server.CreateDidDocument(sdk.WrapSDKContext(suite.ctx), &req)
 			if tc.expectErr {
 				suite.Require().Error(err)
+				suite.Require().NotNil(errExp)
 				if errExp != nil {
-					suite.Require().Equal(err.Error(), errExp.Error())
+					suite.Require().Equal(reflect.TypeOf(errExp), reflect.TypeOf(err))
+					suite.Require().Equal(errExp.Error(), err.Error())
 				}
 			} else {
 				suite.Require().NoError(err)
@@ -115,8 +120,8 @@ func (suite *KeeperTestSuite) TestHandleMsgUpdateDidDocument() {
 					),
 				))
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
-
 				req = *types.NewMsgUpdateDidDocument(did, nil, "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+				errExp = nil
 			},
 			false,
 		},
@@ -143,6 +148,7 @@ func (suite *KeeperTestSuite) TestHandleMsgUpdateDidDocument() {
 				}
 
 				req = *types.NewMsgUpdateDidDocument(didDoc.Id, controllers, "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+				errExp = sdkerrors.Wrapf(types.ErrInvalidDIDFormat, "did document controller validation error '%s'", "invalid")
 			},
 			true,
 		},
@@ -155,8 +161,10 @@ func (suite *KeeperTestSuite) TestHandleMsgUpdateDidDocument() {
 
 			if tc.expectErr {
 				suite.Require().Error(err)
+				suite.Require().NotNil(errExp)
 				if errExp != nil {
-					suite.Require().Equal(err.Error(), errExp.Error())
+					suite.Require().Equal(reflect.TypeOf(errExp), reflect.TypeOf(err))
+					suite.Require().Equal(errExp.Error(), err.Error())
 				}
 			} else {
 				suite.Require().NoError(err)
@@ -186,6 +194,10 @@ func (suite *KeeperTestSuite) TestHandleMsgAddVerification() {
 			},
 			true,
 		},
+		//3 tests in a row are just 'unauthorised'?
+		//1 - no authentication relationship - no-one can change doc? also we sign incorrectly?
+		//2 - no authentication relationship - no-one can change doc? also we sign incorrectly?
+		//3 - now have authentication relationship - but signer set to did id, needs to be  "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"?
 		{
 			"FAIL: can not add verification, unauthorized",
 			func() {
@@ -210,13 +222,13 @@ func (suite *KeeperTestSuite) TestHandleMsgAddVerification() {
 					types.NewVerificationMethod(
 						"did:cosmos:cash:subject#key-2",
 						"did:cosmos:cash:subject",
-						types.NewBlockchainAccountID("foochainid", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"),
+						types.NewBlockchainAccountID("foochainid", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"), //??????
 					),
 					[]string{types.Authentication},
 					nil,
 				)
 				req = *types.NewMsgAddVerification(didDoc.Id, v, "not a key")
-				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer %s not authorized to update the target did document at %s", "not a key", didDoc.Id)
+				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer account %s not authorized to add verification methods to the target did document at %s", "not a key", didDoc.Id)
 			},
 			true,
 		},
@@ -244,13 +256,13 @@ func (suite *KeeperTestSuite) TestHandleMsgAddVerification() {
 					types.NewVerificationMethod(
 						"did:cosmos:cash:subject#key-2",
 						"did:cosmos:cash:subject",
-						types.NewBlockchainAccountID("foochainid", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"),
+						types.NewBlockchainAccountID("foochainid", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"), //??????
 					),
 					[]string{types.Authentication},
 					nil,
 				)
 				req = *types.NewMsgAddVerification(didDoc.Id, v, "cash1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2")
-				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer %s not authorized to update the target did document at %s", "cash1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2", didDoc.Id)
+				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer account %s not authorized to add verification methods to the target did document at %s", "cash1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2", didDoc.Id)
 			},
 			true,
 		},
@@ -258,7 +270,8 @@ func (suite *KeeperTestSuite) TestHandleMsgAddVerification() {
 			"FAIL: can not add verification, invalid verification",
 			func() {
 				// setup
-				signer := "subject"
+				//signer := "subject"
+				signer := "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"
 				didDoc, _ := types.NewDidDocument(
 					"did:cosmos:cash:subject",
 					types.WithVerifications(
@@ -285,6 +298,8 @@ func (suite *KeeperTestSuite) TestHandleMsgAddVerification() {
 					nil,
 				)
 				req = *types.NewMsgAddVerification(didDoc.Id, v, signer)
+				//errExp = sdkerrors.Wrapf(types.ErrUnauthorized,"signer account %s not authorized to add verification methods to the target did document at %s", signer, didDoc.Id)
+				errExp = sdkerrors.Wrapf(types.ErrInvalidDIDURLFormat, "verification method id: %v", "")
 			},
 			true,
 		},
@@ -318,6 +333,7 @@ func (suite *KeeperTestSuite) TestHandleMsgAddVerification() {
 
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
 				req = *types.NewMsgAddVerification(didDoc.Id, v, "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+				errExp = nil
 			},
 			false,
 		},
@@ -330,8 +346,10 @@ func (suite *KeeperTestSuite) TestHandleMsgAddVerification() {
 
 			if tc.expectErr {
 				suite.Require().Error(err)
+				suite.Require().NotNil(errExp)
 				if errExp != nil {
-					suite.Require().Equal(err.Error(), errExp.Error())
+					suite.Require().Equal(reflect.TypeOf(errExp), reflect.TypeOf(err))
+					suite.Require().Equal(errExp.Error(), err.Error())
 				}
 			} else {
 				suite.Require().NoError(err)
@@ -392,12 +410,13 @@ func (suite *KeeperTestSuite) TestHandleMsgSetVerificationRelationships() {
 					[]string{types.Authentication},
 					"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 				)
-				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer %s not authorized to update the target did document at %s", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8", "did:cosmos:cash:subject")
+
+				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer %s not authorized to set verification relationships on the target did document at %s", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8", "did:cosmos:cash:subject")
 			},
 			true,
 		},
 		{
-			"FAIL: can not add verification relationship, invalid relationships",
+			"FAIL: can not add verification relationship, invalid relationship provided",
 			func() {
 				// setup
 				didDoc, _ := types.NewDidDocument(
@@ -405,7 +424,8 @@ func (suite *KeeperTestSuite) TestHandleMsgSetVerificationRelationships() {
 					types.WithVerifications(
 						types.NewVerification(
 							types.NewVerificationMethod(
-								"did:cosmos:cash:subject#cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+								//"did:cosmos:cash:subject#cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+								"did:cosmos:cash:subject#key-1",
 								"did:cosmos:cash:subject",
 								types.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215}, types.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
 							),
@@ -422,6 +442,7 @@ func (suite *KeeperTestSuite) TestHandleMsgSetVerificationRelationships() {
 					nil,
 					"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 				)
+				errExp = sdkerrors.Wrap(types.ErrEmptyRelationships, "at least a verification relationship is required")
 			},
 			true,
 		},
@@ -451,6 +472,7 @@ func (suite *KeeperTestSuite) TestHandleMsgSetVerificationRelationships() {
 					[]string{types.Authentication, types.CapabilityInvocation},
 					"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 				)
+				errExp = sdkerrors.Wrapf(types.ErrVerificationMethodNotFound, "verification method %v not found", "did:cosmos:cash:subject#key-does-not-exists")
 			},
 			true,
 		},
@@ -480,6 +502,7 @@ func (suite *KeeperTestSuite) TestHandleMsgSetVerificationRelationships() {
 					[]string{types.Authentication, types.CapabilityInvocation},
 					"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 				)
+				errExp = nil
 			},
 			false,
 		},
@@ -492,8 +515,10 @@ func (suite *KeeperTestSuite) TestHandleMsgSetVerificationRelationships() {
 
 			if tc.expectErr {
 				suite.Require().Error(err)
+				suite.Require().NotNil(errExp)
 				if errExp != nil {
-					suite.Require().Equal(err.Error(), errExp.Error())
+					suite.Require().Equal(reflect.TypeOf(errExp), reflect.TypeOf(err))
+					suite.Require().Equal(errExp.Error(), err.Error())
 				}
 			} else {
 				suite.Require().NoError(err)
@@ -542,6 +567,7 @@ func (suite *KeeperTestSuite) TestHandleMsgRevokeVerification() {
 				)
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
 				req = *types.NewMsgRevokeVerification(didDoc.Id, "did:cosmos:cash:subject#not-existent", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+				errExp = sdkerrors.Wrapf(types.ErrVerificationMethodNotFound, "verification method id: %v", "did:cosmos:cash:subject#not-existent")
 			},
 			true,
 		},
@@ -569,7 +595,8 @@ func (suite *KeeperTestSuite) TestHandleMsgRevokeVerification() {
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
 				// controller-1 does not exists
 				req = *types.NewMsgRevokeVerification(didDoc.Id, vmID, signer)
-				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer %s not authorized to update the target did document at %s", signer, didDoc.Id)
+
+				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer %s not authorized to revoke verification methods from the target did document at %s", signer, didDoc.Id)
 			},
 			true,
 		},
@@ -596,6 +623,7 @@ func (suite *KeeperTestSuite) TestHandleMsgRevokeVerification() {
 					"did:cosmos:cash:subject#key-1",
 					"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 				)
+				errExp = nil
 			},
 			false,
 		},
@@ -608,8 +636,10 @@ func (suite *KeeperTestSuite) TestHandleMsgRevokeVerification() {
 
 			if tc.expectErr {
 				suite.Require().Error(err)
+				suite.Require().NotNil(errExp)
 				if errExp != nil {
-					suite.Require().Equal(err.Error(), errExp.Error())
+					suite.Require().Equal(reflect.TypeOf(errExp), reflect.TypeOf(err))
+					suite.Require().Equal(errExp.Error(), err.Error())
 				}
 			} else {
 				suite.Require().NoError(err)
@@ -648,6 +678,7 @@ func (suite *KeeperTestSuite) TestHandleMsgAddService() {
 			"FAIL: can not add service, service does not exist",
 			func() {
 				req = *types.NewMsgAddService("did:cosmos:cash:subject", nil, "subject")
+				errExp = sdkerrors.Wrap(types.ErrInvalidInput, "service is not defined")
 			},
 			true,
 		},
@@ -678,7 +709,8 @@ func (suite *KeeperTestSuite) TestHandleMsgAddService() {
 
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
 				req = *types.NewMsgAddService(didDoc.Id, service, signer)
-				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer %s not authorized to update the target did document at %s", signer, didDoc.Id)
+
+				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer %s not authorized to add services to the target did document at %s", signer, didDoc.Id)
 			},
 			true,
 		},
@@ -703,19 +735,22 @@ func (suite *KeeperTestSuite) TestHandleMsgAddService() {
 
 				service := types.NewService(
 					"service-id",
-					"NonUserCredential",
+					//"NonUserCredential",
+					"",
 					"cash/multihash",
 				)
 
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
 				req = *types.NewMsgAddService(didDoc.Id, service, signer)
+				errExp = sdkerrors.Wrap(types.ErrInvalidInput, "service type cannot be empty;")
 			},
 			true,
 		},
 		{
 			"FAIL: duplicated service",
 			func() {
-				signer := "subject"
+				//signer := "subject"
+				signer := "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"
 				didDoc, _ := types.NewDidDocument(
 					"did:cosmos:cash:subject",
 					types.WithVerifications(
@@ -746,6 +781,7 @@ func (suite *KeeperTestSuite) TestHandleMsgAddService() {
 
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
 				req = *types.NewMsgAddService(didDoc.Id, service, signer)
+				errExp = sdkerrors.Wrapf(types.ErrInvalidInput, "duplicated verification method id %s", "service-id")
 			},
 			true,
 		},
@@ -780,6 +816,7 @@ func (suite *KeeperTestSuite) TestHandleMsgAddService() {
 
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
 				req = *types.NewMsgAddService(didDoc.Id, service, signer)
+				errExp = nil
 			},
 			false,
 		},
@@ -792,8 +829,10 @@ func (suite *KeeperTestSuite) TestHandleMsgAddService() {
 
 			if tc.expectErr {
 				suite.Require().Error(err)
+				suite.Require().NotNil(errExp)
 				if errExp != nil {
-					suite.Require().Equal(err.Error(), errExp.Error())
+					suite.Require().Equal(reflect.TypeOf(errExp), reflect.TypeOf(err))
+					suite.Require().Equal(errExp.Error(), err.Error())
 				}
 			} else {
 				suite.Require().NoError(err)
@@ -818,7 +857,7 @@ func (suite *KeeperTestSuite) TestHandleMsgDeleteService() {
 		{
 			"FAIL: can not delete service, did does not exist",
 			func() {
-				req = *types.NewMsgDeleteService("did:cosmos:cash:2222", "service-id", "cash1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+				req = *types.NewMsgDeleteService("did:cosmos:cash:2222", "service-id", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
 				errExp = sdkerrors.Wrapf(types.ErrDidDocumentNotFound, "did document at %s not found", "did:cosmos:cash:2222")
 			},
 			true,
@@ -832,7 +871,7 @@ func (suite *KeeperTestSuite) TestHandleMsgDeleteService() {
 					types.WithVerifications(
 						types.NewVerification(
 							types.NewVerificationMethod(
-								"did:cosmos:cash:subject#cash1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+								"did:cosmos:cash:subject#key-1",
 								"did:cosmos:cash:subject",
 								types.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215}, types.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
 							),
@@ -851,6 +890,7 @@ func (suite *KeeperTestSuite) TestHandleMsgDeleteService() {
 
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
 				req = *types.NewMsgDeleteService(didDoc.Id, "service-id", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+				errExp = nil
 			},
 			false,
 		},
@@ -876,7 +916,7 @@ func (suite *KeeperTestSuite) TestHandleMsgDeleteService() {
 				serviceID := ""
 
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
-				req = *types.NewMsgDeleteService(didDoc.Id, serviceID, "cash1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+				req = *types.NewMsgDeleteService(didDoc.Id, serviceID, "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
 				errExp = sdkerrors.Wrapf(types.ErrInvalidState, "the did document doesn't have services associated")
 			},
 			true,
@@ -902,8 +942,8 @@ func (suite *KeeperTestSuite) TestHandleMsgDeleteService() {
 				serviceID := "service-id"
 
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
-				req = *types.NewMsgDeleteService(didDoc.Id, serviceID, "cash1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
-				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer %s not authorized to update the target did document at %s", "cash1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8", didDoc.Id)
+				req = *types.NewMsgDeleteService(didDoc.Id, serviceID, "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer %s not authorized to delete services from the target did document at %s", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8", didDoc.Id)
 			},
 			true,
 		},
@@ -916,8 +956,10 @@ func (suite *KeeperTestSuite) TestHandleMsgDeleteService() {
 
 			if tc.expectErr {
 				suite.Require().Error(err)
+				suite.Require().NotNil(errExp)
 				if errExp != nil {
-					suite.Require().Equal(err.Error(), errExp.Error())
+					suite.Require().Equal(reflect.TypeOf(errExp), reflect.TypeOf(err))
+					suite.Require().Equal(errExp.Error(), err.Error())
 				}
 			} else {
 				suite.Require().NoError(err)

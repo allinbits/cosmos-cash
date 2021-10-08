@@ -15,7 +15,7 @@ skinparam shadowing false
 
 start
 partition "Chain Setup" {
-    #lightgray:An offline ceremony between the network initial stakeholder
+    #lightgray:An offline ceremony between network initial stakeholders
     collects the list of addresses that are added
     to the regulator module genesis parameters:
     these addresses are the **RootOfTrust**;

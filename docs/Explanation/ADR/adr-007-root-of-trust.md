@@ -26,7 +26,7 @@ In the context of Cosmos Cash there are three roles on chain:
 - EMT/ART (crypto asset issuer)
 - Account holder
 
-The roles form a chain of trust illustrated in the following diagram:
+The roles form a chain of trust that is shown in the following diagram:
 
 ![chain of trust](../../assets/diagrams/out/chain_of_trust.svg)
 
@@ -43,7 +43,7 @@ The details of the off-chain ceremony where the root of trust addresses are coll
 
 > Note: an improvement to this process is the introduction of root of trust governance model.
 
-Once the root of trust is defined, we define a set of verification credentials, compliant wit the W3C verifiable
+After the root of trust is defined, we define a set of verification credentials, compliant with the W3C verifiable
 credential specification, that implements the chain of trust.
 
 The credentials and their issuance constraints are represented in the following diagram:
@@ -53,7 +53,7 @@ The credentials and their issuance constraints are represented in the following 
 ### Issuing credentials
 
 Since the verifiable credential mechanism is independent of the blockchain transaction verification process, a 
-separate verification process MUST be provided for issuing credentials. Such process is described in the following 
+separate verification process MUST be provided for issuing credentials. The verification process is described in the following 
 diagram:
 
 ![credential validation](../../assets/diagrams/out/credentials_validate_proof.svg)
@@ -71,7 +71,7 @@ The credential revocation verification process is described in the following dia
 
 ### Backwards Compatibility
 
-This is a new module so backward compatibility is not a concern.
+This new module is backward compatible.
 
 ### Positive
 
@@ -80,7 +80,7 @@ This is a new module so backward compatibility is not a concern.
 
 ### Negative
 
-- The root of trust model is somewhat centralised
+- The root of trust model is somewhat centralized
 
 ### Neutral
 

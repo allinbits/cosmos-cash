@@ -10,14 +10,14 @@ or a combination of such assets (the so called “reserve assets”) within the 
 
 ## C
 
-CASPs
-:Crypto-asset service providers
+CASP
+: Crypto-asset service provider (CASP) is any person whose occupation or business is the provision of one or more crypto-asset services to third parties on a professional basis.
 
 ## D
 
 DID
-: Decentralised Identifier. W3C defines a DID as *"A portable URL-based identifier ... associated with an entity ... An
-example of a DID is did:example:123456abcdef"*
+: Decentralized Identifier. W3C defines a DID as a _portable URL-based identifier ..._ associated with an entity ... An
+example of a DID is `did:example:123456abcdef"*`
 
 EMT
 : E-money tokens refer to one single fiat currency only.
@@ -25,7 +25,7 @@ EMT
 ## L
 
 `Legal Person`
-: any person or entity that is able to perform legal activties, such as enter into contracts, own property, and so on
+: Any person or entity that is able to perform legal activties, such as enter into contracts, own property, and so on
 
 ## M
 
@@ -41,14 +41,14 @@ markets and the firms that engage in financial activity.
 
 ## V
 
-Verifiable Credential
-: TBD
+Verifiable credential (VC)
+: A verifiable credential (VC) is 
 
-Verifiable Presentation
-: TBD
+Verifiable presentation
+: Verifiable presentation (VP)
 
-Virtual Asset Service Provider
-: FATF defines a VASP as the following: *“Any natural/legal person who ... as a business conducts one or more of the
+VASP
+: FATF defines a virtual asset service provider (VASP) as the following: *“Any natural/legal person who ... as a business conducts one or more of the
 following activities or operations for or on behalf of another natural or legal person: i. exchange between virtual
 assets and fiat currencies; ii. exchange between one or more forms of virtual assets; iii. transfer of virtual assets;
 iv. safekeeping and/or administration of virtual assets or instruments enabling control over virtual assets; and v.

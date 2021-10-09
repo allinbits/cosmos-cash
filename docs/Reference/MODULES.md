@@ -1,10 +1,17 @@
 # Cosmos Cash Modules
 
-The Cosmos Cash project is composed of four modules
+- [Cosmos Cash Modules](#cosmos-cash-modules)
+    - [DID Module](#did-module)
+    - [Verifiable Credential Module](#verifiable-credential-module)
+    - [Regulator Module](#regulator-module)
+    - [Issuer module](#issuer-module)
+
+The Cosmos Cash project is composed of modules.
+
 
 ### DID Module
 
-The DID module implements the Cosmos [DID](../Explanation/ADR/adr-004-did.md) method and is responsible for all the
+The decentralized identifier (DID) module implements the Cosmos [DID](../Explanation/ADR/adr-004-did.md) method and is responsible for all the
 operations around DIDs.
 
 - [Source](https://github.com/allinbits/cosmos-cash/tree/main/x/did)
@@ -13,7 +20,7 @@ operations around DIDs.
 
 ### Verifiable Credential Module
 
-The Verifiable Credential module is responsible for operations around verifiable credentials. It provides limited
+The verifiable credential module is responsible for operations around verifiable credentials. It provides limited
 interaction and it is main function is to provide access to shared credential storage and security around verifiable
 credential proof validation.
 
@@ -25,7 +32,7 @@ credential proof validation.
 
 ### Regulator Module
 
-The Regulator module implements the [root of trust](../Explanation/ADR/adr-007-root-of-trust.md) logic to issue
+The regulator module implements the [root of trust](../Explanation/ADR/adr-007-root-of-trust.md) logic to issue
 [registration](../Explanation/ADR/adr-005-registration-credential.md) and [license](..
 /Explanation/ADR/adr-006-license-credential.md) credentials.
 

@@ -1,4 +1,4 @@
-# ADR 4: DID
+# ADR 004: DID
 
 ## Changelog
 

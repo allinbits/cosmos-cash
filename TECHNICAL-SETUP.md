@@ -1,5 +1,17 @@
 # Technical setup
 
+To ensure you have a successful experience working with our Cosmos Cash content, Tendermint recommends this technical setup.
+
+## GitHub Integration
+
+Click the GitHub icon in the sidebar for GitHub integration and follow the prompts.
+
+Clone the repos you work in
+
+- Fork or clone the https://github.com/allinbits/cosmos-cash/ repository.
+
+Internal Tendermint users have different permissions, if you're not sure, fork the repo.
+
 ## Software requirement
 
 To build the project:

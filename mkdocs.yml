@@ -1,6 +1,21 @@
 site_name: Cosmos Cash Documentation
+site_url: 
 repo_url: https://github.com/allinbits/cosmos-cash
-theme: material
+theme: 
+  name: material
+  features:
+    - navigation.sections
+    - search.suggest
+    - search.highlight
+    - search.share
+#extra:
+#  version:
+#    provider: mike
+#  social:
+#    - icon: fontawesome/brands/github
+#      link: https://github.com/allinbits
+#    - icon: fontawesome/brands/tendermintHQ
+#      link: https://twitter.com/squidfunk
 plugins:
   - search
   - build_plantuml:

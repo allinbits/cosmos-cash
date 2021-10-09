@@ -1,3 +1,7 @@
+---
+title: ADR Template
+---
+
 # ADR {ADR-NUMBER}: {TITLE}
 
 ## Changelog

@@ -1,4 +1,4 @@
-# Technical setup
+# Technical Setup
 
 To ensure you have a successful experience working with our Cosmos Cash content, Tendermint recommends this technical setup.
 
@@ -73,7 +73,9 @@ To install the node client on your local machine, run the `make install` command
 
 > 💡 you can also use the default `go` command to build the project, check the content of the [Makefile](./Makefile) for reference
 
-## Documentation portal (Optional)
+## Documentation Portal 
+
+All code updates are not complete until accompanying documentation is submitted. 
 
 The documentation portal is generated using [mkdocs](https://www.mkdocs.org/), to build or run the documentation portal
 locally the requirements are:
@@ -94,7 +96,7 @@ To build the documentation portal, execute the following command from the projec
 mkdocs build
 ```
 
-The portal will be built in the `site` directory
+The documentation portal is built in the `site` directory.
 
 To run the documentation portal, execute the following command from the project root:
 

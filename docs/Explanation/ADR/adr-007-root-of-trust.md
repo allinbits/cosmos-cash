@@ -69,13 +69,13 @@ The credential revocation verification process is described in the following dia
 
 ## Consequences
 
-### Backwards Compatibility
+### Backward Compatibility
 
 This new module is backward compatible.
 
 ### Positive
 
-- The root of trust and the chain of trust models are compatible with the SSI verifiable credential process, and 
+- The root of trust and the chain of trust models are compatible with the self-sovereign identity (SSI) verifiable credential process, and 
   therefore compatible with 3rd party applicaitons
 
 ### Negative

@@ -46,7 +46,8 @@ There are [many ways to run PlantUML](https://plantuml.com/running) to generate 
 
 ### PlantUML CLI
 
-The [makefile](.makefile) builds all `src/*.puml` files. To create SVG images, run `make (svg|png)` as needed. Run `make clean` to get a clean folder ready for a new build.
+The [makefile](./makefile) builds all `src/*.puml` files. To create SVG images, run `make (svg|png)` as needed. Run 
+`make clean` to get a clean folder ready for a new build.
 
 Using PlantUML and makefile is the preferred and cleanest way to create all the architecture documentation.
 

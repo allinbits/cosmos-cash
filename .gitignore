@@ -46,4 +46,5 @@ cscope.out
 build
 
 # generated docs
-site
+/site
+/docs/assets/diagrams/out/

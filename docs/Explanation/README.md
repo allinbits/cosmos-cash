@@ -57,7 +57,7 @@ Future: Cosmos Cash currently doesn't have a Discord or Telegram Channel. When w
 * All documentation is written following [Google Documentation Best Practice](https://google.github.io/styleguide/docguide/best_practices.html)
 * Autogenerate documentation from the code whenever possible.
 * Raise a PR for all documentation changes
-* Follow our [Code of Conduct](../CONTRIBUTING.md)
+* Follow our [Code of Conduct](https://github.com/allinbits/cosmos-cash/blob/main/CONTRIBUTING.md)
 
 ## Reference
 

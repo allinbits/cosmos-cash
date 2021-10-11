@@ -38,5 +38,5 @@ then
 fi
 
 
-echo "Starting cosmos cash chain"
+echo "Starting Cosmos Cash chain"
 cosmos-cashd start

@@ -661,7 +661,7 @@ While adhering to the decentralised first methodology, the **AML** and **KYC** a
 
 The initial investigations point towards two main components: **Self Sovereign Identities** and **AML profiles.** Utilising both of these ideas, protocol developers can build regulatory compliant protocols with sovereign data and without the need for trusted oracles. 
 
-These ideas combined with **providing liquidity through interoperability** will allow the novel cosmos cash protocol to give the same guarantees as the traditional banking sector while opening up a gateway to the decentralised ecosystem for less technical users thus enforcing mass adoption of Cosmos SDK as the de-facto standard for building self-sovereign blockchains. 
+These ideas combined with **providing liquidity through interoperability** will allow the novel Cosmos Cash protocol to give the same guarantees as the traditional banking sector while opening up a gateway to the decentralised ecosystem for less technical users thus enforcing mass adoption of Cosmos SDK as the de-facto standard for building self-sovereign blockchains. 
 
 ## Self Sovereign Identities
 

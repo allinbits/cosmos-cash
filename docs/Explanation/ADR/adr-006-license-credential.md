@@ -1,4 +1,4 @@
-# ADR 005: An Issuer License based on W3C Verifiable Credential Standards
+# ADR 006: An Issuer License based on W3C Verifiable Credential Standards
 
 ## Table of Contents
 

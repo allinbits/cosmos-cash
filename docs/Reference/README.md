@@ -14,7 +14,8 @@ This section contains **Reference documentation** for Cosmos Cash. [Reference Do
 
 This documentation describes the machinery, for example, classes, functions, interfaces, parameters, and so on.
 
-For further information please see [the ADR relating to the documentation structure](./ADR/adr-002-docs-structure.md). 
+For further information please see 
+[the ADR relating to the documentation structure](../Explanation/ADR/adr-002-docs-structure.md). 
 ## Contributing
 
 * The content must be dry, clear, and terse in style.

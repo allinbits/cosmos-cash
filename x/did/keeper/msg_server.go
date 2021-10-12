@@ -319,7 +319,7 @@ func (k msgServer) SetVerificationRelationships(
 	didDoc, found := k.Keeper.GetDidDocument(ctx, []byte(msg.Id))
 	if !found {
 		err := sdkerrors.Wrapf(types.ErrDidDocumentNotFound, "did document at %s not found", msg.Id)
-		k.Logger(ctx).Error(err.Error())
+		k.Logger(ctx).Error("request to set verification relationships failed", "error", err.Error())
 		return nil, err
 	}
 	// any verification method in the authentication relationship can update the DID document
@@ -329,13 +329,14 @@ func (k msgServer) SetVerificationRelationships(
 			"signer %s not authorized to set verification relationships on the target did document at %s",
 			msg.Signer, msg.Id,
 		)
-		k.Logger(ctx).Error(err.Error())
+		k.Logger(ctx).Error("request to set verification relationships failed", "error", err.Error())
 		return nil, err
 	}
 
 	// set the verification relationships
 	err := didDoc.SetVerificationRelationships(msg.MethodId, msg.Relationships...)
 	if err != nil {
+		k.Logger(ctx).Error("request to set verification relationships failed", "error", err.Error(), "did", didDoc.Id)
 		return nil, err
 	}
 
@@ -345,14 +346,14 @@ func (k msgServer) SetVerificationRelationships(
 
 	// update the Metadata
 	if err := updateDidMetadata(&k.Keeper, ctx, didDoc.Id); err != nil {
-		k.Logger(ctx).Error(err.Error(), "did", didDoc.Id)
+		k.Logger(ctx).Error("request to update did document metadata failed", "error", err.Error(), "did", didDoc.Id)
 	}
 
 	// NOTE: events are expected to change during client development
 	ctx.EventManager().EmitEvent(
 		types.NewVerificationRelationshipsUpdatedEvent(msg.Id, msg.MethodId),
 	)
-
+	k.Logger(ctx).Info("request to set verification relationships success", "did", didDoc.Id)
 	return &types.MsgSetVerificationRelationshipsResponse{}, nil
 }
 

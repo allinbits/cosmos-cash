@@ -96,9 +96,9 @@ func NewIssueUserVerifiableCredentialCmd() *cobra.Command {
 			accAddr := clientCtx.GetFromAddress()
 			accAddrBech32 := accAddr.String()
 
-			credentialSubject := args[0]
+			credentialSubject := didtypes.DID(args[0])
 			credentialID := args[1]
-			issuerDid := args[2]
+			issuerDid := didtypes.DID(args[2])
 			secret := args[3]
 
 			inputs := args[4:7]
@@ -117,7 +117,7 @@ func NewIssueUserVerifiableCredentialCmd() *cobra.Command {
 			hexRoot := hex.EncodeToString(root)
 
 			cs := vctypes.NewUserCredentialSubject(
-				credentialSubject,
+				credentialSubject.String(),
 				hexRoot,
 				true,
 			)
@@ -125,12 +125,12 @@ func NewIssueUserVerifiableCredentialCmd() *cobra.Command {
 
 			vc := vctypes.NewUserVerifiableCredential(
 				credentialID,
-				issuerDid,
+				issuerDid.String(),
 				tm,
 				cs,
 			)
 
-			vmID := didtypes.NewVerificationMethodIDFromAddress(accAddrBech32)
+			vmID := issuerDid.NewVerificationMethodID(accAddrBech32)
 
 			signedVc, err := vc.Sign(clientCtx.Keyring, accAddr, vmID)
 			if err != nil {

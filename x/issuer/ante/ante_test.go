@@ -305,10 +305,12 @@ func (suite *AnteTestSuite) TestCheckUserCredentialDecorator() {
 			func() {
 				var vc vctypes.VerifiableCredential
 				var err error
+
+				emtiDID := didtypes.NewKeyDID(suite.GetEMTiAddress().String())
 				// require issuer credential
 				vc = vctypes.NewLicenseVerifiableCredential(
 					"license-credential-for-emti",
-					didtypes.NewKeyDID(suite.GetEMTiAddress().String()).String(),
+					emtiDID.String(),
 					time.Now(),
 					vctypes.NewLicenseCredentialSubject(
 						didtypes.NewKeyDID(suite.GetEMTiAddress().String()).String(),
@@ -320,7 +322,7 @@ func (suite *AnteTestSuite) TestCheckUserCredentialDecorator() {
 				)
 				vc, err = vc.Sign(
 					suite.keyring, suite.GetEMTiAddress(),
-					didtypes.NewVerificationMethodIDFromAddress(suite.GetEMTiAddress().String()),
+					emtiDID.NewVerificationMethodID(suite.GetEMTiAddress().String()),
 				)
 				suite.Require().NoError(err)
 				err = suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
@@ -338,7 +340,7 @@ func (suite *AnteTestSuite) TestCheckUserCredentialDecorator() {
 				)
 				vc, err = vc.Sign(suite.keyring,
 					suite.GetEMTiAddress(),
-					didtypes.NewVerificationMethodIDFromAddress(suite.GetEMTiAddress().String()),
+					emtiDID.NewVerificationMethodID(suite.GetEMTiAddress().String()),
 				)
 				suite.Require().NoError(err)
 				err = suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
@@ -356,7 +358,7 @@ func (suite *AnteTestSuite) TestCheckUserCredentialDecorator() {
 				)
 				vc, err = vc.Sign(suite.keyring,
 					suite.GetEMTiAddress(),
-					didtypes.NewVerificationMethodIDFromAddress(suite.GetEMTiAddress().String()),
+					emtiDID.NewVerificationMethodID(suite.GetEMTiAddress().String()),
 				)
 				suite.Require().NoError(err)
 				err = suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)

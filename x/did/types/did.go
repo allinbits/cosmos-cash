@@ -215,10 +215,9 @@ func (did DID) String() string {
 	return string(did)
 }
 
-// NewVerificationMethodIDFromAddress compose a verification method id
-// from an account address
-func NewVerificationMethodIDFromAddress(address string) string {
-	return fmt.Sprint(NewKeyDID(address), "#", address)
+// NewVerificationMethodID compose a verification method id from an account address
+func (did DID) NewVerificationMethodID(vmID string) string {
+	return fmt.Sprint(did, "#", vmID)
 }
 
 // IsValidDID validate the input string according to the
@@ -831,14 +830,15 @@ func ResolveAccountDID(did, chainID string) (didDoc DidDocument, didMeta DidMeta
 		return
 	}
 	account := strings.TrimPrefix(did, DidKeyPrefix)
+	accountDID := DID(did)
 	// compose the metadata
 	didMeta = NewDidMetadata([]byte(account), time.Now())
 	// compose the did document
 	didDoc, err = NewDidDocument(did, WithVerifications(
 		NewVerification(
 			NewVerificationMethod(
-				NewVerificationMethodIDFromAddress(account),
-				DID(did), // the controller is the same as the did subject
+				accountDID.NewVerificationMethodID(account),
+				accountDID, // the controller is the same as the did subject
 				NewBlockchainAccountID(chainID, account),
 			),
 			[]string{

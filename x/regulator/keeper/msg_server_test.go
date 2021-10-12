@@ -255,7 +255,7 @@ func (suite *KeeperTestSuite) TestMsgSeverIssueRegistrationCredential() {
 				)
 				vc, _ = vc.Sign(
 					suite.keyring, suite.GetRegulatorAddress(),
-					didtypes.NewVerificationMethodIDFromAddress(regulator.String()),
+					regulatorDID.NewVerificationMethodID(regulator.String()),
 				)
 				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
 				// Actual test
@@ -272,7 +272,7 @@ func (suite *KeeperTestSuite) TestMsgSeverIssueRegistrationCredential() {
 				)
 				vc, _ = vc.Sign(
 					suite.keyring, suite.GetRegulatorAddress(),
-					didtypes.NewVerificationMethodIDFromAddress(regulator.String()),
+					regulatorDID.NewVerificationMethodID(regulator.String()),
 				)
 				req = types.MsgIssueRegistrationCredential{
 					Credential: &vc,
@@ -301,7 +301,7 @@ func (suite *KeeperTestSuite) TestMsgSeverIssueRegistrationCredential() {
 				)
 				vc, _ = vc.Sign(
 					suite.keyring, suite.GetRegulatorAddress(),
-					didtypes.NewVerificationMethodIDFromAddress(regulator.String()),
+					regulatorDID.NewVerificationMethodID(regulator.String()),
 				)
 				req = types.MsgIssueRegistrationCredential{
 					Credential: &vc,
@@ -360,7 +360,7 @@ func (suite *KeeperTestSuite) TestMsgSeverIssueLicenseCredential() {
 				)
 				vc, _ = vc.Sign(
 					suite.keyring, suite.GetRegulatorAddress(),
-					didtypes.NewVerificationMethodIDFromAddress(regulator.String()),
+					regulatorDID.NewVerificationMethodID(regulator.String()),
 				)
 				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
 				// Require a registration credential
@@ -377,7 +377,7 @@ func (suite *KeeperTestSuite) TestMsgSeverIssueLicenseCredential() {
 				)
 				vc, _ = vc.Sign(
 					suite.keyring, suite.GetRegulatorAddress(),
-					didtypes.NewVerificationMethodIDFromAddress(regulator.String()),
+					regulatorDID.NewVerificationMethodID(regulator.String()),
 				)
 				// Actual test
 				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
@@ -395,7 +395,7 @@ func (suite *KeeperTestSuite) TestMsgSeverIssueLicenseCredential() {
 				)
 				vc, _ = vc.Sign(
 					suite.keyring, suite.GetRegulatorAddress(),
-					didtypes.NewVerificationMethodIDFromAddress(regulator.String()),
+					regulatorDID.NewVerificationMethodID(regulator.String()),
 				)
 
 				req = types.MsgIssueLicenseCredential{
@@ -425,7 +425,7 @@ func (suite *KeeperTestSuite) TestMsgSeverIssueLicenseCredential() {
 				)
 				vc, _ = vc.Sign(
 					suite.keyring, suite.GetRegulatorAddress(),
-					didtypes.NewVerificationMethodIDFromAddress(regulator.String()),
+					regulatorDID.NewVerificationMethodID(regulator.String()),
 				)
 				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
 				// Registration credential not issued
@@ -444,7 +444,7 @@ func (suite *KeeperTestSuite) TestMsgSeverIssueLicenseCredential() {
 				)
 				vc, _ = vc.Sign(
 					suite.keyring, suite.GetRegulatorAddress(),
-					didtypes.NewVerificationMethodIDFromAddress(regulator.String()),
+					regulatorDID.NewVerificationMethodID(regulator.String()),
 				)
 
 				req = types.MsgIssueLicenseCredential{
@@ -474,7 +474,7 @@ func (suite *KeeperTestSuite) TestMsgSeverIssueLicenseCredential() {
 				)
 				vc, _ = vc.Sign(
 					suite.keyring, suite.GetRegulatorAddress(),
-					didtypes.NewVerificationMethodIDFromAddress(regulator.String()),
+					regulatorDID.NewVerificationMethodID(regulator.String()),
 				)
 				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
 				// Require a registration credential
@@ -491,7 +491,7 @@ func (suite *KeeperTestSuite) TestMsgSeverIssueLicenseCredential() {
 				)
 				vc, _ = vc.Sign(
 					suite.keyring, suite.GetRegulatorAddress(),
-					didtypes.NewVerificationMethodIDFromAddress(regulator.String()),
+					regulatorDID.NewVerificationMethodID(regulator.String()),
 				)
 				// Actual test
 				suite.vckeeper.SetVerifiableCredential(suite.ctx, []byte(vc.Id), vc)
@@ -509,7 +509,7 @@ func (suite *KeeperTestSuite) TestMsgSeverIssueLicenseCredential() {
 				)
 				vc, _ = vc.Sign(
 					suite.keyring, suite.GetRegulatorUnknownAddress(),
-					didtypes.NewVerificationMethodIDFromAddress(regulator.String()),
+					regulatorDID.NewVerificationMethodID(regulator.String()),
 				)
 
 				req = types.MsgIssueLicenseCredential{

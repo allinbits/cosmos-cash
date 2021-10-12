@@ -75,7 +75,7 @@ func NewCreateDidDocumentCmd() *cobra.Command {
 			}
 			pubKey := info.GetPubKey()
 			// verification method id
-			vmID := types.NewVerificationMethodIDFromAddress(signer.String())
+			vmID := did.NewVerificationMethodID(signer.String())
 			// understand the vmType
 			vmType, err := deriveVMType(pubKey)
 			if err != nil {
@@ -113,6 +113,7 @@ func NewCreateDidDocumentCmd() *cobra.Command {
 
 // NewAddVerificationCmd define the command to add a verification message
 func NewAddVerificationCmd() *cobra.Command {
+
 	cmd := &cobra.Command{
 		Use:     "add-verification-method [id] [pubkey]",
 		Short:   "add an verification method to a decentralized did (did) document",
@@ -139,7 +140,7 @@ func NewAddVerificationCmd() *cobra.Command {
 			// document did
 			did := types.NewChainDID(clientCtx.ChainID, args[0])
 			// verification method id
-			vmID := types.NewVerificationMethodIDFromAddress(sdk.MustBech32ifyAddressBytes(
+			vmID := did.NewVerificationMethodID(sdk.MustBech32ifyAddressBytes(
 				sdk.GetConfig().GetBech32AccountAddrPrefix(),
 				pk.Address().Bytes(),
 			))
@@ -203,10 +204,6 @@ func NewAddServiceCmd() *cobra.Command {
 				service,
 				signer.String(),
 			)
-			// validate
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
 			// broadcast
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
@@ -233,7 +230,7 @@ func NewRevokeVerificationCmd() *cobra.Command {
 			// signer
 			signer := clientCtx.GetFromAddress()
 			// verification method id
-			vmID := types.NewVerificationMethodIDFromAddress(args[1])
+			vmID := did.NewVerificationMethodID(args[1])
 			// build the message
 			msg := types.NewMsgRevokeVerification(
 				did.String(),
@@ -357,7 +354,7 @@ func NewSetVerificationRelationshipCmd() *cobra.Command {
 			did := types.NewChainDID(clientCtx.ChainID, args[0])
 
 			// method id
-			vmID := types.NewVerificationMethodIDFromAddress(args[1])
+			vmID := did.NewVerificationMethodID(args[1])
 
 			// signer
 			signer := clientCtx.GetFromAddress()

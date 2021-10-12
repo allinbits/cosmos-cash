@@ -34,6 +34,7 @@ func GetTxCmd() *cobra.Command {
 		NewDeleteServiceCmd(),
 		NewUpdateDidDocumentCmd(),
 		NewSetVerificationRelationshipCmd(),
+		NewLinkAriesAgentCmd(),
 	)
 
 	return cmd

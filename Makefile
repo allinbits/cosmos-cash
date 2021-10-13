@@ -75,7 +75,7 @@ endif
 	git tag $(APP_VERSION)
 	git-chglog --output CHANGELOG.md
 	git tag $(APP_VERSION) --delete
-	git add CHANGELOG.md && git commit -m "update changelog for $(APP_VERSION)"
+	git add CHANGELOG.md && git commit -m "chore: update changelog for $(APP_VERSION)"
 	@echo release complete
 
 git-tag:

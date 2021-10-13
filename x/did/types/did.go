@@ -88,6 +88,7 @@ const (
 	DIDVMethodTypeEcdsaSecp256k1VerificationKey2019 VerificationMaterialType = "EcdsaSecp256k1VerificationKey2019"
 	DIDVMethodTypeEd25519VerificationKey2018        VerificationMaterialType = "Ed25519VerificationKey2018"
 	DIDVMethodTypeCosmosAccountAddress              VerificationMaterialType = "CosmosAccountAddress"
+	DIDVMethodTypeX25519KeyAgreementKey2019         VerificationMaterialType = "X25519KeyAgreementKey2019"
 )
 
 // String return string name for the Verification Method type
@@ -215,10 +216,9 @@ func (did DID) String() string {
 	return string(did)
 }
 
-// NewVerificationMethodIDFromAddress compose a verification method id
-// from an account address
-func NewVerificationMethodIDFromAddress(address string) string {
-	return fmt.Sprint(NewKeyDID(address), "#", address)
+// NewVerificationMethodID compose a verification method id from an account address
+func (did DID) NewVerificationMethodID(vmID string) string {
+	return fmt.Sprint(did, "#", vmID)
 }
 
 // IsValidDID validate the input string according to the
@@ -781,7 +781,7 @@ func NewVerificationMethod(id string, controller DID, vmr VerificationMaterial) 
 	switch vmr.Type() {
 	case DIDVMethodTypeCosmosAccountAddress:
 		vm.VerificationMaterial = &VerificationMethod_BlockchainAccountID{vmr.EncodeToString()}
-	case DIDVMethodTypeEd25519VerificationKey2018, DIDVMethodTypeEcdsaSecp256k1VerificationKey2019:
+	case DIDVMethodTypeEd25519VerificationKey2018, DIDVMethodTypeEcdsaSecp256k1VerificationKey2019, DIDVMethodTypeX25519KeyAgreementKey2019:
 		vm.VerificationMaterial = &VerificationMethod_PublicKeyMultibase{vmr.EncodeToString()}
 	default:
 		vm.VerificationMaterial = &VerificationMethod_PublicKeyMultibase{vmr.EncodeToString()}
@@ -831,14 +831,15 @@ func ResolveAccountDID(did, chainID string) (didDoc DidDocument, didMeta DidMeta
 		return
 	}
 	account := strings.TrimPrefix(did, DidKeyPrefix)
+	accountDID := DID(did)
 	// compose the metadata
 	didMeta = NewDidMetadata([]byte(account), time.Now())
 	// compose the did document
 	didDoc, err = NewDidDocument(did, WithVerifications(
 		NewVerification(
 			NewVerificationMethod(
-				NewVerificationMethodIDFromAddress(account),
-				DID(did), // the controller is the same as the did subject
+				accountDID.NewVerificationMethodID(account),
+				accountDID, // the controller is the same as the did subject
 				NewBlockchainAccountID(chainID, account),
 			),
 			[]string{

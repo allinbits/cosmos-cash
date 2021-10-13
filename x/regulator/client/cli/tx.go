@@ -88,7 +88,7 @@ that activates it.`,
 				),
 			)
 			// signer is the vmID
-			vmID := didtypes.NewVerificationMethodIDFromAddress(signer.String())
+			vmID := did.NewVerificationMethodID(signer.String())
 
 			// sign the credentials
 			signedVc, err := vc.Sign(clientCtx.Keyring, signer, vmID)
@@ -131,8 +131,8 @@ func IssueLicenseCredentialCmd() *cobra.Command {
 			accAddrBech32 := accAddr.String()
 
 			credentialID := args[0]
-			issuerDid := args[1]
-			credentialSubject := args[2]
+			issuerDid := didtypes.DID(args[1])
+			credentialSubject := didtypes.DID(args[2])
 			licenseType := args[3]
 			country := args[4]
 			authority := args[5]
@@ -142,7 +142,7 @@ func IssueLicenseCredentialCmd() *cobra.Command {
 			coin := sdk.NewCoin(denom, circulationLimit)
 
 			cs := vctypes.NewLicenseCredentialSubject(
-				credentialSubject,
+				credentialSubject.String(),
 				licenseType,
 				country,
 				authority,
@@ -152,12 +152,12 @@ func IssueLicenseCredentialCmd() *cobra.Command {
 
 			vc := vctypes.NewLicenseVerifiableCredential(
 				credentialID,
-				issuerDid,
+				issuerDid.String(),
 				tm.UTC(),
 				cs,
 			)
 
-			vmID := didtypes.NewVerificationMethodIDFromAddress(accAddr.String())
+			vmID := issuerDid.NewVerificationMethodID(accAddr.String())
 			signedVc, err := vc.Sign(clientCtx.Keyring, accAddr, vmID)
 			if err != nil {
 				return err
@@ -189,14 +189,14 @@ func IssueRegistrationCredentialCmd() *cobra.Command {
 			accAddrBech32 := accAddr.String()
 
 			credentialID := args[0]
-			issuerDid := args[1]
-			credentialSubject := args[2]
+			issuerDid := didtypes.DID(args[1])
+			credentialSubject := didtypes.DID(args[2])
 			country := args[3]
 			shortName := args[4]
 			longName := args[5]
 
 			cs := vctypes.NewRegistrationCredentialSubject(
-				credentialSubject,
+				credentialSubject.String(),
 				country,
 				shortName,
 				longName,
@@ -205,12 +205,12 @@ func IssueRegistrationCredentialCmd() *cobra.Command {
 
 			vc := vctypes.NewRegistrationVerifiableCredential(
 				credentialID,
-				issuerDid,
+				issuerDid.String(),
 				tm.UTC(),
 				cs,
 			)
 
-			vmID := didtypes.NewVerificationMethodIDFromAddress(accAddr.String())
+			vmID := issuerDid.NewVerificationMethodID(accAddr.String())
 			signedVc, err := vc.Sign(clientCtx.Keyring, accAddr, vmID)
 			if err != nil {
 				return err

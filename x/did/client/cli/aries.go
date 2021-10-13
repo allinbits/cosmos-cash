@@ -74,7 +74,52 @@ type keySetCreateRsp struct {
 
 // toBytes get the public key to bytes
 func (kscr keySetCreateRsp) toBytes() ([]byte, error) {
+
 	return base64.RawURLEncoding.DecodeString(kscr.PublicKey)
+}
+
+// x25519ECDHKW struct containing a decoded aries pubkey reply for X25519ECDHKW
+type x25519ECDHKW struct {
+	Kid   string `json:"kid"`
+	X     string `json:"x"`
+	Curve string `json:"curve"`
+	Type  string `json:"type"`
+}
+
+// processAriesKeySet process key in case something else has to be done
+// the key generated for a keyType X25519ECDHKW is actually
+// a json structure containing the key itself
+func processAriesKeySet(keyType string, kscr *keySetCreateRsp) (err error) {
+	if keyType != "X25519ECDHKW" {
+		return
+	}
+	/*
+		for this particular key the result from aries is something like this:
+		eyJraWQiOiJKdEhpSVFaN0JENTRhalBwN0xhUU5ZR2ZiRFQ3bnN5ZkJiTDUwWHVTRjhRIiwieCI6IkNZc1c0eG1HeXNFejJRcm9vZlViOCsvUGpBb043ejQrajhveWdCcW5JREU9IiwiY3VydmUiOiJYMjU1MTkiLCJ0eXBlIjoiT0tQIn0
+		that is actually a RawURLEncoding of this structure
+		{"kid":"JtHiIQZ7BD54ajPp7LaQNYGfbDT7nsyfBbL50XuSF8Q","x":"CYsW4xmGysEz2QroofUb8+/PjAoN7z4+j8oygBqnIDE=","curve":"X25519","type":"OKP"}
+		that contains, repeated, the kid and the actual pubkey standard base64 encoded in the X
+	*/
+
+	// decode the kscr.PubKey
+	keyRawJSON, err := base64.RawURLEncoding.DecodeString(kscr.PublicKey)
+	if err != nil {
+		return
+	}
+	// now get into a struct
+	var xPubKey x25519ECDHKW
+	err = json.Unmarshal(keyRawJSON, &xPubKey)
+	if err != nil {
+		return
+	}
+	// now convert the base64 encoding
+	rawPubKey, err := base64.StdEncoding.DecodeString(xPubKey.X)
+	if err != nil {
+		return
+	}
+	// re-encode as expected
+	kscr.PublicKey = base64.RawURLEncoding.EncodeToString(rawPubKey)
+	return
 }
 
 func createKeySetOnAgent(agentURL, keyType string) (keyID string, pubKey []byte, err error) {
@@ -83,6 +128,12 @@ func createKeySetOnAgent(agentURL, keyType string) (keyID string, pubKey []byte,
 	if err != nil {
 		return
 	}
+	// this is a dodgy one
+	err = processAriesKeySet(keyType, &ksr)
+	if err != nil {
+		return
+	}
+	// now get the bytes
 	pubKey, err = ksr.toBytes()
 	if err != nil {
 		return
@@ -152,7 +203,7 @@ func NewLinkAriesAgentCmd() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&keyType, "key-type", "ED25519", "the key type that the aries node should generate")
+	cmd.Flags().StringVar(&keyType, "key-type", "X25519ECDHKW", "the key type that the aries node should generate")
 	flags.AddTxFlagsToCmd(cmd)
 
 	return cmd

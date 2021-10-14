@@ -5,18 +5,24 @@
 <a name="v2.1.0"></a>
 ## [v2.1.0] - 2021-10-13
 ### Chore
+- update changelog for v2.1.0
+- update sdk version to 0.44.2 and go version to 1.17 ([#295](https://github.com/allinbits/cosmos-cash/issues/295))
 - remove handler.go from each module ([#274](https://github.com/allinbits/cosmos-cash/issues/274))
 
 ### Ci
 - **docs:** add requirements.txt for automatic docs build ([#287](https://github.com/allinbits/cosmos-cash/issues/287))
 
 ### Docs
+- fix link to the documentation portal in main README
 - add root of trust ADR and extend modules documentation ([#256](https://github.com/allinbits/cosmos-cash/issues/256))
 - add security and privacy considerations ([#260](https://github.com/allinbits/cosmos-cash/issues/260))
 - publish docs website ([#270](https://github.com/allinbits/cosmos-cash/issues/270))
 
 ### Feat
 - improve compatibility with aries go  ([#291](https://github.com/allinbits/cosmos-cash/issues/291))
+
+### Fix
+- extract X25519ECDHKW pubkey from aries response ([#294](https://github.com/allinbits/cosmos-cash/issues/294))
 
 ### Test
 - **did:** check error type for expected failures  ([#276](https://github.com/allinbits/cosmos-cash/issues/276))

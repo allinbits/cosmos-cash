@@ -33,7 +33,7 @@ For a detailed architecture description and design choices, visit the [ADR](./do
 
 ### Documentation
 
-The Cosmos Cash documentation is available on the [Cosmos Cash Documentation Portal](https://allinbits.github.io/cosmos-cash/).
+The Cosmos Cash documentation is available on the [Cosmos Cash Documentation Portal](https://docs.cosmos-cash.app.beta.starport.cloud/).
 
 Technical reference is bundled within each module, visit the [Cosmos Cash Modules](./docs/Reference/MODULES.md) page for links
 to individual modules.

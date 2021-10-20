@@ -5,6 +5,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"runtime"
+	"strings"
 	"testing"
 
 	"github.com/gogo/protobuf/proto"
@@ -46,7 +47,6 @@ func NewAppConstructor(encodingCfg params.EncodingConfig) network.AppConstructor
 
 type IntegrationTestSuite struct {
 	suite.Suite
-
 	cfg     network.Config
 	network *network.Network
 }
@@ -81,6 +81,7 @@ func name() string {
 }
 
 func addnewdiddoc(s *IntegrationTestSuite, identifier string, val *network.Validator) {
+
 	clientCtx := val.ClientCtx
 	args := []string{
 		identifier,
@@ -173,29 +174,7 @@ func (s *IntegrationTestSuite) TestGetCmdQueryDidDocument() {
 			name(),
 			codes.OK,
 			&types.QueryDidDocumentResponse{},
-			func() {
-				args := []string{
-					identifier,
-					fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-					fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-					fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
-					fmt.Sprintf(
-						"--%s=%s",
-						flags.FlagFees,
-						sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String(),
-					),
-				}
-				cmd := cli.NewCreateDidDocumentCmd()
-				out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, args)
-				// wait for blocks
-				for i := 0; i < 2; i++ {
-					netError := s.network.WaitForNextBlock()
-					s.Require().NoError(netError)
-				}
-				s.Require().NoError(err)
-				response := &sdk.TxResponse{}
-				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), response), out.String())
-			},
+			func() { addnewdiddoc(s, identifier, val) },
 		},
 	}
 
@@ -299,7 +278,6 @@ func (s *IntegrationTestSuite) TestNewUpdateDidDocumentCmd() {
 	identifier2 := "cosmos1kslgpxklq75aj96cz3qwsczr95vdtrd3p0fslp"
 	val := s.network.Validators[0]
 	clientCtx := val.ClientCtx
-	malonce := true
 
 	testCases := []struct {
 		name     string
@@ -322,31 +300,7 @@ func (s *IntegrationTestSuite) TestNewUpdateDidDocumentCmd() {
 				),
 			},
 			&sdk.TxResponse{},
-			func() {
-				cmd := cli.NewCreateDidDocumentCmd()
-				args_temp := []string{
-					identifier1,
-					fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-					fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-					fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
-					fmt.Sprintf(
-						"--%s=%s",
-						flags.FlagFees,
-						sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String(),
-					),
-				}
-				out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, args_temp)
-				s.Require().NoError(err)
-				// wait for blocks
-				for i := 0; i < 2; i++ {
-					netError := s.network.WaitForNextBlock()
-					s.Require().NoError(netError)
-				}
-				response := &sdk.TxResponse{}
-				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), response), out.String())
-				s.Require().True(malonce)
-				malonce = false
-			},
+			func() { addnewdiddoc(s, identifier1, val) },
 		},
 	}
 
@@ -365,9 +319,8 @@ func (s *IntegrationTestSuite) TestNewUpdateDidDocumentCmd() {
 
 			//check for update
 			cmd = cli.GetCmdQueryIdentifer()
-			identifiertoquery := "did:cosmos:net:" + clientCtx.ChainID + ":" + tc.args[0]
 			args_temp := []string{
-				identifiertoquery,
+				"did:cosmos:net:" + clientCtx.ChainID + ":" + identifier1,
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			}
 			out, err = clitestutil.ExecTestCLICmd(clientCtx, cmd, args_temp)
@@ -385,7 +338,6 @@ func (s *IntegrationTestSuite) TestNewAddVerificationCmd() {
 	identifier := "123456789abcdefghijk"
 	val := s.network.Validators[0]
 	clientCtx := val.ClientCtx
-	malonce := true
 
 	testCases := []struct {
 		name      string
@@ -410,32 +362,7 @@ func (s *IntegrationTestSuite) TestNewAddVerificationCmd() {
 			},
 			codes.OK,
 			&sdk.TxResponse{},
-			func() {
-				cmd := cli.NewCreateDidDocumentCmd()
-				args_temp := []string{
-					identifier,
-					fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-					fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-					fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
-					fmt.Sprintf(
-						"--%s=%s",
-						flags.FlagFees,
-						sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String(),
-					),
-				}
-				out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, args_temp)
-				s.Require().NoError(err)
-				// wait for blocks
-				for i := 0; i < 2; i++ {
-					netError := s.network.WaitForNextBlock()
-					s.Require().NoError(netError)
-				}
-				response := &sdk.TxResponse{}
-				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), response), out.String())
-				identifier = "did:cosmos:net:" + clientCtx.ChainID + ":" + identifier
-				s.Require().True(malonce)
-				malonce = false
-			},
+			func() { addnewdiddoc(s, identifier, val) },
 		},
 	}
 
@@ -455,9 +382,8 @@ func (s *IntegrationTestSuite) TestNewAddVerificationCmd() {
 
 			//check for update
 			cmd = cli.GetCmdQueryIdentifer()
-			identifiertoquery := "did:cosmos:net:" + clientCtx.ChainID + ":" + tc.args[0]
 			args_temp := []string{
-				identifiertoquery,
+				"did:cosmos:net:" + clientCtx.ChainID + ":" + identifier,
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			}
 			out, err = clitestutil.ExecTestCLICmd(clientCtx, cmd, args_temp)
@@ -470,7 +396,6 @@ func (s *IntegrationTestSuite) TestNewAddVerificationCmd() {
 			s.Require().Equal(2, len(verificationmethods))
 			for i := 0; i < 2; i++ {
 				s.Require().Equal(authentications[i], verificationmethods[i].Id)
-				s.Require().Equal(identifiertoquery, verificationmethods[i].Controller)
 			}
 
 			verificationmethod := verificationmethods[1]
@@ -483,7 +408,6 @@ func (s *IntegrationTestSuite) TestNewSetVerificationRelationshipsCmd() {
 	identifier := "123456789abcdefghijk"
 	val := s.network.Validators[0]
 	clientCtx := val.ClientCtx
-	malonce := true
 
 	testCases := []struct {
 		name      string
@@ -495,8 +419,8 @@ func (s *IntegrationTestSuite) TestNewSetVerificationRelationshipsCmd() {
 		{
 			name(),
 			[]string{
-				"123456789abcdefghijk",
-				"cosmos1qsu9djdhcp052vyr44vax0ku99s86h85xu8n7r",
+				identifier,
+				"",
 				fmt.Sprintf("--relationship=%s", types.CapabilityDelegation),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
@@ -509,42 +433,29 @@ func (s *IntegrationTestSuite) TestNewSetVerificationRelationshipsCmd() {
 			},
 			codes.OK,
 			&sdk.TxResponse{},
-			func() {
-				cmd := cli.NewCreateDidDocumentCmd()
-				args_temp := []string{
-					identifier,
-					fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-					fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-					fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
-					fmt.Sprintf(
-						"--%s=%s",
-						flags.FlagFees,
-						sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String(),
-					),
-				}
-				out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, args_temp)
-				s.Require().NoError(err)
-				// wait for blocks
-				for i := 0; i < 2; i++ {
-					netError := s.network.WaitForNextBlock()
-					s.Require().NoError(netError)
-				}
-				response := &sdk.TxResponse{}
-				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), response), out.String())
-				identifier = "did:cosmos:net:" + clientCtx.ChainID + ":" + identifier
-				s.Require().True(malonce)
-				malonce = false
-			},
+			func() { addnewdiddoc(s, identifier, val) },
 		},
 	}
 
 	for _, tc := range testCases {
 		s.Run(tc.name, func() {
 			tc.malleate()
-			cmd := cli.NewSetVerificationRelationshipCmd()
-			clientCtx := val.ClientCtx
+			cmd := cli.GetCmdQueryIdentifer()
+			args_temp := []string{
+				"did:cosmos:net:" + clientCtx.ChainID + ":" + identifier,
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			}
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, args_temp)
+			s.Require().NoError(err)
+			response := &types.QueryDidDocumentResponse{}
+			s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), response))
+			verificationmethods := response.GetDidDocument().VerificationMethod
+			s.Require().Greater(len(verificationmethods), 0)
+			temp := strings.Split(verificationmethods[0].Id, "#")
+			tc.args[1] = temp[len(temp)-1]
+			cmd = cli.NewSetVerificationRelationshipCmd()
 
-			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+			out, err = clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
 			s.Require().NoError(err)
 			// wait for blocks
 			for i := 0; i < 2; i++ {
@@ -556,33 +467,21 @@ func (s *IntegrationTestSuite) TestNewSetVerificationRelationshipsCmd() {
 
 			//check for update
 			cmd = cli.GetCmdQueryIdentifer()
-			identifiertoquery := "did:cosmos:net:" + clientCtx.ChainID + ":" + tc.args[0]
-			args_temp := []string{
-				identifiertoquery,
-				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
-			}
 			out, err = clitestutil.ExecTestCLICmd(clientCtx, cmd, args_temp)
 			s.Require().NoError(err)
-			response := &types.QueryDidDocumentResponse{}
+			response = &types.QueryDidDocumentResponse{}
 			s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), response))
-			authentications := response.GetDidDocument().Authentication
-			verificationmethods := response.GetDidDocument().VerificationMethod
-			s.Require().Equal(2, len(authentications))
-			s.Require().Equal(2, len(verificationmethods))
-			for i := 0; i < 2; i++ {
-				s.Require().Equal(authentications[i], verificationmethods[i].Id)
-				s.Require().Equal(identifiertoquery, verificationmethods[i].Controller)
-			}
-
-			verificationmethod := verificationmethods[1]
-			s.Require().Equal("F02126107837346bdbea51a56e230df6a3a4c2f687dcae04e36c4aacfa697299eac", verificationmethod.GetPublicKeyMultibase())
-
+			capabilitydelegation := response.GetDidDocument().CapabilityDelegation
+			s.Require().Equal(1, len(capabilitydelegation))
+			s.Require().Equal(verificationmethods[0].Id, capabilitydelegation[0])
 		})
 	}
 }
 
 func (s *IntegrationTestSuite) TestNewRevokeVerificationCmd() {
+	identifier := "123456789abcdefghijk"
 	val := s.network.Validators[0]
+	clientCtx := val.ClientCtx
 
 	testCases := []struct {
 		name      string
@@ -592,10 +491,10 @@ func (s *IntegrationTestSuite) TestNewRevokeVerificationCmd() {
 		malleate  func()
 	}{
 		{
-			"invalid transaction",
+			name(),
 			[]string{
-				"123456789abcdefghijk",
-				"cosmos1qsu9djdhcp052vyr44vax0ku99s86h85xu8n7r", // TODO when using generated ids this is difficult to test
+				identifier,
+				"",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
@@ -607,36 +506,54 @@ func (s *IntegrationTestSuite) TestNewRevokeVerificationCmd() {
 			},
 			codes.OK,
 			&sdk.TxResponse{},
-			func() {},
+			func() { addnewdiddoc(s, identifier, val) },
 		},
 	}
 
 	for _, tc := range testCases {
 		s.Run(tc.name, func() {
 			tc.malleate()
-			cmd := cli.NewRevokeVerificationCmd()
-			clientCtx := val.ClientCtx
+			cmd := cli.GetCmdQueryIdentifer()
+			args_temp := []string{
+				"did:cosmos:net:" + clientCtx.ChainID + ":" + identifier,
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			}
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, args_temp)
+			s.Require().NoError(err)
+			response := &types.QueryDidDocumentResponse{}
+			s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), response))
 
-			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+			verificationmethods := response.GetDidDocument().VerificationMethod
+			s.Require().Greater(len(verificationmethods), 0)
+			temp := strings.Split(verificationmethods[0].Id, "#")
+			tc.args[1] = temp[len(temp)-1]
+			cmd = cli.NewRevokeVerificationCmd()
+
+			out, err = clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+			s.Require().NoError(err)
 			// wait for blocks
 			for i := 0; i < 2; i++ {
 				netError := s.network.WaitForNextBlock()
 				s.Require().NoError(netError)
 			}
+			s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+
+			//check for update
+			cmd = cli.GetCmdQueryIdentifer()
+			out, err = clitestutil.ExecTestCLICmd(clientCtx, cmd, args_temp)
 			s.Require().NoError(err)
-			if tc.expectErr != codes.OK {
-				s.Require().Error(err)
-				s.Equal(tc.expectErr, status.Code(err))
-			} else {
-				s.Require().NoError(err)
-				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
-			}
+			response = &types.QueryDidDocumentResponse{}
+			s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), response))
+			s.Require().Equal(0, len(response.GetDidDocument().VerificationMethod))
+			s.Require().Equal(0, len(response.GetDidDocument().Authentication))
 		})
 	}
 }
 
 func (s *IntegrationTestSuite) TestNewAddServiceCmd() {
+	identifier := "123456789abcdefghijk"
 	val := s.network.Validators[0]
+	clientCtx := val.ClientCtx
 
 	testCases := []struct {
 		name      string
@@ -646,9 +563,9 @@ func (s *IntegrationTestSuite) TestNewAddServiceCmd() {
 		malleate  func()
 	}{
 		{
-			"invalid transaction",
+			name(),
 			[]string{
-				"123456789abcdefghijk",
+				identifier,
 				"service:seuro",
 				"DIDComm",
 				"service:euro/SIGNATURE",
@@ -663,7 +580,7 @@ func (s *IntegrationTestSuite) TestNewAddServiceCmd() {
 			},
 			codes.OK,
 			&sdk.TxResponse{},
-			func() {},
+			func() { addnewdiddoc(s, identifier, val) },
 		},
 	}
 
@@ -671,61 +588,6 @@ func (s *IntegrationTestSuite) TestNewAddServiceCmd() {
 		s.Run(tc.name, func() {
 			tc.malleate()
 			cmd := cli.NewAddServiceCmd()
-			clientCtx := val.ClientCtx
-
-			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-			s.Require().NoError(err)
-			// TODO: optimize this
-			err = s.network.WaitForNextBlock()
-			s.Require().NoError(err)
-			err = s.network.WaitForNextBlock()
-			s.Require().NoError(err)
-			if tc.expectErr != codes.OK {
-				s.Require().Error(err)
-			} else {
-				s.Require().NoError(err)
-				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
-			}
-		})
-	}
-}
-
-func (s *IntegrationTestSuite) TestNewDeleteServiceCmd() {
-	val := s.network.Validators[0]
-
-	testCases := []struct {
-		name      string
-		args      []string
-		expectErr codes.Code
-		respType  proto.Message
-		malleate  func()
-	}{
-		{
-			"invalid transaction",
-			[]string{
-				"123456789abcdefghijk",
-				"service:seuro",
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
-				fmt.Sprintf(
-					"--%s=%s",
-					flags.FlagFees,
-					sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String(),
-				),
-			},
-			codes.OK,
-			&sdk.TxResponse{},
-			func() {},
-		},
-	}
-
-	for _, tc := range testCases {
-		s.Run(tc.name, func() {
-			tc.malleate()
-			cmd := cli.NewDeleteServiceCmd()
-			clientCtx := val.ClientCtx
-
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
 			s.Require().NoError(err)
 			// wait for blocks
@@ -733,14 +595,98 @@ func (s *IntegrationTestSuite) TestNewDeleteServiceCmd() {
 				netError := s.network.WaitForNextBlock()
 				s.Require().NoError(netError)
 			}
-			s.Require().NoError(err)
-			if tc.expectErr != codes.OK {
-				s.Require().Error(err)
-				s.Equal(tc.expectErr, status.Code(err))
-			} else {
-				s.Require().NoError(err)
-				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+			s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+
+			//check for update
+			cmd = cli.GetCmdQueryIdentifer()
+			args_temp := []string{
+				"did:cosmos:net:" + clientCtx.ChainID + ":" + identifier,
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			}
+			out, err = clitestutil.ExecTestCLICmd(clientCtx, cmd, args_temp)
+			s.Require().NoError(err)
+			response := &types.QueryDidDocumentResponse{}
+			s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), response))
+			s.Require().Equal(1, len(response.GetDidDocument().Service))
+			s.Require().Equal(tc.args[1], response.GetDidDocument().Service[0].Id)
+			s.Require().Equal(tc.args[2], response.GetDidDocument().Service[0].Type)
+			s.Require().Equal(tc.args[3], response.GetDidDocument().Service[0].ServiceEndpoint)
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestNewDeleteServiceCmd() {
+	identifier := "123456789abcdefghijk"
+	val := s.network.Validators[0]
+	clientCtx := val.ClientCtx
+
+	args := []string{
+		identifier,
+		"service:seuro",
+		"DIDComm",
+		"service:euro/SIGNATURE",
+		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+		fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+		fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
+		fmt.Sprintf(
+			"--%s=%s",
+			flags.FlagFees,
+			sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String(),
+		),
+	}
+
+	testCases := []struct {
+		name     string
+		respType proto.Message
+		malleate func()
+	}{
+		{
+			name(),
+			&sdk.TxResponse{},
+			func() {
+				addnewdiddoc(s, identifier, val)
+				cmd := cli.NewAddServiceCmd()
+				out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, args)
+				s.Require().NoError(err)
+				// wait for blocks
+				for i := 0; i < 2; i++ {
+					netError := s.network.WaitForNextBlock()
+					s.Require().NoError(netError)
+				}
+				response := &sdk.TxResponse{}
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), response), out.String())
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		s.Run(tc.name, func() {
+
+			tc.malleate()
+			cmd := cli.NewDeleteServiceCmd()
+
+			args = append(args[:2], args[4:]...)
+
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, args)
+			s.Require().NoError(err)
+			// wait for blocks
+			for i := 0; i < 2; i++ {
+				netError := s.network.WaitForNextBlock()
+				s.Require().NoError(netError)
+			}
+			s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+
+			//check for update
+			cmd = cli.GetCmdQueryIdentifer()
+			args_temp := []string{
+				"did:cosmos:net:" + clientCtx.ChainID + ":" + identifier,
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			}
+			out, err = clitestutil.ExecTestCLICmd(clientCtx, cmd, args_temp)
+			s.Require().NoError(err)
+			response := &types.QueryDidDocumentResponse{}
+			s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), response))
+			s.Require().Equal(0, len(response.GetDidDocument().Service))
 		})
 	}
 }

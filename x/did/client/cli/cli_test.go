@@ -81,7 +81,7 @@ func name() string {
 }
 
 func addnewdiddoc(s *IntegrationTestSuite, identifier string, val *network.Validator) {
-
+	s.T().Log("inside adnewdiddoc")
 	clientCtx := val.ClientCtx
 	args := []string{
 		identifier,

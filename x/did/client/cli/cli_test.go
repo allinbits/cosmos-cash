@@ -132,7 +132,6 @@ func (s *IntegrationTestSuite) TestGetCmdQueryDidDocuments() {
 		},
 	}
 
-	firstloop := true
 	for _, tc := range testCases {
 		s.Run(tc.name, func() {
 			tc.malleate()
@@ -142,9 +141,8 @@ func (s *IntegrationTestSuite) TestGetCmdQueryDidDocuments() {
 			s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
 			queryresponse := tc.respType.(*types.QueryDidDocumentsResponse)
 			diddocs := queryresponse.GetDidDocuments()
-			if firstloop {
-				s.Require().Equal(len(diddocs), 0)
-				firstloop = false
+			if tc.name == name()+"_1" {
+				s.Require().Equal(0, len(diddocs))
 			} else {
 				s.Require().Greater(len(diddocs), 0)
 				s.Require().Equal(diddocs[0].Id, "did:cosmos:net:"+clientCtx.ChainID+":"+identifier)
@@ -267,7 +265,7 @@ func (s *IntegrationTestSuite) TestNewCreateDidDocumentCmd() {
 				response2 := &types.QueryDidDocumentsResponse{}
 				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), response2))
 				diddocs := response2.GetDidDocuments()
-				s.Require().Equal(len(diddocs), i+1)
+				s.Require().Equal(i+1, len(diddocs))
 			}
 		})
 	}
@@ -328,7 +326,7 @@ func (s *IntegrationTestSuite) TestNewUpdateDidDocumentCmd() {
 			response := &types.QueryDidDocumentResponse{}
 			s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), response))
 			controller := response.GetDidDocument().Controller
-			s.Require().Equal(len(controller), 1)
+			s.Require().Equal(1, len(controller))
 			s.Require().Equal(controller[0], "did:cosmos:key:"+identifier2)
 		})
 	}

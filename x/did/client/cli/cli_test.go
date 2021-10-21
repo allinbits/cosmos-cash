@@ -108,7 +108,7 @@ func addnewdiddoc(s *IntegrationTestSuite, identifier string, val *network.Valid
 }
 
 func (s *IntegrationTestSuite) TestGetCmdQueryDidDocuments() {
-	identifier := "123456789abcdefghijk"
+	identifier := "123456789abcdefghijka"
 	val := s.network.Validators[0]
 	clientCtx := val.ClientCtx
 
@@ -132,7 +132,8 @@ func (s *IntegrationTestSuite) TestGetCmdQueryDidDocuments() {
 		},
 	}
 
-	firstloop := true
+	var first bool = true
+	var size int = 0
 	for _, tc := range testCases {
 		s.Run(tc.name, func() {
 			tc.malleate()
@@ -142,19 +143,19 @@ func (s *IntegrationTestSuite) TestGetCmdQueryDidDocuments() {
 			s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
 			queryresponse := tc.respType.(*types.QueryDidDocumentsResponse)
 			diddocs := queryresponse.GetDidDocuments()
-			if firstloop {
-				s.Require().Equal(len(diddocs), 0)
-				firstloop = false
+			if first {
+				first = false
+				size = len(diddocs)
 			} else {
 				s.Require().Greater(len(diddocs), 0)
-				s.Require().Equal(diddocs[0].Id, "did:cosmos:net:"+clientCtx.ChainID+":"+identifier)
+				s.Require().Equal(size+1, len(diddocs))
 			}
 		})
 	}
 }
 
 func (s *IntegrationTestSuite) TestGetCmdQueryDidDocument() {
-	identifier := "123456789abcdefghijk"
+	identifier := "123456789abcdefghijkb"
 	val := s.network.Validators[0]
 	clientCtx := val.ClientCtx
 
@@ -165,13 +166,13 @@ func (s *IntegrationTestSuite) TestGetCmdQueryDidDocument() {
 		malleate  func()
 	}{
 		{
-			name(),
+			name() + "_1",
 			codes.NotFound,
 			&types.QueryDidDocumentResponse{},
 			func() {},
 		},
 		{
-			name(),
+			name() + "_2",
 			codes.OK,
 			&types.QueryDidDocumentResponse{},
 			func() { addnewdiddoc(s, identifier, val) },
@@ -205,7 +206,7 @@ func (s *IntegrationTestSuite) TestGetCmdQueryDidDocument() {
 
 func (s *IntegrationTestSuite) TestNewCreateDidDocumentCmd() {
 
-	identifier := "123456789abcdefghijk_"
+	identifier := "123456789abcdefghijkc"
 	val := s.network.Validators[0]
 	clientCtx := val.ClientCtx
 
@@ -233,7 +234,7 @@ func (s *IntegrationTestSuite) TestNewCreateDidDocumentCmd() {
 	for _, tc := range testCases {
 
 		s.Run(tc.name, func() {
-
+			var size int = 0
 			for i := 0; i < 3; i++ {
 				cmd := cli.NewCreateDidDocumentCmd()
 				tc.args[0] = identifier + fmt.Sprint(i)
@@ -267,14 +268,18 @@ func (s *IntegrationTestSuite) TestNewCreateDidDocumentCmd() {
 				response2 := &types.QueryDidDocumentsResponse{}
 				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), response2))
 				diddocs := response2.GetDidDocuments()
-				s.Require().Equal(len(diddocs), i+1)
+				if i == 0 {
+					size = len(diddocs)
+				} else {
+					s.Require().Equal(size+i, len(diddocs))
+				}
 			}
 		})
 	}
 }
 
 func (s *IntegrationTestSuite) TestNewUpdateDidDocumentCmd() {
-	identifier1 := "123456789abcdefghijk"
+	identifier1 := "123456789abcdefghijkd"
 	identifier2 := "cosmos1kslgpxklq75aj96cz3qwsczr95vdtrd3p0fslp"
 	val := s.network.Validators[0]
 	clientCtx := val.ClientCtx
@@ -335,7 +340,7 @@ func (s *IntegrationTestSuite) TestNewUpdateDidDocumentCmd() {
 }
 
 func (s *IntegrationTestSuite) TestNewAddVerificationCmd() {
-	identifier := "123456789abcdefghijk"
+	identifier := "123456789abcdefghijke"
 	val := s.network.Validators[0]
 	clientCtx := val.ClientCtx
 
@@ -405,7 +410,7 @@ func (s *IntegrationTestSuite) TestNewAddVerificationCmd() {
 }
 
 func (s *IntegrationTestSuite) TestNewSetVerificationRelationshipsCmd() {
-	identifier := "123456789abcdefghijk"
+	identifier := "123456789abcdefghijkf"
 	val := s.network.Validators[0]
 	clientCtx := val.ClientCtx
 
@@ -479,7 +484,7 @@ func (s *IntegrationTestSuite) TestNewSetVerificationRelationshipsCmd() {
 }
 
 func (s *IntegrationTestSuite) TestNewRevokeVerificationCmd() {
-	identifier := "123456789abcdefghijk"
+	identifier := "123456789abcdefghijkg"
 	val := s.network.Validators[0]
 	clientCtx := val.ClientCtx
 
@@ -551,7 +556,7 @@ func (s *IntegrationTestSuite) TestNewRevokeVerificationCmd() {
 }
 
 func (s *IntegrationTestSuite) TestNewAddServiceCmd() {
-	identifier := "123456789abcdefghijk"
+	identifier := "123456789abcdefghijkh"
 	val := s.network.Validators[0]
 	clientCtx := val.ClientCtx
 
@@ -616,7 +621,7 @@ func (s *IntegrationTestSuite) TestNewAddServiceCmd() {
 }
 
 func (s *IntegrationTestSuite) TestNewDeleteServiceCmd() {
-	identifier := "123456789abcdefghijk"
+	identifier := "123456789abcdefghijki"
 	val := s.network.Validators[0]
 	clientCtx := val.ClientCtx
 

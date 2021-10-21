@@ -152,8 +152,13 @@ func (s *IntegrationTestSuite) TestGetCmdQueryDidDocuments() {
 			queryresponse := tc.respType.(*types.QueryDidDocumentsResponse)
 			diddocs := queryresponse.GetDidDocuments()
 			s.Require().Equal(tc.expectedsize, len(diddocs))
+			for _, element := range diddocs {
+				s.T().Log(element.Id)
+			}
+
 			switch tc.expectedsize {
 			case 0:
+
 			case 1:
 				s.Require().Equal(diddocs[0].Id, "did:cosmos:net:"+clientCtx.ChainID+":"+identifier+"_1")
 			case 2:

@@ -122,7 +122,7 @@ func (s *IntegrationTestSuite) TestGetCmdQueryDidDocuments() {
 			name() + "_1",
 			[]string{fmt.Sprintf("--%s=json", tmcli.OutputFlag)},
 			&types.QueryDidDocumentsResponse{},
-			func() {},
+			func() { addnewdiddoc(s, identifier, val) },
 		},
 		{
 			name() + "_2",
@@ -142,9 +142,9 @@ func (s *IntegrationTestSuite) TestGetCmdQueryDidDocuments() {
 			queryresponse := tc.respType.(*types.QueryDidDocumentsResponse)
 			diddocs := queryresponse.GetDidDocuments()
 			if tc.name == name()+"_1" {
-				s.Require().Equal(0, len(diddocs))
+				s.Require().Equal(1, len(diddocs))
 			} else {
-				s.Require().Greater(len(diddocs), 0)
+				s.Require().Equal(1, len(diddocs))
 				s.Require().Equal(diddocs[0].Id, "did:cosmos:net:"+clientCtx.ChainID+":"+identifier)
 			}
 		})

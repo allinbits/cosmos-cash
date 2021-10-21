@@ -133,7 +133,7 @@ func (s *IntegrationTestSuite) TestGetCmdQueryDidDocuments() {
 	}
 
 	var first bool = true
-	var size int = 0
+	var size = 0
 	for _, tc := range testCases {
 		s.Run(tc.name, func() {
 			tc.malleate()
@@ -234,7 +234,7 @@ func (s *IntegrationTestSuite) TestNewCreateDidDocumentCmd() {
 	for _, tc := range testCases {
 
 		s.Run(tc.name, func() {
-			var size int = 0
+			var size = 0
 			for i := 0; i < 3; i++ {
 				cmd := cli.NewCreateDidDocumentCmd()
 				tc.args[0] = identifier + fmt.Sprint(i)

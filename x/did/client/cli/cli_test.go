@@ -80,33 +80,6 @@ func name() string {
 	return f.Name()
 }
 
-func addnewdiddoc(s *IntegrationTestSuite, identifier string, val *network.Validator) {
-	s.T().Log("inside adnewdiddoc")
-	clientCtx := val.ClientCtx
-	args := []string{
-		identifier,
-		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-		fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-		fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
-		fmt.Sprintf(
-			"--%s=%s",
-			flags.FlagFees,
-			sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String(),
-		),
-	}
-
-	cmd := cli.NewCreateDidDocumentCmd()
-	out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, args)
-	s.Require().NoError(err)
-	// wait for blocks
-	for i := 0; i < 2; i++ {
-		netError := s.network.WaitForNextBlock()
-		s.Require().NoError(netError)
-	}
-	response := &sdk.TxResponse{}
-	s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), response), out.String())
-}
-
 func (s *IntegrationTestSuite) TestGetCmdQueryDidDocuments() {
 	identifier := "123456789abcdefghijk"
 	val := s.network.Validators[0]
@@ -130,14 +103,60 @@ func (s *IntegrationTestSuite) TestGetCmdQueryDidDocuments() {
 			name() + "_2",
 			[]string{fmt.Sprintf("--%s=json", tmcli.OutputFlag)},
 			&types.QueryDidDocumentsResponse{},
-			func() { addnewdiddoc(s, identifier+"_1", val) },
+			func() {
+				args := []string{
+					identifier + "_1",
+					fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+					fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+					fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
+					fmt.Sprintf(
+						"--%s=%s",
+						flags.FlagFees,
+						sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String(),
+					),
+				}
+
+				cmd := cli.NewCreateDidDocumentCmd()
+				out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, args)
+				s.Require().NoError(err)
+				// wait for blocks
+				for i := 0; i < 2; i++ {
+					netError := s.network.WaitForNextBlock()
+					s.Require().NoError(netError)
+				}
+				response := &sdk.TxResponse{}
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), response), out.String())
+			},
 			1,
 		},
 		{
 			name() + "_3",
 			[]string{fmt.Sprintf("--%s=json", tmcli.OutputFlag)},
 			&types.QueryDidDocumentsResponse{},
-			func() { addnewdiddoc(s, identifier+"_2", val) },
+			func() {
+				args := []string{
+					identifier + "_2",
+					fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+					fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+					fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
+					fmt.Sprintf(
+						"--%s=%s",
+						flags.FlagFees,
+						sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String(),
+					),
+				}
+
+				cmd := cli.NewCreateDidDocumentCmd()
+				out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, args)
+				s.Require().NoError(err)
+				// wait for blocks
+				for i := 0; i < 2; i++ {
+					netError := s.network.WaitForNextBlock()
+					s.Require().NoError(netError)
+				}
+				response := &sdk.TxResponse{}
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), response), out.String())
+			},
 			2,
 		},
 	}
@@ -151,22 +170,14 @@ func (s *IntegrationTestSuite) TestGetCmdQueryDidDocuments() {
 			s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
 			queryresponse := tc.respType.(*types.QueryDidDocumentsResponse)
 			diddocs := queryresponse.GetDidDocuments()
-			//s.Require().Equal(tc.expectedsize, len(diddocs))
-			for _, element := range diddocs {
-				s.T().Log(element.Id)
-			}
-			//				s.Require().Equal(diddocs[0].Id, "did:cosmos:net:"+clientCtx.ChainID+":"+identifier+"_1")
+			s.Require().Equal(tc.expectedsize, len(diddocs))
 			switch tc.expectedsize {
 			case 0:
-				s.Require().Equal(diddocs[0].Id, "")
-
 			case 1:
-				s.Require().Equal(diddocs[0].Id, "")
-				s.Require().Equal(diddocs[1].Id, "")
+				s.Require().Equal("did:cosmos:net:"+clientCtx.ChainID+":"+identifier+"_1", diddocs[0].Id)
 			case 2:
-				s.Require().Equal(diddocs[0].Id, "")
-				s.Require().Equal(diddocs[1].Id, "")
-				s.Require().Equal(diddocs[2].Id, "")
+				s.Require().Equal("did:cosmos:net:"+clientCtx.ChainID+":"+identifier+"_1", diddocs[0].Id)
+				s.Require().Equal("did:cosmos:net:"+clientCtx.ChainID+":"+identifier+"_2", diddocs[1].Id)
 			}
 		})
 	}
@@ -193,7 +204,30 @@ func (s *IntegrationTestSuite) TestGetCmdQueryDidDocument() {
 			name(),
 			codes.OK,
 			&types.QueryDidDocumentResponse{},
-			func() { addnewdiddoc(s, identifier, val) },
+			func() {
+				args := []string{
+					identifier,
+					fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+					fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+					fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
+					fmt.Sprintf(
+						"--%s=%s",
+						flags.FlagFees,
+						sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String(),
+					),
+				}
+
+				cmd := cli.NewCreateDidDocumentCmd()
+				out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, args)
+				s.Require().NoError(err)
+				// wait for blocks
+				for i := 0; i < 2; i++ {
+					netError := s.network.WaitForNextBlock()
+					s.Require().NoError(netError)
+				}
+				response := &sdk.TxResponse{}
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), response), out.String())
+			},
 		},
 	}
 
@@ -319,7 +353,30 @@ func (s *IntegrationTestSuite) TestNewUpdateDidDocumentCmd() {
 				),
 			},
 			&sdk.TxResponse{},
-			func() { addnewdiddoc(s, identifier1, val) },
+			func() {
+				args := []string{
+					identifier1,
+					fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+					fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+					fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
+					fmt.Sprintf(
+						"--%s=%s",
+						flags.FlagFees,
+						sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String(),
+					),
+				}
+
+				cmd := cli.NewCreateDidDocumentCmd()
+				out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, args)
+				s.Require().NoError(err)
+				// wait for blocks
+				for i := 0; i < 2; i++ {
+					netError := s.network.WaitForNextBlock()
+					s.Require().NoError(netError)
+				}
+				response := &sdk.TxResponse{}
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), response), out.String())
+			},
 		},
 	}
 
@@ -381,7 +438,30 @@ func (s *IntegrationTestSuite) TestNewAddVerificationCmd() {
 			},
 			codes.OK,
 			&sdk.TxResponse{},
-			func() { addnewdiddoc(s, identifier, val) },
+			func() {
+				args := []string{
+					identifier,
+					fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+					fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+					fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
+					fmt.Sprintf(
+						"--%s=%s",
+						flags.FlagFees,
+						sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String(),
+					),
+				}
+
+				cmd := cli.NewCreateDidDocumentCmd()
+				out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, args)
+				s.Require().NoError(err)
+				// wait for blocks
+				for i := 0; i < 2; i++ {
+					netError := s.network.WaitForNextBlock()
+					s.Require().NoError(netError)
+				}
+				response := &sdk.TxResponse{}
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), response), out.String())
+			},
 		},
 	}
 
@@ -416,7 +496,6 @@ func (s *IntegrationTestSuite) TestNewAddVerificationCmd() {
 			for i := 0; i < 2; i++ {
 				s.Require().Equal(authentications[i], verificationmethods[i].Id)
 			}
-
 			verificationmethod := verificationmethods[1]
 			s.Require().Equal("F02126107837346bdbea51a56e230df6a3a4c2f687dcae04e36c4aacfa697299eac", verificationmethod.GetPublicKeyMultibase())
 		})
@@ -452,7 +531,30 @@ func (s *IntegrationTestSuite) TestNewSetVerificationRelationshipsCmd() {
 			},
 			codes.OK,
 			&sdk.TxResponse{},
-			func() { addnewdiddoc(s, identifier, val) },
+			func() {
+				args := []string{
+					identifier,
+					fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+					fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+					fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
+					fmt.Sprintf(
+						"--%s=%s",
+						flags.FlagFees,
+						sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String(),
+					),
+				}
+
+				cmd := cli.NewCreateDidDocumentCmd()
+				out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, args)
+				s.Require().NoError(err)
+				// wait for blocks
+				for i := 0; i < 2; i++ {
+					netError := s.network.WaitForNextBlock()
+					s.Require().NoError(netError)
+				}
+				response := &sdk.TxResponse{}
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), response), out.String())
+			},
 		},
 	}
 
@@ -525,7 +627,30 @@ func (s *IntegrationTestSuite) TestNewRevokeVerificationCmd() {
 			},
 			codes.OK,
 			&sdk.TxResponse{},
-			func() { addnewdiddoc(s, identifier, val) },
+			func() {
+				args := []string{
+					identifier,
+					fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+					fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+					fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
+					fmt.Sprintf(
+						"--%s=%s",
+						flags.FlagFees,
+						sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String(),
+					),
+				}
+
+				cmd := cli.NewCreateDidDocumentCmd()
+				out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, args)
+				s.Require().NoError(err)
+				// wait for blocks
+				for i := 0; i < 2; i++ {
+					netError := s.network.WaitForNextBlock()
+					s.Require().NoError(netError)
+				}
+				response := &sdk.TxResponse{}
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), response), out.String())
+			},
 		},
 	}
 
@@ -599,7 +724,30 @@ func (s *IntegrationTestSuite) TestNewAddServiceCmd() {
 			},
 			codes.OK,
 			&sdk.TxResponse{},
-			func() { addnewdiddoc(s, identifier, val) },
+			func() {
+				args := []string{
+					identifier + "_1",
+					fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+					fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+					fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
+					fmt.Sprintf(
+						"--%s=%s",
+						flags.FlagFees,
+						sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String(),
+					),
+				}
+
+				cmd := cli.NewCreateDidDocumentCmd()
+				out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, args)
+				s.Require().NoError(err)
+				// wait for blocks
+				for i := 0; i < 2; i++ {
+					netError := s.network.WaitForNextBlock()
+					s.Require().NoError(netError)
+				}
+				response := &sdk.TxResponse{}
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), response), out.String())
+			},
 		},
 	}
 
@@ -663,8 +811,19 @@ func (s *IntegrationTestSuite) TestNewDeleteServiceCmd() {
 			name(),
 			&sdk.TxResponse{},
 			func() {
-				addnewdiddoc(s, identifier, val)
-				cmd := cli.NewAddServiceCmd()
+				args := []string{
+					identifier + "_1",
+					fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+					fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+					fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
+					fmt.Sprintf(
+						"--%s=%s",
+						flags.FlagFees,
+						sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String(),
+					),
+				}
+
+				cmd := cli.NewCreateDidDocumentCmd()
 				out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, args)
 				s.Require().NoError(err)
 				// wait for blocks
@@ -673,6 +832,17 @@ func (s *IntegrationTestSuite) TestNewDeleteServiceCmd() {
 					s.Require().NoError(netError)
 				}
 				response := &sdk.TxResponse{}
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), response), out.String())
+
+				cmd = cli.NewAddServiceCmd()
+				out, err = clitestutil.ExecTestCLICmd(clientCtx, cmd, args)
+				s.Require().NoError(err)
+				// wait for blocks
+				for i := 0; i < 2; i++ {
+					netError := s.network.WaitForNextBlock()
+					s.Require().NoError(netError)
+				}
+				response = &sdk.TxResponse{}
 				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), response), out.String())
 			},
 		},

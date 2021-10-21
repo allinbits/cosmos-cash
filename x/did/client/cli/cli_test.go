@@ -113,22 +113,32 @@ func (s *IntegrationTestSuite) TestGetCmdQueryDidDocuments() {
 	clientCtx := val.ClientCtx
 
 	testCases := []struct {
-		name     string
-		args     []string
-		respType proto.Message
-		malleate func()
+		name         string
+		args         []string
+		respType     proto.Message
+		malleate     func()
+		expectedsize int
 	}{
 		{
 			name() + "_1",
 			[]string{fmt.Sprintf("--%s=json", tmcli.OutputFlag)},
 			&types.QueryDidDocumentsResponse{},
-			func() { addnewdiddoc(s, identifier, val) },
+			func() {},
+			0,
 		},
 		{
 			name() + "_2",
 			[]string{fmt.Sprintf("--%s=json", tmcli.OutputFlag)},
 			&types.QueryDidDocumentsResponse{},
-			func() { addnewdiddoc(s, identifier, val) },
+			func() { addnewdiddoc(s, identifier+"_1", val) },
+			1,
+		},
+		{
+			name() + "_3",
+			[]string{fmt.Sprintf("--%s=json", tmcli.OutputFlag)},
+			&types.QueryDidDocumentsResponse{},
+			func() { addnewdiddoc(s, identifier+"_2", val) },
+			2,
 		},
 	}
 
@@ -141,11 +151,14 @@ func (s *IntegrationTestSuite) TestGetCmdQueryDidDocuments() {
 			s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
 			queryresponse := tc.respType.(*types.QueryDidDocumentsResponse)
 			diddocs := queryresponse.GetDidDocuments()
-			if tc.name == name()+"_1" {
-				s.Require().Equal(1, len(diddocs))
-			} else {
-				s.Require().Equal(1, len(diddocs))
-				s.Require().Equal(diddocs[0].Id, "did:cosmos:net:"+clientCtx.ChainID+":"+identifier)
+			s.Require().Equal(tc.expectedsize, len(diddocs))
+			switch tc.expectedsize {
+			case 0:
+			case 1:
+				s.Require().Equal(diddocs[0].Id, "did:cosmos:net:"+clientCtx.ChainID+":"+identifier+"_1")
+			case 2:
+				s.Require().Equal(diddocs[0].Id, "did:cosmos:net:"+clientCtx.ChainID+":"+identifier+"_1")
+				s.Require().Equal(diddocs[1].Id, "did:cosmos:net:"+clientCtx.ChainID+":"+identifier+"_2")
 			}
 		})
 	}

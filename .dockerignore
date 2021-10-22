@@ -1,0 +1,14 @@
+# Ignore all
+*
+
+# Include
+!go.mod
+!go.sum
+!x
+!app
+!cmd
+!docs/Reference/swagger/statik
+!README.md
+!LICENSE.md
+
+

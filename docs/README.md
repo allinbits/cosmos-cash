@@ -1,11 +1,15 @@
+---
+title: About Documentation
+---
+
 # Documentation
 
 How to use the Cosmos Cash Documentation.
 
 - [Documentation](#documentation)
-    - [Overview](#overview)
-    - [Contributing](#contributing)
-    - [Reference](#reference)
+  - [Overview](#overview)
+  - [Contributing](#contributing)
+  - [Reference](#reference)
 
 ## Overview
 

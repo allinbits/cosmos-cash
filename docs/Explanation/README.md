@@ -1,3 +1,7 @@
+---
+title: About Explanation Documentation
+---
+
 # Explanation Documentation
 
 How to use the Cosmos Cash Explanation Documentation.

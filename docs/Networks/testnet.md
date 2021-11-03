@@ -1,8 +1,7 @@
-# Join Testnet
+# Testnet
 
-A Cosmos Cash testnet is available for testing purposes, this document describes the Cosmos Cash testnet coordinates and the 
-satellite projects URLs.
-
+A Cosmos Cash testnet is available for testing purposes, this document describes the Cosmos Cash testnet coordinates and
+the satellite projects URLs.
 
 ## Testnet Coordinates
 
@@ -13,24 +12,27 @@ satellite projects URLs.
 | Genesis File | [cosmos-cash.app.beta.starport.cloud/genesis](https://cosmos-cash.app.beta.starport.cloud/genesis?) |
 | RPC URL      | `https://rpc.cosmos-cash.app.beta.starport.cloud:443`                                               |
 
+### Faucet
 
-Faucet URL:  `https://faucet.cosmos-cash.app.beta.starport.cloud`
+The faucet endpoint is used to get tokens to pay for transaction gas.
 
-```sh
-curl -X POST \
-    -d "{\"address\": \"$(cosmos-cashd keys show YOUR_WALLET_UID -a)\"}" \
-    https://faucet.cosmos-cash.app.beta.starport.cloud
-```
+|            |                                                      |
+| ---------- | ---------------------------------------------------- |
+| Faucet URL | `https://faucet.cosmos-cash.app.beta.starport.cloud` |
+
 
 ## DID Resolver
+
+The following are the URLs for ([DID](../Reference/GLOSSARY.md#decentralized-identifier-did)) resolution in the Cosmos Cash network
 
 |                       |                                                                         |
 | --------------------- | ----------------------------------------------------------------------- |
 | DID resolver driver   | https://resolver-driver.cosmos-cash.app.beta.starport.cloud/identifier/ |
 | DID resolver frontend | https://uniresolver.cosmos-cash.app.beta.starport.cloud                 |
 
-
 ## SSI Agent Router
+
+The following are the URLs to connect to a SSI Agent that uses also Cosmos Cash as VDR
 
 |                         |                                                                  |
 | ----------------------- | ---------------------------------------------------------------- |

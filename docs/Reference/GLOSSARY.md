@@ -84,7 +84,10 @@ virtual assets; and v. participation in and provision of financial services rela
 a virtual
 asset.” [FATF guidance to the G20](https://www.fatf-gafi.org/publications/virtualassets/documents/report-g20-so-called-stablecoins-june-2020.html)
 
+## Z
 
+### Zero-knowledge Proof (ZKP)
 
+In cryptography, a zero-knowledge proof or zero-knowledge protocol is a method by which one party (the prover) can prove to another party (the verifier) that a given statement is true, without conveying any information apart from the fact that the statement is indeed true. The essence of zero-knowledge proofs is that it is trivial to prove that one possesses knowledge of certain information by simply revealing it; the challenge is to prove such possession without revealing the information itself or any additional information ([wikipedia](https://en.wikipedia.org/wiki/Zero-knowledge_proof)).
 
-
+[a](#zero-knowledge-proof-zkp)

@@ -2,8 +2,18 @@
 ## [Unreleased]
 
 
+<a name="v2.1.2"></a>
+## [v2.1.2] - 2021-11-04
+### Fix
+- import path for the v2 module version path
+- **ci:** rules for gosec linter
+
+
 <a name="v2.1.1"></a>
 ## [v2.1.1] - 2021-11-04
+### Chore
+- update changelog for v2.1.1
+
 ### Fix
 - missing semantic import versioning from module declaration
 
@@ -200,7 +210,8 @@ remove support for legacy key format
 - **integration-test:** restructure app.go and fix RegisterTxService
 
 
-[Unreleased]: https://github.com/allinbits/cosmos-cash/compare/v2.1.1...HEAD
+[Unreleased]: https://github.com/allinbits/cosmos-cash/compare/v2.1.2...HEAD
+[v2.1.2]: https://github.com/allinbits/cosmos-cash/compare/v2.1.1...v2.1.2
 [v2.1.1]: https://github.com/allinbits/cosmos-cash/compare/v2.1.0...v2.1.1
 [v2.1.0]: https://github.com/allinbits/cosmos-cash/compare/v2.0.0...v2.1.0
 [v2.0.0]: https://github.com/allinbits/cosmos-cash/compare/v1.0.0...v2.0.0

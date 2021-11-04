@@ -16,7 +16,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/spf13/cobra"
 
-	"github.com/allinbits/cosmos-cash/x/did/types"
+	"github.com/allinbits/cosmos-cash/v2/x/did/types"
 )
 
 // request send a json http request

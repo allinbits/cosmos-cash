@@ -16,9 +16,9 @@ import (
 	"github.com/spf13/cobra"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/allinbits/cosmos-cash/x/regulator/client/cli"
-	"github.com/allinbits/cosmos-cash/x/regulator/keeper"
-	"github.com/allinbits/cosmos-cash/x/regulator/types"
+	"github.com/allinbits/cosmos-cash/v2/x/regulator/client/cli"
+	"github.com/allinbits/cosmos-cash/v2/x/regulator/keeper"
+	"github.com/allinbits/cosmos-cash/v2/x/regulator/types"
 )
 
 var (

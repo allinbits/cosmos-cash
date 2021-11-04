@@ -32,8 +32,8 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	dbm "github.com/tendermint/tm-db"
 
-	"github.com/allinbits/cosmos-cash/app"
-	"github.com/allinbits/cosmos-cash/app/params"
+	"github.com/allinbits/cosmos-cash/v2/app"
+	"github.com/allinbits/cosmos-cash/v2/app/params"
 )
 
 // ChainID the chain did

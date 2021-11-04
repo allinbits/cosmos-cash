@@ -4,7 +4,7 @@ import "gogoproto/gogo.proto";
 import "verifiable-credential/verifiable-credential.proto";
 // this line is used by starport scaffolding # proto/tx/import
 
-option go_package = "github.com/allinbits/cosmos-cash/x/issuer/types";
+option go_package = "github.com/allinbits/cosmos-cash/v2/x/issuer/types";
 
 // Msg defines the Msg service.
 service Msg {

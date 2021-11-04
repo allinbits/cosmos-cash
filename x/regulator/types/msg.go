@@ -4,7 +4,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	vctypes "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
+	vctypes "github.com/allinbits/cosmos-cash/v2/x/verifiable-credential/types"
 )
 
 // define message types

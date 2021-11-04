@@ -4,7 +4,7 @@ import (
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/allinbits/cosmos-cash/x/did/types"
+	"github.com/allinbits/cosmos-cash/v2/x/did/types"
 )
 
 // DidKeeper defines the expected did keeper functions

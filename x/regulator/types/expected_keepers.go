@@ -3,8 +3,8 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
-	vctypes "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
+	didtypes "github.com/allinbits/cosmos-cash/v2/x/did/types"
+	vctypes "github.com/allinbits/cosmos-cash/v2/x/verifiable-credential/types"
 )
 
 // DidKeeper defines the expected did keeper functions

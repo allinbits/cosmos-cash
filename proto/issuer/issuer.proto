@@ -1,7 +1,7 @@
 syntax = "proto3";
 package allinbits.cosmoscash.issuer;
 
-option go_package = "github.com/allinbits/cosmos-cash/x/issuer/types";
+option go_package = "github.com/allinbits/cosmos-cash/v2/x/issuer/types";
 
 // Issuer represents an e-money token issuer
 message Issuer {

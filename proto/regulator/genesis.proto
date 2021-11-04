@@ -3,7 +3,7 @@ package allinbits.cosmoscash.regulator;
 
 // this line is used by starport scaffolding # genesis/proto/import
 
-option go_package = "github.com/allinbits/cosmos-cash/x/regulator/types";
+option go_package = "github.com/allinbits/cosmos-cash/v2/x/regulator/types";
 
 import "gogoproto/gogo.proto";
 

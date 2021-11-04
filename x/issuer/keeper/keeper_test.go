@@ -2,13 +2,14 @@ package keeper
 
 import (
 	"fmt"
-	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
 	"testing"
+
+	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
 
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/allinbits/cosmos-cash/x/issuer/types"
+	"github.com/allinbits/cosmos-cash/v2/x/issuer/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	ct "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
@@ -17,12 +18,12 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
-	didkeeper "github.com/allinbits/cosmos-cash/x/did/keeper"
-	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
-	regkeeper "github.com/allinbits/cosmos-cash/x/regulator/keeper"
-	regtypes "github.com/allinbits/cosmos-cash/x/regulator/types"
-	vckeeper "github.com/allinbits/cosmos-cash/x/verifiable-credential/keeper"
-	vctypes "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
+	didkeeper "github.com/allinbits/cosmos-cash/v2/x/did/keeper"
+	didtypes "github.com/allinbits/cosmos-cash/v2/x/did/types"
+	regkeeper "github.com/allinbits/cosmos-cash/v2/x/regulator/keeper"
+	regtypes "github.com/allinbits/cosmos-cash/v2/x/regulator/types"
+	vckeeper "github.com/allinbits/cosmos-cash/v2/x/verifiable-credential/keeper"
+	vctypes "github.com/allinbits/cosmos-cash/v2/x/verifiable-credential/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	server "github.com/cosmos/cosmos-sdk/server"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"

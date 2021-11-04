@@ -7,7 +7,7 @@ import "did/did.proto";
 import "gogoproto/gogo.proto";
 // this line is used by starport scaffolding # 1
 
-option go_package = "github.com/allinbits/cosmos-cash/x/did/types";
+option go_package = "github.com/allinbits/cosmos-cash/v2/x/did/types";
 
 // this line is used by starport scaffolding # 1
 

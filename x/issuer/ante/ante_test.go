@@ -2,9 +2,10 @@ package ante
 
 import (
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"testing"
 	"time"
+
+	"github.com/cosmos/cosmos-sdk/crypto/hd"
 
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	"github.com/rs/zerolog/log"
@@ -31,12 +32,12 @@ import (
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	dbm "github.com/tendermint/tm-db"
 
-	didkeeper "github.com/allinbits/cosmos-cash/x/did/keeper"
-	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
-	issuerkeeper "github.com/allinbits/cosmos-cash/x/issuer/keeper"
-	issuertypes "github.com/allinbits/cosmos-cash/x/issuer/types"
-	vckeeper "github.com/allinbits/cosmos-cash/x/verifiable-credential/keeper"
-	vctypes "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
+	didkeeper "github.com/allinbits/cosmos-cash/v2/x/did/keeper"
+	didtypes "github.com/allinbits/cosmos-cash/v2/x/did/types"
+	issuerkeeper "github.com/allinbits/cosmos-cash/v2/x/issuer/keeper"
+	issuertypes "github.com/allinbits/cosmos-cash/v2/x/issuer/types"
+	vckeeper "github.com/allinbits/cosmos-cash/v2/x/verifiable-credential/keeper"
+	vctypes "github.com/allinbits/cosmos-cash/v2/x/verifiable-credential/types"
 )
 
 // TestAccount represents an account used in the tests in x/auth/ante.

@@ -3,8 +3,8 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
-	"github.com/allinbits/cosmos-cash/x/issuer/types"
+	didtypes "github.com/allinbits/cosmos-cash/v2/x/did/types"
+	"github.com/allinbits/cosmos-cash/v2/x/issuer/types"
 )
 
 func (k Keeper) SetIssuer(ctx sdk.Context, issuer types.Issuer) {

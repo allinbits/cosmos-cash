@@ -12,9 +12,9 @@ import (
 	"github.com/spf13/cobra"
 
 	// "github.com/cosmos/cosmos-sdk/client/flags"
-	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
-	"github.com/allinbits/cosmos-cash/x/regulator/types"
-	vctypes "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
+	didtypes "github.com/allinbits/cosmos-cash/v2/x/did/types"
+	"github.com/allinbits/cosmos-cash/v2/x/regulator/types"
+	vctypes "github.com/allinbits/cosmos-cash/v2/x/verifiable-credential/types"
 )
 
 var (

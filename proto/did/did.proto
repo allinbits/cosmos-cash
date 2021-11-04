@@ -1,7 +1,7 @@
 syntax = "proto3";
 package allinbits.cosmoscash.did;
 
-option go_package = "github.com/allinbits/cosmos-cash/x/did/types";
+option go_package = "github.com/allinbits/cosmos-cash/v2/x/did/types";
 
 import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";

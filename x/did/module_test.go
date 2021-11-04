@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/require"
 	abcitypes "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/allinbits/cosmos-cash/app"
+	"github.com/allinbits/cosmos-cash/v2/app"
 	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/cosmos/cosmos-sdk/simapp"

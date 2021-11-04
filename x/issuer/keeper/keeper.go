@@ -8,7 +8,7 @@ import (
 	bank "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	"github.com/tendermint/tendermint/libs/log"
 
-	"github.com/allinbits/cosmos-cash/x/issuer/types"
+	"github.com/allinbits/cosmos-cash/v2/x/issuer/types"
 )
 
 // UnmarshalFn is a generic function to unmarshal bytes

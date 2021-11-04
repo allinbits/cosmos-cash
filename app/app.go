@@ -88,22 +88,22 @@ import ( // this line is used by starport scaffolding # stargate/app/moduleImpor
 	tmos "github.com/tendermint/tendermint/libs/os"
 	dbm "github.com/tendermint/tm-db"
 
-	appparams "github.com/allinbits/cosmos-cash/app/params"
-	"github.com/allinbits/cosmos-cash/x/did"
-	didkeeper "github.com/allinbits/cosmos-cash/x/did/keeper"
-	didtypes "github.com/allinbits/cosmos-cash/x/did/types"
-	"github.com/allinbits/cosmos-cash/x/issuer"
-	issuerkeeper "github.com/allinbits/cosmos-cash/x/issuer/keeper"
-	issuertypes "github.com/allinbits/cosmos-cash/x/issuer/types"
-	"github.com/allinbits/cosmos-cash/x/regulator"
-	regulatorkeeper "github.com/allinbits/cosmos-cash/x/regulator/keeper"
-	regulatortypes "github.com/allinbits/cosmos-cash/x/regulator/types"
-	vcs "github.com/allinbits/cosmos-cash/x/verifiable-credential"
-	vcskeeper "github.com/allinbits/cosmos-cash/x/verifiable-credential/keeper"
-	vcstypes "github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
+	appparams "github.com/allinbits/cosmos-cash/v2/app/params"
+	"github.com/allinbits/cosmos-cash/v2/x/did"
+	didkeeper "github.com/allinbits/cosmos-cash/v2/x/did/keeper"
+	didtypes "github.com/allinbits/cosmos-cash/v2/x/did/types"
+	"github.com/allinbits/cosmos-cash/v2/x/issuer"
+	issuerkeeper "github.com/allinbits/cosmos-cash/v2/x/issuer/keeper"
+	issuertypes "github.com/allinbits/cosmos-cash/v2/x/issuer/types"
+	"github.com/allinbits/cosmos-cash/v2/x/regulator"
+	regulatorkeeper "github.com/allinbits/cosmos-cash/v2/x/regulator/keeper"
+	regulatortypes "github.com/allinbits/cosmos-cash/v2/x/regulator/types"
+	vcs "github.com/allinbits/cosmos-cash/v2/x/verifiable-credential"
+	vcskeeper "github.com/allinbits/cosmos-cash/v2/x/verifiable-credential/keeper"
+	vcstypes "github.com/allinbits/cosmos-cash/v2/x/verifiable-credential/types"
 
 	// unnamed import of statik for swagger UI support
-	_ "github.com/allinbits/cosmos-cash/docs/Reference/swagger/statik"
+	_ "github.com/allinbits/cosmos-cash/v2/docs/Reference/swagger/statik"
 )
 
 var (

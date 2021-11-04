@@ -9,7 +9,7 @@ import (
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/spf13/cobra"
 
-	"github.com/allinbits/cosmos-cash/x/verifiable-credential/types"
+	"github.com/allinbits/cosmos-cash/v2/x/verifiable-credential/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module

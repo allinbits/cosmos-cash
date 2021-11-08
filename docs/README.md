@@ -16,7 +16,7 @@ management by leveraging W3C specifications for decentralized identifiers and ve
 
 ### Research paper
 
-For more information on the research behind the Cosmos Cash protocol, please look at the Cosmos Cash research paper:
+For more information on the research behind the Cosmos Cash protocol, see the Cosmos Cash research paper:
 
 [Cosmos Cash: Investigation into EU regulations affecting E-Money tokens](https://drive.google.com/file/d/1zmEyA8kA0uAIRGDKxYElOKvjtz4f_Ep5/view)
 

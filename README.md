@@ -43,13 +43,13 @@ Links to presentations, discussions and interviews are available in
 
 ### Getting Started
 
-To get started and contribute to the project, visit the [ Technical setup](./TECHNICAL-SETUP.md) page and the
+To get started and contribute to the project, see [Technical Setup](./TECHNICAL-SETUP.md) and the
 [Contributing](./CONTRIBUTING.md) page.
 
 
 #### Testnet
 
-To join or interact using the testnet, refer to the [testnet coordinates page](https://docs.cosmos-cash.app.beta.starport.cloud/Networks/testnet/)
+To join or interact using the testnet, see [testnet coordinates](https://docs.cosmos-cash.app.beta.starport.cloud/Networks/testnet/)
 
 --- 
 

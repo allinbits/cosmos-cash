@@ -1,7 +1,8 @@
 # Testnet
 
-A Cosmos Cash testnet is available for testing purposes, this document describes the Cosmos Cash testnet coordinates and
-the satellite projects URLs.
+A Cosmos Cash testnet is available for testing purposes.
+
+Use these Cosmos Cash testnet coordinates and satellite project URLs:
 
 ## Testnet Coordinates
 
@@ -23,7 +24,7 @@ The faucet endpoint is used to get tokens to pay for transaction gas.
 
 ## DID Resolver
 
-The following are the URLs for ([DID](../Reference/GLOSSARY.md#decentralized-identifier-did)) resolution in the Cosmos Cash network
+URLs for ([DID](../Reference/GLOSSARY.md#decentralized-identifier-did)) resolution in the Cosmos Cash network.
 
 |                       |                                                                         |
 | --------------------- | ----------------------------------------------------------------------- |
@@ -32,7 +33,7 @@ The following are the URLs for ([DID](../Reference/GLOSSARY.md#decentralized-ide
 
 ## SSI Agent Router
 
-The following are the URLs to connect to a SSI Agent that uses also Cosmos Cash as VDR
+URLs to connect to an SSI Agent that uses also Cosmos Cash as a verifiable data registry (VDR).
 
 |                         |                                                                  |
 | ----------------------- | ---------------------------------------------------------------- |

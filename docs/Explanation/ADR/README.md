@@ -1,3 +1,8 @@
+---
+title: About Architecture Decision Records (ADR)
+---
+
+
 # Architecture Decision Records (ADR)
 
 Use this location to record all high-level architecture decisions in the Cosmos Cash.

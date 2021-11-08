@@ -1,3 +1,7 @@
+---
+title: About Articles
+---
+
 # Articles README
 
 This folder includes all articles, papers, and so on that have been created for Cosmos Cash. 

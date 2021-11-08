@@ -1,39 +1,38 @@
-# Documentation
+# Cosmos Cash
 
-How to use the Cosmos Cash Documentation.
+[![Go Reference](https://pkg.go.dev/badge/github.com/allinbits/cosmos-cash.svg)](https://pkg.go.dev/github.com/allinbits/cosmos-cash)
+[![build](https://github.com/allinbits/cosmos-cash/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/allinbits/cosmos-cash/actions/workflows/ci.yaml)
+[![codecov](https://codecov.io/gh/allinbits/cosmos-cash/branch/main/graph/badge.svg?token=NLT5ZWM460)](https://codecov.io/gh/allinbits/cosmos-cash)
+[![Libraries.io dependency status for GitHub repo](https://img.shields.io/librariesio/github/allinbits/cosmos-cash)](https://libraries.io/go/github.com%2Fallinbits%2Fcosmos-cash)
 
-- [Documentation](#documentation)
-    - [Overview](#overview)
-    - [Contributing](#contributing)
-    - [Reference](#reference)
+![](https://miro.medium.com/max/1000/1*8Wx44uvyJxpZUVS0WojMNw.png)
 
-## Overview
+### Summary
 
-In Cosmos Cash we use the  *Grand Unified Theory of Documentation* (David Laing) as described
-by [Divio](https://documentation.divio.com/) as a basis for our documentation strategy.
+Cosmos Cash is a protocol designed to be regulatory compliant that offers the same guarantees as traditional banking
+systems. Features that enable these guarantees are Know Your Customer (KYC), anti-money laundering (AML) tracking,
+Financial Action Task Force (FATF) travel rule, and identity management. Cosmos Cash uses a novel approach to identity
+management by leveraging W3C specifications for decentralized identifiers and verifiable credentials.
 
-This approach outlines four specific use cases for documentation:
+### Research paper
 
-* [Tutorials](./Tutorials/README.md)
-* [How-Tos](./How-To/README.md)
-* [Explanation](./Explanation/README.md)
-* [Reference](./Reference/README.md)
+For more information on the research behind the Cosmos Cash protocol, see the Cosmos Cash research paper:
 
-For further background please
-see [the ADR relating to the documentation structure](./Explanation/ADR/adr-002-docs-structure.md).
+[Cosmos Cash: Investigation into EU regulations affecting E-Money tokens](https://drive.google.com/file/d/1zmEyA8kA0uAIRGDKxYElOKvjtz4f_Ep5/view)
 
-## Contributing
+### Architecture
 
-* Write all documentation
-  following [Google Documentation Best Practice](https://google.github.io/styleguide/docguide/best_practices.html)
-* Generate as much documentation as possible from the code.
-* Raise a PR for all documentation changes
-* Follow our [Code of Conduct](https://github.com/allinbits/cosmos-cash/blob/main/CONTRIBUTING.md)
+The Cosmos Cash approach leverages open standards to reach its goals and to offer an open model that is compatible with
+third-party projects that use the open standards. In particular, the Cosmos Cash project uses:
 
-## Reference
+- Self-sovereign identity ([SSI](./Reference/GLOSSARY.md#self-sovereign-identity-ssi))
+- Decentralized identifier ([DID](./Reference/GLOSSARY.md#decentralized-identifier-did))
+- Verifiable credentials ([VC](./Reference/GLOSSARY.md#verifiable-credential-vc))
+- Zero-knowledge proofs ([ZKP](./Reference/GLOSSARY.md#zero-knowledge-proof-zkp))
 
-- [Google Style Guide for Markdown](https://github.com/google/styleguide/blob/gh-pages/docguide/style.md)
-- [Write the Docs global community](https://www.writethedocs.org/)
-- [Write the Docs Code of Conduct](https://www.writethedocs.org/code-of-conduct/#the-principles)
-- [The good docs project](https://github.com/thegooddocsproject)
-- [Readme editor](https://readme.so/editor)
+For a detailed architecture description and design choices, visit the [ADR](./Explanation/ADR) section.
+
+
+--- 
+
+Do you have questions or want to get in touch? Send us an email at *cosmos-cash@tendermint.com*.

@@ -21,17 +21,17 @@ Cosmos Cash supports the second approach.
 
 ## Context
 
-EMT:
+**EMT:**
 
 EMT = e-money token.
 
 For simplicity of description, assume throughout we are discussing EUR-denominated EMTs.
 
-Fungibility:
+**Fungibility:**
 
 Fungibility is defined as an absolute, 2 EMTs are Fungible if they are absolutely interchangeable; as a result, they have the same value.
 
-***Fungibilty Approach 1***:
+**Fungibilty Approach 1:**
 
 Under this approach, the chain will have multiple EMTs - per numeraire.
 
@@ -44,7 +44,7 @@ EMTs are not Fungible.
 It is believed that Fungibility Approach 1 gives a poor user experience, akin to a high street where each shop accepts different EUR notes and,
 shoppers' wallets each contain a subset of the different available EUR notes.
 
-***Fungibilty Approach 2***:
+**Fungibilty Approach 2:**
 
 Under this approach, the chain will support one EMT - per numeraire.
 
@@ -108,7 +108,7 @@ At a later date the chain may also support Fungibilty Approach 1.
 It is anticipated that some issuers may wish to issue EMTs without regard for other issuers.
 
 It is also anticipated that these issuers may then at a later date decide to support the redemption and exchange of other issuer's tokens,
-so as to encourage the issuance of their own tokens and, to encourage overall EMT issuance.
+so as to encourage the issuance of their own EMT and, to encourage overall EMT issuance.
 
 ## Test Cases [optional]
 

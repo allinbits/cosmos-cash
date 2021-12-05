@@ -27,7 +27,7 @@ Issuer behaviour:
 
 Issuers agree to support Fungible (at par) exchange and redemption of EMTs from other currently licensed issuers.
 
-Issuer incentives for the given behaviour: 
+Issuer incentives for the given behaviour:
 
 (a) Benefit: network effect leads to increased EMT use, with increased issuance and circulation.
     (This is driven by the resulting User behaviour and incentives - below. )
@@ -55,9 +55,6 @@ We will update our functionality as follows:
     The transaction will fail if:
         I1 is up to its issuance limit or
         The Issuer license of I2 has been revoked.
-
-> This section describes our response to these forces. It is stated in full sentences, with active voice. "We will ..."
-> {decision body}
 
 ## Consequences
 

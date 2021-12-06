@@ -83,11 +83,17 @@ func NewCreateIssuerCmd() *cobra.Command {
 
 // NewIssueUserVerifiableCredentialCmd defines the command to create a new verifiable credential.
 func NewIssueUserVerifiableCredentialCmd() *cobra.Command {
+
+	var credentialID string
+
 	cmd := &cobra.Command{
-		Use:     `issue-user-credential [cred_subject] [cred_id] [issuer_did] [secret] [amount_per_transaction] [total_number_of_transactions] [total_transaction_amount]`,
-		Short:   "create decentralized verifiable-credential",
-		Example: "creates a verifiable credential for users",
-		Args:    cobra.ExactArgs(7),
+		Use:   `issue-user-credential [issuer_did] [subject_did] [secret] [amount_per_transaction] [total_number_of_transactions] [total_transaction_amount]`,
+		Short: "create decentralized verifiable-credential",
+		Example: `cosmos-cashd tx issuer issue-user-credential \
+did:cosmos:net:cash:emti did:cosmos:cred:emti-user-alice zkp_secret 1000 1000 1000 \
+--credential-id emti-alice-proof-of-kyc \
+--from emti --chain-id cash -y`,
+		Args: cobra.ExactArgs(6),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -96,12 +102,16 @@ func NewIssueUserVerifiableCredentialCmd() *cobra.Command {
 			accAddr := clientCtx.GetFromAddress()
 			accAddrBech32 := accAddr.String()
 
-			credentialSubject := didtypes.DID(args[0])
-			credentialID := args[1]
-			issuerDid := didtypes.DID(args[2])
-			secret := args[3]
+			issuerDID := didtypes.DID(args[0])
+			subjectDID := didtypes.DID(args[1])
 
-			inputs := args[4:7]
+			// assign a credential id if not set
+			if credentialID == "" {
+				credentialID = fmt.Sprintf("PoKYC/%s", subjectDID)
+			}
+
+			secret := args[2]
+			inputs := args[3:6]
 
 			data := make([][]byte, len(inputs))
 			for i, v := range inputs {
@@ -116,21 +126,18 @@ func NewIssueUserVerifiableCredentialCmd() *cobra.Command {
 			root := tree.Root()
 			hexRoot := hex.EncodeToString(root)
 
-			cs := vctypes.NewUserCredentialSubject(
-				credentialSubject.String(),
-				hexRoot,
-				true,
-			)
-			tm := time.Now()
-
 			vc := vctypes.NewUserVerifiableCredential(
 				credentialID,
-				issuerDid.String(),
-				tm,
-				cs,
+				issuerDID.String(),
+				time.Now(),
+				vctypes.NewUserCredentialSubject(
+					subjectDID.String(),
+					hexRoot,
+					true,
+				),
 			)
 
-			vmID := issuerDid.NewVerificationMethodID(accAddrBech32)
+			vmID := issuerDID.NewVerificationMethodID(accAddrBech32)
 
 			signedVc, err := vc.Sign(clientCtx.Keyring, accAddr, vmID)
 			if err != nil {
@@ -146,6 +153,8 @@ func NewIssueUserVerifiableCredentialCmd() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().StringVar(&credentialID, "credential-id", "", "the credential identifier, automatically assigned if not provided")
+
 	flags.AddTxFlagsToCmd(cmd)
 
 	return cmd
@@ -154,7 +163,7 @@ func NewIssueUserVerifiableCredentialCmd() *cobra.Command {
 // NewBurnTokenCmd defines the command to burn tokens.
 func NewBurnTokenCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "burn-token [did] [license_cred_id] [amount]",
+		Use:   "burn-token [issuer_did] [license_cred_id] [amount]",
 		Short: "burn e-money tokens for an issuer",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -181,10 +190,6 @@ func NewBurnTokenCmd() *cobra.Command {
 				amount,
 				accAddrBech32,
 			)
-			// validate the message
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
 			// submit the transaction
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
@@ -198,7 +203,7 @@ func NewBurnTokenCmd() *cobra.Command {
 // NewMintTokenCmd defines the command to mint tokens.
 func NewMintTokenCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "mint-token [did] [license_cred_id] [amount]",
+		Use:   "mint-token [issuer_did] [license_cred_id] [amount]",
 		Short: "mint e-money tokens for an issuer",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -240,7 +245,7 @@ func NewMintTokenCmd() *cobra.Command {
 //NewPauseTokenCmd defines the command to pause all transfers of an emoney token.
 func NewPauseTokenCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "pause-token [did] [license_cred_id]",
+		Use:   "pause-token [issuer_did] [license_cred_id]",
 		Short: "pauses all transfers of an emoney token",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {

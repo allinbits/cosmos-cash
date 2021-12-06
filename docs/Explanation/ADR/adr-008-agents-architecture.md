@@ -21,10 +21,22 @@ TBD
 
 ## Decision
 
-.... described in the following diagram:
+The SSI agents general architecture is represented in the following diagram:
 
 ![ssi_agents_architecture](../../assets/diagrams/out/ssi_agents_architecture.svg)
 
+Connections between edge agents are routed through cloud agents (see [DIDComm Mediator](https://wiki.hyperledger.org/display/ARIES/DIDComm+MediatorRouter))
+
+### Interactions
+
+The general architecture enables the support for different scenarios, in the Cosmos Cash research the following interacitons 
+have been developed:
+![ssi_agents_interactions](../../assets/diagrams/out/ssi_agents_interactions.svg)
+
+##### Legend
+- Blue Lines: on-chain commits 
+- Red Lines: DIDComm exchanges
+- Grey dotted lines: Out-of-band exchanges
 
 ## Consequences
 
@@ -32,7 +44,7 @@ N/A
 
 ### Backward Compatibility
 
-This new module is backward compatible.
+N/A
 
 ### Positive
 

@@ -1,0 +1,108 @@
+@startuml
+title Entity interactions
+footer Cosmos Cash: https://github.com/allinbits/cosmos-cash
+
+skinparam shadowing false
+
+participant "Root of Trust" as rot
+participant "Regulator" as reg
+participant "E-Money Token Provider" as emti
+participant "User" as u1
+participant "eIDAS" as eid
+participant "3rd Party" as u2
+
+
+autonumber 1.1
+
+autonumber stop
+reg -[#blue]> reg: Create DID
+autonumber resume
+
+
+== Definition of regulators ==
+
+rot -[#blue]> reg: Issue Regulator Credential
+
+== Registration and licensing of a CASP ==
+
+autonumber stop
+emti -[#blue]> emti: Create DID
+emti O-> reg: Establish DIDComm Channel via DID Exchange
+autonumber resume
+
+group Registration
+autonumber inc A
+emti -> reg: Apply for Registration Credential
+reg -> emti: Request Registration Credential Presentation
+emti -> reg: Send Registration Credential Presentation
+reg -[#blue]> emti: Issue Registration Credential
+end
+
+group License
+autonumber inc A
+emti -> reg: Apply for License Credential
+reg -> emti: Request License Credential Presentation
+emti -> reg: Send License Credential Presentation
+reg -[#blue]> emti: Issue License Credential
+end
+
+autonumber stop
+emti -[#blue]> emti: Self-Issue Proof of KYC (PoKYC) credential
+autonumber resume
+
+== User Identity ==
+
+autonumber stop
+eid -[#blue]> eid: Create DID
+u1 O-> eid: Establish DIDComm Channel via DID Exchange
+autonumber resume
+
+autonumber inc A
+loop Repeat for all users
+    u1 -> eid: Apply for Identity Credentials
+    eid -> u1: Request Identity Credentials Presentation
+    u1 -> eid: Send Identity Credentials Presentation
+    eid -> u1: Issue Identity Credentials
+end
+
+== E-Money Issuance ==
+
+autonumber stop
+u1 -[#blue]> u1: Create DID
+u1 O-> emti: Establish DIDComm Channel via DID Exchange
+autonumber resume
+
+autonumber inc A
+group Proof of KYC issuance
+u1 -> emti: Apply for eligibility
+emti -> u1: Request Identity Credential
+u1 -> emti: Send Proof of Identity Credential Presentation (Selective disclosure)
+emti <--> eid: Verify Proof of Identity
+emti -[#blue]> u1: Issue Proof of KYC (PoKYC) Credential
+end
+
+autonumber inc A
+group Token issuance
+u1 -> emti: Send Payment Credential Presentation
+emti --> emti: Accept Payment Credential Request
+emti -[#blue]> emti: Mint Tokens
+emti -[#blue]> u1: Transfer tokens to provided account
+emti -> u1: Issue Payment Receipt Credential
+end
+
+== Token Transactions ==
+
+autonumber stop
+u2 -[#blue]> u2: Create DID
+u1 O-> u2: Establish DIDComm Channel via DID Exchange
+autonumber resume
+
+group Payment request
+autonumber inc A
+u2 -> u1: Send Payment Credential Presentation
+u1 --> u1: Accept Payment Credential Request
+u1 -[#blue]> u2: Transfer tokens to provided account
+u1 -> u2: Issue Payment Receipt Credential
+end
+
+@enduml

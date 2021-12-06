@@ -12,68 +12,58 @@ archimateDiagram {
 skinparam monochrome false
 skinparam shadowing false
 
-skinparam rectangle<<behavior>> {
-	roundCorner 25
+
+frame "Cosmos Cash Client" {
+  [Token Wallet] as tw
+  [Aries Agent] as aa
+  database "Aries KMS"
 }
-sprite $bProcess jar:archimate/business-process
-sprite $aService jar:archimate/application-service
-sprite $aComponent jar:archimate/application-component
 
-rectangle "Handle claim"  as HC <<$bProcess>><<behavior>> #Business
-rectangle "Capture Information"  as CI <<$bProcess>><<behavior>> #Business
-rectangle "Notify\nAdditional Stakeholders" as NAS <<$bProcess>><<behavior>> #Business
-rectangle "Validate" as V <<$bProcess>><<behavior>> #Business
-rectangle "Investigate" as I <<$bProcess>><<behavior>> #Business
-rectangle "Pay" as P <<$bProcess>><<behavior>> #Business
+cloud " " as net1
+cloud " " as net2
+cloud " " as net3
+cloud " " as net4
+cloud " " as net5
 
-HC *-down- CI
-HC *-down- NAS
-HC *-down- V
-HC *-down- I
-HC *-down- P
+frame "Cosmos Cash Node" {
+    database "Cosmos Cash Chain" as ccc
+    [Chain of Trust] as ct
+    [ct] <-> [ccc]
+}
 
-CI -right->> NAS
-NAS -right->> V
-V -right->> I
-I -right->> P
+[DID Resolver Driver] as drd
+[Aries Cloud Agent] as aca
 
-rectangle "Scanning" as scanning <<$aService>><<behavior>> #Application
-rectangle "Customer admnistration" as customerAdministration <<$aService>><<behavior>> #Application
-rectangle "Claims admnistration" as claimsAdministration <<$aService>><<behavior>> #Application
-rectangle Printing <<$aService>><<behavior>> #Application
-rectangle Payment <<$aService>><<behavior>> #Application
+frame "eIDAS" {
+    [eIDAS Bridge] as eb
+    [eIDAS] as e
+    [eb] - [e]
+}
 
-scanning -up-> CI
-customerAdministration  -up-> CI
-claimsAdministration -up-> NAS
-claimsAdministration -up-> V
-claimsAdministration -up-> I
-Payment -up-> P
 
-Printing -up-> V
-Printing -up-> P
+[tw] - [aa]
 
-rectangle "Document\nManagement\nSystem" as DMS <<$aComponent>> #Application
-rectangle "General\nCRM\nSystem" as CRM <<$aComponent>>  #Application
-rectangle "Home & Away\nPolicy\nAdministration" as HAPA <<$aComponent>> #Application
-rectangle "Home & Away\nFinancial\nAdministration" as HFPA <<$aComponent>>  #Application
+[aa]  <--> [net1]
+[net1] <--> [aca]
+[aa] --> [net2]
+[aca] --> [net2]
 
-DMS .up.|> scanning
-DMS .up.|> Printing
-CRM .up.|> customerAdministration
-HAPA .up.|> claimsAdministration
-HFPA .up.|> Payment
+[net2] --> [drd]
 
-legend left
-Example from the "Archisurance case study" (OpenGroup).
-See
-====
-<$bProcess> :business process
-====
-<$aService> : application service
-====
-<$aComponent> : application component
-endlegend
+[aa]  <--> [net3]
+[net3] <--> [eb]
+[aca] --> [net3]
+
+
+
+[tw] <--> [net4]
+[net4] <--> [ct]
+
+[drd] --> [net5]
+[net5] --> [ccc]
+
+
+
 
 
 @enduml

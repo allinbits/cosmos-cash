@@ -51,8 +51,8 @@ The issuers agree to support Fungible (at par) exchange and redemption of EMTs f
 Because they can always readily exchange EMTs from different issuers at par, users will treat EMTs from different Issuers as homogeneous.
 
 It is believed that Fungibility Approach 2 provides 2 benefits:
-* An improved user experience
-* A network effect, increasing EMT utility (i.e. if more users accept/use a given EMT, the value from its use and, also its liquidity are increased)
+* An improved user experience.
+* A network effect, increasing EMT utility (i.e. if more users accept/use a given EMT, the value from its use and, also its liquidity are increased).
 
 Both benefits ultimately lead to greater EMT use, EMT issuance and, chain value.
 
@@ -67,11 +67,8 @@ Cosmos Cash will support the second approach.
 * The chain's EMT will have a chosen name, such as EUR-E.
 
 * Issuers support Fungibility on chain via:
-   A transaction type is available as follows:
-   For User U, licensed by Issuer I1, U can 'send' to I1 the EMT an Issuer I2, 'receiving' in returning the EMT of I1.
-   The transaction will fail if:
-    I1 is up to its issuance limit or
-    The Issuer license of I2 has been revoked.
+   - A transaction type is available as follows: for User U, licensed by Issuer I1, U can 'send' to I1 the EMT an Issuer I2, 'receiving' in returning the EMT of I1.
+   - The transaction will fail if: I1 is up to its issuance limit or the Issuer license of I2 has been revoked.
 
 ## Consequences
 

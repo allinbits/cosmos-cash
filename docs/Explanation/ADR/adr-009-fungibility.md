@@ -35,7 +35,7 @@ Suppose n issuers issue EMTs.
 
 The issuers do not support Fungibility, for example by agreeing to exchange and redeem the EMTs of other issuers.
 
-EMTs are not Fungible.
+EMTs are not Fungible under Approach 1.
 
 It is believed that Fungibility Approach 1 gives a poor user experience, akin to a high street where each shop accepts different EUR notes and where
 shoppers' wallets each contain a subset of the different available EUR notes.
@@ -49,6 +49,8 @@ Suppose n issuers issue EMTs.
 The issuers agree to support Fungible (at par) exchange and redemption of EMTs from other issuers.
 
 Because they can always readily exchange EMTs from different issuers at par, users will treat EMTs from different Issuers as homogeneous.
+
+EMTs are Fungible under Approach 2.
 
 It is believed that Fungibility Approach 2 provides 2 benefits:
 * An improved user experience.
@@ -76,7 +78,7 @@ See Further Discussions.
 
 ### Backwards Compatibility
 
-Expected to limit Backward Compatibility, but this compatibility remains to be confirmed.
+This ADR is expected to limit Backward Compatibility, but this compatibility remains to be confirmed.
 
 ### Positive
 

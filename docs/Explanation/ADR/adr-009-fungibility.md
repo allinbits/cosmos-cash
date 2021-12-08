@@ -67,11 +67,11 @@ Cosmos Cash will support the second approach.
 * The chain's EMT will have a chosen name, such as EUR-E.
 
 * Issuers support Fungibility on chain via:
-A transaction type is available as follows:
-For User U, licensed by Issuer I1, U can 'send' to I1 the EMT an Issuer I2, 'receiving' in returning the EMT of I.
-The transaction will fail if:
-I1 is up to its issuance limit or
-The Issuer license of I2 has been revoked.
+  *A transaction type is available as follows:
+    For User U, licensed by Issuer I1, U can 'send' to I1 the EMT an Issuer I2, 'receiving' in returning the EMT of I1.
+  *The transaction will fail if:
+    *I1 is up to its issuance limit or
+    *The Issuer license of I2 has been revoked.
 
 ## Consequences
 
@@ -107,10 +107,6 @@ It is anticipated that some issuers may wish to issue EMTs without regard for ot
 
 It is also anticipated that these issuers may then at a later date decide to support the redemption and exchange of other issuer's tokens,
 so as to encourage the issuance of their own EMT and, to encourage overall EMT issuance.
-
-## Test Cases [optional]
-
-N/A
 
 ## References
 

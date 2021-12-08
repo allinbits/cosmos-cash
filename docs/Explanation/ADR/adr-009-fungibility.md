@@ -2,8 +2,8 @@
 
 ## Changelog
 
-- 2021-12-03: Initial draft
-- 2021-12-05: Updated draft
+- 2021-12-03: Initial draft.
+- 2021-12-05: Updated draft.
 
 ## Status
 

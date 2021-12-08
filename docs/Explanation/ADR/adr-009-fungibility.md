@@ -8,7 +8,7 @@
 
 PROPOSED
 
-> For details on ADR workflow, see the [PROCESS](./PROCESS.md#adr-status) page.
+> ADR creation is an iterative process. For ADR workflow details, see [ADR Creation Process](./PROCESS.md#adr-status).
 > Use DRAFT if the ADR is in a draft stage (draft PR) or PROPOSED if it's in review.
 
 ## Abstract

@@ -25,11 +25,9 @@ Cosmos Cash supports the second approach.
 
 EMT = e-money token.
 
-For simplicity of description, assume throughout we are discussing EUR-denominated EMTs.
-
 ###Fungibility:
 
-Fungibility is defined as an absolute, 2 EMTs are Fungible if they are absolutely interchangeable; as a result, they have the same value.
+Fungibility is defined as an absolute, 2 EMTs of the same numeraire are Fungible if they are absolutely interchangeable; as a result, they have the same value.
 
 ###Fungibilty Approach 1:
 
@@ -37,28 +35,30 @@ Under this approach, the chain will have multiple EMTs - per numeraire.
 
 Suppose n issuers issue EMTs.
 
-The issuers do not support Fungibility, for example by agreeing to exchange and redeem the tokens of other issuers.
+The issuers do not support Fungibility, for example by agreeing to exchange and redeem the EMTs of other issuers.
 
 EMTs are not Fungible.
 
-It is believed that Fungibility Approach 1 gives a poor user experience, akin to a high street where each shop accepts different EUR notes and,
+It is believed that Fungibility Approach 1 gives a poor user experience, akin to a high street where each shop accepts different EUR notes and where
 shoppers' wallets each contain a subset of the different available EUR notes.
 
 ###Fungibilty Approach 2:
 
 Under this approach, the chain will support one EMT - per numeraire.
 
-Suppose n issuers issue tokens.
+Suppose n issuers issue EMTs.
 
 The issuers agree to support Fungible (at par) exchange and redemption of EMTs from other issuers.
 
-Because they can always readily exchange EMTs from different issuers at par, users will treat EMTs from different Issuers are homogeneous.
+Because they can always readily exchange EMTs from different issuers at par, users will treat EMTs from different Issuers as homogeneous.
 
-It is believed that Fungibility Approach 2 provides:
+It is believed that Fungibility Approach 2 provides 2 benefits:
 * An improved user experience
 * A network effect, increasing EMT utility (i.e. if more users accept/use a given EMT, the value from its use and, also its liquidity are increased)
 
-Both (i) and (ii) should ultimately lead to greater EMT use, EMT issuance and, chain value.
+Both benefits ultimately lead to greater EMT use, EMT issuance and, chain value.
+
+Under Fungibility Approach 2, if and when an issuer holds more of another issuer's EMTs than it holds of theirs, it does face Counterparty Risk. It can mitigate this by redeeming competitor EMTs ASAP.
 
 ## Decision
 

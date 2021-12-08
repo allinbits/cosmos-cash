@@ -96,11 +96,11 @@ N/A.
 
 ###Firstly:
 
-At a later date the chain may support 'auto-clearing' where 2 issuers both hold n EMTs of each other's tokens.
+At a later date Cosmos Cash may support 'auto-clearing' where 2 issuers both hold n EMTs of each other's tokens.
 
 ###Secondly:
 
-At a later date the chain may also support Fungibilty Approach 1.
+At a later date Cosmos Cash may also support Fungibilty Approach 1.
 
 It is anticipated that some issuers may wish to issue EMTs without regard for other issuers.
 

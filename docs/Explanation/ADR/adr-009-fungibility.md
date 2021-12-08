@@ -79,7 +79,7 @@ See Further Discussions.
 
 ### Backwards Compatibility
 
-N/A.
+Expected to limit Backward Compatibility, but this compatibility remains to be confirmed.
 
 ### Positive
 

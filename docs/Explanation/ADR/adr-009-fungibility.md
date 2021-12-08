@@ -13,79 +13,102 @@ PROPOSED
 
 ## Abstract
 
-It is anticipated that Elesto will have more than one Issuer issuing e-money tokens denominated in any given currency (numereraire).
+Cosmos Cash is a platform enabling the issuance of MICA-compliant e-money tokens.
 
-Here we summarise the anticipated behaviour and driving incentives of Issuers and Users and, what this means for our choice of functionality.
+Two approaches to e-money token Fungibility are outlined.
+
+Cosmos Cash supports the second approach.
 
 ## Context
 
-For simplicity of description, assume throughout we are discussing USD-denominated tokens.
+EMT:
 
 EMT = e-money token.
 
-Issuer behaviour:
+For simplicity of description, assume throughout we are discussing EUR-denominated EMTs.
 
-Issuers agree to support Fungible (at par) exchange and redemption of EMTs from other currently licensed issuers.
+Fungibility:
 
-Issuer incentives for the given behaviour:
+Fungibility is defined as an absolute, 2 EMTs are Fungible if they are absolutely interchangeable; as a result, they have the same value.
 
-(a) Benefit: network effect leads to increased EMT use, with increased issuance and circulation.
-    (This is driven by the resulting User behaviour and incentives - below. )
-(b) Benefit: any given issuer would lose market share if they didn't agree to support fungility as stated.
-    (Exchange and redemption take their competitors' EMTs out of circulation, put their EMT into circulation.)
-(c) Cost: Issuers face Counterparty risk only while they hold competitors' EMTs - they can mitigate this by redeeming competitor tokens.
+***Fungibilty Approach 1***:
 
-User behaviour:
+Under this approach, the chain will have multiple EMTs - per numeraire.
 
-(i) Users will treat EMTs from different Issuers are homogeneous.
-(ii) Users will accept wallets and related use cases that equally 'handle' EMTs of different Issuers as homogenous.
-     This will lead to enhanced 'ease of use' and, further adoption (see: Issuer incentives).
+Suppose n issuers issue EMTs.
+
+The issuers do not support Fungibility, for example by agreeing to exchange and redeem the tokens of other issuers.
+
+EMTs are not Fungible.
+
+It is believed that Fungibility Approach 1 gives a poor user experience, akin to a high street where each shop accepts different EUR notes and,
+shoppers' wallets each contain a subset of the different available EUR notes.
+
+***Fungibilty Approach 2***:
+
+Under this approach, the chain will support one EMT - per numeraire.
+
+Suppose n issuers issue tokens.
+
+The issuers agree to support Fungible (at par) exchange and redemption of EMTs from other issuers.
+
+Because they can always readily exchange EMTs from different issuers at par, users will treat EMTs from different Issuers are homogeneous.
+
+It is believed that Fungibility Approach 2 provides:
+(i) An improved user experience
+(ii) A network effect, increasing EMT utility (i.e. if more users accept/use a given EMT, the value from its use and, also its liquidity are increased)
+
+Both (i) and (ii) should ultimately lead to greater EMT use, EMT issuance and, chain value.
 
 ## Decision
 
-We will update our functionality as follows:
+Cosmos Cash will support the second approach.
 
-(1) Our chain will support only one EMT (per currency), issued by 1 or more Issuers.
+(1) The chain will support one EMT - per numeraire.
 
-(2) Our chain's EMTs will all have the same given name? (Such as USD-E for USD.)
+(2) The chain's EMT will have a chosen name, such as EUR-E.
 
-(3) Added Issuer functionality.
-    We add a transaction type as follows:
-        For User U, licensed by Issuer I1, U can 'send' to I1 the EMT an Issuer I2, 'receiving' in returning the EMT of I.
-    The transaction will fail if:
-        I1 is up to its issuance limit or
-        The Issuer license of I2 has been revoked.
+(3) Issuers support Fungibility on chain via:
+A transaction type is available as follows:
+For User U, licensed by Issuer I1, U can 'send' to I1 the EMT an Issuer I2, 'receiving' in returning the EMT of I.
+The transaction will fail if:
+I1 is up to its issuance limit or
+The Issuer license of I2 has been revoked.
 
 ## Consequences
 
-See Context.
+See Further Discussions.
 
 ### Backwards Compatibility
 
-Expected to limit Backwards Compatibility but, to be confirmed.
+N/A.
 
 ### Positive
 
-See Context.
+N/A.
 
 ### Negative
 
-See Context.
+N/A.
 
 ### Neutral
 
-See Context.
+N/A.
 
 ## Further Discussions
 
-It is expected users will more readily adopt Fungible EMTs.
+***Firstly:***
 
-The decision given is to only support Fungible EMTs.
+At a later date the chain may support 'auto-clearing' where 2 issuers both hold n EMTs of each other's tokens.
 
-Alternative Decision options are:
-(a) Only support non-Fungibile EMTs,
-(b) Support Fungible and non-Fungible EMTs
-    (For example Issuers I1 and I2 issue Fungible EMT T1 and, Issuer I3 issues non-Fungible EMT T2.)
+***Secondly:***
+
+At a later date the chain may also support Fungibilty Approach 1.
+
+It is anticipated that some issuers may wish to issue EMTs without regard for other issuers.
+
+It is also anticipated that these issuers may then at a later date decide to support the redemption and exchange of other issuer's tokens,
+so as to encourage the issuance of their own tokens and, to encourage overall EMT issuance.
 
 ## Test Cases [optional]
 
@@ -93,4 +116,4 @@ N/A
 
 ## References
 
-https://www.notion.so/allinbits/FungibilityV2-1-e6b1deed13cc46649e9f915d4a23944b
+N/A

@@ -8,9 +8,6 @@
 
 PROPOSED
 
-> ADR creation is an iterative process. For ADR workflow details, see [ADR Creation Process](./PROCESS.md#adr-status).
-> Use DRAFT if the ADR is in a draft stage (draft PR) or PROPOSED if it's in review.
-
 ## Abstract
 
 Cosmos Cash is a platform enabling the issuance of MICA-compliant e-money tokens.

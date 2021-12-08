@@ -56,7 +56,7 @@ It is believed that Fungibility Approach 2 provides 2 benefits:
 * An improved user experience.
 * A network effect, increasing EMT utility (i.e. if more users accept/use a given EMT, the value from its use and, also its liquidity are increased).
 
-Both benefits ultimately lead to greater EMT use, EMT issuance and, chain value.
+Both benefits ultimately lead to greater EMT use, EMT issuance and, chain economic value.
 
 Under Fungibility Approach 2, if and when an issuer holds more of another issuer's EMTs than it holds of theirs, it does face Counterparty Risk. It can mitigate this by redeeming competitor EMTs ASAP.
 

@@ -58,7 +58,7 @@ It is expected that Fungibility Approach 2 provides the following benefits:
 
 Both benefits ultimately lead to greater E-Money token use, E-Money token issuance and chain economic value.
 
-Under Fungibility Approach 2, if and when an issuer holds more of another issuer's EMTs than it holds of theirs, it does face Counterparty Risk. It can mitigate this by redeeming competitor E-Money token ASAP.
+Under Fungibility Approach 2, if and when an issuer holds more of another issuer's EMTs than it holds of theirs, it does face Counterparty Risk. It can easily mitigate this by immediately redeeming competitor E-Money token.
 
 ## Decision
 

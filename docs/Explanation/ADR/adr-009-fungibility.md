@@ -100,7 +100,7 @@ N/A.
 
 ###Firstly:
 
-At a later date Cosmos Cash may support 'auto-clearing' where 2 issuers both hold n EMTs of each other's tokens.
+At a later date Cosmos Cash may support 'auto-clearing' where 2 issuers both hold a given amount of each other's tokens.
 
 ###Secondly:
 
@@ -108,7 +108,7 @@ At a later date Cosmos Cash may also support Fungibility Approach 1 - note that 
 
 It is anticipated that some issuers may wish to issue EMTs without regard for other issuers.
 
-It is also anticipated that these issuers may then at a later date decide to support the redemption and exchange of other issuer's tokens,
+It is also anticipated that these issuers may then at a later date decide to support the redemption and exchange of other issuer's E-Money tokens,
 so as to encourage the issuance of their own EMT and, to encourage overall EMT issuance.
 
 ## References

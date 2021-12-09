@@ -68,7 +68,7 @@ Recall that Cosmos Cash's ultimate goal is to bring true liquidity to the Cosmos
 
 The second approach is conceptually more likely to provide a value proposition for e-money issuers while at the same time ensuring an optimal user experience for token holders. Nevertheless it does present significant technical implementation challenges.
 
-* The chain will support one E-Money token - per numeraire.
+* Cosmos Cash will support one E-Money token per numeraire.
 
 * The chain's E-Money token will have a given name, such as EUR-E.
 

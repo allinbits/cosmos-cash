@@ -28,15 +28,13 @@ Under MiCA regulations a Cosmos Cash token would qualify as an E-Money token sin
 
 I.e. E-Money tokens are collateralized stablecoins pegged to a given single fiat currency - typically the Euro - and with multiple E-Money issuers a technical challenge arises in terms of token fungibility.
 
-EMT = E-Money token.
-
 ###Fungibility:
 
-Fungibility herein is defined as an absolute, where 2 EMTs of the same numeraire are fungible if they are treated as absolutely interchangeable and, as a result, they have the same value.
+Fungibility herein is defined as an absolute, where two E-Money tokens of the same numeraire are fungible if they are treated as absolutely interchangeable and, as a result, they have the same value.
 
 ###Fungibility Approach 1:
 
-Under this approach, Cosmos Cash would have multiple EMTs - per numeraire. (The word numeraire translates as "money," "coinage," or "face value" and just means per currency used to measure amounts; i.e. with less specificity, 'per numeraire' means 'per currency'.)
+Under this approach, Cosmos Cash will have multiple E-Money tokens, per numeraire. (The word numeraire translates as "money," "coinage," or "face value" and just means per currency used to measure amounts; i.e. with less specificity, 'per numeraire' means 'per currency'.)
 
 Following Approach 1 leads us to a situation complementing existing blockchain ecosystems where typically there are different stablecoins pegged to the same fiat currency where nominally they have the same value but their exchange rates vary slightly (for example USDC, USDT, BUSD, UST, ...).
 
@@ -46,38 +44,36 @@ From a user's perspective this approach gives a poor user experience, akin to a 
 
 ###Fungibility Approach 2:
 
-Under this approach, Cosmos Cash would support one EMT - per numeraire.
+Under this approach, Cosmos Cash will have multiple e-money providers that issue a single E-Money token, per numeraire. This is different but similar to the approach implemented by the [Circle](https://www.circle.com/en/) USDC project, where a consortium of organizations issue USDC tokens. 
 
-Under this approach, Cosmos Cash will have multiple e-money providers that issue a single e-money token, per numeraire. This is different but similar to the approach implemented by the [Circle](https://www.circle.com/en/) USDC project, where a consortium of organizations issue USDC tokens. 
+Issuers agree to support Fungible (at par) exchange and redemption of E-Money tokens from other issuers.
 
-Issuers agree to support Fungible (at par) exchange and redemption of EMTs from other issuers.
+Because they can always readily exchange E-Money tokens from different issuers at par, users will treat E-Money tokens from different Issuers as homogeneous.
 
-Because they can always readily exchange EMTs from different issuers at par, users will treat EMTs from different Issuers as homogeneous.
+E-Money tokens are Fungible under Approach 2.
 
-EMTs are Fungible under Approach 2.
-
-It is believed that Fungibility Approach 2 provides 2 benefits:
+It is expected that Fungibility Approach 2 provides the following benefits:
 * An improved user experience.
-* A network effect, increasing EMT utility (i.e. if more users accept/use a given EMT, the value from its use and also its liquidity are increased).
+* A network effect, increasing E-Money token utility (i.e. if more users accept/use a given E-Money token, the value from its use and also its liquidity are increased).
 
-Both benefits ultimately lead to greater EMT use, EMT issuance and chain economic value.
+Both benefits ultimately lead to greater E-Money token use, E-Money token issuance and chain economic value.
 
-Under Fungibility Approach 2, if and when an issuer holds more of another issuer's EMTs than it holds of theirs, it does face Counterparty Risk. It can mitigate this by redeeming competitor EMTs ASAP.
+Under Fungibility Approach 2, if and when an issuer holds more of another issuer's EMTs than it holds of theirs, it does face Counterparty Risk. It can mitigate this by redeeming competitor E-Money token ASAP.
 
 ## Decision
 
 In consideration of the benefits and complexity of the approaches, Cosmos Cash will support the second approach to Fungibility.
 
-Recall Cosmos Cash's ultimate goal is to bring true liquidity to the Cosmos ecosystem through a reliable, regulatory-compliant protocol that guarantees the same guarantees as the traditional banking sector.
+Recall that Cosmos Cash's ultimate goal is to bring true liquidity to the Cosmos ecosystem through a reliable, regulatory-compliant protocol that guarantees the same guarantees as the traditional banking sector.
 
 The second approach is conceptually more likely to provide a value proposition for e-money issuers while at the same time ensuring an optimal user experience for token holders. Nevertheless it does present significant technical implementation challenges.
 
-* The chain will support one EMT - per numeraire.
+* The chain will support one E-Money token - per numeraire.
 
-* The chain's EMT will have a chosen name, such as EUR-E.
+* The chain's E-Money token will have a given name, such as EUR-E.
 
 * Issuers support Fungibility on chain:
-   - A transaction type is available as follows: for User U, licensed by Issuer I1, U can 'send' to I1 the EMT and Issuer I2, 'receiving' in returning the EMT of I1.
+   - A transaction type is available as follows: for User U, licensed by Issuer I1, U can 'send' to I1 the E-Money token of Issuer I2, 'receiving' in returning the E-Money token of I1.
    - The transaction will fail if: I1 is up to its issuance limit or the Issuer license of I2 has been revoked.
 
 ## Consequences
@@ -118,4 +114,3 @@ so as to encourage the issuance of their own EMT and, to encourage overall EMT i
 ## References
  
 N/A.
-

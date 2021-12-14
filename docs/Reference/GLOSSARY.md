@@ -4,7 +4,7 @@
 
 ### Asset-referenced tokens (ART)
 
-Asset-referenced tokens (ART) refer to several fiat currencies, one or several commodities or one or several
+Several fiat currencies, one or several commodities or one or several
 crypto-assets, or a combination of such assets (the so called “reserve assets”) within the [MiCA](#market-in-crypto-assets-mica) context.
 
 ## B
@@ -13,7 +13,7 @@ crypto-assets, or a combination of such assets (the so called “reserve assets�
 
 ### Crypto-asset service provider (CASP)
 
-Crypto-asset service provider (CASP) is any person whose occupation or business is the provision of one or more
+Any person whose occupation or business is the provision of one or more
 crypto-asset services to third parties on a professional basis.
 
 ## D
@@ -25,7 +25,7 @@ example of a DID is `did:example:123456abcdef"*`_
 
 ### E-money tokens (EMT)
 
-E-money tokens refer to one single fiat currency only.
+A type of crypto asset for one single fiat currency
 
 ## L
 
@@ -37,29 +37,28 @@ Any person or entity that is able to perform legal activities, such as enter int
 
 ### Market in Crypto-Assets (MiCA)
 
-Market in Crypto-Assets (MiCA) is
-a [legislation](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A52020PC0593)
-covering Crypto Assets in the European Union
+[Legislation](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A52020PC0593)
+that covers crypto assets in the European Union
 
 ## R
 
 ### Regulator
 
-Entities established by governments or other organizations to oversee the functioning and fairness of financial markets
+An entity that is established by governments or other organizations to oversee the functioning and fairness of financial markets
 and the firms that engage in financial activity.
 
 ## S
 
 ### Self-sovereign identity (SSI)
 
-Self-sovereign identity (SSI) is an approach to digital identity that gives individuals control of their digital
-identities.
+An approach to digital identity that gives individuals control of their digital
+identities
 
 ## V
 
 ### Verifiable credential (VC)
 
-A verifiable credential (VC) is a standard data model and representation format for cryptographically-verifiable digital
+A standard data model and representation format for cryptographically-verifiable digital
 credentials defined by the [W3C Verifiable Credentials specification](https://www.w3.org/TR/did-core/#bib-vc-data-model)
 
 ### Verifiable data registry (VDR)
@@ -70,7 +69,7 @@ verifiable credentials.
 
 ### Verifiable presentation (VP)
 
-A verifiable presentation (VP) is a tamper-evident presentation encoded in such a way that authorship of the data can be
+A tamper-evident presentation encoded in such a way that authorship of the data can be
 trusted after a process of cryptographic verification
 
 ### Virtual Asset Service Provider (VASP)

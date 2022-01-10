@@ -73,6 +73,7 @@ func TestIsValidDIDURL(t *testing.T) {
 		{"did:cash:cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75", true},
 		{"did:cash:cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75#key-1", true},
 		{"did:cash:cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75?key=1", true},
+		{"did:cosmos:net:cosmoscash-testnet:575d062c-d110-42a9-9c04-cb1ff8c01f06#Z46DAL1MrJlVW_WmJ19WY8AeIpGeFOWl49Qwhvsnn2M", true},
 		{"did:subject", false},
 		{"DID:cash:subject", false},
 		{"d1d:cash:subject", false},

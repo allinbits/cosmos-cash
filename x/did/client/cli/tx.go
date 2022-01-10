@@ -217,10 +217,13 @@ func NewAddServiceCmd() *cobra.Command {
 
 func NewRevokeVerificationCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "revoke-verification-method [id] [verificationMethodAddress]",
-		Short:   "revoke a verification method from a decentralized did (did) document",
-		Example: "revoke a verification method for a did document",
-		Args:    cobra.ExactArgs(2),
+		Use:   "revoke-verification-method [did_id] [verification_method_id_fragment]",
+		Short: "revoke a verification method from a decentralized did (did) document",
+		Example: `cosmos-cashd tx did revoke-verification-method 575d062c-d110-42a9-9c04-cb1ff8c01f06 \
+ Z46DAL1MrJlVW_WmJ19WY8AeIpGeFOWl49Qwhvsnn2M \
+ --from alice \
+ --node https://rpc.cosmos-cash.app.beta.starport.cloud:443 --chain-id cosmoscash-testnet`,
+		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -341,9 +344,9 @@ func NewSetVerificationRelationshipCmd() *cobra.Command {
 	var unsafe bool
 
 	cmd := &cobra.Command{
-		Use:     "set-verification-relationship [id] [address] --relationship NAME [--relationship NAME ...]",
+		Use:     "set-verification-relationship [did_id] [verification_method_id_fragment] --relationship NAME [--relationship NAME ...]",
 		Short:   "sets one or more verification relationships to a key on a decentralized identifier (did) document.",
-		Example: "set-verification-relationship vasp vasp#6f1e0700-6c86-41b6-9e05-ae3cf839cdd0 --relationship capabilityInvocation",
+		Example: "set-verification-relationship vasp 6f1e0700-6c86-41b6-9e05-ae3cf839cdd0 --relationship capabilityInvocation",
 		Args:    cobra.ExactArgs(2),
 
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -366,10 +369,6 @@ func NewSetVerificationRelationshipCmd() *cobra.Command {
 				relationships,
 				signer.String(),
 			)
-
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
 
 			// make sure that the authentication relationship is preserved
 			if !unsafe {

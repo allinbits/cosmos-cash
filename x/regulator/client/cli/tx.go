@@ -20,8 +20,6 @@ import (
 var (
 	// DefaultRelativePacketTimeoutTimestamp default timeout
 	DefaultRelativePacketTimeoutTimestamp = uint64((time.Duration(10) * time.Minute).Nanoseconds())
-	activateRegulatorDID                  string
-	activateRegulatorCredentialID         string
 )
 
 // GetTxCmd returns the transaction commands for this module
@@ -45,6 +43,13 @@ func GetTxCmd() *cobra.Command {
 var _ = strconv.Itoa(0)
 
 func ActivateCmd() *cobra.Command {
+
+	var (
+		issuerDIDStr  string
+		subjectDIDStr string
+		credentialID  string
+	)
+
 	cmd := &cobra.Command{
 		Use:   "activate-regulator-credential [name] [countryCode]",
 		Short: "Broadcast message to activate a regulator did",
@@ -65,30 +70,34 @@ that activates it.`,
 			// parameters
 			name := args[0]
 			countryCode := args[1]
-			// assign a did
-			did := didtypes.NewKeyDID(signer.String())
-			if activateRegulatorDID != "" {
-				did = didtypes.DID(activateRegulatorDID)
+			// get the issuer did
+			issuerDID := didtypes.NewKeyDID(signer.String())
+			if issuerDIDStr != "" {
+				issuerDID = didtypes.DID(issuerDIDStr)
+			}
+			// get the subject did
+			subjectDID := didtypes.NewKeyDID(signer.String())
+			if subjectDIDStr != "" {
+				subjectDID = didtypes.DID(subjectDIDStr)
 			}
 
-			// assign a credential id
-			credID := fmt.Sprint("regulator-credential/", did)
-			if activateRegulatorCredentialID != "" {
-				credID = activateRegulatorCredentialID
+			// assign a credential id if not set
+			if credentialID == "" {
+				credentialID = fmt.Sprint("regulator-credential/", subjectDID)
 			}
 			// credentials
 			vc := vctypes.NewRegulatorVerifiableCredential(
-				credID,
-				did.String(),
+				credentialID,
+				issuerDID.String(),
 				time.Now().UTC(),
 				vctypes.NewRegulatorCredentialSubject(
-					did.String(),
+					subjectDID.String(),
 					name,
 					countryCode,
 				),
 			)
 			// signer is the vmID
-			vmID := did.NewVerificationMethodID(signer.String())
+			vmID := issuerDID.NewVerificationMethodID(signer.String())
 
 			// sign the credentials
 			signedVc, err := vc.Sign(clientCtx.Keyring, signer, vmID)
@@ -106,8 +115,9 @@ that activates it.`,
 		},
 	}
 
-	cmd.Flags().StringVar(&activateRegulatorDID, "did", "", "the DID id to use for the regulator DID, otherwise the adddress of the regulator will be used")
-	cmd.Flags().StringVar(&activateRegulatorCredentialID, "credential-id", "", "the credential id to use for the regulator credential, randomly generated if not present")
+	cmd.Flags().StringVar(&issuerDIDStr, "issuer-did", "", "the DID id to use for the the issuer of the regulator credential, defaults to the key did from the signing address")
+	cmd.Flags().StringVar(&subjectDIDStr, "subject-did", "", "the DID id to use for the the subject of the regulator credential, defaults to the key did from the signing address")
+	cmd.Flags().StringVar(&credentialID, "credential-id", "", "the credential identifier, automatically assigned if not provided")
 
 	flags.AddTxFlagsToCmd(cmd)
 
@@ -117,11 +127,19 @@ that activates it.`,
 // IssueLicenseCredentialCmd defines the command to create a new license verifiable credential.
 // This is used by ulatorsreg to define issuers and issuer permissions
 func IssueLicenseCredentialCmd() *cobra.Command {
+
+	var (
+		credentialID string
+	)
+
 	cmd := &cobra.Command{
-		Use:     `issue-license-credential [cred_id] [issuer_did] [credential_subject_did] [type] [country] [authority] [denom] [circulation_limit]`,
-		Short:   "issues a license credential",
-		Example: "creates a license verifiable credential for issuers",
-		Args:    cobra.ExactArgs(8),
+		Use:   `issue-license-credential [issuer_did] [subject_did] [type] [country] [authority] [denom] [circulation_limit]`,
+		Short: "issues a license credential",
+		Example: `cosmos-cashd tx regulator issue-license-credential \ 
+did:cosmos:net:cosmoscash-testnet:regulator \
+did:cosmos:net:cosmoscash-testnet:emti \
+MICAEMI IRL "Another Financial Services Body (AFFB)" sEUR 10000" `,
+		Args: cobra.ExactArgs(7),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -130,34 +148,35 @@ func IssueLicenseCredentialCmd() *cobra.Command {
 			accAddr := clientCtx.GetFromAddress()
 			accAddrBech32 := accAddr.String()
 
-			credentialID := args[0]
-			issuerDid := didtypes.DID(args[1])
-			credentialSubject := didtypes.DID(args[2])
-			licenseType := args[3]
-			country := args[4]
-			authority := args[5]
-			denom := args[6]
-			circulationLimitString := args[7]
+			issuerDID := didtypes.DID(args[0])
+			subjectDID := didtypes.DID(args[1])
+			licenseType := args[2]
+			country := args[3]
+			authority := args[4]
+			denom := args[5]
+			circulationLimitString := args[6]
 			circulationLimit, _ := sdk.NewIntFromString(circulationLimitString)
 			coin := sdk.NewCoin(denom, circulationLimit)
 
-			cs := vctypes.NewLicenseCredentialSubject(
-				credentialSubject.String(),
-				licenseType,
-				country,
-				authority,
-				coin,
-			)
-			tm := time.Now()
+			// assign a credential id if not set
+			if credentialID == "" {
+				credentialID = fmt.Sprintf("license/%v/%v", denom, subjectDID)
+			}
 
 			vc := vctypes.NewLicenseVerifiableCredential(
 				credentialID,
-				issuerDid.String(),
-				tm.UTC(),
-				cs,
+				issuerDID.String(),
+				time.Now().UTC(),
+				vctypes.NewLicenseCredentialSubject(
+					subjectDID.String(),
+					licenseType,
+					country,
+					authority,
+					coin,
+				),
 			)
 
-			vmID := issuerDid.NewVerificationMethodID(accAddr.String())
+			vmID := issuerDID.NewVerificationMethodID(accAddr.String())
 			signedVc, err := vc.Sign(clientCtx.Keyring, accAddr, vmID)
 			if err != nil {
 				return err
@@ -168,6 +187,7 @@ func IssueLicenseCredentialCmd() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().StringVar(&credentialID, "credential-id", "", "the credential identifier, automatically assigned if not provided")
 	flags.AddTxFlagsToCmd(cmd)
 	return cmd
 }
@@ -175,11 +195,19 @@ func IssueLicenseCredentialCmd() *cobra.Command {
 // IssueRegistrationCredentialCmd defines the command to create a new license verifiable credential.
 // This is used by regulators to define issuers and issuer permissions
 func IssueRegistrationCredentialCmd() *cobra.Command {
+
+	var (
+		credentialID string
+	)
+
 	cmd := &cobra.Command{
-		Use:     `issue-registration-credential [cred_id] [issuer_did] [credential_subject_did] [country] [short_name] [long_name]`,
-		Short:   "issue a registration credential for a DID",
-		Example: "creates a registration verifiable credential for e-money issuers",
-		Args:    cobra.ExactArgs(6),
+		Use:   `issue-registration-credential [issuer_did] [subject_did] [country] [short_name] [long_name]`,
+		Short: "issue a registration credential for a DID",
+		Example: `cosmos-cashd tx issue-registration-credential \
+did:cosmos:net:cosmoscash-testnet:regulator \ 
+did:cosmos:net:cosmoscash-testnet:emti \
+EU EmoneyONE "EmoneyONE GmbH" `,
+		Args: cobra.ExactArgs(5),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -188,29 +216,30 @@ func IssueRegistrationCredentialCmd() *cobra.Command {
 			accAddr := clientCtx.GetFromAddress()
 			accAddrBech32 := accAddr.String()
 
-			credentialID := args[0]
-			issuerDid := didtypes.DID(args[1])
-			credentialSubject := didtypes.DID(args[2])
-			country := args[3]
-			shortName := args[4]
-			longName := args[5]
+			issuerDID := didtypes.DID(args[0])
+			subjectDID := didtypes.DID(args[1])
+			country := args[2]
+			shortName := args[3]
+			longName := args[4]
 
-			cs := vctypes.NewRegistrationCredentialSubject(
-				credentialSubject.String(),
-				country,
-				shortName,
-				longName,
-			)
-			tm := time.Now()
+			// assign a credential id if not set
+			if credentialID == "" {
+				credentialID = fmt.Sprintf("registration/%s", subjectDID)
+			}
 
 			vc := vctypes.NewRegistrationVerifiableCredential(
 				credentialID,
-				issuerDid.String(),
-				tm.UTC(),
-				cs,
+				issuerDID.String(),
+				time.Now().UTC(),
+				vctypes.NewRegistrationCredentialSubject(
+					subjectDID.String(),
+					country,
+					shortName,
+					longName,
+				),
 			)
 
-			vmID := issuerDid.NewVerificationMethodID(accAddr.String())
+			vmID := issuerDID.NewVerificationMethodID(accAddr.String())
 			signedVc, err := vc.Sign(clientCtx.Keyring, accAddr, vmID)
 			if err != nil {
 				return err
@@ -221,6 +250,8 @@ func IssueRegistrationCredentialCmd() *cobra.Command {
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
+
+	cmd.Flags().StringVar(&credentialID, "credential-id", "", "the credential identifier, automatically assigned if not provided")
 
 	flags.AddTxFlagsToCmd(cmd)
 	return cmd

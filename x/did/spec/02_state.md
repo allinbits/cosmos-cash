@@ -51,6 +51,7 @@ A verification method has the following fields:
 - `verificationMaterial`: a string that is either   
   - `blockchainAccountID` - a string representing a cosmos based account address
   - `publicKeyHex` - a string representing a public key encoded as a hex string
+  - `publicKeyMultibase` - a string representing a public key encoded according to the Multibase Data Format [Hexadecimal upper-case encoding](https://datatracker.ietf.org/doc/html/draft-multiformats-multibase#appendix-B.1)
 #### Source 
 +++ https://github.com/allinbits/cosmos-cash/blob/v1.0.0/proto/did/did.proto#L73
 

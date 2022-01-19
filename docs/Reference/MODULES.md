@@ -6,7 +6,7 @@
     - [Regulator Module](#regulator-module)
     - [Issuer module](#issuer-module)
 
-The Cosmos Cash project is composed of modules. The following diagram illustrates the module dependencies
+The Cosmos Cash project is composed of modules. The following diagram illustrates the module dependencies:
 
 ![](../assets/diagrams/out/module_dependencies.svg)
 

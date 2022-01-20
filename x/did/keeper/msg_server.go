@@ -57,9 +57,10 @@ func (k msgServer) CreateDidDocument(
 	k.Logger(ctx).Info("created did document", "did", msg.Id, "controller", msg.Signer)
 
 	// emit the event
-	ctx.EventManager().EmitEvent(
-		types.NewDidDocumentCreatedEvent(msg.Id),
-	)
+	if err := ctx.EventManager().EmitTypedEvents(types.NewDidDocumentCreatedEvent(msg.Id, msg.Signer)); err != nil {
+		k.Logger(ctx).Error("failed to emit DidDocumentCreatedEvent", "did", msg.Id, "signer", msg.Signer, "err", err)
+	}
+
 	return &types.MsgCreateDidDocumentResponse{}, nil
 }
 
@@ -283,8 +284,10 @@ func executeOnDidWithRelationships(goCtx context.Context, k *Keeper, constraints
 		k.Logger(ctx).Error(err.Error(), "did", didDoc.Id)
 		return
 	}
-	// NOTE: events are expected to change during client development
-	ctx.EventManager().EmitEvent(types.NewDidDocumentUpdatedEvent(did))
+	// fire the event
+	if err := ctx.EventManager().EmitTypedEvent(types.NewDidDocumentUpdatedEvent(did, signer)); err != nil {
+		k.Logger(ctx).Error("failed to emit DidDocumentUpdatedEvent", "did", did, "signer", signer, "err", err)
+	}
 	k.Logger(ctx).Info("request to update did document success", "did", didDoc.Id)
 	return
 }

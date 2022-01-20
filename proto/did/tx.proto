@@ -25,6 +25,11 @@ service Msg {
   rpc AddService(MsgAddService) returns (MsgAddServiceResponse);
   // DeleteService delete an existing service
   rpc DeleteService(MsgDeleteService) returns (MsgDeleteServiceResponse);
+
+  // AddService add a new service
+  rpc AddController(MsgAddController) returns (MsgAddControllerResponse);
+  // DeleteService delete an existing service
+  rpc DeleteController(MsgDeleteController) returns (MsgDeleteControllerResponse);
 }
 
 // Verification is a message that allows to assign a verification method
@@ -55,12 +60,12 @@ message MsgCreateDidDocument {
 
 message MsgCreateDidDocumentResponse {}
 
+// MsgUpdateDidDocument replace an existing did document with a new version
 message MsgUpdateDidDocument {
   option (gogoproto.equal)            = false;
   option (gogoproto.goproto_getters)  = false;
 
-  string          id         = 1; // the did
-  repeated string controller = 2; // update controllers
+  DidDocument     doc        = 1; // the did document to replace
   string          signer     = 5; // address of the account signing the message
 }
 
@@ -129,3 +134,30 @@ message MsgDeleteService {
 }
 
 message MsgDeleteServiceResponse {}
+
+
+// -------------------------------
+// Controllers
+// -------------------------------
+
+message MsgAddController {
+  option (gogoproto.equal)           = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string id             = 1; // the did of the document
+  string controller_did = 2; // the did to add as a controller of the did document
+  string signer         = 3; // address of the account signing the message
+}
+
+message MsgAddControllerResponse {}
+
+message MsgDeleteController {
+  option (gogoproto.equal)           = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string id             = 1; // the did of the document
+  string controller_did = 2; // the did to remove from the list of controllers of the did document
+  string signer         = 3; // address of the account signing the message
+}
+
+message MsgDeleteControllerResponse {}

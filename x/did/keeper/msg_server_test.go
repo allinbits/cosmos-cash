@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/allinbits/cosmos-cash/v2/x/did/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -75,7 +76,7 @@ func (suite *KeeperTestSuite) TestHandleMsgUpdateDidDocument() {
 		{
 			"FAIL: not found",
 			func() {
-				req = *types.NewMsgUpdateDidDocument("did:cosmos:cash:subject", nil, "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+				req = *types.NewMsgUpdateDidDocument(&types.DidDocument{Id: "did:cosmos:cash:subject"}, "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
 				errExp = sdkerrors.Wrapf(types.ErrDidDocumentNotFound, "did document at %s not found", "did:cosmos:cash:subject")
 			},
 		},
@@ -87,13 +88,13 @@ func (suite *KeeperTestSuite) TestHandleMsgUpdateDidDocument() {
 				didDoc, _ := types.NewDidDocument(did)
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
 
-				req = *types.NewMsgUpdateDidDocument(didDoc.Id, []string{"did:cosmos:cash:controller"}, "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
-				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer %s not authorized to update the target did document at %s", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8", did)
+				req = *types.NewMsgUpdateDidDocument(&types.DidDocument{Id: didDoc.Id, Controller: []string{"did:cosmos:cash:controller"}}, "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer account %s not authorized to update the target did document at %s", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8", did)
 
 			},
 		},
 		{
-			"PASS: nil controllers",
+			"PASS: replace did document",
 			func() {
 
 				did := "did:cosmos:cash:subject"
@@ -109,7 +110,12 @@ func (suite *KeeperTestSuite) TestHandleMsgUpdateDidDocument() {
 					),
 				))
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
-				req = *types.NewMsgUpdateDidDocument(did, nil, "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+				suite.keeper.SetDidMetadata(suite.ctx, []byte(didDoc.Id), types.NewDidMetadata([]byte{1}, time.Now()))
+
+				newDidDoc, err  := types.NewDidDocument(did)
+				suite.Require().Nil(err)
+
+				req = *types.NewMsgUpdateDidDocument(&newDidDoc, "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
 				errExp = nil
 			},
 		},
@@ -135,8 +141,8 @@ func (suite *KeeperTestSuite) TestHandleMsgUpdateDidDocument() {
 					"invalid",
 				}
 
-				req = *types.NewMsgUpdateDidDocument(didDoc.Id, controllers, "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
-				errExp = sdkerrors.Wrapf(types.ErrInvalidDIDFormat, "did document controller validation error '%s'", "invalid")
+				req = *types.NewMsgUpdateDidDocument(&types.DidDocument{Id: didDoc.Id, Controller: controllers}, "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+				errExp = sdkerrors.Wrapf(types.ErrInvalidDIDFormat, "invalid did document")
 			},
 		},
 	}
@@ -205,7 +211,7 @@ func (suite *KeeperTestSuite) TestHandleMsgAddVerification() {
 					nil,
 				)
 				req = *types.NewMsgAddVerification(didDoc.Id, v, "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
-				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer account %s not authorized to add verification methods to the target did document at %s", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8", didDoc.Id)
+				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer account %s not authorized to update the target did document at %s", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8", didDoc.Id)
 			},
 		},
 		{
@@ -238,7 +244,7 @@ func (suite *KeeperTestSuite) TestHandleMsgAddVerification() {
 					nil,
 				)
 				req = *types.NewMsgAddVerification(didDoc.Id, v, "cash1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2")
-				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer account %s not authorized to add verification methods to the target did document at %s", "cash1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2", didDoc.Id)
+				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer account %s not authorized to update the target did document at %s", "cash1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2", didDoc.Id)
 			},
 		},
 		{
@@ -305,6 +311,7 @@ func (suite *KeeperTestSuite) TestHandleMsgAddVerification() {
 				)
 
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+				suite.keeper.SetDidMetadata(suite.ctx, []byte(didDoc.Id), types.NewDidMetadata([]byte{1}, time.Now()))
 				req = *types.NewMsgAddVerification(didDoc.Id, v, "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
 				errExp = nil
 			},
@@ -377,7 +384,7 @@ func (suite *KeeperTestSuite) TestHandleMsgSetVerificationRelationships() {
 					"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 				)
 
-				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer %s not authorized to set verification relationships on the target did document at %s", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8", "did:cosmos:cash:subject")
+				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer account %s not authorized to update the target did document at %s", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8", "did:cosmos:cash:subject")
 			},
 		},
 		{
@@ -458,6 +465,7 @@ func (suite *KeeperTestSuite) TestHandleMsgSetVerificationRelationships() {
 					),
 				)
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+				suite.keeper.SetDidMetadata(suite.ctx, []byte(didDoc.Id), types.NewDidMetadata([]byte{1}, time.Now()))
 				// actual test
 				req = *types.NewMsgSetVerificationRelationships(
 					"did:cosmos:cash:subject",
@@ -551,7 +559,7 @@ func (suite *KeeperTestSuite) TestHandleMsgRevokeVerification() {
 				// controller-1 does not exists
 				req = *types.NewMsgRevokeVerification(didDoc.Id, vmID, signer)
 
-				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer %s not authorized to revoke verification methods from the target did document at %s", signer, didDoc.Id)
+				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer account %s not authorized to update the target did document at %s", signer, didDoc.Id)
 			},
 		},
 		{
@@ -573,6 +581,7 @@ func (suite *KeeperTestSuite) TestHandleMsgRevokeVerification() {
 				)
 
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+				suite.keeper.SetDidMetadata(suite.ctx, []byte(didDoc.Id), types.NewDidMetadata([]byte{1}, time.Now()))
 				req = *types.NewMsgRevokeVerification(didDoc.Id,
 					"did:cosmos:cash:subject#key-1",
 					"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
@@ -617,14 +626,31 @@ func (suite *KeeperTestSuite) TestHandleMsgAddService() {
 					"NonUserCredential",
 					"cash/multihash",
 				)
-				req = *types.NewMsgAddService("did:cosmos:cash:subject", service, "subject")
+				req = *types.NewMsgAddService("did:cosmos:cash:subject", service, "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
 				errExp = sdkerrors.Wrapf(types.ErrDidDocumentNotFound, "did document at %s not found", "did:cosmos:cash:subject")
 			},
 		},
 		{
-			"FAIL: can not add service, service does not exist",
+			"FAIL: can not add service, service not defined",
 			func() {
-				req = *types.NewMsgAddService("did:cosmos:cash:subject", nil, "subject")
+				didDoc, _ := types.NewDidDocument(
+					"did:cosmos:cash:subject",
+					types.WithVerifications(
+						types.NewVerification(
+							types.NewVerificationMethod(
+								"did:cosmos:cash:subject#key-1",
+								types.DID("did:cosmos:cash:subject"),
+								types.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215}, types.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
+							),
+							[]string{types.Authentication},
+							nil,
+						),
+					),
+				)
+				// create the did
+				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+				// try adding a service
+				req = *types.NewMsgAddService("did:cosmos:cash:subject", nil, "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
 				errExp = sdkerrors.Wrap(types.ErrInvalidInput, "service is not defined")
 			},
 		},
@@ -656,13 +682,12 @@ func (suite *KeeperTestSuite) TestHandleMsgAddService() {
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
 				req = *types.NewMsgAddService(didDoc.Id, service, signer)
 
-				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer %s not authorized to add services to the target did document at %s", signer, didDoc.Id)
+				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer account %s not authorized to update the target did document at %s", signer, didDoc.Id)
 			},
 		},
 		{
 			"FAIL: cannot add service to did document with an empty type",
 			func() {
-				signer := "subject"
 				didDoc, _ := types.NewDidDocument(
 					"did:cosmos:cash:subject",
 					types.WithVerifications(
@@ -685,8 +710,8 @@ func (suite *KeeperTestSuite) TestHandleMsgAddService() {
 				)
 
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
-				req = *types.NewMsgAddService(didDoc.Id, service, signer)
-				errExp = sdkerrors.Wrap(types.ErrInvalidInput, "service type cannot be empty;")
+				req = *types.NewMsgAddService(didDoc.Id, service, "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+				errExp = sdkerrors.Wrap(types.ErrInvalidInput, "service type cannot be empty")
 			},
 		},
 		{
@@ -757,6 +782,8 @@ func (suite *KeeperTestSuite) TestHandleMsgAddService() {
 				)
 
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+				suite.keeper.SetDidMetadata(suite.ctx, []byte(didDoc.Id), types.NewDidMetadata([]byte{1}, time.Now()))
+
 				req = *types.NewMsgAddService(didDoc.Id, service, signer)
 				errExp = nil
 			},
@@ -799,7 +826,7 @@ func (suite *KeeperTestSuite) TestHandleMsgDeleteService() {
 		},
 		{
 
-			"Pass: can delete service from did document",
+			"PASS: can delete service from did document",
 			func() {
 				didDoc, _ := types.NewDidDocument(
 					"did:cosmos:cash:subject",
@@ -824,6 +851,7 @@ func (suite *KeeperTestSuite) TestHandleMsgDeleteService() {
 				)
 
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+				suite.keeper.SetDidMetadata(suite.ctx, []byte(didDoc.Id), types.NewDidMetadata([]byte{1}, time.Now()))
 				req = *types.NewMsgDeleteService(didDoc.Id, "service-id", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
 				errExp = nil
 			},
@@ -876,7 +904,7 @@ func (suite *KeeperTestSuite) TestHandleMsgDeleteService() {
 
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
 				req = *types.NewMsgDeleteService(didDoc.Id, serviceID, "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
-				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer %s not authorized to delete services from the target did document at %s", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8", didDoc.Id)
+				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer account %s not authorized to update the target did document at %s", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8", didDoc.Id)
 			},
 		},
 	}

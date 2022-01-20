@@ -21,7 +21,7 @@ import (
 
 // request send a json http request
 func request(method, url string, requestBody io.Reader, val interface{}) (err error) {
-	var client = &http.Client{
+	var netClient = &http.Client{
 		Timeout: time.Second * 1,
 	}
 	req, err := http.NewRequestWithContext(context.Background(), method, url, requestBody)
@@ -30,7 +30,7 @@ func request(method, url string, requestBody io.Reader, val interface{}) (err er
 	}
 	req.Header.Add("Accept", "application/json")
 	req.Header.Add("Content-Type", "application/json")
-	resp, err := client.Do(req)
+	resp, err := netClient.Do(req)
 	if err != nil {
 		return
 	}

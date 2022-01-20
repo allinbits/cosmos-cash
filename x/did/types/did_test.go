@@ -522,11 +522,12 @@ func TestNewDidDocument(t *testing.T) {
 	}
 }
 
-func TestDidDocument_SetControllers(t *testing.T) {
+func TestDidDocument_AddControllers(t *testing.T) {
 
 	tests := []struct {
 		malleate    func() DidDocument
 		controllers []string
+		expectedControllers []string
 		wantErr     bool
 	}{
 		{
@@ -547,6 +548,14 @@ func TestDidDocument_SetControllers(t *testing.T) {
 			[]string{
 				"did:cash:controller-1",
 				"did:cash:controller-4",
+				"did:cash:controller-5",
+			},
+			[]string{
+				"did:cash:controller-1",
+				"did:cash:controller-2",
+				"did:cash:controller-3",
+				"did:cash:controller-4",
+				"did:cash:controller-5",
 			},
 			false,
 		},
@@ -566,6 +575,7 @@ func TestDidDocument_SetControllers(t *testing.T) {
 				"did:cash:controller-1",
 				"not a did:cash:controller-4",
 			},
+			[]string{},
 			true, // invalid controller did
 		},
 		{
@@ -581,13 +591,19 @@ func TestDidDocument_SetControllers(t *testing.T) {
 				return dd
 			},
 			nil,
+			[]string{
+				"did:cash:controller-1",
+				"did:cash:controller-2",
+				"did:cash:controller-3",
+				"did:cash:controller-4",
+			},
 			false,
 		},
 	}
 	for i, tt := range tests {
 		t.Run(fmt.Sprint("TestDidDocument_SetControllers#", i), func(t *testing.T) {
 			didDoc := tt.malleate()
-			err := didDoc.SetControllers(tt.controllers...)
+			err := didDoc.AddControllers(tt.controllers...)
 
 			if tt.wantErr {
 				require.NotNil(t, err, "test: TestDidDocument_SetControllers#%v", i)
@@ -595,7 +611,7 @@ func TestDidDocument_SetControllers(t *testing.T) {
 			}
 
 			require.Nil(t, err, "test: TestDidDocument_SetControllers#%v", i)
-			assert.Equal(t, tt.controllers, didDoc.Controller)
+			assert.Equal(t, tt.expectedControllers, didDoc.Controller)
 
 		})
 	}

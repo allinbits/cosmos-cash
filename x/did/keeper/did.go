@@ -80,7 +80,7 @@ func (k Keeper) Unmarshal(data []byte, val codec.ProtoMarshaler) bool {
 
 // GetAllDidDocumentsWithCondition retrieve a list of
 // did document by some arbitrary criteria. The selector filter has access
-// to both the did and it's metadata
+// to both the did and its metadata
 func (k Keeper) GetAllDidDocumentsWithCondition(
 	ctx sdk.Context,
 	key []byte,

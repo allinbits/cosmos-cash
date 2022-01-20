@@ -197,6 +197,19 @@ func NewPublicKeyMultibase(pubKey []byte, vmType VerificationMaterialType) Publi
 	}
 }
 
+// NewPublicKeyMultibaseFromHex build a new blockchain account ID struct
+func NewPublicKeyMultibaseFromHex(pubKeyHex string, vmType VerificationMaterialType) (pkm PublicKeyMultibase, err error) {
+	pkb, err := hex.DecodeString(pubKeyHex)
+	if err != nil {
+		return
+	}
+	pkm = PublicKeyMultibase{
+		data:   pkb,
+		vmType: vmType,
+	}
+	return
+}
+
 // DID identifies ad did string
 type DID string
 
@@ -383,7 +396,7 @@ func ValidateService(s *Service) (err error) {
 
 	// check that the service type is not empty
 	if IsEmpty(s.Type) {
-		err = sdkerrors.Wrap(ErrInvalidInput, "service type cannot be empty;")
+		err = sdkerrors.Wrap(ErrInvalidInput, "service type cannot be empty")
 		return
 	}
 
@@ -415,7 +428,7 @@ func WithServices(services ...*Service) DidDocumentOption {
 // WithControllers add optional did controller
 func WithControllers(controllers ...string) DidDocumentOption {
 	return func(did *DidDocument) (err error) {
-		return did.SetControllers(controllers...)
+		return did.AddControllers(controllers...)
 	}
 }
 
@@ -440,19 +453,31 @@ func NewDidDocument(id string, options ...DidDocumentOption) (did DidDocument, e
 	return
 }
 
-// SetControllers replace the controllers in the did document
-func (didDoc *DidDocument) SetControllers(controllers ...string) error {
-	if controllers == nil {
-		didDoc.Controller = controllers
-		return nil
+// AddControllers add a controller to a did document if not exists
+func (didDoc *DidDocument) AddControllers(controllers ...string) error {
+	// join the exiting controllers with the new ones
+	dc := distinct(append(didDoc.Controller, controllers...))
+	for _, c := range dc {
+		if !IsValidDID(c) {
+			return sdkerrors.Wrapf(ErrInvalidDIDFormat, "did document controller validation error '%s'", c)
+		}
 	}
+
+	// remove duplicates
+	didDoc.Controller = dc
+	return nil
+}
+
+// DeleteControllers delete controllers from a did document
+func (didDoc *DidDocument) DeleteControllers(controllers ...string) error {
 	dc := distinct(controllers)
 	for _, c := range dc {
 		if !IsValidDID(c) {
 			return sdkerrors.Wrapf(ErrInvalidDIDFormat, "did document controller validation error '%s'", c)
 		}
 	}
-	didDoc.Controller = dc
+	// remove existing
+	didDoc.Controller = subtraction(didDoc.Controller, controllers)
 	return nil
 }
 
@@ -806,7 +831,7 @@ func NewService(id string, serviceType string, serviceEndpoint string) *Service 
 	}
 }
 
-// NewDidMetadata returns a DidMetadata strcut that has equals created and updated date,
+// NewDidMetadata returns a DidMetadata struct that has equals created and updated date,
 // and with deactivated field set to false
 func NewDidMetadata(versionData []byte, created time.Time) DidMetadata {
 	m := DidMetadata{
@@ -902,7 +927,7 @@ func intersection(a, b []string) []string {
 	for _, item := range a {
 		m[item] = struct{}{}
 	}
-	i := []string{}
+	var i []string
 	for _, item := range distinct(b) {
 		if _, ok := m[item]; ok {
 			i = append(i, item)
@@ -924,4 +949,20 @@ func distinct(a []string) []string {
 	}
 	sort.Strings(d)
 	return d
+}
+
+// subtraction remove set b from a
+func subtraction(a, b []string) []string {
+	m := make(map[string]struct{})
+	for _, item := range a {
+		m[item] = struct{}{}
+	}
+	var s []string
+	for _, item := range distinct(b) {
+		if _, ok := m[item]; !ok {
+			s = append(s, item)
+		}
+	}
+	sort.Strings(s)
+	return s
 }

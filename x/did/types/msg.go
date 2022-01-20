@@ -59,14 +59,12 @@ const (
 )
 
 func NewMsgUpdateDidDocument(
-	id string,
-	controller []string,
+	didDoc *DidDocument,
 	signerAccount string,
 ) *MsgUpdateDidDocument {
 	return &MsgUpdateDidDocument{
-		Id:         id,
-		Controller: controller,
-		Signer:     signerAccount,
+		Doc:    didDoc,
+		Signer: signerAccount,
 	}
 }
 
@@ -315,6 +313,94 @@ func (msg MsgDeleteService) GetSignBytes() []byte {
 
 // GetSigners implements sdk.Msg
 func (msg MsgDeleteService) GetSigners() []sdk.AccAddress {
+	accAddr, err := sdk.AccAddressFromBech32(msg.Signer)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{accAddr}
+}
+
+// --------------------------
+// ADD CONTROLLER
+// --------------------------
+
+// msg types
+const (
+	TypeMsgAddController = "add-controller"
+)
+
+func NewMsgAddController(
+	id string,
+	controllerDID string,
+	signerAccount string,
+) *MsgAddController {
+	return &MsgAddController{
+		Id:            id,
+		ControllerDid: controllerDID,
+		Signer:        signerAccount,
+	}
+}
+
+// Route implements sdk.Msg
+func (MsgAddController) Route() string {
+	return RouterKey
+}
+
+// Type implements sdk.Msg
+func (MsgAddController) Type() string {
+	return TypeMsgDeleteService
+}
+
+func (msg MsgAddController) GetSignBytes() []byte {
+	panic("IBC messages do not support amino")
+}
+
+// GetSigners implements sdk.Msg
+func (msg MsgAddController) GetSigners() []sdk.AccAddress {
+	accAddr, err := sdk.AccAddressFromBech32(msg.Signer)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{accAddr}
+}
+
+// --------------------------
+// DELETE CONTROLLER
+// --------------------------
+
+// msg types
+const (
+	TypeMsgDeleteController = "delete-controller"
+)
+
+func NewMsgDeleteController(
+	id string,
+	controllerDID string,
+	signerAccount string,
+) *MsgDeleteController {
+	return &MsgDeleteController{
+		Id:            id,
+		ControllerDid: controllerDID,
+		Signer:        signerAccount,
+	}
+}
+
+// Route implements sdk.Msg
+func (MsgDeleteController) Route() string {
+	return RouterKey
+}
+
+// Type implements sdk.Msg
+func (MsgDeleteController) Type() string {
+	return TypeMsgDeleteService
+}
+
+func (msg MsgDeleteController) GetSignBytes() []byte {
+	panic("IBC messages do not support amino")
+}
+
+// GetSigners implements sdk.Msg
+func (msg MsgDeleteController) GetSigners() []sdk.AccAddress {
 	accAddr, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
 		panic(err)

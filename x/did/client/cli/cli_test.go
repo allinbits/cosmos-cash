@@ -312,7 +312,7 @@ func (s *IntegrationTestSuite) TestNewUpdateDidDocumentCmd() {
 	for _, tc := range testCases {
 		s.Run(tc.name, func() {
 			tc.malleate()
-			cmd := cli.NewUpdateDidDocumentCmd()
+			cmd := cli.NewAddControllerCmd()
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
 			s.Require().NoError(err)
 			// wait for blocks

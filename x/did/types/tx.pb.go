@@ -171,10 +171,10 @@ func (m *MsgCreateDidDocumentResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgCreateDidDocumentResponse proto.InternalMessageInfo
 
+// MsgUpdateDidDocument replace an existing did document with a new version
 type MsgUpdateDidDocument struct {
-	Id         string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Controller []string `protobuf:"bytes,2,rep,name=controller,proto3" json:"controller,omitempty"`
-	Signer     string   `protobuf:"bytes,5,opt,name=signer,proto3" json:"signer,omitempty"`
+	Doc    *DidDocument `protobuf:"bytes,1,opt,name=doc,proto3" json:"doc,omitempty"`
+	Signer string       `protobuf:"bytes,5,opt,name=signer,proto3" json:"signer,omitempty"`
 }
 
 func (m *MsgUpdateDidDocument) Reset()         { *m = MsgUpdateDidDocument{} }
@@ -624,6 +624,156 @@ func (m *MsgDeleteServiceResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgDeleteServiceResponse proto.InternalMessageInfo
 
+type MsgAddController struct {
+	Id            string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	ControllerDid string `protobuf:"bytes,2,opt,name=controller_did,json=controllerDid,proto3" json:"controller_did,omitempty"`
+	Signer        string `protobuf:"bytes,3,opt,name=signer,proto3" json:"signer,omitempty"`
+}
+
+func (m *MsgAddController) Reset()         { *m = MsgAddController{} }
+func (m *MsgAddController) String() string { return proto.CompactTextString(m) }
+func (*MsgAddController) ProtoMessage()    {}
+func (*MsgAddController) Descriptor() ([]byte, []int) {
+	return fileDescriptor_75f788725073a497, []int{15}
+}
+func (m *MsgAddController) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgAddController) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgAddController.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgAddController) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgAddController.Merge(m, src)
+}
+func (m *MsgAddController) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgAddController) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgAddController.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgAddController proto.InternalMessageInfo
+
+type MsgAddControllerResponse struct {
+}
+
+func (m *MsgAddControllerResponse) Reset()         { *m = MsgAddControllerResponse{} }
+func (m *MsgAddControllerResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgAddControllerResponse) ProtoMessage()    {}
+func (*MsgAddControllerResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_75f788725073a497, []int{16}
+}
+func (m *MsgAddControllerResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgAddControllerResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgAddControllerResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgAddControllerResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgAddControllerResponse.Merge(m, src)
+}
+func (m *MsgAddControllerResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgAddControllerResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgAddControllerResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgAddControllerResponse proto.InternalMessageInfo
+
+type MsgDeleteController struct {
+	Id            string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	ControllerDid string `protobuf:"bytes,2,opt,name=controller_did,json=controllerDid,proto3" json:"controller_did,omitempty"`
+	Signer        string `protobuf:"bytes,3,opt,name=signer,proto3" json:"signer,omitempty"`
+}
+
+func (m *MsgDeleteController) Reset()         { *m = MsgDeleteController{} }
+func (m *MsgDeleteController) String() string { return proto.CompactTextString(m) }
+func (*MsgDeleteController) ProtoMessage()    {}
+func (*MsgDeleteController) Descriptor() ([]byte, []int) {
+	return fileDescriptor_75f788725073a497, []int{17}
+}
+func (m *MsgDeleteController) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgDeleteController) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgDeleteController.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgDeleteController) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgDeleteController.Merge(m, src)
+}
+func (m *MsgDeleteController) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgDeleteController) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgDeleteController.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgDeleteController proto.InternalMessageInfo
+
+type MsgDeleteControllerResponse struct {
+}
+
+func (m *MsgDeleteControllerResponse) Reset()         { *m = MsgDeleteControllerResponse{} }
+func (m *MsgDeleteControllerResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgDeleteControllerResponse) ProtoMessage()    {}
+func (*MsgDeleteControllerResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_75f788725073a497, []int{18}
+}
+func (m *MsgDeleteControllerResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgDeleteControllerResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgDeleteControllerResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgDeleteControllerResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgDeleteControllerResponse.Merge(m, src)
+}
+func (m *MsgDeleteControllerResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgDeleteControllerResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgDeleteControllerResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgDeleteControllerResponse proto.InternalMessageInfo
+
 func init() {
 	proto.RegisterType((*Verification)(nil), "allinbits.cosmoscash.did.Verification")
 	proto.RegisterType((*MsgCreateDidDocument)(nil), "allinbits.cosmoscash.did.MsgCreateDidDocument")
@@ -640,57 +790,67 @@ func init() {
 	proto.RegisterType((*MsgAddServiceResponse)(nil), "allinbits.cosmoscash.did.MsgAddServiceResponse")
 	proto.RegisterType((*MsgDeleteService)(nil), "allinbits.cosmoscash.did.MsgDeleteService")
 	proto.RegisterType((*MsgDeleteServiceResponse)(nil), "allinbits.cosmoscash.did.MsgDeleteServiceResponse")
+	proto.RegisterType((*MsgAddController)(nil), "allinbits.cosmoscash.did.MsgAddController")
+	proto.RegisterType((*MsgAddControllerResponse)(nil), "allinbits.cosmoscash.did.MsgAddControllerResponse")
+	proto.RegisterType((*MsgDeleteController)(nil), "allinbits.cosmoscash.did.MsgDeleteController")
+	proto.RegisterType((*MsgDeleteControllerResponse)(nil), "allinbits.cosmoscash.did.MsgDeleteControllerResponse")
 }
 
 func init() { proto.RegisterFile("did/tx.proto", fileDescriptor_75f788725073a497) }
 
 var fileDescriptor_75f788725073a497 = []byte{
-	// 717 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x96, 0xbf, 0x6f, 0xd3, 0x4c,
-	0x18, 0xc7, 0xe3, 0xa6, 0x6f, 0xde, 0xe6, 0x69, 0xf2, 0xfe, 0x38, 0x15, 0xb0, 0x4c, 0xea, 0x94,
-	0x08, 0xd1, 0x82, 0x8a, 0x2d, 0x05, 0x04, 0x02, 0x89, 0xa1, 0x90, 0xa5, 0x08, 0x2f, 0xae, 0x60,
-	0x60, 0xa9, 0x5c, 0xdf, 0xd5, 0x39, 0xe1, 0xf8, 0x22, 0xdf, 0x35, 0x2a, 0x42, 0x62, 0x85, 0x11,
-	0x21, 0xc4, 0xc4, 0xd0, 0x3f, 0x87, 0xb1, 0x23, 0x23, 0x6a, 0x17, 0x26, 0x36, 0x76, 0x14, 0xdb,
-	0x71, 0xed, 0x38, 0x76, 0x1c, 0xb6, 0xdc, 0xf9, 0xf9, 0x3e, 0xdf, 0x8f, 0xbf, 0x79, 0xee, 0x64,
-	0x68, 0x60, 0x8a, 0x75, 0x71, 0xac, 0x0d, 0x7d, 0x26, 0x18, 0x92, 0x2d, 0xd7, 0xa5, 0xde, 0x01,
-	0x15, 0x5c, 0xb3, 0x19, 0x1f, 0x30, 0x6e, 0x5b, 0xbc, 0xaf, 0x61, 0x8a, 0x95, 0x35, 0x87, 0x39,
-	0x2c, 0x28, 0xd2, 0xc7, 0xbf, 0xc2, 0x7a, 0xa5, 0x39, 0x56, 0x63, 0x8a, 0xa3, 0x65, 0xcb, 0x61,
-	0xcc, 0x71, 0x89, 0x6e, 0x0d, 0xa9, 0x6e, 0x79, 0x1e, 0x13, 0x96, 0xa0, 0xcc, 0xe3, 0xe1, 0xd3,
-	0xce, 0x27, 0x09, 0x1a, 0x2f, 0x88, 0x4f, 0x0f, 0xa9, 0x1d, 0xec, 0xa3, 0xeb, 0xd0, 0xf4, 0x89,
-	0x1b, 0xd6, 0xf4, 0xe9, 0x90, 0xcb, 0xd2, 0x46, 0x75, 0xab, 0x6e, 0xa6, 0x37, 0x51, 0x0f, 0x6a,
-	0x03, 0x22, 0xfa, 0x0c, 0xcb, 0x4b, 0x1b, 0xd2, 0xd6, 0x6a, 0x77, 0x5b, 0xcb, 0x83, 0xd4, 0x92,
-	0xdd, 0x8d, 0x40, 0x63, 0x46, 0x5a, 0x24, 0xc3, 0xdf, 0x36, 0xf3, 0x04, 0x39, 0x16, 0x72, 0x35,
-	0x70, 0x99, 0x2c, 0x3b, 0xbf, 0x24, 0x58, 0x33, 0xb8, 0xf3, 0xc4, 0x27, 0x96, 0x20, 0x3d, 0x8a,
-	0x7b, 0xcc, 0x3e, 0x1a, 0x10, 0x4f, 0xa0, 0x7f, 0x60, 0x89, 0x62, 0x59, 0xda, 0x90, 0xb6, 0xea,
-	0xe6, 0x12, 0xc5, 0x48, 0x05, 0x18, 0x6b, 0x7c, 0xe6, 0xba, 0xc4, 0x0f, 0x60, 0xea, 0x66, 0x62,
-	0x07, 0x3d, 0x83, 0xe6, 0x28, 0x01, 0xc0, 0x03, 0xa3, 0xd5, 0xee, 0x8d, 0x72, 0xbc, 0x66, 0x5a,
-	0x8c, 0x1e, 0xc1, 0x0a, 0x27, 0xfe, 0x88, 0xda, 0x84, 0xcb, 0xcb, 0x41, 0xa3, 0x6b, 0xf9, 0x8d,
-	0xf6, 0xc2, 0x4a, 0x33, 0x96, 0xa0, 0xcb, 0x50, 0xe3, 0xd4, 0xf1, 0x88, 0x2f, 0xff, 0x15, 0x80,
-	0x46, 0xab, 0x87, 0x2b, 0xef, 0x4f, 0xda, 0x95, 0x1f, 0x27, 0xed, 0x4a, 0x47, 0x85, 0xd6, 0xac,
-	0xd7, 0x36, 0x09, 0x1f, 0x32, 0x8f, 0x93, 0x4e, 0x3f, 0x88, 0xe5, 0xf9, 0x10, 0x2f, 0x18, 0x4b,
-	0x75, 0x2a, 0x96, 0xb2, 0x24, 0x19, 0xa7, 0x98, 0xe4, 0xa3, 0x04, 0xc8, 0xe0, 0xce, 0x0e, 0xc6,
-	0xa9, 0xf1, 0x99, 0x06, 0x79, 0x0a, 0x8d, 0x64, 0x84, 0xd1, 0xb8, 0x94, 0x8d, 0x3f, 0xa5, 0x4d,
-	0x40, 0x57, 0x73, 0xa0, 0x5b, 0xa0, 0x64, 0x99, 0x62, 0xe4, 0xcf, 0x12, 0xb4, 0x0d, 0xee, 0xec,
-	0x11, 0x91, 0x7e, 0x9c, 0x1c, 0xec, 0x69, 0xfe, 0xab, 0x50, 0x0f, 0x87, 0x75, 0x9f, 0xe2, 0x68,
-	0xbc, 0x56, 0xc2, 0x8d, 0x5d, 0x9c, 0x3d, 0x2b, 0xd5, 0x59, 0x67, 0xe5, 0x02, 0x7b, 0x39, 0x07,
-	0xfb, 0x26, 0x6c, 0xce, 0xe1, 0x8a, 0xdf, 0xe1, 0x10, 0x2e, 0x19, 0xdc, 0x31, 0xc9, 0x88, 0xbd,
-	0x22, 0x85, 0xc1, 0x17, 0x82, 0xcf, 0x4f, 0xb2, 0x0d, 0xeb, 0x33, 0x7d, 0x62, 0x90, 0x77, 0x12,
-	0x34, 0xc3, 0xac, 0xa3, 0x39, 0xcf, 0x10, 0xf4, 0xa0, 0x11, 0x4d, 0xfe, 0x3e, 0xb6, 0x84, 0x15,
-	0xfd, 0xf5, 0x25, 0x0e, 0xcc, 0x6a, 0x24, 0xeb, 0x59, 0xc2, 0x2a, 0x81, 0x7a, 0x25, 0x88, 0xe4,
-	0x02, 0x24, 0x46, 0xb4, 0xe1, 0x3f, 0x83, 0x3b, 0x3d, 0xe2, 0x12, 0x41, 0xf2, 0x20, 0xd7, 0x01,
-	0x26, 0x90, 0x71, 0x4e, 0xf5, 0x68, 0xa7, 0x54, 0x50, 0x0a, 0xc8, 0xd3, 0x26, 0x13, 0x80, 0xee,
-	0xcf, 0x1a, 0x54, 0x0d, 0xee, 0xa0, 0x37, 0xf0, 0x7f, 0xf6, 0x26, 0xd3, 0xf2, 0x83, 0x98, 0x75,
-	0x05, 0x28, 0xf7, 0x16, 0xab, 0x9f, 0x40, 0x8c, 0xcd, 0xb3, 0xf7, 0x45, 0xb1, 0x79, 0xa6, 0x7e,
-	0x8e, 0x79, 0xee, 0x2d, 0x81, 0x8e, 0xe0, 0xdf, 0xe9, 0x1b, 0x62, 0xbb, 0xb0, 0xd5, 0x54, 0xb5,
-	0x72, 0x77, 0x91, 0xea, 0xd8, 0xf6, 0x2d, 0xa0, 0x19, 0x47, 0x44, 0x2f, 0xec, 0x95, 0x15, 0x28,
-	0xf7, 0x17, 0x14, 0xc4, 0xfe, 0x5f, 0x24, 0x68, 0x15, 0x5e, 0x33, 0x0f, 0x0a, 0x3b, 0x17, 0x49,
-	0x95, 0x9d, 0x3f, 0x96, 0xc6, 0x78, 0x87, 0x00, 0x89, 0x73, 0xbb, 0x39, 0x2f, 0xe2, 0xa8, 0x50,
-	0xd1, 0x4b, 0x16, 0xc6, 0x3e, 0x0c, 0x9a, 0xe9, 0xd3, 0x77, 0xab, 0xb0, 0x43, 0xaa, 0x56, 0xe9,
-	0x96, 0xaf, 0x9d, 0x18, 0x3e, 0xde, 0xfd, 0x7a, 0xa6, 0x4a, 0xa7, 0x67, 0xaa, 0xf4, 0xfd, 0x4c,
-	0x95, 0x3e, 0x9c, 0xab, 0x95, 0xd3, 0x73, 0xb5, 0xf2, 0xed, 0x5c, 0xad, 0xbc, 0xd4, 0x1d, 0x2a,
-	0xfa, 0x47, 0x07, 0x9a, 0xcd, 0x06, 0x7a, 0xdc, 0x57, 0x0f, 0xfb, 0xde, 0x1e, 0x37, 0xd6, 0x47,
-	0x5d, 0xfd, 0x58, 0x0f, 0x3e, 0xbc, 0x5e, 0x0f, 0x09, 0x3f, 0xa8, 0x05, 0xdf, 0x47, 0x77, 0x7e,
-	0x07, 0x00, 0x00, 0xff, 0xff, 0xc6, 0x11, 0xe7, 0x96, 0x8c, 0x09, 0x00, 0x00,
+	// 805 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x96, 0xbf, 0x6f, 0xd3, 0x5a,
+	0x14, 0xc7, 0xe3, 0xa6, 0xaf, 0x2f, 0x39, 0x49, 0xfa, 0xfa, 0xfc, 0xfa, 0xc0, 0x72, 0x53, 0xa7,
+	0x44, 0x94, 0x96, 0xaa, 0x8d, 0xa5, 0xf0, 0xa3, 0x02, 0x89, 0xa1, 0x34, 0x4b, 0x11, 0x59, 0x5c,
+	0xc1, 0xc0, 0x52, 0xb9, 0xbe, 0xb7, 0xce, 0x55, 0x13, 0xdf, 0xe0, 0xeb, 0x46, 0x41, 0x48, 0xac,
+	0x30, 0x22, 0x84, 0x98, 0x18, 0xfa, 0xe7, 0x30, 0x76, 0x84, 0x0d, 0xb5, 0x0b, 0xff, 0x00, 0x3b,
+	0x8a, 0xed, 0xdc, 0xd8, 0x71, 0xec, 0x38, 0x0c, 0x6c, 0xf1, 0xcd, 0xf7, 0x9c, 0xef, 0x27, 0xc7,
+	0xe7, 0x7e, 0x15, 0x28, 0x22, 0x82, 0x54, 0xa7, 0x5f, 0xeb, 0xda, 0xd4, 0xa1, 0xa2, 0xa4, 0xb7,
+	0xdb, 0xc4, 0x3a, 0x26, 0x0e, 0xab, 0x19, 0x94, 0x75, 0x28, 0x33, 0x74, 0xd6, 0xaa, 0x21, 0x82,
+	0xe4, 0x65, 0x93, 0x9a, 0xd4, 0x15, 0xa9, 0x83, 0x4f, 0x9e, 0x5e, 0x2e, 0x0d, 0xaa, 0x11, 0x41,
+	0xfe, 0x63, 0xd9, 0xa4, 0xd4, 0x6c, 0x63, 0x55, 0xef, 0x12, 0x55, 0xb7, 0x2c, 0xea, 0xe8, 0x0e,
+	0xa1, 0x16, 0xf3, 0xbe, 0xad, 0x7e, 0x14, 0xa0, 0xf8, 0x1c, 0xdb, 0xe4, 0x84, 0x18, 0xee, 0xb9,
+	0x78, 0x13, 0x4a, 0x36, 0x6e, 0x7b, 0x9a, 0x16, 0xe9, 0x32, 0x49, 0x58, 0xcb, 0x6e, 0xe6, 0xb5,
+	0xf0, 0xa1, 0xd8, 0x80, 0x85, 0x0e, 0x76, 0x5a, 0x14, 0x49, 0x73, 0x6b, 0xc2, 0x66, 0xa1, 0xbe,
+	0x5d, 0x8b, 0x83, 0xac, 0x05, 0xbb, 0x37, 0xdd, 0x1a, 0xcd, 0xaf, 0x15, 0x25, 0xf8, 0xdb, 0xa0,
+	0x96, 0x83, 0xfb, 0x8e, 0x94, 0x75, 0x5d, 0x86, 0x8f, 0xd5, 0x9f, 0x02, 0x2c, 0x37, 0x99, 0xb9,
+	0x6f, 0x63, 0xdd, 0xc1, 0x0d, 0x82, 0x1a, 0xd4, 0x38, 0xeb, 0x60, 0xcb, 0x11, 0x17, 0x61, 0x8e,
+	0x20, 0x49, 0x58, 0x13, 0x36, 0xf3, 0xda, 0x1c, 0x41, 0xa2, 0x02, 0x30, 0xa8, 0xb1, 0x69, 0xbb,
+	0x8d, 0x6d, 0x17, 0x26, 0xaf, 0x05, 0x4e, 0xc4, 0xa7, 0x50, 0xea, 0x05, 0x00, 0x98, 0x6b, 0x54,
+	0xa8, 0xdf, 0x4a, 0xc7, 0xab, 0x85, 0x8b, 0xc5, 0x47, 0x90, 0x63, 0xd8, 0xee, 0x11, 0x03, 0x33,
+	0x69, 0xde, 0x6d, 0x74, 0x23, 0xbe, 0xd1, 0xa1, 0xa7, 0xd4, 0x78, 0x89, 0x78, 0x0d, 0x16, 0x18,
+	0x31, 0x2d, 0x6c, 0x4b, 0x7f, 0xb9, 0xa0, 0xfe, 0xd3, 0xc3, 0xdc, 0xbb, 0xf3, 0x4a, 0xe6, 0xc7,
+	0x79, 0x25, 0x53, 0x55, 0xa0, 0x3c, 0xe9, 0x67, 0x6b, 0x98, 0x75, 0xa9, 0xc5, 0x70, 0xf5, 0xa5,
+	0x3b, 0x96, 0x67, 0x5d, 0x34, 0x36, 0x96, 0x5d, 0xc8, 0x22, 0x6a, 0xb8, 0x73, 0x29, 0xd4, 0xd7,
+	0xe3, 0x99, 0x82, 0x3d, 0x07, 0x15, 0xa9, 0x91, 0x22, 0x96, 0x1c, 0xe9, 0x83, 0x00, 0x62, 0x93,
+	0x99, 0x7b, 0x08, 0x85, 0xf6, 0x68, 0xfc, 0x45, 0x3d, 0x81, 0x62, 0x70, 0x96, 0xfe, 0xde, 0xa4,
+	0x7d, 0x0f, 0xa1, 0xda, 0x00, 0x74, 0x36, 0x06, 0xba, 0x0c, 0x72, 0x94, 0x89, 0x23, 0x7f, 0x12,
+	0xa0, 0xd2, 0x64, 0xe6, 0x21, 0x76, 0xc2, 0x5f, 0x07, 0x37, 0x7c, 0x9c, 0x7f, 0x05, 0xf2, 0xde,
+	0xd6, 0x1e, 0x11, 0xe4, 0xef, 0x59, 0xce, 0x3b, 0x38, 0x40, 0xd1, 0x4b, 0x93, 0x9d, 0x74, 0x69,
+	0x46, 0xd8, 0xf3, 0x31, 0xd8, 0xb7, 0x61, 0x63, 0x0a, 0x17, 0xff, 0x0d, 0x27, 0xf0, 0x7f, 0x93,
+	0x99, 0x1a, 0xee, 0xd1, 0x53, 0x9c, 0x38, 0xf8, 0x44, 0xf0, 0xe9, 0x93, 0xac, 0xc0, 0xea, 0x44,
+	0x1f, 0x0e, 0xf2, 0x56, 0x80, 0x92, 0x37, 0x6b, 0x7f, 0xe1, 0x23, 0x04, 0x0d, 0x28, 0xfa, 0x57,
+	0xe0, 0x08, 0xe9, 0x8e, 0xee, 0xbf, 0xfa, 0x14, 0x37, 0xa7, 0xe0, 0x97, 0x35, 0x74, 0x47, 0x4f,
+	0x81, 0x7a, 0xdd, 0x1d, 0xc9, 0x08, 0x84, 0x23, 0x1a, 0xb0, 0xd4, 0x64, 0x66, 0x03, 0xb7, 0xb1,
+	0x83, 0xe3, 0x20, 0x57, 0x01, 0x86, 0x90, 0x7c, 0x4e, 0x79, 0xff, 0x24, 0xd5, 0xa0, 0x64, 0x90,
+	0xc6, 0x4d, 0x38, 0xc0, 0xa9, 0x0b, 0xb0, 0x87, 0xd0, 0xfe, 0x28, 0x99, 0xc6, 0x01, 0xd6, 0x61,
+	0x71, 0x94, 0x5b, 0x47, 0x88, 0x43, 0x94, 0x46, 0xa7, 0x0d, 0x92, 0x1e, 0x24, 0x64, 0xc6, 0x41,
+	0x2c, 0xf8, 0x8f, 0x43, 0xfe, 0x09, 0x96, 0x55, 0x58, 0x99, 0xe0, 0x37, 0xc4, 0xa9, 0x7f, 0xcb,
+	0x41, 0xb6, 0xc9, 0x4c, 0xf1, 0x35, 0xfc, 0x1b, 0x8d, 0xfa, 0x5a, 0xfc, 0x82, 0x4c, 0xca, 0x48,
+	0xf9, 0xfe, 0x6c, 0xfa, 0x21, 0xc4, 0xc0, 0x3c, 0x1a, 0xa8, 0xc9, 0xe6, 0x11, 0xfd, 0x14, 0xf3,
+	0xd8, 0xf4, 0x14, 0xcf, 0xe0, 0x9f, 0xf1, 0xe4, 0xdc, 0x4e, 0x6c, 0x35, 0xa6, 0x96, 0xef, 0xce,
+	0xa2, 0xe6, 0xb6, 0x6f, 0x40, 0x9c, 0x10, 0x1d, 0x6a, 0x62, 0xaf, 0x68, 0x81, 0xbc, 0x3b, 0x63,
+	0x01, 0xf7, 0xff, 0x2c, 0x40, 0x39, 0x31, 0x7e, 0x1f, 0x24, 0x76, 0x4e, 0x2a, 0x95, 0xf7, 0x7e,
+	0xbb, 0x94, 0xe3, 0x9d, 0x00, 0x04, 0xf2, 0x6c, 0x63, 0xda, 0x88, 0x7d, 0xa1, 0xac, 0xa6, 0x14,
+	0x72, 0x1f, 0x0a, 0xa5, 0x70, 0x2a, 0x6d, 0x25, 0x76, 0x08, 0x69, 0xe5, 0x7a, 0x7a, 0x6d, 0xd0,
+	0x30, 0x9c, 0x42, 0x5b, 0xd3, 0x90, 0x47, 0xda, 0x29, 0x86, 0x13, 0x03, 0x47, 0xec, 0xc3, 0x52,
+	0x24, 0x6d, 0x76, 0x52, 0x80, 0x07, 0x6c, 0xef, 0xcd, 0x24, 0x1f, 0x3a, 0x3f, 0x3e, 0xf8, 0x72,
+	0xa9, 0x08, 0x17, 0x97, 0x8a, 0xf0, 0xfd, 0x52, 0x11, 0xde, 0x5f, 0x29, 0x99, 0x8b, 0x2b, 0x25,
+	0xf3, 0xf5, 0x4a, 0xc9, 0xbc, 0x50, 0x4d, 0xe2, 0xb4, 0xce, 0x8e, 0x6b, 0x06, 0xed, 0xa8, 0xbc,
+	0xb5, 0xea, 0xb5, 0xde, 0x19, 0xf4, 0x56, 0x7b, 0x75, 0xb5, 0xaf, 0xba, 0x7f, 0xc2, 0x5f, 0x75,
+	0x31, 0x3b, 0x5e, 0x70, 0xff, 0x2b, 0xdf, 0xf9, 0x15, 0x00, 0x00, 0xff, 0xff, 0xe9, 0x24, 0x84,
+	0xd4, 0x98, 0x0b, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -719,6 +879,10 @@ type MsgClient interface {
 	AddService(ctx context.Context, in *MsgAddService, opts ...grpc.CallOption) (*MsgAddServiceResponse, error)
 	// DeleteService delete an existing service
 	DeleteService(ctx context.Context, in *MsgDeleteService, opts ...grpc.CallOption) (*MsgDeleteServiceResponse, error)
+	// AddService add a new service
+	AddController(ctx context.Context, in *MsgAddController, opts ...grpc.CallOption) (*MsgAddControllerResponse, error)
+	// DeleteService delete an existing service
+	DeleteController(ctx context.Context, in *MsgDeleteController, opts ...grpc.CallOption) (*MsgDeleteControllerResponse, error)
 }
 
 type msgClient struct {
@@ -792,6 +956,24 @@ func (c *msgClient) DeleteService(ctx context.Context, in *MsgDeleteService, opt
 	return out, nil
 }
 
+func (c *msgClient) AddController(ctx context.Context, in *MsgAddController, opts ...grpc.CallOption) (*MsgAddControllerResponse, error) {
+	out := new(MsgAddControllerResponse)
+	err := c.cc.Invoke(ctx, "/allinbits.cosmoscash.did.Msg/AddController", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) DeleteController(ctx context.Context, in *MsgDeleteController, opts ...grpc.CallOption) (*MsgDeleteControllerResponse, error) {
+	out := new(MsgDeleteControllerResponse)
+	err := c.cc.Invoke(ctx, "/allinbits.cosmoscash.did.Msg/DeleteController", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
 	// CreateDidDocument defines a method for creating a new identity.
@@ -808,6 +990,10 @@ type MsgServer interface {
 	AddService(context.Context, *MsgAddService) (*MsgAddServiceResponse, error)
 	// DeleteService delete an existing service
 	DeleteService(context.Context, *MsgDeleteService) (*MsgDeleteServiceResponse, error)
+	// AddService add a new service
+	AddController(context.Context, *MsgAddController) (*MsgAddControllerResponse, error)
+	// DeleteService delete an existing service
+	DeleteController(context.Context, *MsgDeleteController) (*MsgDeleteControllerResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
@@ -834,6 +1020,12 @@ func (*UnimplementedMsgServer) AddService(ctx context.Context, req *MsgAddServic
 }
 func (*UnimplementedMsgServer) DeleteService(ctx context.Context, req *MsgDeleteService) (*MsgDeleteServiceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteService not implemented")
+}
+func (*UnimplementedMsgServer) AddController(ctx context.Context, req *MsgAddController) (*MsgAddControllerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddController not implemented")
+}
+func (*UnimplementedMsgServer) DeleteController(ctx context.Context, req *MsgDeleteController) (*MsgDeleteControllerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteController not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
@@ -966,6 +1158,42 @@ func _Msg_DeleteService_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_AddController_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgAddController)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).AddController(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/allinbits.cosmoscash.did.Msg/AddController",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).AddController(ctx, req.(*MsgAddController))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_DeleteController_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgDeleteController)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).DeleteController(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/allinbits.cosmoscash.did.Msg/DeleteController",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).DeleteController(ctx, req.(*MsgDeleteController))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "allinbits.cosmoscash.did.Msg",
 	HandlerType: (*MsgServer)(nil),
@@ -997,6 +1225,14 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteService",
 			Handler:    _Msg_DeleteService_Handler,
+		},
+		{
+			MethodName: "AddController",
+			Handler:    _Msg_AddController_Handler,
+		},
+		{
+			MethodName: "DeleteController",
+			Handler:    _Msg_DeleteController_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -1178,19 +1414,15 @@ func (m *MsgUpdateDidDocument) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x2a
 	}
-	if len(m.Controller) > 0 {
-		for iNdEx := len(m.Controller) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.Controller[iNdEx])
-			copy(dAtA[i:], m.Controller[iNdEx])
-			i = encodeVarintTx(dAtA, i, uint64(len(m.Controller[iNdEx])))
-			i--
-			dAtA[i] = 0x12
+	if m.Doc != nil {
+		{
+			size, err := m.Doc.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintTx(dAtA, i, uint64(size))
 		}
-	}
-	if len(m.Id) > 0 {
-		i -= len(m.Id)
-		copy(dAtA[i:], m.Id)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.Id)))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -1574,6 +1806,140 @@ func (m *MsgDeleteServiceResponse) MarshalToSizedBuffer(dAtA []byte) (int, error
 	return len(dAtA) - i, nil
 }
 
+func (m *MsgAddController) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgAddController) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgAddController) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Signer) > 0 {
+		i -= len(m.Signer)
+		copy(dAtA[i:], m.Signer)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Signer)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.ControllerDid) > 0 {
+		i -= len(m.ControllerDid)
+		copy(dAtA[i:], m.ControllerDid)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.ControllerDid)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Id) > 0 {
+		i -= len(m.Id)
+		copy(dAtA[i:], m.Id)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Id)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgAddControllerResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgAddControllerResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgAddControllerResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgDeleteController) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgDeleteController) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgDeleteController) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Signer) > 0 {
+		i -= len(m.Signer)
+		copy(dAtA[i:], m.Signer)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Signer)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.ControllerDid) > 0 {
+		i -= len(m.ControllerDid)
+		copy(dAtA[i:], m.ControllerDid)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.ControllerDid)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Id) > 0 {
+		i -= len(m.Id)
+		copy(dAtA[i:], m.Id)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Id)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgDeleteControllerResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgDeleteControllerResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgDeleteControllerResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
 	offset -= sovTx(v)
 	base := offset
@@ -1658,15 +2024,9 @@ func (m *MsgUpdateDidDocument) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = len(m.Id)
-	if l > 0 {
+	if m.Doc != nil {
+		l = m.Doc.Size()
 		n += 1 + l + sovTx(uint64(l))
-	}
-	if len(m.Controller) > 0 {
-		for _, s := range m.Controller {
-			l = len(s)
-			n += 1 + l + sovTx(uint64(l))
-		}
 	}
 	l = len(m.Signer)
 	if l > 0 {
@@ -1832,6 +2192,66 @@ func (m *MsgDeleteService) Size() (n int) {
 }
 
 func (m *MsgDeleteServiceResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgAddController) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Id)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.ControllerDid)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Signer)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgAddControllerResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgDeleteController) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Id)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.ControllerDid)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Signer)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgDeleteControllerResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -2291,9 +2711,9 @@ func (m *MsgUpdateDidDocument) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Doc", wireType)
 			}
-			var stringLen uint64
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowTx
@@ -2303,55 +2723,27 @@ func (m *MsgUpdateDidDocument) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
+			if msglen < 0 {
 				return ErrInvalidLengthTx
 			}
-			postIndex := iNdEx + intStringLen
+			postIndex := iNdEx + msglen
 			if postIndex < 0 {
 				return ErrInvalidLengthTx
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Id = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Controller", wireType)
+			if m.Doc == nil {
+				m.Doc = &DidDocument{}
 			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
+			if err := m.Doc.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Controller = append(m.Controller, string(dAtA[iNdEx:postIndex]))
 			iNdEx = postIndex
 		case 5:
 			if wireType != 2 {
@@ -3453,6 +3845,398 @@ func (m *MsgDeleteServiceResponse) Unmarshal(dAtA []byte) error {
 		}
 		if fieldNum <= 0 {
 			return fmt.Errorf("proto: MsgDeleteServiceResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgAddController) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgAddController: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgAddController: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Id = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ControllerDid", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ControllerDid = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgAddControllerResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgAddControllerResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgAddControllerResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgDeleteController) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgDeleteController: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgDeleteController: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Id = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ControllerDid", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ControllerDid = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgDeleteControllerResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgDeleteControllerResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgDeleteControllerResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:

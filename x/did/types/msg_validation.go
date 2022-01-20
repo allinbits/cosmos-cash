@@ -43,11 +43,11 @@ func (msg MsgCreateDidDocument) ValidateBasic() error {
 
 // ValidateBasic performs a basic check of the MsgUpdateDidDocument fields.
 func (msg MsgUpdateDidDocument) ValidateBasic() error {
-	if !IsValidDID(msg.Id) {
-		return sdkerrors.Wrap(ErrInvalidDIDFormat, msg.Id)
+	if !IsValidDID(msg.Doc.Id) {
+		return sdkerrors.Wrap(ErrInvalidDIDFormat, msg.Doc.Id)
 	}
 
-	for _, c := range msg.Controller {
+	for _, c := range msg.Doc.Controller {
 		// if controller is set must be compliant
 		if !IsValidDID(c) {
 			return sdkerrors.Wrap(ErrInvalidDIDFormat, "controller validation error")
@@ -136,5 +136,39 @@ func (msg MsgDeleteService) ValidateBasic() error {
 	if !IsValidRFC3986Uri(msg.ServiceId) {
 		return sdkerrors.Wrap(ErrInvalidRFC3986UriFormat, "service id validation error")
 	}
+	return nil
+}
+
+// --------------------------
+// ADD CONTROLLERS
+// --------------------------
+
+// ValidateBasic performs a basic check of the MsgAddService fields.
+func (msg MsgAddController) ValidateBasic() error {
+	if !IsValidDID(msg.Id) {
+		return sdkerrors.Wrap(ErrInvalidDIDFormat, msg.Id)
+	}
+
+	if !IsValidDID(msg.ControllerDid) {
+		return sdkerrors.Wrap(ErrInvalidDIDFormat, msg.ControllerDid)
+	}
+
+	return nil
+}
+
+// --------------------------
+// DELETE CONTROLLERS
+// --------------------------
+
+// ValidateBasic performs a basic check of the MsgDeleteService fields.
+func (msg MsgDeleteController) ValidateBasic() error {
+	if !IsValidDID(msg.Id) {
+		return sdkerrors.Wrap(ErrInvalidDIDFormat, msg.Id)
+	}
+
+	if !IsValidDID(msg.ControllerDid) {
+		return sdkerrors.Wrap(ErrInvalidDIDFormat, msg.ControllerDid)
+	}
+
 	return nil
 }

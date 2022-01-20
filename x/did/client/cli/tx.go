@@ -32,7 +32,6 @@ func GetTxCmd() *cobra.Command {
 		NewAddServiceCmd(),
 		NewRevokeVerificationCmd(),
 		NewDeleteServiceCmd(),
-		NewUpdateDidDocumentCmd(),
 		NewSetVerificationRelationshipCmd(),
 		NewLinkAriesAgentCmd(),
 	)
@@ -293,12 +292,12 @@ func NewDeleteServiceCmd() *cobra.Command {
 	return cmd
 }
 
-// NewUpdateDidDocumentCmd adds a controller to a did document
-func NewUpdateDidDocumentCmd() *cobra.Command {
+// NewAddControllerCmd adds a controller to a did document
+func NewAddControllerCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "update-did-document [id] [controllerAddress]",
+		Use:     "add-controller [id] [controllerAddress]",
 		Short:   "updates a decentralized identifier (did) document to contain a controller",
-		Example: "update-did-document vasp cosmos1kslgpxklq75aj96cz3qwsczr95vdtrd3p0fslp",
+		Example: "add-controller vasp cosmos1kslgpxklq75aj96cz3qwsczr95vdtrd3p0fslp",
 		Args:    cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -314,11 +313,9 @@ func NewUpdateDidDocumentCmd() *cobra.Command {
 			// signer
 			signer := clientCtx.GetFromAddress()
 
-			msg := types.NewMsgUpdateDidDocument(
+			msg := types.NewMsgAddController(
 				did.String(),
-				[]string{
-					didKey.String(),
-				},
+				didKey.String(),
 				signer.String(),
 			)
 

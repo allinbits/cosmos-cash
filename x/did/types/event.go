@@ -31,15 +31,11 @@ func NewDidDocumentCreatedEvent(owner string) sdk.Event {
 }
 
 // NewDidDocumentUpdatedEvent constructs a new did_created sdk.Event
-// XXX: does it make sense ? cc @paddy
-func NewDidDocumentUpdatedEvent(did string, controllers ...string) sdk.Event {
+func NewDidDocumentUpdatedEvent(did string) sdk.Event {
 	e := sdk.NewEvent(
 		EventTypeDidDocumentUpdated,
 		sdk.NewAttribute(AttributeDID, did),
 	)
-	for _, c := range controllers {
-		e.AppendAttributes(sdk.NewAttribute(AttributeKeyOwner, c))
-	}
 	return e
 }
 

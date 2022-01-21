@@ -1,0 +1,38 @@
+@startuml
+title Module dependencies
+footer Cosmos Cash: https://github.com/allinbits/cosmos-cash
+
+<style>
+objectDiagram {
+  LineColor #222
+  FontName sans
+}
+</style>
+skinparam monochrome false
+skinparam shadowing false
+
+
+object "DID Module" as did  #lightblue
+object "Verifiable Credential Module" as vc #lightblue
+object "Regulator Module" as reg #lightblue
+object "Issuer Module" as issuer #lightblue
+object "Bank Module" as bank #white {
+ cosmos sdk module
+}
+object "Account Module" as acc #white {
+  cosmos sdk module
+}
+
+vc --> did
+vc --> acc
+reg --> vc
+issuer --> vc
+issuer --> did
+issuer --> bank
+
+
+
+hide empty members
+
+@enduml
+

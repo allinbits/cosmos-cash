@@ -706,6 +706,17 @@ func (didDoc DidDocument) HasPublicKey(pubkey cryptotypes.PubKey) bool {
 	return false
 }
 
+// HasController returns true if the DID document has the input DID as a controller, false otherwise
+func (didDoc *DidDocument) HasController(controller DID) bool {
+	ctrl := controller.String()
+	for _, c := range didDoc.Controller {
+		if c == ctrl {
+			return true
+		}
+	}
+	return false
+}
+
 // AddServices add services to a did document
 func (didDoc *DidDocument) AddServices(services ...*Service) (err error) {
 	if didDoc.Service == nil {

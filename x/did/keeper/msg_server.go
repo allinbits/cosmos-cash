@@ -33,6 +33,7 @@ func (k msgServer) CreateDidDocument(
 	did, err := types.NewDidDocument(msg.Id,
 		types.WithServices(msg.Services...),
 		types.WithVerifications(msg.Verifications...),
+		types.WithControllers(msg.Controllers...),
 	)
 	if err != nil {
 		k.Logger(ctx).Error(err.Error())
@@ -260,14 +261,20 @@ func executeOnDidWithRelationships(goCtx context.Context, k *Keeper, constraints
 
 	// Any verification method in the authentication relationship can update the DID document
 	if !didDoc.HasRelationship(types.NewBlockchainAccountID(ctx.ChainID(), signer), constraints.relationships...) {
-		err = sdkerrors.Wrapf(
-			types.ErrUnauthorized,
-			"signer account %s not authorized to update the target did document at %s",
-			signer, did,
-		)
-		k.Logger(ctx).Error(err.Error())
-		return
+		// check also the controllers
+		signerDID := types.NewKeyDID(signer)
+		if !didDoc.HasController(signerDID) {
+			// if also the controller was not set the error
+			err = sdkerrors.Wrapf(
+				types.ErrUnauthorized,
+				"signer account %s not authorized to update the target did document at %s",
+				signer, did,
+			)
+			k.Logger(ctx).Error(err.Error())
+			return
+		}
 	}
+
 	// apply the update
 	err = update(&didDoc)
 	if err != nil {

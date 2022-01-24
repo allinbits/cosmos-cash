@@ -34,6 +34,8 @@ func GetTxCmd() *cobra.Command {
 		NewDeleteServiceCmd(),
 		NewSetVerificationRelationshipCmd(),
 		NewLinkAriesAgentCmd(),
+		NewAddControllerCmd(),
+		NewDeleteControllerCmd(),
 	)
 
 	return cmd
@@ -328,7 +330,45 @@ func NewAddControllerCmd() *cobra.Command {
 	}
 
 	flags.AddTxFlagsToCmd(cmd)
+	return cmd
+}
 
+// NewDeleteControllerCmd adds a controller to a did document
+func NewDeleteControllerCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "delete-controller [id] [controllerAddress]",
+		Short:   "updates a decentralized identifier (did) document removing a controller",
+		Example: "delete-controller vasp cosmos1kslgpxklq75aj96cz3qwsczr95vdtrd3p0fslp",
+		Args:    cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			// document did
+			did := types.NewChainDID(clientCtx.ChainID, args[0])
+
+			// did key to use as the controller
+			didKey := types.NewKeyDID(args[1])
+
+			// signer
+			signer := clientCtx.GetFromAddress()
+
+			msg := types.NewMsgDeleteController(
+				did.String(),
+				didKey.String(),
+				signer.String(),
+			)
+
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
 	return cmd
 }
 

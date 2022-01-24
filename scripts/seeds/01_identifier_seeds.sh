@@ -42,16 +42,8 @@ cosmos-cashd tx did revoke-verification-method emti $(cosmos-cashd keys show val
 --from emti \
 --chain-id cash -y --broadcast-mode block
 
-cosmos-cashd query did did did:cosmos:net:cash:emti --output json | jq
-
-echo "Adding Alice as controller of the EMTi did (by EMTi user)"
-cosmos-cashd tx did update-did-document emti $(cosmos-cashd keys show alice -a) \
---from emti \
---chain-id cash -y --broadcast-mode block
-
-
 echo "Querying dids"
-cosmos-cashd query did dids --output json | jq
+cosmos-cashd query did did did:cosmos:net:cash:emti --output json | jq
 
 echo "Deleting service from EMTi did document (by EMTi user)"
 cosmos-cashd tx did delete-service emti emti-agent \
@@ -59,5 +51,18 @@ cosmos-cashd tx did delete-service emti emti-agent \
 --chain-id cash -y --broadcast-mode block
 
 
+echo "Add a controller to the EMTi did document (by EMTi user)"
+cosmos-cashd tx did add-controller emti $(cosmos-cashd keys show alice -a) \
+--from emti \
+--chain-id cash -y --broadcast-mode block
+
 echo "Querying dids"
-cosmos-cashd query did dids --output json | jq
+cosmos-cashd query did did did:cosmos:net:cash:emti --output json | jq
+
+echo "Remove a controller from the EMTi did document (by alice user)"
+cosmos-cashd tx did delete-controller emti $(cosmos-cashd keys show alice -a) \
+--from alice \
+--chain-id cash -y --broadcast-mode block
+
+echo "Querying dids"
+cosmos-cashd query did did did:cosmos:net:cash:emti --output json | jq

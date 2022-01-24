@@ -461,6 +461,10 @@ func (didDoc *DidDocument) AddControllers(controllers ...string) error {
 		if !IsValidDID(c) {
 			return sdkerrors.Wrapf(ErrInvalidDIDFormat, "did document controller validation error '%s'", c)
 		}
+		if !IsValidDIDKeyFormat(c) {
+			// TODO: link to the documentation for the error
+			return sdkerrors.Wrapf(ErrInvalidInput, "did document controller '%s' must be of type key", c)
+		}
 	}
 
 	// remove duplicates

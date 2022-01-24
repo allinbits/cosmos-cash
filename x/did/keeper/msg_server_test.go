@@ -112,7 +112,7 @@ func (suite *KeeperTestSuite) TestHandleMsgUpdateDidDocument() {
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
 				suite.keeper.SetDidMetadata(suite.ctx, []byte(didDoc.Id), types.NewDidMetadata([]byte{1}, time.Now()))
 
-				newDidDoc, err  := types.NewDidDocument(did)
+				newDidDoc, err := types.NewDidDocument(did)
 				suite.Require().Nil(err)
 
 				req = *types.NewMsgUpdateDidDocument(&newDidDoc, "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
@@ -923,3 +923,201 @@ func (suite *KeeperTestSuite) TestHandleMsgDeleteService() {
 		})
 	}
 }
+
+func (suite *KeeperTestSuite) TestHandleMsgAddController() {
+	var (
+		req    types.MsgAddController
+		errExp error
+	)
+
+	server := NewMsgServerImpl(suite.keeper)
+
+	// FAIL: cannot add controller, did doesn't exist
+	// FAIL: controller is not a valid did
+	// FAIL: signer not authorized to change controller
+	// FAIL: controller is not type key
+	// PASS: controller added
+	// PASS: controller already added (duplicated)
+	testCases := []struct {
+		name     string
+		malleate func()
+	}{
+		{
+			"FAIL: cannot add controller, did doesn't exist",
+			func() {
+				req = *types.NewMsgAddController(
+					"did:cosmos:cash:subject",
+					"did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
+					"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+				errExp = sdkerrors.Wrapf(types.ErrDidDocumentNotFound, "did document at %s not found", "did:cosmos:cash:subject")
+			},
+		},
+		{
+			"FAIL: controller is not a valid did",
+			func() {
+				didDoc, _ := types.NewDidDocument(
+					"did:cosmos:cash:subject",
+					types.WithVerifications(
+						types.NewVerification(
+							types.NewVerificationMethod(
+								"did:cosmos:cash:subject#key-1",
+								types.DID("did:cosmos:cash:subject"),
+								types.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215}, types.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
+							),
+							[]string{types.Authentication},
+							nil,
+						),
+					),
+				)
+				// create the did
+				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+				// try adding a service
+				req = *types.NewMsgAddController("did:cosmos:cash:subject", "", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+				errExp = sdkerrors.Wrap(types.ErrInvalidDIDFormat, "did document controller validation error ''")
+			},
+		},
+		{
+			"FAIL: signer not authorized to change controller",
+			func() {
+
+				didDoc, _ := types.NewDidDocument(
+					"did:cosmos:cash:subject",
+					types.WithVerifications(
+						types.NewVerification(
+							types.NewVerificationMethod(
+								"did:cosmos:cash:subject#key-1",
+								types.DID("did:cosmos:cash:subject"),
+								types.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215}, types.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
+							),
+							[]string{types.CapabilityInvocation, types.CapabilityDelegation},
+							nil,
+						),
+					),
+				)
+
+				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+
+
+				req = *types.NewMsgAddController(
+					"did:cosmos:cash:subject",
+					"did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
+					"cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2", // does not match the pub key (it's the new controller)
+					)
+
+
+				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer account %s not authorized to update the target did document at %s", "cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2", didDoc.Id)
+			},
+		},
+		{
+			"FAIL: controller is not type key",
+			func() {
+
+				didDoc, _ := types.NewDidDocument(
+					"did:cosmos:cash:subject",
+					types.WithVerifications(
+						types.NewVerification(
+							types.NewVerificationMethod(
+								"did:cosmos:cash:subject#key-1",
+								types.DID("did:cosmos:cash:subject"),
+								types.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215}, types.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
+							),
+							[]string{types.Authentication},
+							nil,
+						),
+					),
+				)
+
+				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+
+
+				req = *types.NewMsgAddController(
+					"did:cosmos:cash:subject",
+					"did:cosmos:net:foochain:whatever",
+					"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8", // does not match the pub key (it's the new controller)
+				)
+
+
+				errExp = sdkerrors.Wrapf(types.ErrInvalidInput, "did document controller 'did:cosmos:net:foochain:whatever' must be of type key")
+			},
+		},
+		{
+			"PASS: can add controller",
+			func() {
+				didDoc, err := types.NewDidDocument(
+					"did:cosmos:cash:subject",
+					types.WithVerifications(
+						types.NewVerification(
+							types.NewVerificationMethod(
+								"did:cosmos:cash:subject#key-1",
+								types.DID("did:cosmos:cash:subject"),
+								types.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215}, types.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
+							),
+							[]string{types.Authentication},
+							nil,
+						),
+					),
+				)
+
+				if err != nil {
+					suite.FailNow("test setup failed: ", err)
+				}
+
+				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+				suite.keeper.SetDidMetadata(suite.ctx, []byte(didDoc.Id), types.NewDidMetadata([]byte{1}, time.Now()))
+
+				req = *types.NewMsgAddController(
+					"did:cosmos:cash:subject",
+					"did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
+					"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+				errExp = nil
+			},
+		},
+		{
+			"PASS: controller already added (duplicated)",
+			func() {
+				didDoc, err := types.NewDidDocument(
+					"did:cosmos:cash:subject",
+					types.WithVerifications(
+						types.NewVerification(
+							types.NewVerificationMethod(
+								"did:cosmos:cash:subject#key-1",
+								types.DID("did:cosmos:cash:subject"),
+								types.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215}, types.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
+							),
+							[]string{types.Authentication},
+							nil,
+						),
+					),
+				)
+
+				if err != nil {
+					suite.FailNow("test setup failed: ", err)
+				}
+
+				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+				suite.keeper.SetDidMetadata(suite.ctx, []byte(didDoc.Id), types.NewDidMetadata([]byte{1}, time.Now()))
+
+				req = *types.NewMsgAddController(
+					"did:cosmos:cash:subject",
+					"did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
+					"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+				errExp = nil
+			},
+		},
+	}
+	for _, tc := range testCases {
+		suite.Run(tc.name, func() {
+			tc.malleate()
+
+			_, err := server.AddController(sdk.WrapSDKContext(suite.ctx), &req)
+
+			if errExp == nil {
+				suite.Require().NoError(err)
+			} else {
+				suite.Require().Error(err)
+				suite.Require().Equal(errExp.Error(), err.Error())
+			}
+		})
+	}
+}
+

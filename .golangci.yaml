@@ -23,7 +23,7 @@ linters:
 
 linters-settings:
   unused:
-    go: "1.15"
+    go: "1.17"
   dupl:
     threshold: 100
   funlen:

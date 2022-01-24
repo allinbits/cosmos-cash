@@ -236,19 +236,14 @@ func updateDidMetadata(keeper *Keeper, ctx sdk.Context, did string) (err error) 
 	return
 }
 
-// Constraints for did document manipulation
-type Constraints struct {
-	// XXX: may be used to perform checks on the controller
-	relationships []string
+// VerificationRelationships for did document manipulation
+type VerificationRelationships []string
+
+func newConstraints(relationships ...string) VerificationRelationships {
+	return relationships
 }
 
-func newConstraints(relationships ...string) Constraints {
-	return Constraints{
-		relationships: relationships,
-	}
-}
-
-func executeOnDidWithRelationships(goCtx context.Context, k *Keeper, constraints Constraints, did, signer string, update func(document *types.DidDocument) error) (err error) {
+func executeOnDidWithRelationships(goCtx context.Context, k *Keeper, constraints VerificationRelationships, did, signer string, update func(document *types.DidDocument) error) (err error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	k.Logger(ctx).Info("request to update a did document", "target did", did)
 	// get the did document
@@ -260,7 +255,7 @@ func executeOnDidWithRelationships(goCtx context.Context, k *Keeper, constraints
 	}
 
 	// Any verification method in the authentication relationship can update the DID document
-	if !didDoc.HasRelationship(types.NewBlockchainAccountID(ctx.ChainID(), signer), constraints.relationships...) {
+	if !didDoc.HasRelationship(types.NewBlockchainAccountID(ctx.ChainID(), signer), constraints...) {
 		// check also the controllers
 		signerDID := types.NewKeyDID(signer)
 		if !didDoc.HasController(signerDID) {

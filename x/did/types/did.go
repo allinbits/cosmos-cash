@@ -156,6 +156,7 @@ func (baID BlockchainAccountID) MatchAddress(address string) bool {
 }
 
 // GetAddress get the address from a blockchain account id
+// TODO: this function shall return an error for invalid addresses
 func (baID BlockchainAccountID) GetAddress() string {
 	addrStart := strings.LastIndex(string(baID), ":")
 	if addrStart < 0 {
@@ -203,6 +204,7 @@ func NewPublicKeyMultibaseFromHex(pubKeyHex string, vmType VerificationMaterialT
 	if err != nil {
 		return
 	}
+	// TODO: shall we check if it is conform to the verification material? probably
 	pkm = PublicKeyMultibase{
 		data:   pkb,
 		vmType: vmType,
@@ -210,7 +212,7 @@ func NewPublicKeyMultibaseFromHex(pubKeyHex string, vmType VerificationMaterialT
 	return
 }
 
-// DID identifies ad did string
+// DID as typed string
 type DID string
 
 // NewChainDID format a DID from a method specific did

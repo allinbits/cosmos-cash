@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestDID(t *testing.T) {
+func TestNewChainDID(t *testing.T) {
 
 	tests := []struct {
 		did   string
@@ -37,6 +37,54 @@ func TestDID(t *testing.T) {
 			if got := NewChainDID(tt.chain, tt.did); got != tt.want {
 				t.Errorf("DID() = %v, want %v", got, tt.want)
 			}
+		})
+	}
+}
+
+func TestNewKeyDID(t *testing.T) {
+
+	tests := []struct {
+		name    string
+		account string
+		want    DID
+	}{
+		{
+			"PASS: valid account",
+			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+			"did:cosmos:key:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equalf(t, tt.want, NewKeyDID(tt.account), "NewKeyDID(%v)", tt.account)
+		})
+	}
+}
+
+func TestDID_NewVerificationMethodID(t *testing.T) {
+
+	tests := []struct {
+		name string
+		did  DID
+		vmID string
+		want string
+	}{
+		{
+			"PASS: generated vmId for network DID",
+			DID("did:cosmos:net:foochain:whatever"),
+			"123456",
+			"did:cosmos:net:foochain:whatever#123456",
+		},
+		{
+			"PASS: generated vmId for key DID",
+			DID("did:cosmos:key:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"),
+			"123456",
+			"did:cosmos:key:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8#123456",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equalf(t, tt.want, tt.did.NewVerificationMethodID(tt.vmID), "NewVerificationMethodID(%v)", tt.vmID)
 		})
 	}
 }
@@ -114,7 +162,7 @@ func TestIsValidRFC3986Uri(t *testing.T) {
 
 func TestIsValidDIDDocument(t *testing.T) {
 	tests := []struct {
-		name string
+		name  string
 		didFn func() *DidDocument
 		want  bool
 	}{
@@ -123,7 +171,7 @@ func TestIsValidDIDDocument(t *testing.T) {
 			func() *DidDocument {
 				return &DidDocument{
 					Context: []string{contextDIDBase},
-					Id:      "did:cosmos:cash:1",
+					Id:      "did:cosmos:net:cash:1",
 				}
 			},
 			true, // all good
@@ -133,7 +181,7 @@ func TestIsValidDIDDocument(t *testing.T) {
 			func() *DidDocument {
 				return &DidDocument{
 					Context: []string{},
-					Id:      "did:cosmos:cash:1",
+					Id:      "did:cosmos:net:cash:1",
 				}
 			},
 			false, // missing context
@@ -141,7 +189,8 @@ func TestIsValidDIDDocument(t *testing.T) {
 		{
 			"PASS: minimal did document",
 			func() *DidDocument {
-				dd, _ := NewDidDocument("did:cosmos:cash:1")
+				dd, err := NewDidDocument("did:cosmos:cash:1")
+				assert.NoError(t, err)
 				return &dd
 			},
 			true, // all good
@@ -149,8 +198,10 @@ func TestIsValidDIDDocument(t *testing.T) {
 		{
 			"FAIL: empty did",
 			func() *DidDocument {
-				dd, _ := NewDidDocument("")
-				return &dd
+				return &DidDocument{
+					Context: []string{contextDIDBase},
+					Id:      "",
+				}
 			},
 			false, // empty id
 		},
@@ -164,12 +215,26 @@ func TestIsValidDIDDocument(t *testing.T) {
 		{
 			"PASS: did with valid controller",
 			func() *DidDocument {
-				dd, _ := NewDidDocument("did:cash:key:cas:1", WithControllers(
-					"did:cash:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
+				dd, err := NewDidDocument("did:cosmos:key:cas:1", WithControllers(
+					"did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
 				))
+				assert.NoError(t, err)
 				return &dd
 			},
 			true,
+		},
+		{
+			"FAIL: invalid controller",
+			func() *DidDocument {
+				return &DidDocument{
+					Context: []string{contextDIDBase},
+					Id:      "did:cosmos:net:foochain:1",
+					Controller: []string{
+						"did:cosmos:net:foochain:whatever",
+					},
+				}
+			},
+			false,
 		},
 	}
 	for _, tt := range tests {
@@ -523,10 +588,10 @@ func TestNewDidDocument(t *testing.T) {
 func TestDidDocument_AddControllers(t *testing.T) {
 
 	tests := []struct {
-		malleate    func() DidDocument
-		controllers []string
+		malleate            func() DidDocument
+		controllers         []string
 		expectedControllers []string
-		wantErr     bool
+		wantErr             bool
 	}{
 		{
 			func() DidDocument {
@@ -544,7 +609,6 @@ func TestDidDocument_AddControllers(t *testing.T) {
 			[]string{
 				"did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
 				"did:cosmos:key:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
-
 			},
 			false,
 		},
@@ -1739,6 +1803,84 @@ func TestDidDocument_DeleteService(t *testing.T) {
 			gotDid.DeleteService(tt.params.methodID)
 
 			assert.Equal(t, tt.wantDid, gotDid)
+		})
+	}
+}
+
+func TestBlockchainAccountID_GetAddress(t *testing.T) {
+	tests := []struct {
+		name string
+		baID BlockchainAccountID
+		want string
+	}{
+		{
+			"PASS: can get address",
+			BlockchainAccountID("cosmos:foochain:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"),
+			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+		},
+		{
+			// TODO: this should result in an error
+			"PASS: address is empty",
+			BlockchainAccountID("cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"),
+			"",
+		},
+		{
+			// TODO: this should result in an error
+			"PASS: can get address (but address is wrong)",
+			BlockchainAccountID("cosmos:foochain:whatever"),
+			"whatever",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equalf(t, tt.want, tt.baID.GetAddress(), "GetAddress()")
+		})
+	}
+}
+
+func TestNewPublicKeyMultibaseFromHex(t *testing.T) {
+	type args struct {
+		pubKeyHex string
+		vmType    VerificationMaterialType
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantPkm PublicKeyMultibase
+		wantErr assert.ErrorAssertionFunc
+	}{
+		{
+			"PASS: key match",
+			args{
+				pubKeyHex: "03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+				vmType:    DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
+			},
+			PublicKeyMultibase{
+				data:   []byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215},
+				vmType: DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
+			},
+			assert.NoError,
+		},
+		{
+			"FAIL: invalid hex key",
+			args{
+				pubKeyHex: "not hex string",
+				vmType:    DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
+			},
+			PublicKeyMultibase{
+				data:   nil,
+				vmType: "",
+			},
+			assert.Error, // TODO: check the error message
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotPkm, err := NewPublicKeyMultibaseFromHex(tt.args.pubKeyHex, tt.args.vmType)
+			if !tt.wantErr(t, err, fmt.Sprintf("NewPublicKeyMultibaseFromHex(%v, %v)", tt.args.pubKeyHex, tt.args.vmType)) {
+				return
+			}
+			assert.Equalf(t, tt.wantPkm, gotPkm, "NewPublicKeyMultibaseFromHex(%v, %v)", tt.args.pubKeyHex, tt.args.vmType)
 		})
 	}
 }

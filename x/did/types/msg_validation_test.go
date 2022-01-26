@@ -1,6 +1,8 @@
 package types
 
 import (
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/stretchr/testify/assert"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -644,5 +646,122 @@ func TestMsgDeleteService(t *testing.T) {
 		} else {
 			require.NotNil(t, msg.ValidateBasic(), "test: TestMsgDeleteService#%v", i)
 		}
+	}
+}
+
+func TestMsgAddController_ValidateBasic(t *testing.T) {
+	type fields struct {
+		Id            string
+		ControllerDid string
+		Signer        string
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		wantErr error
+	}{
+		{
+			"PASS: controller is valid",
+			fields{
+				Id:            "did:cosmos:net:foochain:12345",
+				ControllerDid: "did:cosmos:key:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+				Signer:        "cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
+			},
+			nil,
+		},
+		{
+			"FAIL: invalid did",
+			fields{
+				Id:            "not a did",
+				ControllerDid: "did:cosmos:key:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+				Signer:        "cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
+			},
+			sdkerrors.Wrap(ErrInvalidDIDFormat, "not a did"),
+		},
+		{
+			"FAIL: invalid controller did",
+			fields{
+				Id:            "did:cosmos:net:foochain:12345",
+				ControllerDid: "did:cosmos:net:foochain:whatever",
+				Signer:        "cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
+			},
+			sdkerrors.Wrap(ErrInvalidDIDFormat, "did:cosmos:net:foochain:whatever"),
+		},
+
+
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			msg := MsgAddController{
+				Id:            tt.fields.Id,
+				ControllerDid: tt.fields.ControllerDid,
+				Signer:        tt.fields.Signer,
+			}
+
+			err := msg.ValidateBasic()
+			if tt.wantErr == nil {
+				assert.NoError(t, err)
+			} else {
+				assert.Error(t, err)
+				assert.Equal(t, tt.wantErr.Error(), err.Error())
+			}
+		})
+	}
+}
+
+func TestMsgDeleteController_ValidateBasic(t *testing.T) {
+	type fields struct {
+		Id            string
+		ControllerDid string
+		Signer        string
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		wantErr error
+	}{
+		{
+			"PASS: controller is valid",
+			fields{
+				Id:            "did:cosmos:net:foochain:12345",
+				ControllerDid: "did:cosmos:key:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+				Signer:        "cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
+			},
+			nil,
+		},
+		{
+			"FAIL: invalid did",
+			fields{
+				Id:            "not a did",
+				ControllerDid: "did:cosmos:key:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+				Signer:        "cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
+			},
+			sdkerrors.Wrap(ErrInvalidDIDFormat, "not a did"),
+		},
+		{
+			"FAIL: invalid controller did",
+			fields{
+				Id:            "did:cosmos:net:foochain:12345",
+				ControllerDid: "not a did",
+				Signer:        "cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
+			},
+			sdkerrors.Wrap(ErrInvalidDIDFormat, "not a did"),
+		},// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			msg := MsgDeleteController{
+				Id:            tt.fields.Id,
+				ControllerDid: tt.fields.ControllerDid,
+				Signer:        tt.fields.Signer,
+			}
+			err := msg.ValidateBasic()
+			if tt.wantErr == nil {
+				assert.NoError(t, err)
+			} else {
+				assert.Error(t, err)
+				assert.Equal(t, tt.wantErr.Error(), err.Error())
+			}
+		})
 	}
 }

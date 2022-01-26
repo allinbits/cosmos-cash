@@ -149,7 +149,7 @@ func (msg MsgAddController) ValidateBasic() error {
 		return sdkerrors.Wrap(ErrInvalidDIDFormat, msg.Id)
 	}
 
-	if !IsValidDID(msg.ControllerDid) {
+	if !IsValidDIDKeyFormat(msg.ControllerDid) {
 		return sdkerrors.Wrap(ErrInvalidDIDFormat, msg.ControllerDid)
 	}
 

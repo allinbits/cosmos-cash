@@ -22,6 +22,8 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgRevokeVerification{},
 		&MsgAddService{},
 		&MsgDeleteService{},
+		&MsgAddController{},
+		&MsgDeleteController{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)

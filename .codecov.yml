@@ -12,37 +12,15 @@ coverage:
     # Learn more at https://docs.codecov.io/docs/commit-status
     project:
       default:
-        threshold: 1% # allow this much decrease on project
-      app:
         target: 80%
-        flags:
-          - app
-      modules:
-        target: 80%
-        flags:
-          - modules
-      client:
-        flags:
-          - client
+        threshold: 1%
+        paths: "x/"  # only include coverage in "x/" folder
     changes: false
 
 comment:
   layout: "reach, diff, files"
   behavior: default # update if exists else create new
   require_changes: true
-
-flags:
-  app:
-    paths:
-      - "app/"
-  modules:
-    paths:
-      - "x/"
-      - "!x/**/client/" # ignore client package
-  client:
-    paths:
-      - "client/"
-      - "x/**/client/" # ignore client package
 
 ignore:
   - "docs"

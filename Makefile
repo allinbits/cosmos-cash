@@ -1,4 +1,4 @@
-PACKAGES=$(shell go list ./...)
+PACKAGES="./x/..."
 # build paramters 
 BUILD_FOLDER = build
 APP_VERSION = $(git describe --tags --always)

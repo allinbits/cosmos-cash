@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"testing"
 	"time"
 
@@ -588,12 +589,14 @@ func TestNewDidDocument(t *testing.T) {
 func TestDidDocument_AddControllers(t *testing.T) {
 
 	tests := []struct {
+		name string
 		malleate            func() DidDocument
 		controllers         []string
 		expectedControllers []string
-		wantErr             bool
+		wantErr             error
 	}{
 		{
+			"PASS: controllers added",
 			func() DidDocument {
 				dd, _ := NewDidDocument("did:cash:subject",
 					WithControllers(
@@ -610,9 +613,10 @@ func TestDidDocument_AddControllers(t *testing.T) {
 				"did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
 				"did:cosmos:key:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 			},
-			false,
+			nil,
 		},
 		{
+			"FAIL: invalid controller did",
 			func() DidDocument {
 				dd, _ := NewDidDocument("did:cash:subject",
 					WithControllers(
@@ -626,9 +630,27 @@ func TestDidDocument_AddControllers(t *testing.T) {
 				"not a did:cosmos:key:cosmos100000000000000000000000000000000000004",
 			},
 			[]string{},
-			true, // invalid controller did
+			sdkerrors.Wrapf(ErrInvalidDIDFormat, "did document controller validation error 'not a did:cosmos:key:cosmos100000000000000000000000000000000000004'"),
 		},
 		{
+			"FAIL: controller did is not type key",
+			func() DidDocument {
+				dd, _ := NewDidDocument("did:cash:subject",
+					WithControllers(
+						"did:cosmos:key:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+					),
+				)
+				return dd
+			},
+			[]string{
+				"did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
+				"did:cosmos:net:foochain:1234",
+			},
+			[]string{},
+			sdkerrors.Wrapf(ErrInvalidInput, "did document controller 'did:cosmos:net:foochain:1234' must be of type key"),
+		},
+		{
+			"PASS: controllers empty",
 			func() DidDocument {
 				dd, _ := NewDidDocument("did:cash:subject",
 					WithControllers(
@@ -643,7 +665,7 @@ func TestDidDocument_AddControllers(t *testing.T) {
 				"did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
 				"did:cosmos:key:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 			},
-			false,
+			nil,
 		},
 	}
 	for i, tt := range tests {
@@ -651,14 +673,90 @@ func TestDidDocument_AddControllers(t *testing.T) {
 			didDoc := tt.malleate()
 			err := didDoc.AddControllers(tt.controllers...)
 
-			if tt.wantErr {
-				require.NotNil(t, err, "test: TestDidDocument_AddControllers#%v", i)
-				return
+			if tt.wantErr == nil {
+				assert.NoError(t, err)
+			} else {
+				assert.Error(t, err)
+				assert.Equal(t, tt.wantErr.Error(), err.Error())
 			}
+		})
+	}
+}
 
-			require.Nil(t, err, "test: TestDidDocument_AddControllers#%v", i)
-			assert.Equal(t, tt.expectedControllers, didDoc.Controller)
+func TestDidDocument_DeleteControllers(t *testing.T) {
 
+	tests := []struct {
+		name string
+		malleate            func() DidDocument
+		controllers         []string
+		expectedControllers []string
+		wantErr             error
+	}{
+		{
+			"PASS: controllers deleted",
+			func() DidDocument {
+				dd, _ := NewDidDocument("did:cash:subject",
+					WithControllers(
+						"did:cosmos:key:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+						"did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
+					),
+				)
+				return dd
+			},
+			[]string{
+				"did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
+			},
+			[]string{
+				"did:cosmos:key:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+			},
+			nil,
+		},
+		{
+			"FAIL: invalid controller did",
+			func() DidDocument {
+				dd, _ := NewDidDocument("did:cash:subject",
+					WithControllers(
+						"did:cosmos:key:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+					),
+				)
+				return dd
+			},
+			[]string{
+				"not a did:cosmos:key:cosmos100000000000000000000000000000000000004",
+			},
+			[]string{},
+			sdkerrors.Wrapf(ErrInvalidDIDFormat, "did document controller validation error 'not a did:cosmos:key:cosmos100000000000000000000000000000000000004'"),
+		},
+		{
+			"PASS: controllers empty",
+			func() DidDocument {
+				dd, _ := NewDidDocument("did:cash:subject",
+					WithControllers(
+						"did:cosmos:key:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+						"did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
+					),
+				)
+				return dd
+			},
+			nil,
+			[]string{
+				"did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
+				"did:cosmos:key:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+			},
+			nil,
+		},
+	}
+	for i, tt := range tests {
+		t.Run(fmt.Sprint("TestDidDocument_AddControllers#", i), func(t *testing.T) {
+			didDoc := tt.malleate()
+			err := didDoc.DeleteControllers(tt.controllers...)
+
+			if tt.wantErr == nil {
+				assert.NoError(t, err)
+			} else {
+				assert.Error(t, err)
+				assert.Equal(t, tt.wantErr.Error(), err.Error())
+			}
 		})
 	}
 }

@@ -457,6 +457,9 @@ func NewDidDocument(id string, options ...DidDocumentOption) (did DidDocument, e
 
 // AddControllers add a controller to a did document if not exists
 func (didDoc *DidDocument) AddControllers(controllers ...string) error {
+	if len(controllers) == 0 {
+		return nil
+	}
 	// join the exiting controllers with the new ones
 	dc := distinct(append(didDoc.Controller, controllers...))
 	for _, c := range dc {
@@ -476,6 +479,9 @@ func (didDoc *DidDocument) AddControllers(controllers ...string) error {
 
 // DeleteControllers delete controllers from a did document
 func (didDoc *DidDocument) DeleteControllers(controllers ...string) error {
+	if len(controllers) == 0 {
+		return nil
+	}
 	dc := distinct(controllers)
 	for _, c := range dc {
 		if !IsValidDID(c) {

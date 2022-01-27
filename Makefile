@@ -1,5 +1,5 @@
 PACKAGES=$(shell go list ./...)
-# build paramters 
+# build paramters
 BUILD_FOLDER = build
 APP_VERSION = $(git describe --tags --always)
 
@@ -36,6 +36,9 @@ go.sum: go.mod
 test:
 	@go test -mod=readonly $(PACKAGES) -cover -race
 
+sim:
+	@go test -mod=readonly ./app -run TestFullAppSimulation -Enabled=true -NumBlocks=100 -BlockSize=200 -Commit=true -Verbose=true -Period=0 -v -timeout 24h -Seed 100
+
 lint:
 	@echo "--> Running linter"
 	@golangci-lint run
@@ -45,10 +48,10 @@ lint:
 ###                           Chain Initialization                          ###
 ###############################################################################
 
-start-dev: install 
+start-dev: install
 	./scripts/seeds/00_start_chain.sh
 
-seed: 
+seed:
 	./scripts/seeds/01_identifier_seeds.sh
 	./scripts/seeds/02_verifiable_credentials_seeds.sh
 	./scripts/seeds/03_issuer_seeds.sh
@@ -99,4 +102,3 @@ release-minor: _release-minor git-release-prepare
 _release-major:
 	$(eval APP_VERSION = $(shell git describe --tags | awk -F '("|")' '{ print($$1)}' | awk -F. '{$$(NF-2) = $$(NF-2) + 1;} 1' | sed 's/ /./g' | awk -F. '{$$(NF-1) = 0;} 1' | sed 's/ /./g' | awk -F. '{$$(NF) = 0;} 1' | sed 's/ /./g' ))
 release-major: _release-major git-release-prepare
-

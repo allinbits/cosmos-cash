@@ -346,8 +346,7 @@ func TestMsgUpdateDidDocument(t *testing.T) {
 
 	for i, tc := range tests {
 		msg := NewMsgUpdateDidDocument(
-			tc.id,
-			tc.controllers,
+			&DidDocument{Id: tc.id, Controller: tc.controllers},
 			tc.signer,
 		)
 

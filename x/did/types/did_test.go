@@ -114,10 +114,12 @@ func TestIsValidRFC3986Uri(t *testing.T) {
 
 func TestIsValidDIDDocument(t *testing.T) {
 	tests := []struct {
+		name string
 		didFn func() *DidDocument
 		want  bool
 	}{
 		{
+			"PASS: document is valid",
 			func() *DidDocument {
 				return &DidDocument{
 					Context: []string{contextDIDBase},
@@ -127,6 +129,7 @@ func TestIsValidDIDDocument(t *testing.T) {
 			true, // all good
 		},
 		{
+			"FAIL: empty context",
 			func() *DidDocument {
 				return &DidDocument{
 					Context: []string{},
@@ -136,6 +139,7 @@ func TestIsValidDIDDocument(t *testing.T) {
 			false, // missing context
 		},
 		{
+			"PASS: minimal did document",
 			func() *DidDocument {
 				dd, _ := NewDidDocument("did:cosmos:cash:1")
 				return &dd
@@ -143,6 +147,7 @@ func TestIsValidDIDDocument(t *testing.T) {
 			true, // all good
 		},
 		{
+			"FAIL: empty did",
 			func() *DidDocument {
 				dd, _ := NewDidDocument("")
 				return &dd
@@ -150,32 +155,25 @@ func TestIsValidDIDDocument(t *testing.T) {
 			false, // empty id
 		},
 		{
+			"FAIL: nil did document",
 			func() *DidDocument {
 				return nil
 			},
 			false, // nil pointer
 		},
 		{
+			"PASS: did with valid controller",
 			func() *DidDocument {
-				dd, _ := NewDidDocument("did:cosmos:key:cas:1", WithControllers(
-					"did:cosmos:key:",
+				dd, _ := NewDidDocument("did:cash:key:cas:1", WithControllers(
+					"did:cash:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
 				))
 				return &dd
 			},
-			true, // nil pointer
-		},
-		{
-			func() *DidDocument {
-				dd, _ := NewDidDocument("did:cosmos:key:cas:1", WithControllers(
-					"did:cosmos:nonsense",
-				))
-				return &dd
-			},
-			false, // nil pointer
+			true,
 		},
 	}
-	for i, tt := range tests {
-		t.Run(fmt.Sprint("TestIsValidDIDDocument#", i), func(t *testing.T) {
+	for _, tt := range tests {
+		t.Run(fmt.Sprint("TestIsValidDIDDocument#", tt.name), func(t *testing.T) {
 			if got := IsValidDIDDocument(tt.didFn()); got != tt.want {
 				t.Errorf("TestIsValidDIDDocument() = %v, want %v", got, tt.want)
 			}
@@ -383,7 +381,7 @@ func TestNewDidDocument(t *testing.T) {
 						"DIDCommMessaging",
 						"https://agent.xyz/1234",
 					}),
-					WithControllers("did:cash:controller-1"),
+					WithControllers("did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2"),
 				},
 			},
 			wantDid: DidDocument{
@@ -392,7 +390,7 @@ func TestNewDidDocument(t *testing.T) {
 					contextDIDBase,
 				},
 				Id:         "did:cash:subject",
-				Controller: []string{"did:cash:controller-1"},
+				Controller: []string{"did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2"},
 				VerificationMethod: []*VerificationMethod{
 					{
 						"did:cash:subject#key-1",
@@ -522,31 +520,31 @@ func TestNewDidDocument(t *testing.T) {
 	}
 }
 
-func TestDidDocument_SetControllers(t *testing.T) {
+func TestDidDocument_AddControllers(t *testing.T) {
 
 	tests := []struct {
 		malleate    func() DidDocument
 		controllers []string
+		expectedControllers []string
 		wantErr     bool
 	}{
 		{
 			func() DidDocument {
 				dd, _ := NewDidDocument("did:cash:subject",
 					WithControllers(
-						"did:cash:controller-1",
-						"did:cash:controller-2",
-						"did:cash:controller-3",
-						"did:cash:controller-4",
-						"did:cash:controller-4", // duplicate controllers
-						"did:cash:controller-4",
-						"did:cash:controller-4",
+						"did:cosmos:key:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+						"did:cosmos:key:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8", // duplicate controllers
 					),
 				)
 				return dd
 			},
 			[]string{
-				"did:cash:controller-1",
-				"did:cash:controller-4",
+				"did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
+			},
+			[]string{
+				"did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
+				"did:cosmos:key:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+
 			},
 			false,
 		},
@@ -554,48 +552,48 @@ func TestDidDocument_SetControllers(t *testing.T) {
 			func() DidDocument {
 				dd, _ := NewDidDocument("did:cash:subject",
 					WithControllers(
-						"did:cash:controller-1",
-						"did:cash:controller-2",
-						"did:cash:controller-3",
-						"did:cash:controller-4",
+						"did:cosmos:key:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 					),
 				)
 				return dd
 			},
 			[]string{
-				"did:cash:controller-1",
-				"not a did:cash:controller-4",
+				"did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
+				"not a did:cosmos:key:cosmos100000000000000000000000000000000000004",
 			},
+			[]string{},
 			true, // invalid controller did
 		},
 		{
 			func() DidDocument {
 				dd, _ := NewDidDocument("did:cash:subject",
 					WithControllers(
-						"did:cash:controller-1",
-						"did:cash:controller-2",
-						"did:cash:controller-3",
-						"did:cash:controller-4",
+						"did:cosmos:key:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+						"did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
 					),
 				)
 				return dd
 			},
 			nil,
+			[]string{
+				"did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
+				"did:cosmos:key:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+			},
 			false,
 		},
 	}
 	for i, tt := range tests {
-		t.Run(fmt.Sprint("TestDidDocument_SetControllers#", i), func(t *testing.T) {
+		t.Run(fmt.Sprint("TestDidDocument_AddControllers#", i), func(t *testing.T) {
 			didDoc := tt.malleate()
-			err := didDoc.SetControllers(tt.controllers...)
+			err := didDoc.AddControllers(tt.controllers...)
 
 			if tt.wantErr {
-				require.NotNil(t, err, "test: TestDidDocument_SetControllers#%v", i)
+				require.NotNil(t, err, "test: TestDidDocument_AddControllers#%v", i)
 				return
 			}
 
-			require.Nil(t, err, "test: TestDidDocument_SetControllers#%v", i)
-			assert.Equal(t, tt.controllers, didDoc.Controller)
+			require.Nil(t, err, "test: TestDidDocument_AddControllers#%v", i)
+			assert.Equal(t, tt.expectedControllers, didDoc.Controller)
 
 		})
 	}

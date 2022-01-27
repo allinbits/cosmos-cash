@@ -8,7 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
 
-	"github.com/allinbits/cosmos-cash/v2/x/issuer/types"
+	"github.com/allinbits/cosmos-cash/v3/x/issuer/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module

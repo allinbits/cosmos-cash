@@ -5,7 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/allinbits/cosmos-cash/v2/x/issuer/types"
+	"github.com/allinbits/cosmos-cash/v3/x/issuer/types"
 )
 
 var _ types.QueryServer = Keeper{}

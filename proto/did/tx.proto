@@ -5,7 +5,7 @@ import "gogoproto/gogo.proto";
 import "did/did.proto";
 import "google/api/annotations.proto";
 
-option go_package = "github.com/allinbits/cosmos-cash/v2/x/did/types";
+option go_package = "github.com/allinbits/cosmos-cash/v3/x/did/types";
 
 // Msg defines the identity Msg service.
 service Msg {

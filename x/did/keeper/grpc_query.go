@@ -7,7 +7,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/allinbits/cosmos-cash/v2/x/did/types"
+	"github.com/allinbits/cosmos-cash/v3/x/did/types"
 )
 
 var _ types.QueryServer = Keeper{}

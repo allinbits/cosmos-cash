@@ -536,8 +536,6 @@ func (didDoc DidDocument) GetVerificationMethodBlockchainAddress(methodID string
 				address, err = toAddress(k.PublicKeyMultibase[1:])
 			case *VerificationMethod_PublicKeyHex:
 				address, err = toAddress(k.PublicKeyHex)
-			default:
-				err = ErrKeyFormatNotSupported
 			}
 			return
 		}

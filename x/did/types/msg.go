@@ -348,7 +348,7 @@ func (MsgAddController) Route() string {
 
 // Type implements sdk.Msg
 func (MsgAddController) Type() string {
-	return TypeMsgDeleteService
+	return TypeMsgAddController
 }
 
 func (msg MsgAddController) GetSignBytes() []byte {
@@ -392,7 +392,7 @@ func (MsgDeleteController) Route() string {
 
 // Type implements sdk.Msg
 func (MsgDeleteController) Type() string {
-	return TypeMsgDeleteService
+	return TypeMsgDeleteController
 }
 
 func (msg MsgDeleteController) GetSignBytes() []byte {

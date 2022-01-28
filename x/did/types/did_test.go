@@ -2,6 +2,12 @@ package types
 
 import (
 	"fmt"
+
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
+	"github.com/cosmos/cosmos-sdk/crypto/types"
+	"github.com/cosmos/cosmos-sdk/simapp"
+
 	"testing"
 	"time"
 
@@ -9,7 +15,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestDID(t *testing.T) {
+func TestNewChainDID(t *testing.T) {
 
 	tests := []struct {
 		did   string
@@ -37,6 +43,54 @@ func TestDID(t *testing.T) {
 			if got := NewChainDID(tt.chain, tt.did); got != tt.want {
 				t.Errorf("DID() = %v, want %v", got, tt.want)
 			}
+		})
+	}
+}
+
+func TestNewKeyDID(t *testing.T) {
+
+	tests := []struct {
+		name    string
+		account string
+		want    DID
+	}{
+		{
+			"PASS: valid account",
+			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+			"did:cosmos:key:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equalf(t, tt.want, NewKeyDID(tt.account), "NewKeyDID(%v)", tt.account)
+		})
+	}
+}
+
+func TestDID_NewVerificationMethodID(t *testing.T) {
+
+	tests := []struct {
+		name string
+		did  DID
+		vmID string
+		want string
+	}{
+		{
+			"PASS: generated vmId for network DID",
+			DID("did:cosmos:net:foochain:whatever"),
+			"123456",
+			"did:cosmos:net:foochain:whatever#123456",
+		},
+		{
+			"PASS: generated vmId for key DID",
+			DID("did:cosmos:key:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"),
+			"123456",
+			"did:cosmos:key:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8#123456",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equalf(t, tt.want, tt.did.NewVerificationMethodID(tt.vmID), "NewVerificationMethodID(%v)", tt.vmID)
 		})
 	}
 }
@@ -114,7 +168,7 @@ func TestIsValidRFC3986Uri(t *testing.T) {
 
 func TestIsValidDIDDocument(t *testing.T) {
 	tests := []struct {
-		name string
+		name  string
 		didFn func() *DidDocument
 		want  bool
 	}{
@@ -123,7 +177,7 @@ func TestIsValidDIDDocument(t *testing.T) {
 			func() *DidDocument {
 				return &DidDocument{
 					Context: []string{contextDIDBase},
-					Id:      "did:cosmos:cash:1",
+					Id:      "did:cosmos:net:cash:1",
 				}
 			},
 			true, // all good
@@ -133,7 +187,7 @@ func TestIsValidDIDDocument(t *testing.T) {
 			func() *DidDocument {
 				return &DidDocument{
 					Context: []string{},
-					Id:      "did:cosmos:cash:1",
+					Id:      "did:cosmos:net:cash:1",
 				}
 			},
 			false, // missing context
@@ -141,7 +195,8 @@ func TestIsValidDIDDocument(t *testing.T) {
 		{
 			"PASS: minimal did document",
 			func() *DidDocument {
-				dd, _ := NewDidDocument("did:cosmos:cash:1")
+				dd, err := NewDidDocument("did:cosmos:cash:1")
+				assert.NoError(t, err)
 				return &dd
 			},
 			true, // all good
@@ -149,8 +204,10 @@ func TestIsValidDIDDocument(t *testing.T) {
 		{
 			"FAIL: empty did",
 			func() *DidDocument {
-				dd, _ := NewDidDocument("")
-				return &dd
+				return &DidDocument{
+					Context: []string{contextDIDBase},
+					Id:      "",
+				}
 			},
 			false, // empty id
 		},
@@ -164,12 +221,26 @@ func TestIsValidDIDDocument(t *testing.T) {
 		{
 			"PASS: did with valid controller",
 			func() *DidDocument {
-				dd, _ := NewDidDocument("did:cash:key:cas:1", WithControllers(
-					"did:cash:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
+				dd, err := NewDidDocument("did:cosmos:key:cas:1", WithControllers(
+					"did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
 				))
+				assert.NoError(t, err)
 				return &dd
 			},
 			true,
+		},
+		{
+			"FAIL: invalid controller",
+			func() *DidDocument {
+				return &DidDocument{
+					Context: []string{contextDIDBase},
+					Id:      "did:cosmos:net:foochain:1",
+					Controller: []string{
+						"did:cosmos:net:foochain:whatever",
+					},
+				}
+			},
+			false,
 		},
 	}
 	for _, tt := range tests {
@@ -523,12 +594,14 @@ func TestNewDidDocument(t *testing.T) {
 func TestDidDocument_AddControllers(t *testing.T) {
 
 	tests := []struct {
-		malleate    func() DidDocument
-		controllers []string
+		name                string
+		malleate            func() DidDocument
+		controllers         []string
 		expectedControllers []string
-		wantErr     bool
+		wantErr             error
 	}{
 		{
+			"PASS: controllers added",
 			func() DidDocument {
 				dd, _ := NewDidDocument("did:cash:subject",
 					WithControllers(
@@ -544,11 +617,11 @@ func TestDidDocument_AddControllers(t *testing.T) {
 			[]string{
 				"did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
 				"did:cosmos:key:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
-
 			},
-			false,
+			nil,
 		},
 		{
+			"FAIL: invalid controller did",
 			func() DidDocument {
 				dd, _ := NewDidDocument("did:cash:subject",
 					WithControllers(
@@ -562,9 +635,27 @@ func TestDidDocument_AddControllers(t *testing.T) {
 				"not a did:cosmos:key:cosmos100000000000000000000000000000000000004",
 			},
 			[]string{},
-			true, // invalid controller did
+			sdkerrors.Wrapf(ErrInvalidDIDFormat, "did document controller validation error 'not a did:cosmos:key:cosmos100000000000000000000000000000000000004'"),
 		},
 		{
+			"FAIL: controller did is not type key",
+			func() DidDocument {
+				dd, _ := NewDidDocument("did:cash:subject",
+					WithControllers(
+						"did:cosmos:key:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+					),
+				)
+				return dd
+			},
+			[]string{
+				"did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
+				"did:cosmos:net:foochain:1234",
+			},
+			[]string{},
+			sdkerrors.Wrapf(ErrInvalidInput, "did document controller 'did:cosmos:net:foochain:1234' must be of type key"),
+		},
+		{
+			"PASS: controllers empty",
 			func() DidDocument {
 				dd, _ := NewDidDocument("did:cash:subject",
 					WithControllers(
@@ -579,7 +670,7 @@ func TestDidDocument_AddControllers(t *testing.T) {
 				"did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
 				"did:cosmos:key:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
 			},
-			false,
+			nil,
 		},
 	}
 	for i, tt := range tests {
@@ -587,14 +678,90 @@ func TestDidDocument_AddControllers(t *testing.T) {
 			didDoc := tt.malleate()
 			err := didDoc.AddControllers(tt.controllers...)
 
-			if tt.wantErr {
-				require.NotNil(t, err, "test: TestDidDocument_AddControllers#%v", i)
-				return
+			if tt.wantErr == nil {
+				assert.NoError(t, err)
+			} else {
+				assert.Error(t, err)
+				assert.Equal(t, tt.wantErr.Error(), err.Error())
 			}
+		})
+	}
+}
 
-			require.Nil(t, err, "test: TestDidDocument_AddControllers#%v", i)
-			assert.Equal(t, tt.expectedControllers, didDoc.Controller)
+func TestDidDocument_DeleteControllers(t *testing.T) {
 
+	tests := []struct {
+		name                string
+		malleate            func() DidDocument
+		controllers         []string
+		expectedControllers []string
+		wantErr             error
+	}{
+		{
+			"PASS: controllers deleted",
+			func() DidDocument {
+				dd, _ := NewDidDocument("did:cash:subject",
+					WithControllers(
+						"did:cosmos:key:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+						"did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
+					),
+				)
+				return dd
+			},
+			[]string{
+				"did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
+			},
+			[]string{
+				"did:cosmos:key:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+			},
+			nil,
+		},
+		{
+			"FAIL: invalid controller did",
+			func() DidDocument {
+				dd, _ := NewDidDocument("did:cash:subject",
+					WithControllers(
+						"did:cosmos:key:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+					),
+				)
+				return dd
+			},
+			[]string{
+				"not a did:cosmos:key:cosmos100000000000000000000000000000000000004",
+			},
+			[]string{},
+			sdkerrors.Wrapf(ErrInvalidDIDFormat, "did document controller validation error 'not a did:cosmos:key:cosmos100000000000000000000000000000000000004'"),
+		},
+		{
+			"PASS: controllers empty",
+			func() DidDocument {
+				dd, _ := NewDidDocument("did:cash:subject",
+					WithControllers(
+						"did:cosmos:key:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+						"did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
+					),
+				)
+				return dd
+			},
+			nil,
+			[]string{
+				"did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
+				"did:cosmos:key:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+			},
+			nil,
+		},
+	}
+	for i, tt := range tests {
+		t.Run(fmt.Sprint("TestDidDocument_AddControllers#", i), func(t *testing.T) {
+			didDoc := tt.malleate()
+			err := didDoc.DeleteControllers(tt.controllers...)
+
+			if tt.wantErr == nil {
+				assert.NoError(t, err)
+			} else {
+				assert.Error(t, err)
+				assert.Equal(t, tt.wantErr.Error(), err.Error())
+			}
 		})
 	}
 }
@@ -1330,19 +1497,21 @@ func TestDidDocument_SetVerificationRelationships(t *testing.T) {
 func TestDidDocument_HasRelationship(t *testing.T) {
 
 	type params struct {
-		malleate      func() DidDocument
+		didFn         func() DidDocument
 		signer        BlockchainAccountID
 		relationships []string
 	}
 	tests := []struct {
+		name                    string
 		params                  params
 		expectedHasRelationship bool
 	}{
 		{
+			name:                    "PASS: has relationships (multibase)",
 			expectedHasRelationship: true,
 			params: params{
-				malleate: func() DidDocument {
-					dd, _ := NewDidDocument("did:cash:subject", WithVerifications(
+				didFn: func() DidDocument {
+					dd, err := NewDidDocument("did:cash:subject", WithVerifications(
 						NewVerification(
 							NewVerificationMethod(
 								"did:cash:subject#key-1",
@@ -1356,6 +1525,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 							nil,
 						),
 					))
+					assert.NoError(t, err)
 					return dd
 				},
 				signer: NewBlockchainAccountID("cash", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"),
@@ -1366,10 +1536,11 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 			},
 		},
 		{
+			name:                    "PASS: relationships missing (multibase, blockchainaccountid, hex)",
 			expectedHasRelationship: false,
 			params: params{
-				malleate: func() DidDocument {
-					dd, _ := NewDidDocument("did:cash:subject", WithVerifications(
+				didFn: func() DidDocument {
+					dd, err := NewDidDocument("did:cash:subject", WithVerifications(
 						NewVerification(
 							NewVerificationMethod(
 								"did:cash:subject#key-1",
@@ -1384,7 +1555,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 						),
 						NewVerification(
 							NewVerificationMethod(
-								"did:cash:controller-1#key-1",
+								"did:cash:controller-1#key-2",
 								"did:cash:controller-1",
 								NewBlockchainAccountID("cash", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"),
 							),
@@ -1393,7 +1564,20 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 							},
 							nil,
 						),
+						NewVerification(
+							NewVerificationMethod(
+								"did:cash:subject#key-3",
+								"did:cash:subject",
+								NewPublicKeyHex([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215}, DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
+							),
+							[]string{
+								Authentication,
+								KeyAgreement,
+							},
+							nil,
+						),
 					))
+					assert.NoError(t, err)
 					return dd
 				},
 				signer: NewBlockchainAccountID("cash", "subject"),
@@ -1403,10 +1587,12 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 			},
 		},
 		{
+			name:                    "PASS: relationships missing (blockchainaccountid)",
 			expectedHasRelationship: false,
 			params: params{
-				malleate: func() DidDocument {
-					dd, _ := NewDidDocument("did:cash:subject")
+				didFn: func() DidDocument {
+					dd, err := NewDidDocument("did:cash:subject")
+					assert.NoError(t, err)
 					return dd
 				},
 				signer: NewBlockchainAccountID("cash", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"),
@@ -1416,10 +1602,11 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 			},
 		},
 		{
+			name:                    "PASS: relationships missing (Multibase)",
 			expectedHasRelationship: false,
 			params: params{
-				malleate: func() DidDocument {
-					dd, _ := NewDidDocument("did:cash:subject", WithVerifications(
+				didFn: func() DidDocument {
+					dd, err := NewDidDocument("did:cash:subject", WithVerifications(
 						NewVerification(
 							NewVerificationMethod(
 								"did:cash:subject#key-1",
@@ -1433,6 +1620,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 							nil,
 						),
 					))
+					assert.NoError(t, err)
 					return dd
 				},
 				signer:        NewBlockchainAccountID("cash", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"),
@@ -1440,10 +1628,11 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 			},
 		},
 		{
+			name:                    "PASS: has relationship (BlockchainAccountID)",
 			expectedHasRelationship: true,
 			params: params{
-				malleate: func() DidDocument {
-					dd, _ := NewDidDocument("did:cash:subject", WithVerifications(
+				didFn: func() DidDocument {
+					dd, err := NewDidDocument("did:cash:subject", WithVerifications(
 						NewVerification(
 							NewVerificationMethod(
 								"did:cash:subject#key-1",
@@ -1467,6 +1656,7 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 							nil,
 						),
 					))
+					assert.NoError(t, err)
 					return dd
 				},
 				signer: NewBlockchainAccountID("cash", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"),
@@ -1475,10 +1665,36 @@ func TestDidDocument_HasRelationship(t *testing.T) {
 				},
 			},
 		},
+		{
+			name:                    "PASS:  missing relationship (PublicKeyHex)",
+			expectedHasRelationship: false,
+			params: params{
+				didFn: func() DidDocument {
+					dd, err := NewDidDocument("did:cash:subject", WithVerifications(
+						NewVerification(
+							NewVerificationMethod(
+								"did:cash:subject#key-1",
+								"did:cash:subject",
+								NewPublicKeyHex([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215}, DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
+							),
+							[]string{
+								Authentication,
+								KeyAgreement,
+							},
+							nil,
+						),
+					))
+					assert.NoError(t, err)
+					return dd
+				},
+				signer:        NewBlockchainAccountID("cash", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"),
+				relationships: nil,
+			},
+		},
 	}
 	for i, tt := range tests {
 		t.Run(fmt.Sprint("TestDidDocument_SetVerificationRelationships#", i), func(t *testing.T) {
-			didDoc := tt.params.malleate()
+			didDoc := tt.params.didFn()
 			gotHasRelationship := didDoc.HasRelationship(tt.params.signer, tt.params.relationships...)
 			assert.Equal(t, tt.expectedHasRelationship, gotHasRelationship)
 		})
@@ -1624,7 +1840,7 @@ func TestDidDocument_AddServices(t *testing.T) {
 
 func TestDidDocument_DeleteService(t *testing.T) {
 	type params struct {
-		malleate func() DidDocument // build a did document
+		didFn    func() DidDocument // build a did document
 		methodID string             // input list of verifications
 	}
 	tests := []struct {
@@ -1734,11 +1950,458 @@ func TestDidDocument_DeleteService(t *testing.T) {
 	}
 	for i, tt := range tests {
 		t.Run(fmt.Sprint("TestDidDocument_DeleteService#", i), func(t *testing.T) {
-			gotDid := tt.params.malleate()
+			gotDid := tt.params.didFn()
 
 			gotDid.DeleteService(tt.params.methodID)
 
 			assert.Equal(t, tt.wantDid, gotDid)
+		})
+	}
+}
+
+func TestBlockchainAccountID_GetAddress(t *testing.T) {
+	tests := []struct {
+		name string
+		baID BlockchainAccountID
+		want string
+	}{
+		{
+			"PASS: can get address",
+			BlockchainAccountID("cosmos:foochain:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"),
+			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+		},
+		{
+			// TODO: this should result in an error
+			"PASS: address is empty",
+			BlockchainAccountID("cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"),
+			"",
+		},
+		{
+			// TODO: this should result in an error
+			"PASS: can get address (but address is wrong)",
+			BlockchainAccountID("cosmos:foochain:whatever"),
+			"whatever",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equalf(t, tt.want, tt.baID.GetAddress(), "GetAddress()")
+		})
+	}
+}
+
+func TestNewPublicKeyMultibaseFromHex(t *testing.T) {
+	type args struct {
+		pubKeyHex string
+		vmType    VerificationMaterialType
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantPkm PublicKeyMultibase
+		wantErr assert.ErrorAssertionFunc
+	}{
+		{
+			"PASS: key match",
+			args{
+				pubKeyHex: "03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7",
+				vmType:    DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
+			},
+			PublicKeyMultibase{
+				data:   []byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215},
+				vmType: DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
+			},
+			assert.NoError,
+		},
+		{
+			"FAIL: invalid hex key",
+			args{
+				pubKeyHex: "not hex string",
+				vmType:    DIDVMethodTypeEcdsaSecp256k1VerificationKey2019,
+			},
+			PublicKeyMultibase{
+				data:   nil,
+				vmType: "",
+			},
+			assert.Error, // TODO: check the error message
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotPkm, err := NewPublicKeyMultibaseFromHex(tt.args.pubKeyHex, tt.args.vmType)
+			if !tt.wantErr(t, err, fmt.Sprintf("NewPublicKeyMultibaseFromHex(%v, %v)", tt.args.pubKeyHex, tt.args.vmType)) {
+				return
+			}
+			assert.Equalf(t, tt.wantPkm, gotPkm, "NewPublicKeyMultibaseFromHex(%v, %v)", tt.args.pubKeyHex, tt.args.vmType)
+
+		})
+	}
+}
+
+func TestDidDocument_HasPublicKey(t *testing.T) {
+
+	tests := []struct {
+		name   string
+		didFn  func() DidDocument
+		pubkey func() types.PubKey
+		want   bool
+	}{
+		{
+			"PASS: has public key (multibase)",
+			func() DidDocument {
+				dd, err := NewDidDocument("did:cash:subject", WithVerifications(
+					NewVerification(
+						NewVerificationMethod(
+							"did:cash:subject#key-1",
+							"did:cash:subject",
+							NewPublicKeyMultibase([]byte{2, 201, 95, 248, 187, 133, 206, 97, 166, 70, 229, 226, 88, 124, 29, 43, 70, 3, 244, 225, 19, 128, 44, 132, 110, 15, 15, 35, 40, 189, 237, 71, 245}, DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
+						),
+						[]string{
+							Authentication,
+							KeyAgreement,
+						},
+						nil,
+					),
+				))
+				assert.NoError(t, err)
+				return dd
+			},
+			func() types.PubKey {
+				var pk types.PubKey
+				c := simapp.MakeTestEncodingConfig().Marshaler
+				err := c.UnmarshalInterfaceJSON([]byte(`{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"Aslf+LuFzmGmRuXiWHwdK0YD9OETgCyEbg8PIyi97Uf1"}`), &pk)
+				assert.NoError(t, err)
+				return pk
+
+			},
+			true,
+		},
+		{
+			"PASS: doesn't have public key (multibase)",
+			func() DidDocument {
+				dd, err := NewDidDocument("did:cash:subject", WithVerifications(
+					NewVerification(
+						NewVerificationMethod(
+							"did:cash:subject#key-1",
+							"did:cash:subject",
+							NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215}, DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
+						),
+						[]string{
+							Authentication,
+							KeyAgreement,
+						},
+						nil,
+					),
+				))
+				assert.NoError(t, err)
+				return dd
+			},
+			func() types.PubKey {
+				var pk types.PubKey
+				c := simapp.MakeTestEncodingConfig().Marshaler
+				err := c.UnmarshalInterfaceJSON([]byte(`{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"Aslf+LuFzmGmRuXiWHwdK0YD9OETgCyEbg8PIyi97Uf1"}`), &pk)
+				assert.NoError(t, err)
+				return pk
+
+			},
+			false,
+		},
+		{
+			"PASS: has public key (blockchainAccount)",
+			func() DidDocument {
+				dd, err := NewDidDocument("did:cash:subject", WithVerifications(
+					NewVerification(
+						NewVerificationMethod(
+							"did:cash:subject#key-1",
+							"did:cash:subject",
+							NewBlockchainAccountID("foochain", "cosmos17t8t3t6a6vpgk69perfyq930593sa8dn4kzsdf"),
+						),
+						[]string{
+							Authentication,
+							KeyAgreement,
+						},
+						nil,
+					),
+				))
+				assert.NoError(t, err)
+				return dd
+			},
+			func() types.PubKey {
+				var pk types.PubKey
+				c := simapp.MakeTestEncodingConfig().Marshaler
+				err := c.UnmarshalInterfaceJSON([]byte(`{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"Aslf+LuFzmGmRuXiWHwdK0YD9OETgCyEbg8PIyi97Uf1"}`), &pk)
+				assert.NoError(t, err)
+				return pk
+
+			},
+			true,
+		},
+		{
+			"PASS: doesn't have public key (blockchainAccountId)",
+			func() DidDocument {
+				dd, err := NewDidDocument("did:cash:subject", WithVerifications(
+					NewVerification(
+						NewVerificationMethod(
+							"did:cash:subject#key-1",
+							"did:cash:subject",
+							NewBlockchainAccountID("foochain", "cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2"),
+						),
+						[]string{
+							Authentication,
+							KeyAgreement,
+						},
+						nil,
+					),
+				))
+				assert.NoError(t, err)
+				return dd
+			},
+			func() types.PubKey {
+				var pk types.PubKey
+				c := simapp.MakeTestEncodingConfig().Marshaler
+				err := c.UnmarshalInterfaceJSON([]byte(`{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"Aslf+LuFzmGmRuXiWHwdK0YD9OETgCyEbg8PIyi97Uf1"}`), &pk)
+				assert.NoError(t, err)
+				return pk
+
+			},
+			false,
+		},
+		{
+			"PASS: has public key (publicKeyHex)",
+			func() DidDocument {
+				dd, err := NewDidDocument("did:cash:subject", WithVerifications(
+					NewVerification(
+						NewVerificationMethod(
+							"did:cash:subject#key-1",
+							"did:cash:subject",
+							NewPublicKeyHex([]byte{2, 201, 95, 248, 187, 133, 206, 97, 166, 70, 229, 226, 88, 124, 29, 43, 70, 3, 244, 225, 19, 128, 44, 132, 110, 15, 15, 35, 40, 189, 237, 71, 245}, DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
+						),
+						[]string{
+							Authentication,
+							KeyAgreement,
+						},
+						nil,
+					),
+				))
+				assert.NoError(t, err)
+				return dd
+			},
+			func() types.PubKey {
+				var pk types.PubKey
+				c := simapp.MakeTestEncodingConfig().Marshaler
+				err := c.UnmarshalInterfaceJSON([]byte(`{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"Aslf+LuFzmGmRuXiWHwdK0YD9OETgCyEbg8PIyi97Uf1"}`), &pk)
+				assert.NoError(t, err)
+				return pk
+
+			},
+			true,
+		},
+		{
+			"PASS: doesn't have public key (pubKeyHex)",
+			func() DidDocument {
+				dd, err := NewDidDocument("did:cash:subject", WithVerifications(
+					NewVerification(
+						NewVerificationMethod(
+							"did:cash:subject#key-1",
+							"did:cash:subject",
+							NewPublicKeyHex([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215}, DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
+						),
+						[]string{
+							Authentication,
+							KeyAgreement,
+						},
+						nil,
+					),
+				))
+				assert.NoError(t, err)
+				return dd
+			},
+			func() types.PubKey {
+				var pk types.PubKey
+				c := simapp.MakeTestEncodingConfig().Marshaler
+				err := c.UnmarshalInterfaceJSON([]byte(`{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"Aslf+LuFzmGmRuXiWHwdK0YD9OETgCyEbg8PIyi97Uf1"}`), &pk)
+				assert.NoError(t, err)
+				return pk
+
+			},
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			didDoc := tt.didFn()
+			pubKey := tt.pubkey()
+			assert.Equalf(t, tt.want, didDoc.HasPublicKey(pubKey), "HasPublicKey(%v)", pubKey)
+		})
+	}
+}
+
+func TestDidDocument_GetVerificationMethodBlockchainAddress(t *testing.T) {
+	tests := []struct {
+		name        string
+		didFn       func() DidDocument
+		methodID    string
+		wantAddress string
+		wantErr     error
+	}{
+		{
+			"PASS: get address (PublicKeyMultibase)",
+			func() DidDocument {
+				dd, err := NewDidDocument("did:cash:subject", WithVerifications(
+					NewVerification(
+						NewVerificationMethod(
+							"did:cash:subject#key-1",
+							"did:cash:subject",
+							NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215}, DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
+						),
+						[]string{
+							Authentication,
+							KeyAgreement,
+						},
+						nil,
+					),
+				))
+				assert.NoError(t, err)
+				return dd
+			},
+			"did:cash:subject#key-1",
+			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+			nil,
+		},
+		{
+			"PASS: get address (PublicKeyHex)",
+			func() DidDocument {
+				dd, err := NewDidDocument("did:cash:subject", WithVerifications(
+					NewVerification(
+						NewVerificationMethod(
+							"did:cash:subject#key-1",
+							"did:cash:subject",
+							NewPublicKeyHex([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215}, DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
+						),
+						[]string{
+							Authentication,
+							KeyAgreement,
+						},
+						nil,
+					),
+				))
+				assert.NoError(t, err)
+				return dd
+			},
+			"did:cash:subject#key-1",
+			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+			nil,
+		},
+		{
+			"PASS: get address (BlockchainAccountID)",
+			func() DidDocument {
+				dd, err := NewDidDocument("did:cash:subject", WithVerifications(
+					NewVerification(
+						NewVerificationMethod(
+							"did:cash:subject#key-1",
+							"did:cash:subject",
+							NewBlockchainAccountID("foochain", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"),
+						),
+						[]string{
+							Authentication,
+							KeyAgreement,
+						},
+						nil,
+					),
+				))
+				assert.NoError(t, err)
+				return dd
+			},
+			"did:cash:subject#key-1",
+			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+			nil,
+		},
+		{
+			"PASS: get address (BlockchainAccountID)",
+			func() DidDocument {
+				dd, err := NewDidDocument("did:cash:subject", WithVerifications(
+					NewVerification(
+						NewVerificationMethod(
+							"did:cash:subject#key-1",
+							"did:cash:subject",
+							NewBlockchainAccountID("foochain", "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"),
+						),
+						[]string{
+							Authentication,
+							KeyAgreement,
+						},
+						nil,
+					),
+				))
+				assert.NoError(t, err)
+				return dd
+			},
+			"did:cash:subject#key-2",
+			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+			ErrVerificationMethodNotFound,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			didDoc := tt.didFn()
+			gotAddress, err := didDoc.GetVerificationMethodBlockchainAddress(tt.methodID)
+			if tt.wantErr == nil {
+				assert.NoError(t, err)
+				assert.Equalf(t, tt.wantAddress, gotAddress, "GetVerificationMethodBlockchainAddress(%v)", tt.methodID)
+			} else {
+				assert.Error(t, err)
+				assert.Equal(t, tt.wantErr.Error(), err.Error())
+			}
+		})
+	}
+}
+
+func TestDidDocument_HasController(t *testing.T) {
+
+	tests := []struct {
+		name          string
+		didFn         func() DidDocument
+		controllerDID string
+		want          bool
+	}{
+		{
+			"PASS: controller found",
+			func() DidDocument {
+				dd, err := NewDidDocument(
+					"did:cash:subject",
+					WithControllers(
+						"did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
+						"did:cosmos:key:cosmos17t8t3t6a6vpgk69perfyq930593sa8dn4kzsdf",
+						),
+				)
+				assert.NoError(t, err)
+				return dd
+			},
+			"did:cosmos:key:cosmos17t8t3t6a6vpgk69perfyq930593sa8dn4kzsdf",
+			true,
+		},
+		{
+			"PASS: controller not found",
+			func() DidDocument {
+				dd, err := NewDidDocument(
+					"did:cash:subject",
+					WithControllers(
+						"did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
+						"did:cosmos:key:cosmos17t8t3t6a6vpgk69perfyq930593sa8dn4kzsdf",
+					),
+				)
+				assert.NoError(t, err)
+				return dd
+			},
+			"did:cosmos:key:cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			didDoc := tt.didFn()
+			assert.Equalf(t, tt.want, didDoc.HasController(DID(tt.controllerDID)), "HasController(%v)", tt.controllerDID)
 		})
 	}
 }

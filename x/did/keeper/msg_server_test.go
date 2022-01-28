@@ -932,12 +932,6 @@ func (suite *KeeperTestSuite) TestHandleMsgAddController() {
 
 	server := NewMsgServerImpl(suite.keeper)
 
-	// FAIL: cannot add controller, did doesn't exist
-	// FAIL: controller is not a valid did
-	// FAIL: signer not authorized to change controller
-	// FAIL: controller is not type key
-	// PASS: controller added
-	// PASS: controller already added (duplicated)
 	testCases := []struct {
 		name     string
 		malleate func()
@@ -997,13 +991,11 @@ func (suite *KeeperTestSuite) TestHandleMsgAddController() {
 
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
 
-
 				req = *types.NewMsgAddController(
 					"did:cosmos:cash:subject",
 					"did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
 					"cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2", // does not match the pub key (it's the new controller)
-					)
-
+				)
 
 				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer account %s not authorized to update the target did document at %s", "cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2", didDoc.Id)
 			},
@@ -1029,19 +1021,17 @@ func (suite *KeeperTestSuite) TestHandleMsgAddController() {
 
 				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
 
-
 				req = *types.NewMsgAddController(
 					"did:cosmos:cash:subject",
 					"did:cosmos:net:foochain:whatever",
 					"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8", // does not match the pub key (it's the new controller)
 				)
 
-
 				errExp = sdkerrors.Wrapf(types.ErrInvalidInput, "did document controller 'did:cosmos:net:foochain:whatever' must be of type key")
 			},
 		},
 		{
-			"PASS: can add controller",
+			"PASS: can add controller (via authentication relationship)",
 			func() {
 				didDoc, err := types.NewDidDocument(
 					"did:cosmos:cash:subject",
@@ -1069,6 +1059,40 @@ func (suite *KeeperTestSuite) TestHandleMsgAddController() {
 					"did:cosmos:cash:subject",
 					"did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
 					"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+				errExp = nil
+			},
+		},
+		{
+			"PASS: can add controller (via controller)",
+			func() {
+				didDoc, err := types.NewDidDocument(
+					"did:cosmos:cash:subject",
+					types.WithVerifications(
+						types.NewVerification(
+							types.NewVerificationMethod(
+								"did:cosmos:cash:subject#key-1",
+								types.DID("did:cosmos:cash:subject"),
+								types.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215}, types.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
+							),
+							[]string{types.AssertionMethod},
+							nil,
+						),
+					),
+					types.WithControllers("did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2"),
+				)
+
+				if err != nil {
+					suite.FailNow("test setup failed: ", err)
+				}
+
+				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+				suite.keeper.SetDidMetadata(suite.ctx, []byte(didDoc.Id), types.NewDidMetadata([]byte{1}, time.Now()))
+
+				req = *types.NewMsgAddController(
+					"did:cosmos:cash:subject",
+					"did:cosmos:key:cosmos17t8t3t6a6vpgk69perfyq930593sa8dn4kzsdf",
+					"cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2") // this is the controller
+
 				errExp = nil
 			},
 		},
@@ -1121,3 +1145,143 @@ func (suite *KeeperTestSuite) TestHandleMsgAddController() {
 	}
 }
 
+func (suite *KeeperTestSuite) TestHandleMsgDeleteController() {
+	var (
+		req    types.MsgDeleteController
+		errExp error
+	)
+
+	server := NewMsgServerImpl(suite.keeper)
+
+	// FAIL: cannot delete controller, did doesn't exist
+	// FAIL: signer not authorized to change controller
+	// PASS: controller removed
+	testCases := []struct {
+		name     string
+		malleate func()
+	}{
+		{
+			"FAIL: cannot delete controller, did doesn't exist",
+			func() {
+				req = *types.NewMsgDeleteController(
+					"did:cosmos:cash:subject",
+					"did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
+					"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+				errExp = sdkerrors.Wrapf(types.ErrDidDocumentNotFound, "did document at %s not found", "did:cosmos:cash:subject")
+			},
+		},
+		{
+			"FAIL: signer not authorized to change controller",
+			func() {
+
+				didDoc, _ := types.NewDidDocument(
+					"did:cosmos:cash:subject",
+					types.WithVerifications(
+						types.NewVerification(
+							types.NewVerificationMethod(
+								"did:cosmos:cash:subject#key-1",
+								types.DID("did:cosmos:cash:subject"),
+								types.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215}, types.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
+							),
+							[]string{types.CapabilityInvocation, types.CapabilityDelegation},
+							nil,
+						),
+					),
+				)
+
+				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+
+				req = *types.NewMsgDeleteController(
+					"did:cosmos:cash:subject",
+					"did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
+					"cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2", // does not match the pub key (it's the new controller)
+				)
+
+				errExp = sdkerrors.Wrapf(types.ErrUnauthorized, "signer account %s not authorized to update the target did document at %s", "cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2", didDoc.Id)
+			},
+		},
+		{
+			"PASS: can delete controller (via authentication relationship)",
+			func() {
+				didDoc, err := types.NewDidDocument(
+					"did:cosmos:cash:subject",
+					types.WithVerifications(
+						types.NewVerification(
+							types.NewVerificationMethod(
+								"did:cosmos:cash:subject#key-1",
+								types.DID("did:cosmos:cash:subject"),
+								types.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215}, types.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
+							),
+							[]string{types.Authentication},
+							nil,
+						),
+					),
+				)
+
+				if err != nil {
+					suite.FailNow("test setup failed: ", err)
+				}
+
+				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+				suite.keeper.SetDidMetadata(suite.ctx, []byte(didDoc.Id), types.NewDidMetadata([]byte{1}, time.Now()))
+
+				req = *types.NewMsgDeleteController(
+					"did:cosmos:cash:subject",
+					"did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
+					"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+				errExp = nil
+			},
+		}, {
+			"PASS: can delete controller (via controller)",
+			func() {
+				didDoc, err := types.NewDidDocument(
+					"did:cosmos:cash:subject",
+					types.WithVerifications(
+						types.NewVerification(
+							types.NewVerificationMethod(
+								"did:cosmos:cash:subject#key-1",
+								types.DID("did:cosmos:cash:subject"),
+								types.NewPublicKeyMultibase([]byte{3, 223, 208, 164, 105, 128, 109, 102, 162, 60, 124, 148, 143, 85, 193, 41, 70, 125, 109, 9, 116, 162, 34, 239, 110, 36, 165, 56, 250, 104, 130, 243, 215}, types.DIDVMethodTypeEcdsaSecp256k1VerificationKey2019),
+							),
+							[]string{types.AssertionMethod},
+							nil,
+						),
+					),
+					types.WithControllers(
+						"did:cosmos:key:cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2",
+						"did:cosmos:key:cosmos17t8t3t6a6vpgk69perfyq930593sa8dn4kzsdf",
+					),
+				)
+
+				if err != nil {
+					suite.FailNow("test setup failed: ", err)
+				}
+
+				suite.keeper.SetDidDocument(suite.ctx, []byte(didDoc.Id), didDoc)
+				suite.keeper.SetDidMetadata(suite.ctx, []byte(didDoc.Id), types.NewDidMetadata([]byte{1}, time.Now()))
+
+				req = *types.NewMsgDeleteController(
+					"did:cosmos:cash:subject",
+					"did:cosmos:key:cosmos17t8t3t6a6vpgk69perfyq930593sa8dn4kzsdf",
+					"cosmos1lvl2s8x4pta5f96appxrwn3mypsvumukvk7ck2", // this is the controller
+				)
+
+				errExp = nil
+			},
+		},
+	}
+	for _, tc := range testCases {
+		suite.Run(tc.name, func() {
+			tc.malleate()
+
+			_, err := server.DeleteController(sdk.WrapSDKContext(suite.ctx), &req)
+
+			if errExp == nil {
+				suite.Require().NoError(err)
+			} else {
+				suite.Require().Error(err)
+				suite.Require().Equal(errExp.Error(), err.Error())
+			}
+		})
+	}
+}

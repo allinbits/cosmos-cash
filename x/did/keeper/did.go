@@ -112,6 +112,7 @@ func (k Keeper) GetAllDidDocuments(ctx sdk.Context) []types.DidDocument {
 }
 
 // GetDidDocumentsByPubKey retrieve a did document using a pubkey associated to the DID
+// TODO: this function is used only in the issuer module ante handler !
 func (k Keeper) GetDidDocumentsByPubKey(ctx sdk.Context, pubkey cryptotypes.PubKey) (dids []types.DidDocument) {
 
 	dids = k.GetAllDidDocumentsWithCondition(

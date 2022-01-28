@@ -246,6 +246,9 @@ func newConstraints(relationships ...string) VerificationRelationships {
 func executeOnDidWithRelationships(goCtx context.Context, k *Keeper, constraints VerificationRelationships, did, signer string, update func(document *types.DidDocument) error) (err error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	k.Logger(ctx).Info("request to update a did document", "target did", did)
+	// TODO: fail if the input did is of type KEY (immutable)
+	// eg: ErrInvalidState, "did document key is immutable"
+
 	// get the did document
 	didDoc, found := k.GetDidDocument(ctx, []byte(did))
 	if !found {

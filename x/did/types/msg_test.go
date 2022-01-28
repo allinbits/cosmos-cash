@@ -1,648 +1,205 @@
 package types
 
 import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/assert"
 	"testing"
-
-	"github.com/stretchr/testify/require"
 )
 
-func TestMsgCreateDidDocument(t *testing.T) {
-	tests := []struct {
-		id            string
-		verifications Verifications
-		services      Services
-		owner         string
-		expectPass    bool
-	}{
-		{
-			"did:auth:whatever",
-			Verifications{
-				&Verification{
-					[]string{string(Authentication)},
-					&VerificationMethod{
-						"did:auth:whatever#1",
-						DIDVMethodTypeEcdsaSecp256k1VerificationKey2019.String(),
-						"did:auth:whatever",
-						&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
-					},
-					[]string{},
-				},
-			},
-			Services{},
-			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
-			true,
-		},
-		{
-			"did:auth:whatever",
-			Verifications{
-				&Verification{
-					[]string{string(Authentication)},
-					&VerificationMethod{
-						"did:auth:whatever#1",
-						DIDVMethodTypeCosmosAccountAddress.String(),
-						"did:auth:whatever",
-						&VerificationMethod_BlockchainAccountID{""},
-					},
-					[]string{},
-				},
-			},
-			Services{},
-			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
-			false, // empty pub key
-		},
-		{
-			"did:auth:whatever",
-			Verifications{
-				&Verification{
-					[]string{string(Authentication)},
-					&VerificationMethod{
-						"did:auth:whatever#1",
-						"",
-						"did:auth:whatever",
-						&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
-					},
-					[]string{},
-				},
-			},
-			Services{},
-			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
-			false, // emtpy verification method type
-		},
-		{
-			"did:auth:whatever",
-			Verifications{
-				&Verification{
-					[]string{},
-					&VerificationMethod{
-						"did:auth:whatever#1",
-						DIDVMethodTypeEcdsaSecp256k1VerificationKey2019.String(),
-						"did:auth:whatever",
-						&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
-					},
-					[]string{},
-				},
-			},
-			Services{},
-			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
-			false, // empty relationships
-		},
-		{
-			"did:auth:whatever",
-			Verifications{
-				&Verification{
-					[]string{string(Authentication)},
-					&VerificationMethod{
-						"did:auth:whatever#/asd 123",
-						DIDVMethodTypeEcdsaSecp256k1VerificationKey2019.String(),
-						"did:auth:whatever",
-						&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
-					},
-					[]string{},
-				},
-			},
-			Services{},
-			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
-			false, // invalid method id
-		},
-		{
-			"did:auth:whatever",
-			Verifications{
-				&Verification{
-					[]string{string(Authentication)},
-					&VerificationMethod{
-						"did:auth:whatever#1",
-						DIDVMethodTypeEcdsaSecp256k1VerificationKey2019.String(),
-						"did:auth:whatever",
-						&VerificationMethod_PublicKeyHex{""},
-					},
-					[]string{},
-				},
-			},
-			Services{},
-			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
-			false, // empty verification key
-		},
-		{
-			"did:auth:whatever",
-			Verifications{
-				&Verification{
-					[]string{string(Authentication)},
-					&VerificationMethod{
-						"did:auth:whatever#1",
-						"",
-						"did:auth:whatever",
-						&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
-					},
-					[]string{},
-				},
-			},
-			Services{},
-			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
-			false, // empty verification method type
-		},
-		{
-			"did:auth:whatever",
-			Verifications{
-				&Verification{
-					[]string{string(Authentication)},
-					&VerificationMethod{
-						"did:auth:whatever#1",
-						DIDVMethodTypeCosmosAccountAddress.String(),
-						"",
-						&VerificationMethod_BlockchainAccountID{"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"},
-					},
-					[]string{},
-				},
-			},
-			Services{},
-			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
-			false, // invalid verification method controller
-		},
-		{
-			"did:auth:whatever",
-			Verifications{},
-			Services{},
-			"owner",
-			false, // empty verifications
-		},
-
-		{
-			"invalid did",
-			Verifications{
-				&Verification{
-					[]string{string(Authentication)},
-					&VerificationMethod{
-						"did:auth:whatever#1",
-						DIDVMethodTypeEcdsaSecp256k1VerificationKey2019.String(),
-						"cont",
-						&VerificationMethod_BlockchainAccountID{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
-					},
-					[]string{},
-				},
-			},
-			Services{},
-			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
-			false, // invalid did
-		},
-		{
-			"did:auth:whatever",
-			Verifications{
-				&Verification{
-					[]string{string(Authentication)},
-					&VerificationMethod{
-						"did:auth:whatever#1",
-						DIDVMethodTypeEcdsaSecp256k1VerificationKey2019.String(),
-						"did:auth:whatever",
-						&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
-					},
-					[]string{},
-				},
-			},
-			Services{
-				&Service{
-					"the:agent:service",
-					"DIDCommMessaging",
-					"https://agent.xyz/agent/123",
-				},
-			},
-			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
-			true,
-		},
-		{
-			"did:auth:whatever",
-			Verifications{
-				&Verification{
-					[]string{string(Authentication)},
-					&VerificationMethod{
-						"did:auth:whatever#1",
-						DIDVMethodTypeEcdsaSecp256k1VerificationKey2019.String(),
-						"did:auth:whatever",
-						&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
-					},
-					[]string{},
-				},
-			},
-			Services{
-				&Service{
-					"the:agent:service",
-					"",
-					"https://agent.xyz/agent/123",
-				},
-			},
-			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
-			false, // empty service type
-		},
-		{
-			"did:auth:whatever",
-			Verifications{
-				&Verification{
-					[]string{string(Authentication)},
-					&VerificationMethod{
-						"did:auth:whatever#1",
-						DIDVMethodTypeEcdsaSecp256k1VerificationKey2019.String(),
-						"did:auth:whatever",
-						&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
-					},
-					[]string{},
-				},
-			},
-			Services{
-				&Service{
-					"",
-					"DIDCommMessaging",
-					"https://agent.xyz/agent/123",
-				},
-			},
-			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
-			false, // service id is not valid
-		},
-		{
-			"did:auth:whatever",
-			Verifications{
-				&Verification{
-					[]string{string(Authentication)},
-					&VerificationMethod{
-						"did:auth:whatever#1",
-						DIDVMethodTypeEcdsaSecp256k1VerificationKey2019.String(),
-						"did:auth:whatever",
-						&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
-					},
-					[]string{},
-				},
-			},
-			Services{
-				&Service{
-					"this:is:fine",
-					"DIDCommMessaging",
-					"",
-				},
-			},
-			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
-			false, // service id is not valid
-		},
-	}
-
-	for i, tc := range tests {
-		msg := NewMsgCreateDidDocument(
-			tc.id,
-			tc.verifications,
-			tc.services,
-			tc.owner,
-		)
-
-		if tc.expectPass {
-			require.Nil(t, msg.ValidateBasic(), "test: TestMsgCreateDidDocument#%v", i)
-		} else {
-			require.NotNil(t, msg.ValidateBasic(), "test: TestMsgCreateDidDocument#%v", i)
-		}
-	}
+func TestMsgCreateDidDocument_Route(t *testing.T) {
+	assert.Equalf(t, ModuleName, MsgCreateDidDocument{}.Route(), "Route()")
 }
 
-func TestMsgUpdateDidDocument(t *testing.T) {
-	tests := []struct {
-		id          string
-		controllers []string
-		signer      string
-		expectPass  bool
-	}{
-		{
-			"did:cash:subject",
-			[]string{"did:cash:controller-1"},
-			"cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75",
-			true,
-		},
-		{
-			"did:cash:subject",
-			[]string{},
-			"cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75",
-			true,
-		},
-		{
-			// FIXME: duplicated controller
-			"did:cash:subject",
-			[]string{"did:cash:controller-1", "did:cash:controller-1"},
-			"cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75",
-			true,
-		},
-		{
-			"invalid did",
-			[]string{"did:cash:controller-1"},
-			"cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75",
-			false, // invalid did
-		},
-		{
-			"did:cash:subject",
-			[]string{"invalid:controller"},
-			"cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75",
-			false, // invalid controller
-		},
-		{
-			"did:cash:subject",
-			[]string{"did:cash:controller-1", "did:cash:controller-2", ""},
-			"cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75",
-			false, // invalid controller
-		},
-	}
-
-	for i, tc := range tests {
-		msg := NewMsgUpdateDidDocument(
-			&DidDocument{Id: tc.id, Controller: tc.controllers},
-			tc.signer,
-		)
-
-		if tc.expectPass {
-			require.Nil(t, msg.ValidateBasic(), "test: TestMsgUpdateDidDocument#%v", i)
-		} else {
-			require.NotNil(t, msg.ValidateBasic(), "test: TestMsgUpdateDidDocument#%v", i)
-		}
-	}
+func TestMsgCreateDidDocument_Type(t *testing.T) {
+	assert.Equalf(t, TypeMsgCreateDidDocument, MsgCreateDidDocument{}.Type(), "Type()")
 }
 
-func TestMsgAddVerification(t *testing.T) {
-	tests := []struct {
-		id         string
-		auth       Verification
-		owner      string
-		expectPass bool
-	}{
-		{
-			"did:cash:subject",
-			Verification{
-				[]string{string(Authentication)},
-				&VerificationMethod{
-					"did:cash:subject#1",
-					DIDVMethodTypeEcdsaSecp256k1VerificationKey2019.String(),
-					"did:cash:subject",
-					&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
-				},
-				[]string{},
-			},
-			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
-			true,
-		},
-		{
-			"something not right",
-			Verification{
-				[]string{string(Authentication)},
-				&VerificationMethod{
-					"did:cash:subject#1",
-					DIDVMethodTypeEcdsaSecp256k1VerificationKey2019.String(),
-					"did:cash:subject",
-					&VerificationMethod_PublicKeyHex{"03dfd0a469806d66a23c7c948f55c129467d6d0974a222ef6e24a538fa6882f3d7"},
-				},
-				[]string{},
-			},
-			"cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8",
-			false, // invalid did
-		},
-	}
-
-	for i, tc := range tests {
-		msg := NewMsgAddVerification(
-			tc.id,
-			&tc.auth,
-			tc.owner,
-		)
-
-		if tc.expectPass {
-			require.Nil(t, msg.ValidateBasic(), "test: TestMsgAddVerification#%v", i)
-		} else {
-			require.NotNil(t, msg.ValidateBasic(), "test: TestMsgAddVerification#%v", i)
-		}
-	}
+func TestMsgCreateDidDocument_GetSignBytes(t *testing.T) {
+	assert.Panicsf(t, func() { MsgCreateDidDocument{}.GetSignBytes() }, "GetSignBytes()")
 }
 
-func TestMsgRevokeVerification(t *testing.T) {
-	tests := []struct {
-		id         string
-		key        string
-		signer     string
-		expectPass bool
-	}{
-		{
-			"did:cash:subject",
-			"did:cash:subject#key-method-1",
-			"cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75",
-			true,
-		},
-		{
-			"invalid did",
-			"did:cash:subject#key-method-1",
-			"cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75",
-			false, // invalid did
-		},
-		{
-			"did:cash:subject",
-			"did:cash:subject  #   key-method-1",
-			"cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75",
-			false, // invalid method id
-		},
-		{
-			"did:cash:subject",
-			"did:cash:subject#key-method-1",
-			"",
-			true, // empty signer
-		},
-	}
-
-	for i, tc := range tests {
-		msg := NewMsgRevokeVerification(
-			tc.id,
-			tc.key,
-			tc.signer,
-		)
-
-		if tc.expectPass {
-			require.Nil(t, msg.ValidateBasic(), "test: TestMsgRevokeVerification#%v", i)
-		} else {
-			require.NotNil(t, msg.ValidateBasic(), "test: TestMsgRevokeVerification#%v", i)
-		}
-	}
+func TestMsgCreateDidDocument_GetSigners(t *testing.T) {
+	a, err := sdk.AccAddressFromBech32("cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+	assert.NoError(t, err)
+	assert.Equal(t,
+		MsgCreateDidDocument{Signer: "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"}.GetSigners(),
+		[]sdk.AccAddress{a},
+	)
+	assert.Panics(t, func(){MsgCreateDidDocument{Signer: "invalid"}.GetSigners()})
 }
 
-func TestMsgSetVerificationRelationships(t *testing.T) {
-	tests := []struct {
-		id            string
-		key           string
-		relationships []string
-		signer        string
-		expectPass    bool
-	}{
-		{
-			"did:cash:subject",
-			"did:cash:subject#key-method-1",
-			[]string{"authorization", "keyExchange"},
-			"cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75",
-			true,
-		},
-		{
-			"did:cash:subject",
-			"did:cash:subject#key-method-1",
-			[]string{"authorization"},
-			"cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75",
-			true,
-		},
-		{
-			"did:cash:subject",
-			"did:cash:subject  #   key-method-1",
-			[]string{"authorization", "keyExchange"},
-			"cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75",
-			false, // invalid method id
-		},
-		{
-			"invalid did",
-			"did:cash:subject#key-method-1",
-			[]string{"authorization", "keyExchange"},
-			"cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75",
-			false, // invalid did
-		},
-		{
-			"did:cash:subject",
-			"did:cash:subject#key-method-1",
-			[]string{},
-			"cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75",
-			false, // empty relationship
-		},
-		{
-			"did:cash:subject",
-			"did:cash:subject#key-method-1",
-			[]string{"authorization", "keyExchange"},
-			"",
-			true, // empty signer
-		},
-	}
-
-	for i, tc := range tests {
-		t.Logf("TestMsgRevokeVerification#%d", i)
-		msg := NewMsgSetVerificationRelationships(
-			tc.id,
-			tc.key,
-			tc.relationships,
-			tc.signer,
-		)
-
-		if tc.expectPass {
-			require.Nil(t, msg.ValidateBasic(), "test: TestMsgSetVerificationRelationships#%v", i)
-		} else {
-			require.NotNil(t, msg.ValidateBasic(), "test: TestMsgSetVerificationRelationships#%v", i)
-		}
-	}
+func TestMsgUpdateDidDocument_Route(t *testing.T) {
+	assert.Equalf(t, ModuleName, MsgUpdateDidDocument{}.Route(), "Route()")
 }
 
-func TestMsgAddService(t *testing.T) {
-	tests := []struct {
-		id         string
-		service    *Service
-		signer     string
-		expectPass bool
-	}{
-		{
-			"did:cash:subject",
-			&Service{
-				Id:              "a:valid:url",
-				Type:            "DIDCommMessaging",
-				ServiceEndpoint: "https://agent.xyz/validate",
-			},
-			"cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75",
-			true,
-		},
-		{
-			"invalid did",
-			&Service{
-				Id:              "my:agent",
-				Type:            "DIDCommMessaging",
-				ServiceEndpoint: "https://agent.xyz/validate",
-			},
-			"cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75",
-			false, // invalid did
-		},
-		{
-			"did:cash:subject",
-			&Service{
-				Id:              "",
-				Type:            "DIDCommMessaging",
-				ServiceEndpoint: "https://agent.xyz/validate",
-			},
-			"cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75",
-			false, // invalid agent id
-		},
-		{
-			"did:cash:subject",
-			&Service{
-				Id:              "my:agent",
-				Type:            "",
-				ServiceEndpoint: "https://agent.xyz/validate",
-			},
-			"cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75",
-			false, // empty type
-		},
-		{
-			"did:cash:subject",
-			&Service{
-				Id:              "my:agent",
-				Type:            "DIDCommMessaging",
-				ServiceEndpoint: "",
-			},
-			"cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75",
-			false, // empty service endpoint
-		},
-	}
-
-	for i, tc := range tests {
-		t.Logf("TestMsgRevokeVerification#%d", i)
-		msg := NewMsgAddService(
-			tc.id,
-			tc.service,
-			tc.signer,
-		)
-
-		if tc.expectPass {
-			require.Nil(t, msg.ValidateBasic(), "test: TestMsgAddService#%v", i)
-		} else {
-			require.NotNil(t, msg.ValidateBasic(), "test: TestMsgAddService#%v", i)
-		}
-	}
+func TestMsgUpdateDidDocument_Type(t *testing.T) {
+	assert.Equalf(t, TypeMsgUpdateDidDocument, MsgUpdateDidDocument{}.Type(), "Type()")
 }
 
-func TestMsgDeleteService(t *testing.T) {
-	tests := []struct {
-		id         string
-		serviceID  string
-		signer     string
-		expectPass bool
-	}{
-		{
-			"did:cash:subject",
-			"my:service:uri",
-			"cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75",
-			true,
-		},
-		{
-			"invalid did",
-			"my:service:uri",
-			"cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75",
-			false, //invalid did
-		},
-		{
-			"did:cash:subject",
-			"",
-			"cosmos1uam3kpjdx3wksx46lzq6y628wwyzv0guuren75",
-			false, // empty service id
-		},
-	}
+func TestMsgUpdateDidDocument_GetSignBytes(t *testing.T) {
+	assert.Panicsf(t, func() { MsgUpdateDidDocument{}.GetSignBytes() }, "GetSignBytes()")
+}
 
-	for i, tc := range tests {
-		t.Logf("TestMsgRevokeVerification#%d", i)
-		msg := NewMsgDeleteService(
-			tc.id,
-			tc.serviceID,
-			tc.signer,
-		)
+func TestMsgUpdateDidDocument_GetSigners(t *testing.T) {
+	a, err := sdk.AccAddressFromBech32("cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+	assert.NoError(t, err)
+	assert.Equal(t,
+		MsgUpdateDidDocument{Signer: "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"}.GetSigners(),
+		[]sdk.AccAddress{a},
+	)
+	assert.Panics(t, func(){MsgUpdateDidDocument{Signer: "invalid"}.GetSigners()})
+}
 
-		if tc.expectPass {
-			require.Nil(t, msg.ValidateBasic(), "test: TestMsgDeleteService#%v", i)
-		} else {
-			require.NotNil(t, msg.ValidateBasic(), "test: TestMsgDeleteService#%v", i)
-		}
-	}
+func TestMsgAddVerification_Route(t *testing.T) {
+	assert.Equalf(t, ModuleName, MsgAddVerification{}.Route(), "Route()")
+}
+
+func TestMsgAddVerification_Type(t *testing.T) {
+	assert.Equalf(t, TypeMsgAddVerification, MsgAddVerification{}.Type(), "Type()")
+}
+
+func TestMsgAddVerification_GetSignBytes(t *testing.T) {
+	assert.Panicsf(t, func() { MsgAddVerification{}.GetSignBytes() }, "GetSignBytes()")
+}
+
+func TestMsgAddVerification_GetSigners(t *testing.T) {
+	a, err := sdk.AccAddressFromBech32("cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+	assert.NoError(t, err)
+	assert.Equal(t,
+		MsgAddVerification{Signer: "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"}.GetSigners(),
+		[]sdk.AccAddress{a},
+	)
+	assert.Panics(t, func(){MsgAddVerification{Signer: "invalid"}.GetSigners()})
+}
+
+func TestMsgRevokeVerification_Route(t *testing.T) {
+	assert.Equalf(t, ModuleName, MsgRevokeVerification{}.Route(), "Route()")
+}
+
+func TestMsgRevokeVerification_Type(t *testing.T) {
+	assert.Equalf(t, TypeMsgRevokeVerification, MsgRevokeVerification{}.Type(), "Type()")
+}
+
+func TestMsgRevokeVerification_GetSignBytes(t *testing.T) {
+	assert.Panicsf(t, func() { MsgRevokeVerification{}.GetSignBytes() }, "GetSignBytes()")
+}
+
+func TestMsgRevokeVerification_GetSigners(t *testing.T) {
+	a, err := sdk.AccAddressFromBech32("cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+	assert.NoError(t, err)
+	assert.Equal(t,
+		MsgRevokeVerification{Signer: "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"}.GetSigners(),
+		[]sdk.AccAddress{a},
+	)
+	assert.Panics(t, func(){MsgRevokeVerification{Signer: "invalid"}.GetSigners()})
+}
+
+func TestMsgSetVerificationRelationships_Route(t *testing.T) {
+	assert.Equalf(t, ModuleName, MsgSetVerificationRelationships{}.Route(), "Route()")
+}
+
+func TestMsgSetVerificationRelationships_Type(t *testing.T) {
+	assert.Equalf(t, TypeMsgSetVerificationRelationships, MsgSetVerificationRelationships{}.Type(), "Type()")
+}
+
+func TestMsgSetVerificationRelationships_GetSignBytes(t *testing.T) {
+	assert.Panicsf(t, func() { MsgSetVerificationRelationships{}.GetSignBytes() }, "GetSignBytes()")
+}
+
+func TestMsgSetVerificationRelationships_GetSigners(t *testing.T) {
+	a, err := sdk.AccAddressFromBech32("cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+	assert.NoError(t, err)
+	assert.Equal(t,
+		MsgSetVerificationRelationships{Signer: "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"}.GetSigners(),
+		[]sdk.AccAddress{a},
+	)
+	assert.Panics(t, func(){MsgSetVerificationRelationships{Signer: "invalid"}.GetSigners()})
+}
+
+func TestMsgDeleteService_Route(t *testing.T) {
+	assert.Equalf(t, ModuleName, MsgDeleteService{}.Route(), "Route()")
+}
+
+func TestMsgDeleteService_Type(t *testing.T) {
+	assert.Equalf(t, TypeMsgDeleteService, MsgDeleteService{}.Type(), "Type()")
+}
+
+func TestMsgDeleteService_GetSignBytes(t *testing.T) {
+	assert.Panicsf(t, func() { MsgDeleteService{}.GetSignBytes() }, "GetSignBytes()")
+}
+
+func TestMsgDeleteService_GetSigners(t *testing.T) {
+	a, err := sdk.AccAddressFromBech32("cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+	assert.NoError(t, err)
+	assert.Equal(t,
+		MsgDeleteService{Signer: "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"}.GetSigners(),
+		[]sdk.AccAddress{a},
+	)
+	assert.Panics(t, func(){MsgDeleteService{Signer: "invalid"}.GetSigners()})
+}
+
+func TestMsgAddService_Route(t *testing.T) {
+	assert.Equalf(t, ModuleName, MsgAddService{}.Route(), "Route()")
+}
+
+func TestMsgAddService_Type(t *testing.T) {
+	assert.Equalf(t, TypeMsgAddService, MsgAddService{}.Type(), "Type()")
+}
+
+func TestMsgAddService_GetSignBytes(t *testing.T) {
+	assert.Panicsf(t, func() { MsgAddService{}.GetSignBytes() }, "GetSignBytes()")
+}
+
+func TestMsgAddService_GetSigners(t *testing.T) {
+	a, err := sdk.AccAddressFromBech32("cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+	assert.NoError(t, err)
+	assert.Equal(t,
+		MsgAddService{Signer: "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"}.GetSigners(),
+		[]sdk.AccAddress{a},
+	)
+	assert.Panics(t, func(){MsgAddService{Signer: "invalid"}.GetSigners()})
+}
+
+func TestMsgAddController_Route(t *testing.T) {
+	assert.Equalf(t, ModuleName, MsgAddController{}.Route(), "Route()")
+}
+
+func TestMsgAddController_Type(t *testing.T) {
+	assert.Equalf(t, TypeMsgAddController, MsgAddController{}.Type(), "Type()")
+}
+
+func TestMsgAddController_GetSignBytes(t *testing.T) {
+	assert.Panicsf(t, func() { MsgAddController{}.GetSignBytes() }, "GetSignBytes()")
+}
+
+func TestMsgAddController_GetSigners(t *testing.T) {
+	a, err := sdk.AccAddressFromBech32("cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+	assert.NoError(t, err)
+	assert.Equal(t,
+		MsgAddController{Signer: "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"}.GetSigners(),
+		[]sdk.AccAddress{a},
+	)
+	assert.Panics(t, func(){MsgAddController{Signer: "invalid"}.GetSigners()})
+}
+
+func TestMsgDeleteController_Route(t *testing.T) {
+	assert.Equalf(t, ModuleName, MsgDeleteController{}.Route(), "Route()")
+}
+
+func TestMsgDeleteController_Type(t *testing.T) {
+	assert.Equalf(t, TypeMsgDeleteController, MsgDeleteController{}.Type(), "Type()")
+}
+
+func TestMsgDeleteController_GetSignBytes(t *testing.T) {
+	assert.Panicsf(t, func() { MsgDeleteController{}.GetSignBytes() }, "GetSignBytes()")
+}
+
+func TestMsgDeleteController_GetSigners(t *testing.T) {
+	a, err := sdk.AccAddressFromBech32("cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8")
+	assert.NoError(t, err)
+	assert.Equal(t,
+		MsgDeleteController{Signer: "cosmos1sl48sj2jjed7enrv3lzzplr9wc2f5js5tzjph8"}.GetSigners(),
+		[]sdk.AccAddress{a},
+	)
+	assert.Panics(t, func(){MsgDeleteController{Signer: "invalid"}.GetSigners()})
 }

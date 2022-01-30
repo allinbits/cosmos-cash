@@ -68,7 +68,14 @@ test-ci:
 changelog:
 	git-chglog --output CHANGELOG.md
 
-git-release-prepare:
+_get-release-version:
+ifneq ($(shell git branch --show-current | head -c 9), release/v)
+    $(error this is not a release branch. a release branch should be something like 'release/v1.2.3')
+endif
+	$(eval APP_VERSION = $(subst release/,,$(shell git branch --show-current)))
+#	@echo -n "releasing version $(APP_VERSION), confirm? [y/N] " && read ans && [ $${ans:-N} == y ]
+
+release-prepare: _get-release-version
 	@echo making release $(APP_VERSION)
 ifndef APP_VERSION
 	$(error APP_VERSION is not set, please specifiy the version you want to tag)
@@ -86,17 +93,4 @@ endif
 ifneq ($(shell git rev-parse --abbrev-ref HEAD),main)
 	$(error you are not on the main branch. aborting)
 endif
-	git tag -s -a "$(APP_VERSION)" -m "Changelog: https://github.com/allinbits/cosmos-cash/blob/main/CHANGELOG.md"
-
-_release-patch:
-	$(eval APP_VERSION = $(shell git describe --tags | awk -F '("|")' '{ print($$1)}' | awk -F. '{$$NF = $$NF + 1;} 1' | sed 's/ /./g'))
-release-patch: _release-patch git-release-prepare
-
-_release-minor:
-	$(eval APP_VERSION = $(shell git describe --tags | awk -F '("|")' '{ print($$1)}' | awk -F. '{$$(NF-1) = $$(NF-1) + 1;} 1' | sed 's/ /./g' | awk -F. '{$$(NF) = 0;} 1' | sed 's/ /./g'))
-release-minor: _release-minor git-release-prepare
-
-_release-major:
-	$(eval APP_VERSION = $(shell git describe --tags | awk -F '("|")' '{ print($$1)}' | awk -F. '{$$(NF-2) = $$(NF-2) + 1;} 1' | sed 's/ /./g' | awk -F. '{$$(NF-1) = 0;} 1' | sed 's/ /./g' | awk -F. '{$$(NF) = 0;} 1' | sed 's/ /./g' ))
-release-major: _release-major git-release-prepare
-
+	git tag -s -a "$(shell git-chglog $(APP_VERSION))" -m "Changelog: https://github.com/allinbits/cosmos-cash/blob/main/CHANGELOG.md"

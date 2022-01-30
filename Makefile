@@ -70,7 +70,7 @@ changelog:
 
 _get-release-version:
 ifneq ($(shell git branch --show-current | head -c 9), release/v)
-    $(error this is not a release branch. a release branch should be something like 'release/v1.2.3')
+	$(error this is not a release branch. a release branch should be something like 'release/v1.2.3')
 endif
 	$(eval APP_VERSION = $(subst release/,,$(shell git branch --show-current)))
 #	@echo -n "releasing version $(APP_VERSION), confirm? [y/N] " && read ans && [ $${ans:-N} == y ]

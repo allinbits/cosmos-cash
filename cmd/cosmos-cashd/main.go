@@ -6,8 +6,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/server"
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 
-	"github.com/allinbits/cosmos-cash/v2/app"
-	"github.com/allinbits/cosmos-cash/v2/cmd/cosmos-cashd/cmd"
+	"github.com/allinbits/cosmos-cash/v3/app"
+	"github.com/allinbits/cosmos-cash/v3/cmd/cosmos-cashd/cmd"
 )
 
 func main() {

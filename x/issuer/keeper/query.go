@@ -6,7 +6,7 @@ import ( // this line is used by starport scaffolding # 1
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/allinbits/cosmos-cash/v2/x/issuer/types"
+	"github.com/allinbits/cosmos-cash/v3/x/issuer/types"
 )
 
 //nolint

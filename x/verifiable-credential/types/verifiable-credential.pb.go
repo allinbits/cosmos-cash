@@ -429,7 +429,7 @@ func (m *RegulatorCredentialSubject) GetCountry() string {
 }
 
 // RegistrationCredentialSubject is used to identify a business entity
-// https://github.com/allinbits/cosmos-cash/v2/blob/main/docs/Explanation/ADR/adr-005-registration-credential.md
+// https://github.com/allinbits/cosmos-cash/v3/blob/main/docs/Explanation/ADR/adr-005-registration-credential.md
 type RegistrationCredentialSubject struct {
 	// The value of id represents the ID of the credential_subject
 	Id           string         `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`

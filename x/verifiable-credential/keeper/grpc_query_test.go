@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/allinbits/cosmos-cash/v2/x/verifiable-credential/types"
+	"github.com/allinbits/cosmos-cash/v3/x/verifiable-credential/types"
 )
 
 func (suite *KeeperTestSuite) TestGRPCQueryVerifiableCredentials() {

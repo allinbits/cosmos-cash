@@ -7,7 +7,7 @@ import "verifiable-credential/verifiable-credential.proto";
 import "gogoproto/gogo.proto";
 // this line is used by starport scaffolding # 1
 
-option go_package = "github.com/allinbits/cosmos-cash/v2/x/verifiable-credential/types";
+option go_package = "github.com/allinbits/cosmos-cash/v3/x/verifiable-credential/types";
 
 // Query defines the gRPC querier service.
 service Query {

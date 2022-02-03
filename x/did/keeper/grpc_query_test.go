@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/allinbits/cosmos-cash/v2/x/did/types"
+	"github.com/allinbits/cosmos-cash/v3/x/did/types"
 )
 
 func (suite *KeeperTestSuite) TestGRPCQueryDidDocuments() {

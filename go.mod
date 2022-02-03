@@ -1,4 +1,4 @@
-module github.com/allinbits/cosmos-cash/v2
+module github.com/allinbits/cosmos-cash/v3
 
 go 1.17
 

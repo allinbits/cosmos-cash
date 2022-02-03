@@ -1,0 +1,2089 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.9">
+    
+    
+      
+        <title>ADR 005: A VASP Registration Credential based on W3C Standards - Cosmos Cash Documentation Portal</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.2b4465f4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.e6a45f82.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#adr-005-a-vasp-registration-credential-based-on-w3c-standards" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Cosmos Cash Documentation Portal" class="md-header__button md-logo" aria-label="Cosmos Cash Documentation Portal" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Cosmos Cash Documentation Portal
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              ADR 005: A VASP Registration Credential based on W3C Standards
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08z"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/allinbits/cosmos-cash/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Cosmos Cash Documentation Portal" class="md-nav__button md-logo" aria-label="Cosmos Cash Documentation Portal" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    Cosmos Cash Documentation Portal
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/allinbits/cosmos-cash/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        Cosmos Cash
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ABOUT/" class="md-nav__link">
+        About Documentation
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          Explanation
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Explanation" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Explanation
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        About Explanation Documentation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../presentations/" class="md-nav__link">
+        Presentations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_3" type="checkbox" id="__nav_3_3" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_3">
+          ADR
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="ADR" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_3">
+          <span class="md-nav__icon md-icon"></span>
+          ADR
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        About Architecture Decision Records (ADR)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PROCESS/" class="md-nav__link">
+        ADR Creation Process
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr-002-docs-structure/" class="md-nav__link">
+        ADR 002: Documentation Structure
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr-003-issuer/" class="md-nav__link">
+        ADR 003: Cosmos Cash Issuance model
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr-004-did/" class="md-nav__link">
+        ADR 004: DID
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          ADR 005: A VASP Registration Credential based on W3C Standards
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        ADR 005: A VASP Registration Credential based on W3C Standards
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    Table of Contents
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#changelog" class="md-nav__link">
+    Changelog
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#status" class="md-nav__link">
+    Status
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#abstract" class="md-nav__link">
+    Abstract
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#context" class="md-nav__link">
+    Context
+  </a>
+  
+    <nav class="md-nav" aria-label="Context">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#terminology" class="md-nav__link">
+    Terminology
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decision" class="md-nav__link">
+    Decision
+  </a>
+  
+    <nav class="md-nav" aria-label="Decision">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#credential-structure" class="md-nav__link">
+    Credential Structure
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#legal-person" class="md-nav__link">
+    Legal Person
+  </a>
+  
+    <nav class="md-nav" aria-label="Legal Person">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#name" class="md-nav__link">
+    Name
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#name-type" class="md-nav__link">
+    Name Type
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#identification-type" class="md-nav__link">
+    Identification Type
+  </a>
+  
+    <nav class="md-nav" aria-label="Identification Type">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#identifier-type-code" class="md-nav__link">
+    Identifier Type Code
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#address" class="md-nav__link">
+    Address
+  </a>
+  
+    <nav class="md-nav" aria-label="Address">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#address-type" class="md-nav__link">
+    Address Type
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-credential" class="md-nav__link">
+    Example Credential
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consequences" class="md-nav__link">
+    Consequences
+  </a>
+  
+    <nav class="md-nav" aria-label="Consequences">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#backward-compatibility" class="md-nav__link">
+    Backward Compatibility
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#positive" class="md-nav__link">
+    Positive
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#negative" class="md-nav__link">
+    Negative
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#neutral" class="md-nav__link">
+    Neutral
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#further-discussions" class="md-nav__link">
+    Further Discussions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    References
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr-006-license-credential/" class="md-nav__link">
+        ADR 006: An Issuer License based on W3C Verifiable Credential Standards
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr-007-root-of-trust/" class="md-nav__link">
+        ADR 007: Root of trust
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr-template/" class="md-nav__link">
+        ADR Template
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4" type="checkbox" id="__nav_3_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4">
+          Articles
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Articles" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_4">
+          <span class="md-nav__icon md-icon"></span>
+          Articles
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../articles/" class="md-nav__link">
+        About Articles
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4_2" type="checkbox" id="__nav_3_4_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4_2">
+          Regulation paper
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Regulation paper" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_4_2">
+          <span class="md-nav__icon md-icon"></span>
+          Regulation paper
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4_2_1" type="checkbox" id="__nav_3_4_2_1" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4_2_1">
+          Rpts
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Rpts" data-md-level="4">
+        <label class="md-nav__title" for="__nav_3_4_2_1">
+          <span class="md-nav__icon md-icon"></span>
+          Rpts
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../articles/regulation-paper/rpts/CosmosCashRegs/" class="md-nav__link">
+        Cosmos Cash
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_5" type="checkbox" id="__nav_3_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_5">
+          Topics
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Topics" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_5">
+          <span class="md-nav__icon md-icon"></span>
+          Topics
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../topics/Compare%20USDC%20vs%20USDT%20vs%20CASH-ISSUER/" class="md-nav__link">
+        USDC vs USDT vs Cosmos Cash Issuer
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          How To
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="How To" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          How To
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../How-To/" class="md-nav__link">
+        How-to guides
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../How-To/chain_001_faucet/" class="md-nav__link">
+        Get Testnet Tokens (Faucet)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../How-To/general_001_swagger/" class="md-nav__link">
+        Swagger
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5">
+          Networks
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Networks" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Networks
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Networks/testnet/" class="md-nav__link">
+        Testnet
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Reference/" class="md-nav__link">
+        Reference Documentation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Reference/GLOSSARY/" class="md-nav__link">
+        GLOSSARY
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Reference/MODULES/" class="md-nav__link">
+        Cosmos Cash Modules
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6_4" type="checkbox" id="__nav_6_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6_4">
+          Architecture
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Architecture" data-md-level="2">
+        <label class="md-nav__title" for="__nav_6_4">
+          <span class="md-nav__icon md-icon"></span>
+          Architecture
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Reference/architecture/" class="md-nav__link">
+        Architecture
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Reference/architecture/CONTRIBUTING/" class="md-nav__link">
+        CONTRIBUTING
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_7" type="checkbox" id="__nav_7" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_7">
+          Tutorials
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Tutorials" data-md-level="1">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          Tutorials
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Tutorials/" class="md-nav__link">
+        Index
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    Table of Contents
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#changelog" class="md-nav__link">
+    Changelog
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#status" class="md-nav__link">
+    Status
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#abstract" class="md-nav__link">
+    Abstract
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#context" class="md-nav__link">
+    Context
+  </a>
+  
+    <nav class="md-nav" aria-label="Context">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#terminology" class="md-nav__link">
+    Terminology
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decision" class="md-nav__link">
+    Decision
+  </a>
+  
+    <nav class="md-nav" aria-label="Decision">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#credential-structure" class="md-nav__link">
+    Credential Structure
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#legal-person" class="md-nav__link">
+    Legal Person
+  </a>
+  
+    <nav class="md-nav" aria-label="Legal Person">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#name" class="md-nav__link">
+    Name
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#name-type" class="md-nav__link">
+    Name Type
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#identification-type" class="md-nav__link">
+    Identification Type
+  </a>
+  
+    <nav class="md-nav" aria-label="Identification Type">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#identifier-type-code" class="md-nav__link">
+    Identifier Type Code
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#address" class="md-nav__link">
+    Address
+  </a>
+  
+    <nav class="md-nav" aria-label="Address">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#address-type" class="md-nav__link">
+    Address Type
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-credential" class="md-nav__link">
+    Example Credential
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consequences" class="md-nav__link">
+    Consequences
+  </a>
+  
+    <nav class="md-nav" aria-label="Consequences">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#backward-compatibility" class="md-nav__link">
+    Backward Compatibility
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#positive" class="md-nav__link">
+    Positive
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#negative" class="md-nav__link">
+    Negative
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#neutral" class="md-nav__link">
+    Neutral
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#further-discussions" class="md-nav__link">
+    Further Discussions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    References
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+<a href="https://github.com/allinbits/cosmos-cash/edit/master/docs/Explanation/ADR/adr-005-registration-credential.md" title="Edit this page" class="md-content__button md-icon">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+</a>
+
+
+<h1 id="adr-005-a-vasp-registration-credential-based-on-w3c-standards">ADR 005: A VASP Registration Credential based on W3C Standards</h1>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><a href="#adr-005-a-vasp-registration-credential-based-on-w3c-standards">ADR 005: A VASP Registration Credential based on W3C Standards</a><ul>
+<li><a href="#table-of-contents">Table of Contents</a></li>
+<li><a href="#changelog">Changelog</a></li>
+<li><a href="#status">Status</a></li>
+<li><a href="#abstract">Abstract</a></li>
+<li><a href="#context">Context</a><ul>
+<li><a href="#terminology">Terminology</a></li>
+</ul>
+</li>
+<li><a href="#decision">Decision</a><ul>
+<li><a href="#credential-structure">Credential Structure</a></li>
+<li><a href="#legal-person">Legal Person</a><ul>
+<li><a href="#name">Name</a></li>
+<li><a href="#name-type">Name Type</a></li>
+</ul>
+</li>
+<li><a href="#identification-type">Identification Type</a><ul>
+<li><a href="#identifier-type-code">Identifier Type Code</a></li>
+</ul>
+</li>
+<li><a href="#address">Address</a><ul>
+<li><a href="#address-type">Address Type</a></li>
+</ul>
+</li>
+<li><a href="#example-credential">Example Credential</a></li>
+</ul>
+</li>
+<li><a href="#consequences">Consequences</a><ul>
+<li><a href="#backward-compatibility">Backward Compatibility</a></li>
+<li><a href="#positive">Positive</a></li>
+<li><a href="#negative">Negative</a></li>
+<li><a href="#neutral">Neutral</a></li>
+</ul>
+</li>
+<li><a href="#further-discussions">Further Discussions</a></li>
+<li><a href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="changelog">Changelog</h2>
+<ul>
+<li>29-Jul-2021: Initial Draft</li>
+<li>09-Aug-2021: Second Draft</li>
+</ul>
+<h2 id="status">Status</h2>
+<p>DRAFT - Not Implemented</p>
+<hr />
+<h2 id="abstract">Abstract</h2>
+<p>Financial services regulation is based on registrations issued by publicly appointed authorities for a given jurisdiction. Registrations together with licenses allow legal entities to perform activities such holding client money, offer financial advice etc. Typically a regulator will maintain a central public registry, for example the <a href="https://register.fca.org.uk/s/">FCA register</a>. </p>
+<p>This ADR describes the structure of a Financial Services registration based on the <a href="https://www.w3.org/TR/vc-data-model/">W3C specification</a> for verifiable credential. This credential will be signed by the relevant authority and can be used as proof of identity such as when establishing relationships with new clients or counterparties.</p>
+<hr />
+<h2 id="context">Context</h2>
+<p><a href="https://github.com/allinbits/cosmos-cash/blob/main/docs/Explanation/ADR/adr-003-issuer.md">ADR-003</a> identified an <code>issuer</code> actor. This issuer holds a license that gives permissions to perform certain activities. The license is issued by an authority actor: the regulator.</p>
+<p>The use cases of Role-based permissions on-chain extends to other services or protocols. For example, exchange and custody services. A definition that can extend to these cases would be vital.</p>
+<p>Current regulation is typically based around a single jurisdiction.  Each jurisdiction can have one or more authorities. Each authority manages one or more financial services and licenses legal persons for these services. In effect a single legal person can have one or more licenses to provide different services from different authorities. </p>
+<p>In the case of the EU, regulation can extend across multiple jurisdiction, specifically passporting means that licensed legal persons in one jurisdiction can offer the same financial services in another EU-based jurisdiction. </p>
+<p><a href="https://openvasp.org">OpenVASP</a> defines a <a href="https://github.com/OpenVASP/ovips/blob/master/ovip-0015.md">credential</a> and <a href="https://github.com/OpenVASP/ovips/blob/master/ovip-0013.md">ovip-0013</a> as part of their protocol. </p>
+<h3 id="terminology">Terminology</h3>
+<p>See <a href="../../../Reference/GLOSSARY/">Glossary</a> for specific terms.</p>
+<blockquote>
+<p><strong>NOTES:</strong> 
+In this ADR we SHALL USE <code>legal person</code> rather than <code>legal entity</code>. The terms are interchangeable, but <code>legal person</code> has a legal meaning. Note that W3C documentation uses <code>legal entity</code> when it refers to <code>legal person</code></p>
+</blockquote>
+<hr />
+<h2 id="decision">Decision</h2>
+<p>Within Cosmos Cash, registrations will be based upon Verifiable Credentials, as per <a href="https://www.w3.org/TR/vc-data-model/">W3C Recommendation</a>.  These SHALL BE called a <code>RegistrationCredential</code>.</p>
+<ul>
+<li>Each credential SHALL BE issued by a single authority. </li>
+<li>The credential SHALL BE issued to a single legal person.</li>
+<li>The legal person will be denoted by their <strong>PUBLIC DID</strong>. </li>
+<li>DID SHALL BE the primary means for identification of VASPs and authorities.</li>
+<li>The credential Schema SHALL BE stored in a Verifiable Data Registry (VDR)</li>
+<li>The credential SHALL BE stored in the same VDR AND be viewed. </li>
+<li>Registrations CAN NOT expire, but CAN BE revoked under certain circumstances such as </li>
+<li>The holder no longer exists</li>
+<li>Some form of malpractice.</li>
+</ul>
+<h3 id="credential-structure">Credential Structure</h3>
+<p>Overall structure is based on standard verifiable credentials.</p>
+<p><img alt="Diagram" src="../../../Reference/architecture/out/RegistrationCredential.svg" /></p>
+<table>
+<thead>
+<tr>
+<th align="left">Level 1</th>
+<th align="left">Level 2</th>
+<th align="left">Type</th>
+<th align="left">Mult.</th>
+<th align="left">Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>@context</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">1..1</td>
+<td align="left">See <a href="https://www.w3.org/TR/vc-data-model/#contexts">W3C Contexts Data Model</a></td>
+</tr>
+<tr>
+<td align="left"><code>id</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">1..1</td>
+<td align="left">See <a href="https://www.w3.org/TR/vc-data-model/#identifiers">W3C Identifiers Data Model</a></td>
+</tr>
+<tr>
+<td align="left"><code>type</code></td>
+<td align="left"></td>
+<td align="left">List[String]</td>
+<td align="left">1..1</td>
+<td align="left">See <a href="https://www.w3.org/TR/vc-data-model/#types">W3C Types Data Model</a></td>
+</tr>
+<tr>
+<td align="left"><code>issuer</code></td>
+<td align="left"></td>
+<td align="left">DID</td>
+<td align="left">1..1</td>
+<td align="left">DID of credential issuer, for example "did:sov:12345"</td>
+</tr>
+<tr>
+<td align="left"><code>issuanceDate</code></td>
+<td align="left"></td>
+<td align="left">String</td>
+<td align="left">1..1</td>
+<td align="left">Date format SHALL BE <a href="https://datatracker.ietf.org/doc/html/rfc3339">RFC3339</a> standard</td>
+</tr>
+<tr>
+<td align="left"><code>credentialSubject</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">1..1</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"><code>id</code></td>
+<td align="left">DID</td>
+<td align="left">1..1</td>
+<td align="left">DID of credential subject, for example "did:cosmos:cash:12345"</td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"><code>legalPerson</code></td>
+<td align="left"><a href="#legal-person">Legal Person</a></td>
+<td align="left">0..1</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"><code>address</code></td>
+<td align="left"><a href="#address">Address</a></td>
+<td align="left">1..1</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"><code>ids</code></td>
+<td align="left"><a href="#identification-type">Identification Type</a></td>
+<td align="left">1..*</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left"><code>proof</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">1..*</td>
+<td align="left">As per <a href="https://www.w3.org/TR/vc-data-model/#proofs-signatures">W3C Proofs Data Model</a></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Notes:</strong></p>
+<ul>
+<li>Contexts CAN TAKE this value as an example: 
+<code>[
+    "https://www.w3.org/2018/credentials/v1",
+    "https://www.cosmos.cash/2021/credentials/registration/v1"
+  ]</code>. </li>
+<li>Registration Credential SHALL BE versioned based on the context</li>
+<li><code>id</code> SHALL BE the ID of credential, for example "http://fca.gov.uk/credentials/1234"</li>
+<li>Types SHALL TAKE this value <code>["VerifiableCredential", "RegistrationCredential"]</code></li>
+<li>Unlike the OpenVASP standard, the version is no longer part of the <code>credentialSubject</code>. The  context SHALL BE USED to do this instead.</li>
+<li>The subject of the credential SHALL BE the registered legal person. They will have a DID, one or more names, a registered address and one or more identifiers for tax, license and operating purposes.</li>
+<li>OpenVASP <code>vaspId</code> is a string and must be a VASP Identifier as specified in <a href="https://github.com/OpenVASP/ovips/blob/master/ovip-0002.md">ovip-0002</a>. This is a string that is very similar to <a href="https://www.iban.com/">IBANs</a>. In our specification Decentralized Identifiers SHALL BE used. This SHALL BE a <strong>PUBLIC DID</strong>, for example "did:git:df1245"</li>
+</ul>
+<h3 id="legal-person">Legal Person</h3>
+<p>A legal person CAN HAVE multiple names representing a legal name, trading and short name. A relevant example would be where <em>All in Bits GmBH</em> is a LEGAL name, but <em>Tendermint</em> is a TRADING name. </p>
+<p>Within this specification, a Legal Person MUST HAVE at least one name AND this must be a LEGAL name (see <a href="#name-type">Name Type</a>)</p>
+<p>This defintion follows OpenVASP proposal of local and phonetic names. These SHALL BE optional.</p>
+<table>
+<thead>
+<tr>
+<th align="left">Level 2</th>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Mult.</th>
+<th align="left">Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Name</td>
+<td align="left"><code>name</code></td>
+<td align="left">List[<a href="#name">Name</a>]</td>
+<td align="left">1..*</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">Local Name</td>
+<td align="left"><code>nameLocal</code></td>
+<td align="left">List[<a href="#name">Name</a>]</td>
+<td align="left">0..*</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">Phonetic Name</td>
+<td align="left"><code>namePhonetic</code></td>
+<td align="left">List[<a href="#name">Name</a>]</td>
+<td align="left">0..*</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">Registration Country</td>
+<td align="left"><code>regCtry</code></td>
+<td align="left">String(2)</td>
+<td align="left">1..1</td>
+<td align="left"><code>regCtry</code> MUST BE formatted as per <a href="https://www.iso.org/obp/ui/#iso:std:iso:3166:-1:ed-4:v1:en">ISO 3166-1</a></td>
+</tr>
+</tbody>
+</table>
+<h4 id="name">Name</h4>
+<p>Each <code>Name</code> SHALL HAVE two values: the name itself and a value denoting the type.</p>
+<table>
+<thead>
+<tr>
+<th align="left">Level 3</th>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Mult.</th>
+<th align="left">Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Name</td>
+<td align="left"><code>name</code></td>
+<td align="left">String</td>
+<td align="left">1..1</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">Name type</td>
+<td align="left"><code>type</code></td>
+<td align="left"><a href="#name-type">Name Type</a></td>
+<td align="left">1..1</td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
+<h4 id="name-type">Name Type</h4>
+<p>A legal person can operate using a range of different names - see the example above. <code>Name Type</code> CAN TAKE the following values:</p>
+<table>
+<thead>
+<tr>
+<th align="left">Code</th>
+<th align="left">Name</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>LEGL</code></td>
+<td align="left">Legal name</td>
+<td align="left">Official name under which an organization is registered</td>
+</tr>
+<tr>
+<td align="left"><code>SHRT</code></td>
+<td align="left">Short name</td>
+<td align="left">Short name of the organization</td>
+</tr>
+<tr>
+<td align="left"><code>TRAD</code></td>
+<td align="left">Trading name</td>
+<td align="left">Name used by the organization for commercial purposes</td>
+</tr>
+</tbody>
+</table>
+<h3 id="identification-type">Identification Type</h3>
+<table>
+<thead>
+<tr>
+<th align="left">Level 2</th>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Mult.</th>
+<th align="left">Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Identifier</td>
+<td align="left"><code>id</code></td>
+<td align="left">String</td>
+<td align="left">1..1</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">Identifier Type</td>
+<td align="left"><code>type</code></td>
+<td align="left"><a href="#identifier-type-code">Identifier Type Code</a></td>
+<td align="left">1..1</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">Country of issue</td>
+<td align="left"><code>idCtry</code></td>
+<td align="left">String</td>
+<td align="left">0..1</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">Registration Authority</td>
+<td align="left"><code>idAuthority</code></td>
+<td align="left">String</td>
+<td align="left">0..1</td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Notes:</strong></p>
+<ul>
+<li>If value of <code>type</code> is in [<code>RAID</code>, <code>TXID</code>, <code>MISC</code>] then <code>idAuthority</code> MUST BE present.</li>
+<li>If the value of <code>type</code> is <code>LEIX</code> then <code>idAuthority</code> MUST NOT BE present.</li>
+<li><code>idCtry</code> MUST BE formatted as per <a href="https://www.iso.org/obp/ui/#iso:std:iso:3166:-1:ed-4:v1:en">ISO 3166-1</a>.</li>
+<li><code>idAuthority</code> MUST BE a valid <a href="https://www.gleif.org/en/about-lei/code-lists/gleif-registration-authorities-list">GLEIF Registration Authority Code</a></li>
+</ul>
+<h4 id="identifier-type-code">Identifier Type Code</h4>
+<p>Identifies the national identification type.</p>
+<table>
+<thead>
+<tr>
+<th align="left">Code</th>
+<th align="left">Name</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>ARNU</code></td>
+<td align="left">Alien registration number</td>
+<td align="left">Number assigned by a government agency to identify foreign nationals</td>
+</tr>
+<tr>
+<td align="left"><code>CCPT</code></td>
+<td align="left">Passport number</td>
+<td align="left">Number assigned by a passport authority</td>
+</tr>
+<tr>
+<td align="left"><code>RAID</code></td>
+<td align="left">Registration authority identifier</td>
+<td align="left">Identifier of a legal entity as maintained by a registration entity</td>
+</tr>
+<tr>
+<td align="left"><code>DRLC</code></td>
+<td align="left">Driver license number</td>
+<td align="left">Number assigned to a driver's license</td>
+</tr>
+<tr>
+<td align="left"><code>FIIN</code></td>
+<td align="left">Foreign investment identity number</td>
+<td align="left">Number assigned to a foreign investor (other than the alien number)</td>
+</tr>
+<tr>
+<td align="left"><code>TXID</code></td>
+<td align="left">Tax identification number</td>
+<td align="left">Number assigned by a tax authority to an entity</td>
+</tr>
+<tr>
+<td align="left"><code>SOCS</code></td>
+<td align="left">Social security number</td>
+<td align="left">Number assigned by a social security agency</td>
+</tr>
+<tr>
+<td align="left"><code>IDCD</code></td>
+<td align="left">Identity card number</td>
+<td align="left">Number assigned by a national authority to an identity card</td>
+</tr>
+<tr>
+<td align="left"><code>LEIX</code></td>
+<td align="left">Legal Entity Identifier</td>
+<td align="left">Legal Entity Identifier (LEI) as per <a href="https://www.gleif.org/en/about-lei/iso-17442-the-lei-code-structure">ISO 17442</a></td>
+</tr>
+<tr>
+<td align="left"><code>MISC</code></td>
+<td align="left">Unspecified</td>
+<td align="left">A national identifier which is known but cannot be categorized by the sender</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Notes:</strong></p>
+<ul>
+<li>This is more generic than required for a VASP, but this COULD BE reused for KYC credentials.</li>
+</ul>
+<h3 id="address">Address</h3>
+<p>Unlike OpenVASP, <code>address</code> SHALL USE collonly defined standards for address, that include:</p>
+<ul>
+<li><code>ctry</code> SHALL FOLLOW <a href="https://www.iso.org/obp/ui/#iso:std:iso:3166:-1:ed-4:v1:en">ISO 3166-1</a>.</li>
+<li><code>adminArea</code> SHALL FOLLOW <a href="https://www.iso.org/obp/ui/#iso:std:iso:3166:-2:ed-4:v1:en">ISO 3166-2</a> </li>
+<li>Address fields SHALL FOLLOW <a href="https://www.drupal.org/project/addressfield">xNAL standards</a></li>
+</ul>
+<p>Address currently WILL NOT permit geographical coordinates.</p>
+<table>
+<thead>
+<tr>
+<th align="left">Level 2</th>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Mult.</th>
+<th align="left">Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Address type</td>
+<td align="left"><code>adrType</code></td>
+<td align="left"><a href="#address-type">Address Type</a></td>
+<td align="left">1..1</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">Sub-Premise</td>
+<td align="left"><code>subPremise</code></td>
+<td align="left">String</td>
+<td align="left">0..1</td>
+<td align="left">Equivalent of Floor, sub-unit etc.</td>
+</tr>
+<tr>
+<td align="left">Premise</td>
+<td align="left"><code>premise</code></td>
+<td align="left">String</td>
+<td align="left">0..1</td>
+<td align="left">Equivalent of , Box Number etc.</td>
+</tr>
+<tr>
+<td align="left">thoroughfare</td>
+<td align="left"><code>thfare</code></td>
+<td align="left">String</td>
+<td align="left">0..1</td>
+<td align="left">Equivalent Street Address or Road</td>
+</tr>
+<tr>
+<td align="left">Post code</td>
+<td align="left"><code>postcode</code></td>
+<td align="left">String</td>
+<td align="left">0..1</td>
+<td align="left">Equivalent of zip code</td>
+</tr>
+<tr>
+<td align="left">Locality</td>
+<td align="left"><code>town</code></td>
+<td align="left">String</td>
+<td align="left">1..1</td>
+<td align="left">Equivalent of Town or City</td>
+</tr>
+<tr>
+<td align="left">Sub Administrative Area</td>
+<td align="left"><code>subAdminArea</code></td>
+<td align="left">String</td>
+<td align="left">0..1</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">administrative_area</td>
+<td align="left"><code>adminArea</code></td>
+<td align="left">String</td>
+<td align="left">0..1</td>
+<td align="left">Equivalent of State/Province/Region</td>
+</tr>
+<tr>
+<td align="left">Country</td>
+<td align="left"><code>ctry</code></td>
+<td align="left">String</td>
+<td align="left">1..1</td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
+<h4 id="address-type">Address Type</h4>
+<p>Identifies the nature of the address</p>
+<table>
+<thead>
+<tr>
+<th align="left">Code</th>
+<th align="left">Name</th>
+<th align="left">Description</th>
+<th align="left">Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>HOME</code></td>
+<td align="left">Residential</td>
+<td align="left">Home address</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left"><code>BIZZ</code></td>
+<td align="left">Business</td>
+<td align="left">Business address</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left"><code>GEOG</code></td>
+<td align="left">Geographic</td>
+<td align="left">Unspecified physical address</td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
+<h3 id="example-credential">Example Credential</h3>
+<p>Example Registration Credential in <code>json-ld</code> format is as follows:</p>
+<pre><code class="language-javascript">{
+    &quot;@context&quot;: [
+        &quot;https://www.w3.org/2018/credentials/v1&quot;,
+        &quot;https://www.cosmos.cash/2021/credentials/registration/v1&quot;
+    ],
+    &quot;id&quot;: &quot;http://fca.gov.uk/credentials/1234&quot;,
+    &quot;type&quot;: [
+        &quot;VerifiableCredential&quot;, 
+        &quot;RegistrationCredential&quot;
+    ],
+    &quot;issuer&quot;: &quot;did:sov:12345&quot;,
+    &quot;issuanceDate&quot;: &quot;2021-08-01T15:23:24Z&quot;,
+    &quot;credentialSubject&quot;: {
+        &quot;id&quot;: &quot;did:cosmos:cash:1000bb528777&quot;,
+        &quot;legalPerson&quot;: {
+            &quot;names&quot;: [{
+                &quot;name&quot;: &quot;Example VASP AG&quot;,
+                &quot;type&quot;: &quot;LEGL&quot;
+            }, {
+                &quot;name&quot;: &quot;EgVASP&quot;,
+                &quot;type&quot;: &quot;SHRT&quot;
+            }],
+            &quot;ctryReg&quot;: &quot;CH&quot;
+        },
+        &quot;address&quot;: {
+            &quot;addr_type&quot;: &quot;BIZZ&quot;,
+            &quot;thfare&quot;: &quot;Liverpool Street&quot;,
+            &quot;premise&quot;: &quot;22&quot;,
+            &quot;postcode&quot;: &quot;EC2R&quot;,
+            &quot;locality&quot;: &quot;London&quot;,
+            &quot;country&quot;: &quot;GB&quot;
+        },
+        &quot;ids&quot;: [{
+            &quot;id&quot;: &quot;CH02035398520&quot;,
+            &quot;type&quot;: &quot;RAID&quot;
+        }, {
+            &quot;id&quot;: &quot;529900W6B9NEA233DS71&quot;,
+            &quot;type&quot;: &quot;LEIX&quot;
+        }]
+    },
+    &quot;proof&quot;: {
+        &quot;type&quot;: &quot;SIGNATURE-TYPE&quot;,
+        &quot;created&quot;: &quot;2021-08-01T15:23:24Z&quot;,
+        &quot;proofPurpose&quot;: &quot;assertionMethod&quot;,
+        &quot;verificationMethod&quot;: &quot;https://example.edu/issuers/keys/1&quot;,
+        &quot;jws&quot;: &quot;a_jws_...&quot;
+    }
+}
+</code></pre>
+<h2 id="consequences">Consequences</h2>
+<blockquote>
+<p>This section describes the resulting context after applying the decision. List all consequences here, taking care not to list only the "positive" consequences. A particular decision may have positive, negative, and neutral consequences, but all of the consesquences affect the team and project in the future.</p>
+</blockquote>
+<h3 id="backward-compatibility">Backward Compatibility</h3>
+<p>This is the first definition of the credential. Backwards compatibility is not a concern. </p>
+<h3 id="positive">Positive</h3>
+<p>This ADR offers the following benefits</p>
+<ul>
+<li>A public VASP registry maintained by a regulator</li>
+<li>A verified registration credential issued by a regulator provides guarantees to new clients that the holder is a registered VASP. Combined with a license credential it offer guarantees to the </li>
+<li>The credential is compatible with W3C standards</li>
+</ul>
+<h3 id="negative">Negative</h3>
+<p>{negative consequences}</p>
+<h3 id="neutral">Neutral</h3>
+<p>{neutral consequences}</p>
+<h2 id="further-discussions">Further Discussions</h2>
+<p>While an ADR is in the DRAFT or PROPOSED stage, this section contains a summary of issues to be solved in future iterations. The issues summarized here can reference comments from a pull request discussion.
+Later, this section can optionally list ideas or improvements the author or reviewers found during the analysis of this ADR.</p>
+<h2 id="references">References</h2>
+<ul>
+<li>{reference link}</li>
+</ul>
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href="../adr-004-did/" class="md-footer__link md-footer__link--prev" aria-label="Previous: ADR 004: DID" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              ADR 004: DID
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../adr-006-license-credential/" class="md-footer__link md-footer__link--next" aria-label="Next: ADR 006: An Issuer License based on W3C Verifiable Credential Standards" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              ADR 006: An Issuer License based on W3C Verifiable Credential Standards
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.sections", "search.suggest", "search.highlight", "search.share"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../assets/javascripts/workers/search.22074ed6.min.js"}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.960e086b.min.js"></script>
+      
+    
+  </body>
+</html>

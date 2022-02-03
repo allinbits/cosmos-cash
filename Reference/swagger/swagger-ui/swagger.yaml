@@ -1,0 +1,812 @@
+swagger: '2.0'
+info:
+  title: Cosmos Cash - gRPC Gateway docs
+  description: 'A REST interface for state queries, legacy transactions'
+  version: 1.0.0
+paths:
+  /allinbits/did/dids:
+    get:
+      summary: DidDocuments queries all did documents that match the given status.
+      operationId: DidDocuments
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              didDocuments:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    context:
+                      type: array
+                      items:
+                        type: string
+                      description: '@context is spec for did document.'
+                    id:
+                      type: string
+                      description: id represents the id for the did document.
+                    controller:
+                      type: array
+                      items:
+                        type: string
+                      title: >-
+                        A DID controller is an entity that is authorized to make
+                        changes to a DID document.
+
+                        cfr. https://www.w3.org/TR/did-core/#did-controller
+                    verificationMethods:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          type:
+                            type: string
+                          controller:
+                            type: string
+                          blockchainAccountID:
+                            type: string
+                        title: |-
+                          A DID document can express verification methods, 
+                          such as cryptographic public keys, which can be used 
+                          to authenticate or authorize interactions 
+                          with the DID subject or associated parties. 
+                          https://www.w3.org/TR/did-core/#verification-methods
+                      title: >-
+                        A DID document can express verification methods, 
+
+                        such as cryptographic public keys, which can be used 
+
+                        to authenticate or authorize interactions with the DID
+                        subject or associated parties.
+
+                        https://www.w3.org/TR/did-core/#verification-methods
+                    services:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          type:
+                            type: string
+                          serviceEndpoint:
+                            type: string
+                        title: >-
+                          Service defines how to find data associated with a
+                          identifer
+                      title: >-
+                        Services are used in DID documents to express ways of
+                        communicating 
+
+                        with the DID subject or associated entities.
+
+                        https://www.w3.org/TR/did-core/#services
+                    verificationRelationships:
+                      type: object
+                      additionalProperties:
+                        type: object
+                        properties:
+                          Labels:
+                            type: array
+                            items:
+                              type: string
+                        title: >-
+                          VerificationRelationships - support structure for
+                          proto3 repeated string in map
+                      title: >-
+                        A verification relationship expresses the relationship
+                        between the DID subject and a verification method.
+
+                        This enum is used to 
+
+                        cfr.
+                        https://www.w3.org/TR/did-core/#verification-relationships
+                  description: DidDocument represents a dencentralised identifer.
+                description: validators contains all the queried validators.
+              pagination:
+                description: pagination defines the pagination in the response.
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+            title: >-
+              QueryDidDocumentsResponse is response type for the
+              Query/DidDocuments RPC method
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: status
+          description: status enables to query for validators matching a given status.
+          in: query
+          required: false
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  '/allinbits/did/dids/{id}':
+    get:
+      summary: DidDocument queries a did documents with an id.
+      operationId: DidDocument
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              didDocument:
+                type: object
+                properties:
+                  context:
+                    type: array
+                    items:
+                      type: string
+                    description: '@context is spec for did document.'
+                  id:
+                    type: string
+                    description: id represents the id for the did document.
+                  controller:
+                    type: array
+                    items:
+                      type: string
+                    title: >-
+                      A DID controller is an entity that is authorized to make
+                      changes to a DID document.
+
+                      cfr. https://www.w3.org/TR/did-core/#did-controller
+                  verificationMethods:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        type:
+                          type: string
+                        controller:
+                          type: string
+                        blockchainAccountID:
+                          type: string
+                      title: |-
+                        A DID document can express verification methods, 
+                        such as cryptographic public keys, which can be used 
+                        to authenticate or authorize interactions 
+                        with the DID subject or associated parties. 
+                        https://www.w3.org/TR/did-core/#verification-methods
+                    title: >-
+                      A DID document can express verification methods, 
+
+                      such as cryptographic public keys, which can be used 
+
+                      to authenticate or authorize interactions with the DID
+                      subject or associated parties.
+
+                      https://www.w3.org/TR/did-core/#verification-methods
+                  services:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        type:
+                          type: string
+                        serviceEndpoint:
+                          type: string
+                      title: >-
+                        Service defines how to find data associated with a
+                        identifer
+                    title: >-
+                      Services are used in DID documents to express ways of
+                      communicating 
+
+                      with the DID subject or associated entities.
+
+                      https://www.w3.org/TR/did-core/#services
+                  verificationRelationships:
+                    type: object
+                    additionalProperties:
+                      type: object
+                      properties:
+                        Labels:
+                          type: array
+                          items:
+                            type: string
+                      title: >-
+                        VerificationRelationships - support structure for proto3
+                        repeated string in map
+                    title: >-
+                      A verification relationship expresses the relationship
+                      between the DID subject and a verification method.
+
+                      This enum is used to 
+
+                      cfr.
+                      https://www.w3.org/TR/did-core/#verification-relationships
+                description: DidDocument represents a dencentralised identifer.
+            title: >-
+              QueryDidDocumentsResponse is response type for the
+              Query/DidDocuments RPC method
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: id
+          description: status enables to query for validators matching a given status.
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+definitions:
+  allinbits.cosmoscash.did.DidDocument:
+    type: object
+    properties:
+      context:
+        type: array
+        items:
+          type: string
+        description: '@context is spec for did document.'
+      id:
+        type: string
+        description: id represents the id for the did document.
+      controller:
+        type: array
+        items:
+          type: string
+        title: >-
+          A DID controller is an entity that is authorized to make changes to a
+          DID document.
+
+          cfr. https://www.w3.org/TR/did-core/#did-controller
+      verificationMethods:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+            type:
+              type: string
+            controller:
+              type: string
+            blockchainAccountID:
+              type: string
+          title: |-
+            A DID document can express verification methods, 
+            such as cryptographic public keys, which can be used 
+            to authenticate or authorize interactions 
+            with the DID subject or associated parties. 
+            https://www.w3.org/TR/did-core/#verification-methods
+        title: >-
+          A DID document can express verification methods, 
+
+          such as cryptographic public keys, which can be used 
+
+          to authenticate or authorize interactions with the DID subject or
+          associated parties.
+
+          https://www.w3.org/TR/did-core/#verification-methods
+      services:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+            type:
+              type: string
+            serviceEndpoint:
+              type: string
+          title: Service defines how to find data associated with a identifer
+        title: |-
+          Services are used in DID documents to express ways of communicating 
+          with the DID subject or associated entities.
+          https://www.w3.org/TR/did-core/#services
+      verificationRelationships:
+        type: object
+        additionalProperties:
+          type: object
+          properties:
+            Labels:
+              type: array
+              items:
+                type: string
+          title: >-
+            VerificationRelationships - support structure for proto3 repeated
+            string in map
+        title: >-
+          A verification relationship expresses the relationship between the DID
+          subject and a verification method.
+
+          This enum is used to 
+
+          cfr. https://www.w3.org/TR/did-core/#verification-relationships
+    description: DidDocument represents a dencentralised identifer.
+  allinbits.cosmoscash.did.DidDocument.VerificationRelationships:
+    type: object
+    properties:
+      Labels:
+        type: array
+        items:
+          type: string
+    title: >-
+      VerificationRelationships - support structure for proto3 repeated string
+      in map
+  allinbits.cosmoscash.did.QueryDidDocumentResponse:
+    type: object
+    properties:
+      didDocument:
+        type: object
+        properties:
+          context:
+            type: array
+            items:
+              type: string
+            description: '@context is spec for did document.'
+          id:
+            type: string
+            description: id represents the id for the did document.
+          controller:
+            type: array
+            items:
+              type: string
+            title: >-
+              A DID controller is an entity that is authorized to make changes
+              to a DID document.
+
+              cfr. https://www.w3.org/TR/did-core/#did-controller
+          verificationMethods:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: string
+                type:
+                  type: string
+                controller:
+                  type: string
+                blockchainAccountID:
+                  type: string
+              title: |-
+                A DID document can express verification methods, 
+                such as cryptographic public keys, which can be used 
+                to authenticate or authorize interactions 
+                with the DID subject or associated parties. 
+                https://www.w3.org/TR/did-core/#verification-methods
+            title: >-
+              A DID document can express verification methods, 
+
+              such as cryptographic public keys, which can be used 
+
+              to authenticate or authorize interactions with the DID subject or
+              associated parties.
+
+              https://www.w3.org/TR/did-core/#verification-methods
+          services:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: string
+                type:
+                  type: string
+                serviceEndpoint:
+                  type: string
+              title: Service defines how to find data associated with a identifer
+            title: >-
+              Services are used in DID documents to express ways of
+              communicating 
+
+              with the DID subject or associated entities.
+
+              https://www.w3.org/TR/did-core/#services
+          verificationRelationships:
+            type: object
+            additionalProperties:
+              type: object
+              properties:
+                Labels:
+                  type: array
+                  items:
+                    type: string
+              title: >-
+                VerificationRelationships - support structure for proto3
+                repeated string in map
+            title: >-
+              A verification relationship expresses the relationship between the
+              DID subject and a verification method.
+
+              This enum is used to 
+
+              cfr. https://www.w3.org/TR/did-core/#verification-relationships
+        description: DidDocument represents a dencentralised identifer.
+    title: >-
+      QueryDidDocumentsResponse is response type for the Query/DidDocuments RPC
+      method
+  allinbits.cosmoscash.did.QueryDidDocumentsResponse:
+    type: object
+    properties:
+      didDocuments:
+        type: array
+        items:
+          type: object
+          properties:
+            context:
+              type: array
+              items:
+                type: string
+              description: '@context is spec for did document.'
+            id:
+              type: string
+              description: id represents the id for the did document.
+            controller:
+              type: array
+              items:
+                type: string
+              title: >-
+                A DID controller is an entity that is authorized to make changes
+                to a DID document.
+
+                cfr. https://www.w3.org/TR/did-core/#did-controller
+            verificationMethods:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  type:
+                    type: string
+                  controller:
+                    type: string
+                  blockchainAccountID:
+                    type: string
+                title: |-
+                  A DID document can express verification methods, 
+                  such as cryptographic public keys, which can be used 
+                  to authenticate or authorize interactions 
+                  with the DID subject or associated parties. 
+                  https://www.w3.org/TR/did-core/#verification-methods
+              title: >-
+                A DID document can express verification methods, 
+
+                such as cryptographic public keys, which can be used 
+
+                to authenticate or authorize interactions with the DID subject
+                or associated parties.
+
+                https://www.w3.org/TR/did-core/#verification-methods
+            services:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  type:
+                    type: string
+                  serviceEndpoint:
+                    type: string
+                title: Service defines how to find data associated with a identifer
+              title: >-
+                Services are used in DID documents to express ways of
+                communicating 
+
+                with the DID subject or associated entities.
+
+                https://www.w3.org/TR/did-core/#services
+            verificationRelationships:
+              type: object
+              additionalProperties:
+                type: object
+                properties:
+                  Labels:
+                    type: array
+                    items:
+                      type: string
+                title: >-
+                  VerificationRelationships - support structure for proto3
+                  repeated string in map
+              title: >-
+                A verification relationship expresses the relationship between
+                the DID subject and a verification method.
+
+                This enum is used to 
+
+                cfr. https://www.w3.org/TR/did-core/#verification-relationships
+          description: DidDocument represents a dencentralised identifer.
+        description: validators contains all the queried validators.
+      pagination:
+        description: pagination defines the pagination in the response.
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+    title: >-
+      QueryDidDocumentsResponse is response type for the Query/DidDocuments RPC
+      method
+  allinbits.cosmoscash.did.Service:
+    type: object
+    properties:
+      id:
+        type: string
+      type:
+        type: string
+      serviceEndpoint:
+        type: string
+    title: Service defines how to find data associated with a identifer
+  allinbits.cosmoscash.did.VerificationMethod:
+    type: object
+    properties:
+      id:
+        type: string
+      type:
+        type: string
+      controller:
+        type: string
+      blockchainAccountID:
+        type: string
+    title: |-
+      A DID document can express verification methods, 
+      such as cryptographic public keys, which can be used 
+      to authenticate or authorize interactions 
+      with the DID subject or associated parties. 
+      https://www.w3.org/TR/did-core/#verification-methods
+  cosmos.base.query.v1beta1.PageRequest:
+    type: object
+    properties:
+      key:
+        type: string
+        format: byte
+        description: |-
+          key is a value returned in PageResponse.next_key to begin
+          querying the next page most efficiently. Only one of offset or key
+          should be set.
+      offset:
+        type: string
+        format: uint64
+        description: |-
+          offset is a numeric offset that can be used when key is unavailable.
+          It is less efficient than using key. Only one of offset or key should
+          be set.
+      limit:
+        type: string
+        format: uint64
+        description: >-
+          limit is the total number of results to be returned in the result
+          page.
+
+          If left empty it will default to a value to be set by each app.
+      count_total:
+        type: boolean
+        description: >-
+          count_total is set to true  to indicate that the result set should
+          include
+
+          a count of the total number of items available for pagination in UIs.
+
+          count_total is only respected when offset is used. It is ignored when
+          key
+
+          is set.
+    description: |-
+      message SomeRequest {
+               Foo some_parameter = 1;
+               PageRequest pagination = 2;
+       }
+    title: |-
+      PageRequest is to be embedded in gRPC request messages for efficient
+      pagination. Ex:
+  cosmos.base.query.v1beta1.PageResponse:
+    type: object
+    properties:
+      next_key:
+        type: string
+        format: byte
+        title: |-
+          next_key is the key to be passed to PageRequest.key to
+          query the next page most efficiently
+      total:
+        type: string
+        format: uint64
+        title: |-
+          total is total number of results available if PageRequest.count_total
+          was set, its value is undefined otherwise
+    description: |-
+      PageResponse is to be embedded in gRPC response messages where the
+      corresponding request message has used PageRequest.
+
+       message SomeResponse {
+               repeated Bar results = 1;
+               PageResponse page = 2;
+       }
+  google.protobuf.Any:
+    type: object
+    properties:
+      type_url:
+        type: string
+      value:
+        type: string
+        format: byte
+  grpc.gateway.runtime.Error:
+    type: object
+    properties:
+      error:
+        type: string
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      details:
+        type: array
+        items:
+          type: object
+          properties:
+            type_url:
+              type: string
+            value:
+              type: string
+              format: byte
+  allinbits.cosmoscash.did.MsgAddServiceResponse:
+    type: object
+  allinbits.cosmoscash.did.MsgAddVerificationResponse:
+    type: object
+  allinbits.cosmoscash.did.MsgCreateDidDocumentResponse:
+    type: object
+  allinbits.cosmoscash.did.MsgDeleteServiceResponse:
+    type: object
+  allinbits.cosmoscash.did.MsgRevokeVerificationResponse:
+    type: object
+  allinbits.cosmoscash.did.MsgSetVerificationRelationshipsResponse:
+    type: object
+  allinbits.cosmoscash.did.MsgUpdateDidDocumentResponse:
+    type: object
+  allinbits.cosmoscash.did.Verification:
+    type: object
+    properties:
+      relationships:
+        type: array
+        items:
+          type: string
+        title: |-
+          verificationRelationships defines which relationships
+          are allowed to use the verification method
+      method:
+        type: object
+        properties:
+          id:
+            type: string
+          type:
+            type: string
+          controller:
+            type: string
+          blockchainAccountID:
+            type: string
+        title: |-
+          A DID document can express verification methods, 
+          such as cryptographic public keys, which can be used 
+          to authenticate or authorize interactions 
+          with the DID subject or associated parties. 
+          https://www.w3.org/TR/did-core/#verification-methods
+      context:
+        type: array
+        items:
+          type: string
+    title: |-
+      Verification is a message that allows to assign a verification method
+      to one or more verification relationships

@@ -1,0 +1,30 @@
+@startmindmap
+
+title Chain of Trust
+footer Cosmos Cash: https://github.com/allinbits/cosmos-cash
+
+<style>
+activityDiagram {
+  LineColor #222
+  FontName sans
+}
+</style>
+skinparam monochrome false
+skinparam shadowing false
+
+
+* RootOfTrust
+** Regulator 1
+*** Token Issuer 1
+**** Account Holder 1
+**** Account Holder ...
+**** Account Holder Y
+*** Token Issuer ...
+*** Token Issuer X
+** Regulator ..
+** Reguator N
+
+
+
+
+@endmindmap

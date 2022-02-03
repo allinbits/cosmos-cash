@@ -1,0 +1,1642 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+        <meta name="author" content="['David Grierson', 'Patrick McHale', 'Alessio Treglia']">
+      
+      
+      <link rel="icon" href="../../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.9">
+    
+    
+      
+        <title>Cosmos Cash - Cosmos Cash Documentation Portal</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.2b4465f4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.e6a45f82.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../../../..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#executive-summary" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../../.." title="Cosmos Cash Documentation Portal" class="md-header__button md-logo" aria-label="Cosmos Cash Documentation Portal" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Cosmos Cash Documentation Portal
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Cosmos Cash
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08z"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/allinbits/cosmos-cash/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../../.." title="Cosmos Cash Documentation Portal" class="md-nav__button md-logo" aria-label="Cosmos Cash Documentation Portal" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    Cosmos Cash Documentation Portal
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/allinbits/cosmos-cash/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../.." class="md-nav__link">
+        Cosmos Cash
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../ABOUT/" class="md-nav__link">
+        About Documentation
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          Explanation
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Explanation" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Explanation
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../" class="md-nav__link">
+        About Explanation Documentation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../presentations/" class="md-nav__link">
+        Presentations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_3" type="checkbox" id="__nav_3_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_3">
+          ADR
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="ADR" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_3">
+          <span class="md-nav__icon md-icon"></span>
+          ADR
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ADR/" class="md-nav__link">
+        About Architecture Decision Records (ADR)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ADR/PROCESS/" class="md-nav__link">
+        ADR Creation Process
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ADR/adr-002-docs-structure/" class="md-nav__link">
+        ADR 002: Documentation Structure
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ADR/adr-003-issuer/" class="md-nav__link">
+        ADR 003: Cosmos Cash Issuance model
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ADR/adr-004-did/" class="md-nav__link">
+        ADR 004: DID
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ADR/adr-005-registration-credential/" class="md-nav__link">
+        ADR 005: A VASP Registration Credential based on W3C Standards
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ADR/adr-006-license-credential/" class="md-nav__link">
+        ADR 006: An Issuer License based on W3C Verifiable Credential Standards
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ADR/adr-007-root-of-trust/" class="md-nav__link">
+        ADR 007: Root of trust
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ADR/adr-template/" class="md-nav__link">
+        ADR Template
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4" type="checkbox" id="__nav_3_4" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4">
+          Articles
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Articles" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_4">
+          <span class="md-nav__icon md-icon"></span>
+          Articles
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../" class="md-nav__link">
+        About Articles
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4_2" type="checkbox" id="__nav_3_4_2" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4_2">
+          Regulation paper
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Regulation paper" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_4_2">
+          <span class="md-nav__icon md-icon"></span>
+          Regulation paper
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4_2_1" type="checkbox" id="__nav_3_4_2_1" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4_2_1">
+          Rpts
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Rpts" data-md-level="4">
+        <label class="md-nav__title" for="__nav_3_4_2_1">
+          <span class="md-nav__icon md-icon"></span>
+          Rpts
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Cosmos Cash
+      </a>
+      
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_5" type="checkbox" id="__nav_3_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_5">
+          Topics
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Topics" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_5">
+          <span class="md-nav__icon md-icon"></span>
+          Topics
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../topics/Compare%20USDC%20vs%20USDT%20vs%20CASH-ISSUER/" class="md-nav__link">
+        USDC vs USDT vs Cosmos Cash Issuer
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          How To
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="How To" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          How To
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../How-To/" class="md-nav__link">
+        How-to guides
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../How-To/chain_001_faucet/" class="md-nav__link">
+        Get Testnet Tokens (Faucet)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../How-To/general_001_swagger/" class="md-nav__link">
+        Swagger
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5">
+          Networks
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Networks" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Networks
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../Networks/testnet/" class="md-nav__link">
+        Testnet
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../Reference/" class="md-nav__link">
+        Reference Documentation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../Reference/GLOSSARY/" class="md-nav__link">
+        GLOSSARY
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../Reference/MODULES/" class="md-nav__link">
+        Cosmos Cash Modules
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6_4" type="checkbox" id="__nav_6_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6_4">
+          Architecture
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Architecture" data-md-level="2">
+        <label class="md-nav__title" for="__nav_6_4">
+          <span class="md-nav__icon md-icon"></span>
+          Architecture
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../Reference/architecture/" class="md-nav__link">
+        Architecture
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../Reference/architecture/CONTRIBUTING/" class="md-nav__link">
+        CONTRIBUTING
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_7" type="checkbox" id="__nav_7" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_7">
+          Tutorials
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Tutorials" data-md-level="1">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          Tutorials
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../Tutorials/" class="md-nav__link">
+        Index
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+<a href="https://github.com/allinbits/cosmos-cash/edit/master/docs/Explanation/articles/regulation-paper/rpts/CosmosCashRegs.md" title="Edit this page" class="md-content__button md-icon">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+</a>
+
+
+<h1 id="executive-summary">Executive Summary</h1>
+<p>This article describes the legal requirements to create a Cosmos-SDK powered regulatory compliant e-money token. This token would have the same guarantees as the traditional banking sector thus bringing true liquidity to the crypto world. </p>
+<p>In this paper, the regulatory environment within Europe will be laid out. It will outline how the regulations have been drawn up and how the regulations define DLT based assets and the requirements based on these classifications. It will also briefly review the roles and permits required to perform activities relating to crypto-assets.</p>
+<p>It is observed that:</p>
+<ul>
+<li>Financial services that are licensed under existing EU regulation have advantages under new crypto-asset legislation;</li>
+<li>Key deliverable from a technology perspective for issuers of e-money tokens on Decentralised Ledger Technologies - assuming issuer is authorised - is a whitepaper that details the supporting technology and associated risks;</li>
+<li>Anti-Money Laundering (AML) regulations are the main point of concern with regard to decentralised ledger technology and represents key regulatory risk;</li>
+<li>With respect to AML, some attention should be paid to the FATF "travel rule", which is not contained in current EU directive, but is part of FATF recommendations;</li>
+<li>The definition of validators within regulatory frameworks is unclear and forms another regulatory risk to be mitigated for an e-money token issuer;</li>
+<li>The EU regulatory requirements relating to the implementation of Central Bank Digital Coins (CBDC) is likely to lead to delays, but a regulated protocol with a consortium of issuers could be a way forward.</li>
+</ul>
+<h1 id="acknowledgements">Acknowledgements</h1>
+<p>Authors of this article would like to thank</p>
+<ul>
+<li>Amagis Capital for their backing report and many recommendations, particularly <ul>
+<li>Antonio Giannino</li>
+<li>Francesca Valenti</li>
+<li>Andrea Vianelli</li>
+</ul>
+</li>
+<li>Martin Worner at Confio.tech for his design input and reviews</li>
+<li>Interchain Foundation for their backing and suggestions</li>
+</ul>
+<p>This paper will make significant reference to Amagis' report produced in conjunction with this report. For the sake of brevity, reference details are noted here [@Amagis:CosmosCashReport] </p>
+<h2 id="disclaimer">Disclaimer</h2>
+<p>This paper represents the opinions and views of the authors. It should not be any way construed as legal advice.</p>
+<h1 id="background">Background</h1>
+<p>The value of assets secured on Distributed Ledger Technology (DLT) is increasing at ever upward rates. However, pervasiveness in the general economy is still low. This is for a number of reasons that include:</p>
+<ul>
+<li>Understanding the new technology</li>
+<li>Financial literacy in the general public</li>
+<li>Trust and public perception</li>
+</ul>
+<p>Readers of this document will doubtless believe that DLT is indeed a tool of public good that can change finance for the better for millions of people. However to make that transition, appropriate regulation is important, especially as the technology matures. </p>
+<p>To date, jurisdictions are adopting three contrasting approaches toward crypto-assets and crypto-related services, namely:</p>
+<ul>
+<li><strong>Proactive approach</strong>, adopting regulations addressed to crypto-assets and related services;</li>
+<li><strong>Neutral approach</strong>, seeking to promote case-by-case assessments on the relevant circumstances and eventually attempting to reconduct such assets and activities to existing legislation and regulations (mostly within the payment and investment services spheres);</li>
+<li><strong>Restrictive approach</strong>, seeking to introduce outright bans to crypto-assets and related activities.</li>
+</ul>
+<p>This document will review the approach within the European Union.</p>
+<h1 id="scope">Scope</h1>
+<h2 id="european-union">European Union</h2>
+<p>This document will only consider European Regulation. The reasons for this are two-fold: market size and regulatory framework. </p>
+<p>The union (as defined as the 27 member states) represents 450 million people (third in size behind China and India) and is the second biggest trading bloc in the world. Further, the Eurozone (area using the Euro currency) </p>
+<ul>
+<li>is the second largest economy in the world in nominal terms, after the United States;</li>
+<li>is the third economy largest in purchasing power parity (PPP) terms, after China and the United States;</li>
+<li>has a GDP estimated at 18.8 trillion USD (nominal) in 2018;</li>
+<li>represents approximately 22% of the global economy.</li>
+</ul>
+<p>In terms of economy and demographics, the EU is globally extremely important, but with respect to DLT-based assets, as of September 2020, the EU has also taken the lead in attempting to create the first harmonised and cross-border framework applicable to crypto-assets and related activities.</p>
+<p>In addition to legislation, the EU Commission has also been promoting a digital finance package, which includes a new strategy on digital finance for the EU financial sector. The aim is to ensure that the EU embraces the digital revolution and drives it with innovative European firms in the lead, making the benefits of digital finance available to European consumers and businesses. </p>
+<h2 id="eu-regulatory-framework">EU Regulatory Framework</h2>
+<p>Financial legislation is guided and implemented through a network of international and national level bodies. The scope of each body defined as as per the table below [@Judge:CryptoLandscape]:</p>
+<p><img alt="Authorities involved in the legal and regulatory framework" src="../../imgs/CosmosCashRegs/RegulatorTable.png" /></p>
+<p>A number of supranational and intergovernmental bodies such as Bank of International Settlements (BIS), and the Financial Action Task Force (FATF), with respect to their role and responsibilities, advise on best practice, policy and standards. For BIS this is central bank and monetary policy; for FATF this is money laundering and terrorism financing.</p>
+<p>Within the European Union (EU) the commission turn policy and guidelines - like FATF recommendations - into draft legislation which is then approved by the European Parliament and the Council of Minsters.</p>
+<p><img alt="Organigram of the European political system. The seven organs of the Union are in blue, national / intergovernmental elements in orange. (Source: Wikipedia)" src="../../imgs/CosmosCashRegs/EuOmnigram.png" /></p>
+<p>The commission drafts legislation in two forms: regulation and directives. As per the <a href="https://europa.eu/european-union/law/legal-acts_en">Europa.org</a> website, they are defined as follows:</p>
+<blockquote>
+<p><em>A "regulation" is a binding legislative act. It must be applied in its entirety across the EU.</em></p>
+<p><em>A "directive" is a legislative act that sets out a goal that all EU countries must achieve. However, it is up to the individual countries to devise their own laws on how to reach these goals.</em></p>
+</blockquote>
+<p>Through these mechanisms financial regulation is implemented in the EU.</p>
+<h1 id="mica">MiCA</h1>
+<p>The background above outlined the EU package to support DLT technologies. This package includes a proposal for a pilot regime on DLT market infrastructures, a proposal for digital operational resilience and a proposal to clarify or amend certain related EU financial services rules. This proposal for a "Regulation of The European Parliament And of The Council on Markets in Crypto-assets, and amending Directive (EU) 2019/1937" is also known as “MiCA” [@EU:MiCA].</p>
+<p>MiCA follows from several supervisory opinions, guidance, industry-wide consultations and international reports. It is drafted with several core goals in mind:</p>
+<ul>
+<li>To increase legal certainty around crypto-assets and related services;</li>
+<li>To support innovation and promote the development of crypto-assets and the wider use of distributed ledger technology (DLT);</li>
+<li>To instill appropriate levels of consumer and investor protection and market integrity in an area that presents many of the same risks as traditional financial instruments;</li>
+<li>To ensure financial stability.</li>
+</ul>
+<p>MiCA introduces the first EU-wide licensing regime for crypto-asset issuers and service providers. It follows the approach taken with traditional investment services regulation through the implementation of MiFID II (Directive 2014/65/EU) [@EU:MiFID] and MiFIR [@EU:MiFIR]. Further, it builds upon - and complements - other existing regulation, of which the most relevant are:</p>
+<ul>
+<li>Electronic money within the scope of EMD II (Directive 2009/110/EC) [@EU:EMD2];</li>
+<li>Deposits within the scope of the EU Directive on Deposit Guarantee Schemes (Directive 2014/49/EU) [@EU:DepositGuarantee];</li>
+<li>Securitisations within the scope of the Securitisation Regulation (Regulation (EU) 2017/2402) [EU:Securitisation].</li>
+</ul>
+<p>In addition to these articles, there are other directives that apply cross-asset/service. The most important for crypto-assets is the 5th Anti-Money Laundering Directive (Directive 2018/843) known as AMLD5 [@EU:AMLD5]</p>
+<p>Given MiCA has been drafted on the basis of leveraging existing legislation, by design it favours those entities that are already licensed under existing financial services regulation. By way of an example, if a firm is already licensed to issue an asset (under MiFiD or e-money) then the barriers a DLT token can be issued very easily through the completion of steps defined under MiCA</p>
+<h2 id="products">Products</h2>
+<h3 id="definition-of-cryptovirtual-assets">Definition of crypto/virtual-assets</h3>
+<p>In short, the definition of crypto/virtual assets depends on the regulation under consideration.</p>
+<p>For MiCA it means </p>
+<blockquote>
+<p>“<em>a digital representation of value or rights which may be transferred and stored electronically, using distributed ledger technology or similar technology</em>”.</p>
+</blockquote>
+<p>The key point is the DLT or "alike". However, under the FATF guidance [@FATF:G20Guidance], a virtual asset is </p>
+<blockquote>
+<p><em>"a digital representation of value that can be digitally traded, or transferred, and can be used for payment or investment purposes. Virtual assets do not include digital representations of fiat currencies, securities and other financial assets that are already covered elsewhere ..."</em></p>
+</blockquote>
+<p>All the definitions of MiCA (as per next section) come under this remit, with the exclusion of security tokens where they are digital representations of the existing securities/assets. FATF also refer to a range of underlying technologies, not just DLT.</p>
+<p>This paper is particularly focused on e-money tokens, so it is worth considering the AMLD5 legal definition of a virtual currency:</p>
+<blockquote>
+<p><em>“a digital representation of value that is not issued or guaranteed by a central bank or a public authority, is not necessarily attached to a legally established currency, and does not possess a legal status of currency or money, but is accepted by natural or legal persons, as a means of exchange, and which can be transferred, stored and traded electronically”</em></p>
+</blockquote>
+<p>Which, unsurprisingly, is close to the definition of stablecoins (and by extension e-money tokens).</p>
+<h3 id="types-of-crypto-asset-covered-by-mica-regulation">Types of crypto-asset covered by MiCA regulation</h3>
+<p>MiCA addresses crypto-assets. In particular it focuses on a number of sub-types that represent either a claim on an economic asset, method of payment or for another utility (permissions etc.):</p>
+<p><img alt="Crypto-Asset class definitions as per MiCA" src="../../imgs/CosmosCashRegs/TokenTaxonomy.png" /></p>
+<p><strong>Economic assets</strong></p>
+<p><strong>Security Tokens</strong>: these represent the DLT based equivalent of traditional securities i.e. they represent ownership rights and/or entitlements (e.g. dividends, coupon payments etc)</p>
+<p>The key observation is that these can include traditional securities or other assets that have undergone the process of tokenization (i.e. that have been registered on a blockchain in the form of a token). </p>
+<p><strong>Utility</strong></p>
+<p><strong>Utility Tokens</strong> are a type of crypto-asset which is intended to provide digital access to a DLT-based good or service. The important features of this class of token is that:</p>
+<ul>
+<li>It is only accepted by the issuer;</li>
+<li>In general, it has a non-financial purposes.</li>
+</ul>
+<p><strong>Methods of payment</strong></p>
+<ul>
+<li><strong>CBDC</strong>: these may be defined digital assets issued by a public authority (i.e. central banks, in the form of central bank liability), often referred to as sovereign tokens (namely a central bank) for the purpose of ensuring smooth and frictionless payment and settlement solutions, in either retail or wholesale transactions.</li>
+<li><strong>Payment tokens / Cryptocurrencies</strong>: these instruments are those crypto-assets that are designed as an alternative to government issued fiat money i.e.  they are intended to perform the roles of medium of exchange, store of value and unit of account. These are often referred to as virtual currencies or coins. Classic examples are Bitcoin and Litecoin,</li>
+<li>
+<p><strong>Stablecoins (or asset-referenced tokens)</strong>: these tokens aim at maintaining a stable value by referencing one or more of the following asset types:</p>
+<ul>
+<li>currencies that are legal tender;</li>
+<li>commodities;</li>
+<li>other crypto-assets</li>
+</ul>
+<p>By stabilising their value, those asset-referenced tokens often aim at being used by their holders as a means of payment to buy goods and services and as a store of value.</p>
+</li>
+</ul>
+<p><strong>E-Money Tokens</strong></p>
+<p>E-money tokens (EMT) are a sub-category of stablecoins, but the key characteristic is that value stability is achieved by referencing <em>only one fiat currency</em> rather than a basket of assets. Effectively, they are a proxy for a fiat currency that is legal tender. They are not a CBDC because they are not issued by a public body.</p>
+<p>The function of such crypto-assets is very similar to the function of electronic money, as defined in the EMD2 Directive [@EU:EMD2].</p>
+<h3 id="significant-tokens">Significant tokens</h3>
+<p>Notably, under the MiCA, the European Banking Authority (EBA) has been given the power to classify asset-referenced tokens as <em>"significant asset-referenced tokens"</em> - and by extension - <em>"significant e-money-token"</em></p>
+<p>Significance is established by satisfying at least three of the following factors:</p>
+<ul>
+<li>Size of the EMT, either by <ul>
+<li>The size of the customer base, </li>
+<li>Value of issued tokens, </li>
+<li>The number and value of transactions,</li>
+<li>The number of Member States where the EMT is used,</li>
+<li>use for cross- border payments and remittances;</li>
+</ul>
+</li>
+<li>Size of the issuer, through <ul>
+<li>Market capitalisation, and/or </li>
+<li>Asset reserves of the issuer,</li>
+<li>cross-border activities;</li>
+</ul>
+</li>
+<li>The shareholders of the issuer of the EMT or of any of the third-party entities referred to in Article 30(5), point (h);</li>
+<li>The significance of the number of Member States where the third-party entities referred to in Article 30(5), point (h), are established;</li>
+<li>The degree of interconnectivity of the EMT with the financial system - the measure of this are unclear.</li>
+</ul>
+<p>The significant classification leads to enhanced regulation of such tokens particularly:</p>
+<ul>
+<li><strong>Asset related</strong> - custodial requirements, quality and issuer capital requirements</li>
+<li><strong>Risk management</strong> - policy, liquidity management and wind-down procedures</li>
+<li><strong>Oversight</strong> - Set-up of an EBA chaired and managed supervisory college, which is paid by issuers based on size of issuance.</li>
+</ul>
+<p>Please review section Appendix \ref{sec:appsigtokens} for specifics.</p>
+<p>Note: Eventually, issuers themselves may apply for having their EMT classified as significant. </p>
+<h3 id="crypto-assets-exempt-from-mica-secexemptions">Crypto-Assets exempt from MiCA {#sec:exemptions}</h3>
+<p>There are a number of types (or combinations of types) of crypto-assets where MiCA authorisation does not apply:</p>
+<p><strong>Case 1: Size of the token offering</strong>, in terms of either value and/or audience</p>
+<ul>
+<li>The crypto-assets are offered for free;</li>
+<li>The offering of crypto-assets is addressed to fewer than 150 natural or legal persons per member state acting on their own account;</li>
+<li>The total consideration of such an offering in the Union does not exceed €1,000,000, or the corresponding equivalent in another currency or in crypto-assets, over a period of 12 months;</li>
+<li>The average outstanding amount of asset-referenced tokens/e-money tokens does not exceed €5,000,000, or the corresponding equivalent in another currency, over a period of 12 months, calculated at the end of each calendar day.</li>
+</ul>
+<p><strong>Case 2: The knowledge and experience of audience</strong>, i.e. the offering of crypto-assets (e.g. asset-referenced tokens/e-money tokens) is solely addressed to qualified investors and the crypto-assets can only be held by such qualified investors.</p>
+<p><strong>Case 3: asset attributes</strong>, specifically, the crypto-asset is unique and not fungible with other crypto-assets;</p>
+<p><strong>Case 4: The crypto-assets that are created through mining</strong> as a reward for the maintenance of or validation of transactions on a or similar technology;</p>
+<h2 id="services">Services</h2>
+<h3 id="crypto-asset-service-providers-seccasps">Crypto-Asset Service Providers {#sec:casps}</h3>
+<p>MiCA - aside from issuance - sets out eight types of crypto-asset services. These services map almost directly to the equivalent roles in  MiFID). These are namely:</p>
+<ul>
+<li><strong>The custody and administration of crypto-assets on behalf of third parties</strong>: this refers to the safekeeping or controlling, on behalf of third parties, crypto-assets or the means of access to such crypto-assets, where applicable in the form of private cryptographic keys;</li>
+<li><strong>The operation of a trading platform for crypto-assets</strong>: this means managing one or more trading platforms for crypto-assets, within which multiple third-party buying and selling interests for crypto-assets can interact in a manner that results in a contract, either by exchanging one crypto-asset for another or a crypto-asset for fiat currency that is legal tender;</li>
+<li><strong>The exchange of crypto-assets for fiat currency that is legal tender</strong>: this means concluding purchase or sale contracts concerning crypto-assets with third parties against fiat currency that is legal tender by using proprietary capital;</li>
+<li><strong>The exchange of crypto-assets for other crypto-assets</strong>: this means concluding purchase or sale contracts concerning crypto-assets with third parties against other crypto-assets by using proprietary capital;</li>
+<li><strong>The execution of orders for crypto-assets on behalf of third parties:</strong> this means concluding agreements to buy or to sell one or more crypto-assets or to subscribe for one or more crypto-assets on behalf of third parties;</li>
+<li><strong>Placing of crypto-assets</strong>: means the marketing of newly-issued crypto-assets or of crypto-assets that are already issued but that are not admitted to trade on a trading platform for crypto-assets, to specified purchasers and which does not involve an offer to the public or an offer to existing holders of the issuer’s crypto-assets;</li>
+<li><strong>The reception and transmission of orders for crypto-assets on behalf of third parties</strong>: this means the reception from a person of an order to buy or to sell one or more crypto-assets or to subscribe for one or more crypto-assets and the transmission of that order to a third party for execution;</li>
+<li><strong>Providing advice on crypto-assets</strong>: this means offering, giving or agreeing to give personalised or specific recommendations to a third party, either at the third party’s request or on the initiative of the crypto-asset service provider offering the advice, concerning the acquisition or the sale of one or more crypto-assets, or the use of crypto-asset services.</li>
+</ul>
+<p>Entities that are licensed to offer these services are called CASP's <strong>(Crypto-Asset Service Providers).</strong> An entity wanting to offer multiple services must apply for each license as needed. Note that these licenses can expire if not used.</p>
+<h3 id="minersvalidators-do-they-need-to-be-authorised">Miners/Validators - do they need to be authorised?</h3>
+<p>In the EU Commission Consultation [@EUCommission:Crypto:Consulation], the Commission enquired about the suitability to include the following activity within the regulatory perimeter: </p>
+<blockquote>
+<p>“<em>Processing services, also known as ‘mining’ or ‘validating’ services in a DLT environment (e.g. ‘miners’ or validating ‘nodes’ constantly work on verifying and confirming transactions)”</em>.</p>
+</blockquote>
+<p>Looking at the definition of crypto-service set out in MiCA, no reference is made to mining and/or validators’ activities beyond those defined services above. Amagis, in their analysis, suggest this ought to be the result of an assessment on the nature of the activities of miners following the feedback received after the consultation. </p>
+<p>As will be seen in section \ref{sec:AMLGov}, the application of AML recommendations is somewhat different and this presents a point of uncertainty.</p>
+<h3 id="relation-of-mica-services-to-mifid-ii">Relation of MiCA services to MiFID II</h3>
+<p>It is important to note that neither credit institutions (i.e. banks), or MiFID investment firms are subject to the authorisation requirements when providing crypto-asset services (provided that the relevant crypto-asset service is related to the relevant MiFID investment service or activity for which they are authorised). As an example, holding a license for the provision of advisory services under MiFID can also advise on crypto-asset investments without further regulation required.</p>
+<p>However, it is the view of this paper that this relation is not reciprocal, i.e. entities licensed under MiCA are not licensed under MiFID, thus, a firm licensed to advise on crypto-assets can not offer advisory on other securities.</p>
+<p>For MiFID licensed firms, the only additional requirements under MiCA to issue an asset referenced token is the need to fulfil white paper requirements as outlined in Appendix \ref{sec:whitepaper}</p>
+<h3 id="issuers">Issuers</h3>
+<p>In addition to the roles outlined above, MiCA draws a tripartite distinction among categories of issuers basing on the type of crypto-asset issued:</p>
+<ul>
+<li><strong>Issuers of crypto-assets that are not asset-referenced tokens or e-money tokens (such as utility tokens):</strong> These do not need to be licensed in order to offer their crypto-assets to the public or seek admission to a Crypto-exchange and, provided that they comply with the requirements of MiCA, they are permitted to do so throughout the EU.</li>
+<li><strong>Issuers of stablecoins (asset-referenced tokens):</strong>  Issuers of stablecoins are required to be authorised by their home state regulator, which shall assess their compliance with a list of prudential, conduct of business (including requirements on custody of reserve assets), and governance requirements. Issuers shall be required to draft a white paper, having the minimum content set out under MiCA relating to the offer of stablecoins that must be approved by the issuer’s home state regulator prior to the offer.</li>
+<li><strong>Issuers of e-money tokens:</strong>  Issuers of e-money tokens are required to be authorised by their home state regulator as a credit institution (i.e. a bank) or an e-money issuer (under E-Money Directive). Consequently, they will be subject to the requirements of the EMD. In addition, e-money issuers also need to issue a white-paper to the home state regulator, but unlike the stablecoin token it does NOT need to be approved.</li>
+</ul>
+<h3 id="passports">Passports</h3>
+<p>The EU comprises 27 member states. The regulatory burden of registering in each member state would be too onerous, despite purporting to be a single market. Therefore the concept of passporting was introduced. Passporting allows entities authorised to conduct certain business in one jurisdiction to only need satisfy registration requirements in another EU jurisdiction in order to conduct cross-border business.</p>
+<p>MiCA introduces the same EU-wide passport concept that is available to market participants who become licensed under the MiCA regime in their home member state, again replicating the existing features of traditional investment services legislation. </p>
+<p>Passporting represents a major breakthrough in the industry as it effectively ensures the cross-border provision of crypto-related services across the EU, creating a level playing field among EU member states.</p>
+<h1 id="anti-money-laundering">Anti-Money Laundering</h1>
+<h2 id="definition">Definition</h2>
+<p>As defined by the Financial Action Task Force (FATF):</p>
+<blockquote>
+<p><em>Money laundering is the processing of these criminal proceeds to disguise their illegal origin.</em></p>
+</blockquote>
+<p>With reference to the regulatory framework section earlier, FATF is an intergovernmental organisation tasked with setting policy and guidelines [@FATF:G20Guidance] to prevent both Money Laundering and Terrorism Financing. These standards are then interpreted by each jurisdiction and turned into legislation.</p>
+<p>The combination of lack of regulation, anonymity and global reach has made DLT based tokens useful tools in money laundering. Over time FATF have defined and subsequently clarified the definitions of virtual assets, their providers and the application of guidelines to these assets.</p>
+<p>AMLD5 is a significant issue for DLT based technologies to address in order to get regulatory approval.</p>
+<h2 id="eu-aml-implementation">EU AML implementation</h2>
+<p>Within the EU, FATF guidelines are implemented through the 5th Anti-Money Laundering Directive (Directive 2018/843) [@EU:AMLD5]. Broadly this is a multi-level risk based approach. Each country may assess their vulnerability to money laundering and then take appropriate steps. Each organisation will decide on the risk they are prepared to accept and identify the risk they are subject to, which include product range, customer types etc.</p>
+<p>AML processes in financial service providers follow a model of "Know Your Client/Business" (KYC/KYB) and then based on the results of this an on-going process of either:</p>
+<ul>
+<li>Client Due Diligence (CDD); or</li>
+<li>Enhanced Due Diligence (EDD)</li>
+</ul>
+<p>Which may be more fine-grained as needed.</p>
+<h3 id="kyc-kyb">KYC / KYB</h3>
+<p>This first step involves establishing the identity of a client and address. This is then assessed against public information, AML/CFT exemption lists and possibly an internal model. Based on this more checks may be required that can include:</p>
+<ul>
+<li>Who the economic beneficiary is i.e. if the client is a private business, then who owns the business;</li>
+<li>Business profile and types of transaction</li>
+<li>The source of funds i.e. how the business earns its income</li>
+</ul>
+<p>There may be additional checks resulting checks, particularly if the client is a "political exposed person" then these persons - and family - would also qualify for a higher risk rating</p>
+<h3 id="cdd-edd">CDD / EDD</h3>
+<p>Once these checks are done and risk rating established, there are on-going checks that last for the entire business relationship. It includes:</p>
+<ul>
+<li>Regular KYC reviews and re-rating of risk.</li>
+<li>On-going transactions checks. </li>
+</ul>
+<p>In cases where the transaction is unusual, large, complex or of unclear purpose in relation to the client business and against similar classes of business, or the transaction involves a high-risk third countries then it should be flagged and investigated. Unexplained transactions are identified and raised as a "Suspicious Activity Report" with the relevant authority within the jurisdiction.</p>
+<p>The checks and controls themselves are based on a risk model and risks change with time - for example: new guidance, products, threats etc - so the models themselves need to be reassessed at regular intervals.</p>
+<p>The AMLD5 requires member states to create central databases comprised of crypto users’ identities and wallet addresses and authorise national FIUs to access the information stored in them. This means that AML subject firms are legally required to register their businesses with local authorities in the EU and must retain the documents regarding the conducted CDD and recorded transactions in order to hand over identifiable user information to FIUs if requested, such as real names and addresses.</p>
+<h2 id="the-penalties">The Penalties</h2>
+<p>By way of illustrating the seriousness of AMLD5, severe sanctions and penalties may be applied to obliged entities that do not apply appropriate measures in line with the requirements. The maximum financial penalty for a breach is equal to at least twice the amount of the benefit derived from the breach where that benefit can be determined, or at least EUR 1,000,000.</p>
+<h2 id="aml-and-vasps">AML and VASPs</h2>
+<p>In section \ref{sec:casps} it was explained how MiCA defined classes of service providers called CASPs that needed authorisation based on the service offered.</p>
+<p>FATF[@FATF:G20Guidance] recommendations have a similar concept called VASPs (Virtual Asset Service Providers), who are defined as the following:</p>
+<blockquote>
+<p><em>“Any natural/legal person who is not covered elsewhere under the Recommendations, and as a business conducts one or more of the following activities or operations for or on behalf of another natural or legal person: i. exchange between virtual assets and fiat currencies; ii. exchange between one or more forms of virtual assets; iii. transfer of virtual assets; iv. safekeeping and/or administration of virtual assets or instruments enabling control over virtual assets; and v. participation in and provision of financial services related to an issuer’s offer and/or sale of a virtual asset.”</em></p>
+</blockquote>
+<p>This definition is relevant because it imposes AML/CFT requirements. The table below maps roles in a centralised stablecoin network to AML/CFT obligations. </p>
+<p><img alt="Functions subject to AML/CFT obligations in known centralised so-called stablecoin arrangements [@FATF:G20Guidance]" src="../../imgs/CosmosCashRegs/StablecoinRoleMap.png" /></p>
+<p>From the above it is clear that where there is a "gateway" into the network there is a AML/CFT responsibility, which implies</p>
+<ol>
+<li><strong>Virtual currency issuers</strong> - <em>"issuance, redemption and stabilisation of coins"</em></li>
+<li><strong>Virtual currencies exchange providers</strong> (the “<strong>VCEPs</strong>”),  or <em>"Providers engaged in exchange services between virtual currencies and fiat currencies"</em>; </li>
+<li><strong>Custodian wallet providers</strong> (the “<strong>CWPs</strong>”), i.e. entities that provide services to safeguard private cryptographic keys on behalf of their customers, to hold, store and transfer virtual currencies.</li>
+</ol>
+<p>What is not so clear is the definition of "Governance" and "Transfer mechanism(s)". These will be discussed in section \ref{sec:AMLGov}.</p>
+<p>It should be highlighted that point 2 above is scoped to exchange services for fiat currency and not crypto-crypto exchanges. This is due to a point of difference between AMLD5 implementation and the FATF recommendation, specifically the <em>"crypto travel rule"</em>. This rule requires VASPs to collect and exchange beneficiary and originator information with VASP counterparties during any transmittal exceeding USD 1,000. The required personally identifiable information includes names, account numbers, physical addresses and unique identification numbers. </p>
+<p>This point of difference is worth noting. AMLD5 is a directive and therefore, it has slightly different implementation across jurisdictions. Some jurisdictions will go beyond AMLD5 and implement the travel rule. </p>
+<h2 id="aml-governance-and-developers-secamlgov">AML, governance and developers {#sec:AMLGov}</h2>
+<p>The points concerning AML and stablecoins in FATF recommendations should be brought to attention.</p>
+<p>According to FATF [@FATF:G20Guidance], </p>
+<blockquote>
+<p><em>"The central developers and governance bodies of so-called stablecoins are in a unique position to undertake ML/TF risk mitigation"</em></p>
+</blockquote>
+<p>Thus, the logic behind this is that:</p>
+<blockquote>
+<p><em>"... they determine how the functions of the so-called stablecoin arrangement (e.g. the stabilisation mechanism, transfer of coins and user interface) will operate. They make key design and functionality decisions and they determine the extent to which functions are centralised or decentralised and whether AML/CFT preventive measures are built into a so-called stablecoin. They can also control the access points to the arrangement (e.g. who can participate as an exchange or transfer service or whether a person can only access the system through a VASP) and impose AML/CFT standards setting out expectations or operating requirements for key entities in the arrangement, including exchanges and custodial wallet providers. They are also best positioned to undertake centralised AML/CFT functions, such as transaction monitoring across the so-called stablecoin arrangement”</em></p>
+</blockquote>
+<p>FATF then suggest that developers and governance bodies are subject to AML/CFT because</p>
+<blockquote>
+<p><em>“Due to the types of functions necessary for the launch and operations of so-called stablecoins, there will generally be a central administrator or governance body. This is particularly the case for so-called stablecoins with potential for mass-adoption ... For such so-called stablecoins, the FATF considers that these developers and governance bodies are, in general, a financial institution ... or a VASP ...  under the revised FATF Standards. This is particularly the case if the governance body carries out other </em><em>functions in the so-called stablecoin arrangement (such as managing the stabilisation function). The exact designation will depend on what functions the body specifically undertakes and each jurisdiction’s national law</em><em>”.</em></p>
+</blockquote>
+<p>The keys to this are the caveats mentioned, namely:</p>
+<ul>
+<li>what functions the body specifically undertakes and</li>
+<li>each jurisdiction’s national law</li>
+</ul>
+<p>How this affects Cosmos Cash will be reviewed in later sections.</p>
+<h2 id="aml-and-validators">AML and validators</h2>
+<p>Under the AML/CFT perspective, the regulatory requirements of validators is somewhat different. FATF, in their guidance state the following: </p>
+<blockquote>
+<p><em>“depending on the functions they perform, the validator nodes that validate the underlying distributed ledger technology may be VASPs or financial institutions. These entities may be part of the so-called stablecoin governance body or separate entities”.</em></p>
+</blockquote>
+<p>As per the FATF argument regarding governance, the <em>"functions they [validators] perform"</em> is the key to clarifying this point.</p>
+<h2 id="off-chain-requirements">Off-chain requirements</h2>
+<p>In addition to the KYC and CDD / EDD, there are further organisational requirements that are off-chain, but noted for completeness:</p>
+<ul>
+<li>Compliance officer at managerial level</li>
+<li>Management practices</li>
+<li>Employee screening and training on the AML Directives.</li>
+</ul>
+<h2 id="possible-on-chain-considerations">Possible on-chain considerations</h2>
+<p>Further to the off-chain considerations, there are additional control and procedures that include the internal risk model, ongoing transaction monitoring plan, reporting, record-keeping and internal control.</p>
+<p>A particular requirement of a crypto/virtual asset is noted in AMLD5, consideration n. 9:</p>
+<blockquote>
+<p><em>“To combat the risks related to the anonymity, national Financial Intelligence Units (FIUs) should be able to obtain information allowing them to associate virtual currency addresses to the identity of the owner of virtual currency”</em></p>
+</blockquote>
+<p>Ideally robust AML initiatives should be implemented within the protocol rather than relying on CASP's implementation would add another level of defence, making the entire network safer. </p>
+<h1 id="credit-institution-versus-e-money-institution">Credit institution versus E-Money Institution</h1>
+<p>It is worth highlighting the types of institution that can issue e-money tokens. </p>
+<p>As noted there are two types of institution that can issue such tokens: Credit Institutions and E-Money Institutions.</p>
+<p>Credit institutions are in fact banks and therefore hold a banking license. In a more generic sense, these can also be considered as "fractional" banks, which is the predominant banking model in the EU (and much of the developed world). These institutions can do the following:</p>
+<ul>
+<li>Take deposits AND lend to clients;</li>
+<li>Pay/receive interest on deposits/loans;</li>
+<li>Make deposits and borrow from the central bank;</li>
+<li>Are backed by deposit insurance scheme.</li>
+</ul>
+<p>Because credit institutions benefit from central bank and deposit insurance they are subject to greater capital requirements, enhanced regulation and greater scrutiny as well as enhanced risk management.</p>
+<p>In contrast, E-Money Institutions have a much more limited scope. This is matched by an equivalent regulatory regime. These institutions can do the following:</p>
+<ul>
+<li>Take deposits, but can not lend;</li>
+<li>Can't pay interest on those deposits;</li>
+<li>Are subject to lesser regulation compared to banks;</li>
+<li>Are also subject to looser capital requirements;</li>
+<li>Have no access to central bank funds;</li>
+<li>Can not be part of deposit insurance scheme (because deposits are not lent to other clients).</li>
+</ul>
+<p>In contrast to Credit Institutions, EMI's can be considered as a type of "narrow" bank.</p>
+<h1 id="application-of-regulations-to-cbdc">Application of regulations to CBDC</h1>
+<p>At this point is worth reviewing the situation regarding regulation of CBDC. According to MiCA, CBDCs are exempted from the regulation if crypto-assets are issued by central banks acting in their monetary authority capacity or by other public authorities. However, as pointed out in the literature[@EBI:CryptoMarkets]</p>
+<blockquote>
+<p><em>“The MiCA exemption, however, does not extend to intermediaries acting in the issuance of CBDCs or providing services to CBDCs. In turn, only if a central bank adopts a CBDC model under which retail currency holders have direct contact with the central bank are the CBDCs exempted. (…). Models where well- qualified and resourced intermediaries function as links between central banks and retail currency holders are much more likely and far less burdensome on the central banks. This explains why such two-tier CBDC structures have been adopted, for instance, by China in its Digital Yuan project (…). As presently proposed, MiCA will obstruct the sound development of a Digital Euro or other European CBDC strategy. We thus recommend that, subject to further rules stipulated by the respective central bank, private entities acting on behalf of a central bank or in cooperation with a central bank in the context of a CBDC system be exempted from MiCA”</em></p>
+</blockquote>
+<p>To summarise, CBDC are exempt from regulation if the token is issued by a central bank directly to retail customers. However this is contrary to the current operating model of the interbank-market and presents significant risk as it represents a fundamental change in operating model. </p>
+<p>Conversely, third parties acting on behalf of a central bank in the implementation of a CBDC would be subject to regulatory oversight under the significant token requirements, which seems punitive.</p>
+<p>As [@EBI:CryptoMarkets] and [@IMF:RiseDigitalMoney] both note, the two-tier CBDC/e-money model is likely to be the best operating model generally (consider the Digital Yuan project). Based on the impasse outlined above, within the EU this presently does not look likely.</p>
+<h1 id="cosmos-cash">Cosmos Cash</h1>
+<h2 id="definition_1">Definition</h2>
+<p>Cosmos Cash is intended to offer features typical of electronic money, adopting the blockchain technology as underlying infrastructure, and thus leading to a digital asset to be applied within the payment industry. Using the conceptual framework outlined by Adrian &amp; Griffoli [@IMF:RiseDigitalMoney], Cosmos Cash would be acting as a claim based asset with a fixed value redemption, using a private backstop and ultimately built on Blockchain technology.</p>
+<p>More specifically, Cosmos Cash would be built as a digital token that references to a fiat currency (or a digital representation of a fiat currency) based on assets held by the issuer using a Tendermint-based network.</p>
+<p>Cosmos Cash comprises a number of different stakeholders, identified as follows:</p>
+<ul>
+<li><strong>Central Bank</strong> - issues fiat currencies, which may in the future be digital currencies, that back the token;</li>
+<li><strong>Issuers</strong> - one or more approved parties that have the authority to mint, burn and hold reserves of tokens. They use fiat reserves (and digital representations) to issue and redeem tokens presented by customers. They would also offer functionality and services through customer wallets;</li>
+<li><strong>Validators</strong> are entities that validate and settle transactions on the Tendermint network;</li>
+<li><strong>Holders/customers</strong> who can send, receive and redeem tokens from the network. These can be legal entities and private individuals. They would need to successfully complete a KYC process before joining the network.</li>
+</ul>
+<h2 id="regulatory-classification-clue-it-is-an-e-money-token">Regulatory Classification - clue: it is an e-money token</h2>
+<p>Under MiCA regulations - and based on Amagis' consideration - Cosmos Cash would be classed as a crypto-asset based on the following argument:</p>
+<ul>
+<li>It is a digital representation of value</li>
+<li>It can be transferred and stored electronically</li>
+<li>It is based on a Distributed Ledger Technology</li>
+</ul>
+<p>Furthermore, it is an E-money token on the basis that</p>
+<ul>
+<li>It qualifies as a crypto-asset (see above)</li>
+<li>It is intended as a means of exchange, specifically it is an electronic surrogates, for coins and banknotes and is used for making payments</li>
+<li>It maintains a stable value by referring to the value of a fiat currency</li>
+</ul>
+<p>Given that Cosmos Cash is an E-Money token, it is now possible to consider the applicable regulation.</p>
+<h2 id="authorisation">Authorisation</h2>
+<p>First question: Does MiCA apply? According to Article 43(1), last paragraph, an e-money token which references a Union currency shall be deemed to be offered to the public in the Union, which means that authorisation is required. It should be noted that if the issuance (\ref{sec:exemptions}) is small the regulation is much lower.</p>
+<h2 id="cosmos-cash-regulation">Cosmos Cash Regulation</h2>
+<p>Given Cosmos Cash references a Union currency then the following will apply:</p>
+<p><img alt="Regulations relevant for E-Money tokens" src="../../imgs/CosmosCashRegs/RelevantRegulation.png" />{width=50%}</p>
+<h3 id="issuers_1">Issuers</h3>
+<p>In order to issue e-money tokens, the issuer must be a credit institution or E-Money Institution. It also needs to comply with the E-Money Directive II (2009/110/EC) - specifically Titles II &amp; III [@EU:EMD2]. </p>
+<p>The E-Money directive defines various requirements:</p>
+<ul>
+<li>Funds received by issuers for e-money tokens will be invested in secure, low-risk assets in accordance with Article 7(2) of Directive 2009/110/EC; and</li>
+<li>The assets are denominated in the same currency as the one referenced by the e- money token.</li>
+</ul>
+<p>Obligations for issuers of e-money tokens include:</p>
+<ol>
+<li>Not paying interest on e-money token;</li>
+<li>Holders of e-money tokens are provided with a claim on the issuer;</li>
+<li>Tokens are issued at par value on the receipt of funds, 1 EUR means 1 token;</li>
+<li>They are redeemable upon demand by holders at par value. This can be done into cash or via credit transfer; </li>
+<li>Any fees for redemption must be proportionate to the actual cost incurred by the issuer;</li>
+<li>Processing times for redemption can not be longer than 30 days;</li>
+<li>Any conditions of redemption are clearly stated, including any fees and processing times.</li>
+</ol>
+<p><strong>White-paper</strong></p>
+<p>In addition to obligations under EMD, issuers of e-money tokens must also draft a white paper relating to the offer of crypto-assets and submit it to the issuer’s home state regulator at least 20 working days before the white paper’s publication. </p>
+<p>The white-paper in content outlines most of the points outlined above plus the technology supporting the token. Full details can be found in Appendix \ref{sec:whitepaper}.</p>
+<p>There are three points of interest to note regarding the white-paper:</p>
+<ol>
+<li>As noted previously, such a white paper does not need to be approved by the home state regulator. It is unclear what the status such a token would be in the situation where the white-paper is not explicitly approved.</li>
+<li>It is a significant point of difference that issuers of e-money tokens based on DLT have to issue a white-paper. E-money on other technologies do not. </li>
+<li>Holder can claim damages from the issuer if they have evidence that information in the white-paper is not "complete, fair, clear or misleading"</li>
+</ol>
+<p><strong>Significance</strong></p>
+<p>The token may be classed as significant within 30 days by the EBA. If so then the additional requirements would be enforced - Appendix \ref{sec:appsigtokens}</p>
+<p><strong>Marketing</strong></p>
+<p>When marketing such a token there are a number of requirements:</p>
+<ul>
+<li>The marketing communications shall be clearly identifiable as such;</li>
+<li>The information shall be fair, clear and not misleading, it should be clear that holders have the right of redemption at par value at any time;</li>
+<li>The communications shall be consistent with the information in the crypto-asset white paper;</li>
+<li>The communications shall reference the crypto-asset white paper</li>
+<li>Communications shall indicate the address of the website of the issuer of the e-money tokens.</li>
+</ul>
+<h3 id="aml">AML</h3>
+<p>As shown in section \ref{sec:AMLGov} above, the status of governance bodies, developers, validators and miners with respect to AML requirements depends on two factors:</p>
+<ul>
+<li>Functions the body perform; and</li>
+<li>Law in the national jurisdiction</li>
+</ul>
+<p>These frame Amagis' thinking on this such that </p>
+<blockquote>
+<p><em>"... in terms of MiCA, the activity of developer and/or validator and/or miner does not fall into the regulatory perimeter, nor such activities are included in AMLD5 as subject persons – in fact, according to such statutory instruments and looking at the Cosmos Cash ecosystem, we would consider subject persons only EMIs, PSPs and wallet or exchange providers, rather than validators, developers and miners."</em></p>
+</blockquote>
+<p>Amagis go further, stating</p>
+<blockquote>
+<p><em>"About validators, we once again strongly disagree with the statement set out under the FATF Report whereby “Depending on the functions they perform, the validator nodes that validate the underlying distributed ledger technology may be VASPs or financial institutions. These entities may be part of the so-called stablecoin governance body or separate entities”"</em>.</p>
+</blockquote>
+<p>As Amagis note, these points will be clarified over time, both in MiCA and FATF recommendations and they should be reviewed,</p>
+<p>Finally, as suggested by Amagis, Cosmos Cash should implement features based on FATF stablecoin focused guidance that could include, amongst others:</p>
+<ul>
+<li>Ensuring that Cosmos Cash may be transferred exclusively through regulated firms qualifying as financial institutions or VASP in terms of FATF Standards (i.e. being firms subject to AML/CFT obligations);</li>
+<li>Removing address anonymity;</li>
+<li>Restrict peer-to-peer transaction via unhosted wallets;</li>
+<li>Restrict adoption of tumblers and mixers with respect to Cosmos Cash and/or providers within the Cosmos Cash ecosystem;</li>
+<li>Issue a template AML/CFT policy for stakeholders within the Cosmos Cash ecosystem;</li>
+<li>Offering webinars for compliance and AML personnel so as to understand the features of Cosmos Cash.</li>
+</ul>
+<h1 id="conclusions">Conclusions</h1>
+<p>Given the analysis above, the key points are:</p>
+<ul>
+<li>Financial services that are licensed under existing EU regulation have advantages under new crypto-asset legislation.</li>
+<li>Key deliverable for Issuers of e-money tokens on Decentralised Ledger Technologies - assuming issuer is authorised - is the whitepaper detailing the technology supporting the token</li>
+<li>Anti-Money Laundering (AML) regulations are the main point of concern with regard to decentralised ledger technology and represents a key regulatory risk</li>
+<li>With respect to AML, some attention should be paid to the FATF "travel rule", which is not currently an EU directive, but is part of the FATF recommendations</li>
+<li>The definition of validators within regulatory frameworks is unclear and forms an additional regulatory risk to be mitigated for an e-money token issuer.</li>
+<li>The EU regulatory requirements relating to the implementation of Central Bank Digital Coins is likely to lead to delays, but a regulated protocol with a consortium of issuers could be a way forward.</li>
+</ul>
+<p>From this it is clear that AML is a prime area of concern, but also who would use such a protocol, given the hurdles to entry.</p>
+<h2 id="amlcft">AML/CFT</h2>
+<p>AML/CFT is an area of significant risk and opportunity for Cosmos Cash. The anonymity of existing payments coins need to be eliminated with features such as:</p>
+<ul>
+<li>Reduce and eliminate off-chain transactions;</li>
+<li>Establish link between identity between wallet holders;</li>
+<li>Eliminate mechanisms for hiding identity;</li>
+<li>Maintain privacy for clients in-line with GDPR requirements;</li>
+<li>Freeze tokens and accounts in event of suspicious events.</li>
+</ul>
+<p>There is point of a regulatory risk for validators on the chain underlying a Cosmos cash protocol, such that they are classed as a Financial Institution/VASP. This would need to mitigated/eliminated as the costs of setting up legal mechanisms and AML compliance may be punitive.</p>
+<p>There is not only a risk, but an opportunity. According to latest reports [@LexisNexis:2019Costs], Financial Crime Compliance costs (this includes, but not limited to AML) in EMEA was USD 137 Bn in 2019. On average 74% of that cost is staffing [@LexisNexis:2017Costs]. An on-chain protocol with AML/CFT shared between issuers and CASPs could offer significant benefits to financial regulators and law enforcement in identifying and researching payment patterns.</p>
+<p>This presents opportunities to leverage Cosmos based technologies in decentralised identity and zero knowledge proofs. It also offer opportunities to bring in parties with expertise in transaction analysis and data mining capabilities.</p>
+<h2 id="secondary-market">Secondary Market</h2>
+<p>As liquidity and transferability are the indisputable advantages of the DLT: this would require Cosmos Cash to cater for transferability features which would not affect the frictionless and seamless nature of DLT-based transfers. It would need however to cater for safeguards ensuring that transactions among customers take place in a safe, transparent and compliant framework. </p>
+<p>From the analysis above, it is clear that there will be a license-based approach for each financial service, whether that be wallets, exchanges, advisory etc. Ideally such services should be governed without a centralised authority.</p>
+<p>One proposal for this is suggested by Martin Worner [@Confio:PublicPermissioned][@Confio:Self-sovereign-KYC] at confio.tech through self-sovereign governance framework.</p>
+<p>This framework on the blockchain is designed to allow the creation of a community of regulated institutions which can be thought of as <em>“Garden walls”</em>. The institutions conduct self-sovereign, verification that the chain addresses match the institutions, and that the institutions are permitted to operate. There is an optional step of requiring the institutions to add funds to a “staking account” which would allow for the slashing of funds in the event of defined breaches of rules, however, the off-chain safeguards may be a more robust mechanism.</p>
+<p>Once the community of institutions is established, they can then begin the process of creating instruments to trade, which are restricted to the registered institutions to ensure compliance.In this respect, an open point of MiCA deals with exchanges and trading venues supporting E-Money Tokens: one question to ask is if they will require a specific license as payment service providers or EMI to support such transactions! It is the view of Amagis and this paper that this is the most likely in view of the approach adopted in MiCA.</p>
+<p><img alt="On-chain framework to facilitate compliance with national regulations (courtesy: Martin Worner)" src="../../imgs/CosmosCashRegs/SelfSovereignGardenWalls.png" /></p>
+<h2 id="potential-users">Potential users</h2>
+<p>Some of the issues raised by trade bodies within the EU is that MiCA unduly favours entities that are already regulated through MiFID, EMD or other legislation. In the authors' view there is strong evidence for this opinion.</p>
+<p>This leads to the question of who are the likely users for Cosmos Cash. In this respect, Cosmos Cash protocols may be promoted among </p>
+<ul>
+<li>Already licensed and established players seeking to access to the crypto market through a fully regulated and disruptive solution such as Cosmos Cash; and</li>
+<li>Incumbent firms which may be willing to get licensed in order to support Cosmos Cash issuances.</li>
+</ul>
+<p>Many existing issuers do not have technological expertise in distributed ledger technologies, but are looking for business opportunities to access digital finance with a range of products. As will be seen below, the secondary market and chain interconnectivity also offers existing entities exciting opportunities for growth.</p>
+<p>The likely scenario will be the development of partnerships between licensed and established financial firms with technology organisations. It is possible that issuers may combine into a consortium for the purposes of issuance. For this to happen, clear and pre-defined governance rules would be needed to ensure and maintain the same compliance standards for all members players, particularly those which will be officially the front vis-à-vis customers and authorities. </p>
+<p>A second scenario of incumbent firms looking for a license, as suggested by Amagis suggest would be that Cosmos Cash could build an open-source tool kit that supports such users in the process for becoming eligible issuers. It should be noted that these firms should rely on third parties such as Amagis Capital for non-chain activities such as structuring licensing.</p>
+<h2 id="ecosystem-integration">Ecosystem Integration</h2>
+<p>Although the protocol is important, as Amagis point out, coordination with other stakeholders will be equally important. Stakeholders can include</p>
+<ul>
+<li>Existing e-money and credit institutions and payment service providers</li>
+<li>Local regulators</li>
+<li>Think tanks</li>
+<li>Contributors</li>
+<li>Users</li>
+</ul>
+<p>A plan to include such stakeholders would strengthen the vision behind Cosmos Cash.</p>
+<h1 id="design-initial-thoughts">Design Initial Thoughts</h1>
+<p>There are currently two prevalent stable token implementations developed using the Cosmos SDK, <a href="https://github.com/terra-project/core">Terra-Core</a> and <a href="https://github.com/e-money/em-ledger">e-Money Ledger</a>. These both represent a holistic approach to building a stable token. Both applications define a full suite of modules and compose them to be used as a single application. </p>
+<p>The goal of Cosmos Cash is to be a protocol that can be deployed on any Cosmos SDK powered application. This forces a deep focus on the core protocol and allows adherence to regulation in a more flexible way. </p>
+<h2 id="design-principles">Design Principles</h2>
+<p>The characteristics that would allow a novel approach to defining a protocol are as follows:</p>
+<ul>
+<li>Using a decentralised first methodology</li>
+<li>Ensuring the protocol follows the latest regulation</li>
+<li>Using a permission-less chain in a regulated way</li>
+<li>Allowing e-money to be represented as a token deployed on a distributed ledger application</li>
+</ul>
+<h2 id="actors">Actors</h2>
+<p>Through the analysis over the course of this paper, the identified actors needed to build the protocol include at least the following:</p>
+<ul>
+<li>The <strong>Identity</strong> module is the core module and allows tracking of <strong>AML</strong> and <strong>KYC</strong> data in a trust less and secure way that also allows privacy</li>
+<li>The <strong>Issuer</strong> module handles creating and tracking issuers, this allows issuer to revoke tokens, and freeze tokens if necessary</li>
+<li>The <strong>Regulator</strong> module handles creating and monitoring of regulators, in turn, regulators can create and manage issuers</li>
+<li>The <strong>Token</strong> module consists of the basic functionality needed to send, receive and withdraw tokens from the application</li>
+</ul>
+<p>This represents a preliminary architecture diagram to illustrate the segmentation of the protocol from the holistic application.</p>
+<p><img alt="Initial Protocol Architecture" src="../../imgs/CosmosCashRegs/ComsosCashArchitecture.png" /></p>
+<h2 id="known-knowns-and-known-unknowns">"Known knowns" and "Known unknowns"</h2>
+<p>While leveraging the Cosmos SDK, token functionality such as creating new tokens, deleting tokens, and freezing tokens come "out-of-the-box". This has been proven through the development of an initial "sketch" <a href="https://github.com/allinbits/cosmos-cash-poc">protocol</a> that has informed initial thinking and focused attention to the more technically challenging parts of the protocol. </p>
+<p>While adhering to the decentralised first methodology, the <strong>AML</strong> and <strong>KYC</strong> aspects of the protocol become more difficult to reason about - these aspects need further investigation and discussion. </p>
+<p>The initial investigations point towards two main components: <strong>Self Sovereign Identities</strong> and <strong>AML profiles.</strong> Utilising both of these ideas, protocol developers can build regulatory compliant protocols with sovereign data and without the need for trusted oracles. </p>
+<p>These ideas combined with <strong>providing liquidity through interoperability</strong> will allow the novel Cosmos Cash protocol to give the same guarantees as the traditional banking sector while opening up a gateway to the decentralised ecosystem for less technical users thus enforcing mass adoption of Cosmos SDK as the de-facto standard for building self-sovereign blockchains. </p>
+<h2 id="self-sovereign-identities">Self Sovereign Identities</h2>
+<p>Decentralised identifiers[@Sporny:20:DI] and verifiable credentials[@Sporny:19:VCD] can be combined to construct self-sovereign identities on a sovereign blockchain, but how can privacy be maintain and comply with AML regulations? This can be done through leveraging up and coming advancements in the Cosmos eco-system such as Coconut [@ICF:coconut][@Nym:Coconut][@1802.07344] for selective disclosure of personally identifiable information. This could facilitates regulatory oversight and privacy in a decentralised public application.</p>
+<h2 id="anti-money-laundering-profiles">Anti-Money Laundering Profiles</h2>
+<p>Another aspect that has been identified for regulatory compliance is the risk based approach to AML. The initial idea developed with Confio consists of mapping to an AML profile. Each profile represents a different risk profile and corresponds to increased checks. So, for example, a politically exposed person or company in a high risk industry would have a higher classification than a low risk user. </p>
+<p><img alt="AML Process with AML profiles (courtesy: Martin Worner)" src="../../imgs/CosmosCashRegs/AMLProfiler.png" /></p>
+<p>This leads to the second point, which is the proposal to remove send transations. This is handled by an AML function that reviews the transaction against the users' AML profile. Non-acknowledgements are referred to the regulator (or other actor) for intervention.</p>
+<h2 id="providing-liquidity-through-interoperability">Providing liquidity through interoperability</h2>
+<p>Finally, the protocol can be opened to inter-chain transfers. If each sovereign blockchain is a VASP, the FAFT Travel Rule [@CryptoTravelRule] would likely apply to IBC transfers. To address this issue, certain protocols exist in the Ethereum space such as OpenVASP [@OpenVASP]. This area needs more investigation.</p>
+<blockquote>
+<p><em>"Countries should ensure that beneficiary VASPs obtain and hold required originator information and required and accurate beneficiary information on virtual asset transfers, and make it available on request to appropriate authorities."</em> [@CryptoTravelRule]</p>
+</blockquote>
+<p>To support integration with other chains, a relayer will have to be implemented. A protocol native IBC token transfer application still needs to be considered, but will ultimately be built with reference to the FAFT travel rule. </p>
+<h1 id="appendix">Appendix</h1>
+<h2 id="appendix-a-asset-referenced-token-white-paper-requirements-secwhitepaper">Appendix A - Asset Referenced Token white-paper requirements {#sec:whitepaper}</h2>
+<p><strong>General information about the issuer</strong></p>
+<ol>
+<li>Issuer’s name</li>
+<li>Registered address</li>
+<li>Date of the registration</li>
+<li>Legal entity identifier</li>
+<li>Where applicable, the group of undertakings to which the issuer belongs</li>
+<li>Identity, address and functions of persons belonging to the management body of the issuer</li>
+<li>The statement as referred to in Article 46(4)</li>
+<li>Potential conflicts of interest</li>
+<li>Details of the issuer’s financial track record for the last three years or where the issuer has not been established for the last three years, the issuer’s financial track record since the date of its registration.</li>
+<li>Except for e-money issuers who are exempted from authorisation in accordance with Article 43(2), details about the authorisation as an issuer of
+e-money tokens and name of the competent authority which granted authorisation.</li>
+</ol>
+<p><strong>Information about the project</strong></p>
+<ol>
+<li>Details of all natural or legal persons (including addresses and/or domicile of the company) involved in design and development, such as advisors,
+development team and crypto-asset service providers.</li>
+</ol>
+<p><strong>Information about the offer to the public of e-money tokens or their admission to trading</strong></p>
+<ol>
+<li>Indication on whether the whitepaper concerns an offer to the public of e-money tokens to the general public and/or their admission to trading on a
+trading platform for crypto-assets.</li>
+<li>Where applicable, the total number of e-money tokens to be offered to the public and/or admitted to trading on a trading platform for crypto-assets.</li>
+<li>Where applicable, name of the trading platform for crypto-assets where the admission to trading of e-money tokens is sought.</li>
+<li>The law applicable to the offer to the public of e-money tokens, as well as the competent courts.</li>
+</ol>
+<p><strong>Rights and obligations attached to e-money tokens</strong></p>
+<ol>
+<li>A detailed description of the rights and obligations (if any) that the holder of the e-money token is entitled to, including the right of redemption at par value as well as the procedure and conditions for the exercise of these rights.</li>
+<li>Any related fees applied by the issuer of e-money tokens when the redemption right at par value is exercised by the holder of e-money tokens.</li>
+</ol>
+<p><strong>Information on the underlying technology</strong></p>
+<ol>
+<li>Information on the technology used, including distributed ledger technology, protocols and technical standards used, allowing for the holding, storing and transfer of such e-money tokens.</li>
+<li>Description of the underlying protocol’s interoperability with other protocols.</li>
+<li>The consensus algorithm, where applicable.</li>
+<li>Incentive mechanisms to secure transactions and any fees applicable.</li>
+<li>Where the crypto-assets are issued, transferred and stored on a distributed ledger that is operated by the issuer or a third-party acting on its behalf, a detailed description of the functioning of such distributed ledger.</li>
+<li>Information on the audit outcome of the technology used (if any).</li>
+</ol>
+<p><strong>Risks</strong></p>
+<ol>
+<li>Description of risks associated with the issuer of e-money tokens.</li>
+<li>Description of risks associated with the e-money tokens.</li>
+<li>Description of risks associated with the technology used as well as mitigating measures (if any).</li>
+</ol>
+<h2 id="appendix-b-requirements-for-significant-tokens-secappsigtokens">Appendix B - Requirements for Significant tokens {#sec:appsigtokens}</h2>
+<ol>
+<li>Rules for custody of assets (MiCA Article 33)</li>
+<li>Quality of assets held in reserves (MiCA Article 34)</li>
+<li>Management policies to promote sound risk management, particularly liquidity risk (MiCA Article 41-1)</li>
+<li>Diversify custody of tokens across multiple CASP's (MiCA Article 41-2)</li>
+<li>Strengthen liquidity risk management, with a focus on stress testing (MiCA Article 41-3);</li>
+<li>Elevated issuer capital requirements from 2% to 3% (MiCA Article 41-4)</li>
+<li>Procedures for an orderly wind-down (MiCA Article 42)</li>
+<li>Enhanced EBA supervision, through a supervisory college, which is paid by issuers</li>
+</ol>
+<h1 id="references">References</h1>
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href="../../../" class="md-footer__link md-footer__link--prev" aria-label="Previous: About Articles" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              About Articles
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../../../../topics/Compare%20USDC%20vs%20USDT%20vs%20CASH-ISSUER/" class="md-footer__link md-footer__link--next" aria-label="Next: USDC vs USDT vs Cosmos Cash Issuer" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              USDC vs USDT vs Cosmos Cash Issuer
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.sections", "search.suggest", "search.highlight", "search.share"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../../../assets/javascripts/workers/search.22074ed6.min.js"}</script>
+    
+    
+      <script src="../../../../../assets/javascripts/bundle.960e086b.min.js"></script>
+      
+    
+  </body>
+</html>

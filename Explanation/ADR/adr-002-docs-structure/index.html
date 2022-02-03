@@ -1,0 +1,1783 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.9">
+    
+    
+      
+        <title>ADR 002: Documentation Structure - Cosmos Cash Documentation Portal</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.2b4465f4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.e6a45f82.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#adr-002-documentation-structure" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Cosmos Cash Documentation Portal" class="md-header__button md-logo" aria-label="Cosmos Cash Documentation Portal" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Cosmos Cash Documentation Portal
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              ADR 002: Documentation Structure
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08z"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/allinbits/cosmos-cash/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Cosmos Cash Documentation Portal" class="md-nav__button md-logo" aria-label="Cosmos Cash Documentation Portal" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    Cosmos Cash Documentation Portal
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/allinbits/cosmos-cash/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        Cosmos Cash
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ABOUT/" class="md-nav__link">
+        About Documentation
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          Explanation
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Explanation" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Explanation
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        About Explanation Documentation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../presentations/" class="md-nav__link">
+        Presentations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_3" type="checkbox" id="__nav_3_3" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_3">
+          ADR
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="ADR" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_3">
+          <span class="md-nav__icon md-icon"></span>
+          ADR
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        About Architecture Decision Records (ADR)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PROCESS/" class="md-nav__link">
+        ADR Creation Process
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          ADR 002: Documentation Structure
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        ADR 002: Documentation Structure
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#status" class="md-nav__link">
+    Status
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#abstract" class="md-nav__link">
+    Abstract
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#context" class="md-nav__link">
+    Context
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decision" class="md-nav__link">
+    Decision
+  </a>
+  
+    <nav class="md-nav" aria-label="Decision">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#structure" class="md-nav__link">
+    Structure
+  </a>
+  
+    <nav class="md-nav" aria-label="Structure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#root-level-documents" class="md-nav__link">
+    Root level documents
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modules" class="md-nav__link">
+    Modules
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docs" class="md-nav__link">
+    docs/
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docsreference" class="md-nav__link">
+    docs/Reference
+  </a>
+  
+    <nav class="md-nav" aria-label="docs/Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#docsreferenceuse-cases" class="md-nav__link">
+    docs/Reference/use-cases
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docsreferencearchitecture" class="md-nav__link">
+    docs/Reference/architecture
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docsexplanation" class="md-nav__link">
+    docs/Explanation
+  </a>
+  
+    <nav class="md-nav" aria-label="docs/Explanation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#docsexplanationadr" class="md-nav__link">
+    docs/Explanation/ADR
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docsexplanationarticles" class="md-nav__link">
+    docs/Explanation/articles
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docstutorials" class="md-nav__link">
+    docs/Tutorials
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docshow-to" class="md-nav__link">
+    docs/How-To
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#templates" class="md-nav__link">
+    Templates
+  </a>
+  
+    <nav class="md-nav" aria-label="Templates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#code-comments" class="md-nav__link">
+    Code Comments
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#commit-comments" class="md-nav__link">
+    Commit Comments
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consequences" class="md-nav__link">
+    Consequences
+  </a>
+  
+    <nav class="md-nav" aria-label="Consequences">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#backwards-compatibility" class="md-nav__link">
+    Backwards Compatibility
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#positive" class="md-nav__link">
+    Positive
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#negative" class="md-nav__link">
+    Negative
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#further-discussions" class="md-nav__link">
+    Further Discussions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    References
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr-003-issuer/" class="md-nav__link">
+        ADR 003: Cosmos Cash Issuance model
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr-004-did/" class="md-nav__link">
+        ADR 004: DID
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr-005-registration-credential/" class="md-nav__link">
+        ADR 005: A VASP Registration Credential based on W3C Standards
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr-006-license-credential/" class="md-nav__link">
+        ADR 006: An Issuer License based on W3C Verifiable Credential Standards
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr-007-root-of-trust/" class="md-nav__link">
+        ADR 007: Root of trust
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr-template/" class="md-nav__link">
+        ADR Template
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4" type="checkbox" id="__nav_3_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4">
+          Articles
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Articles" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_4">
+          <span class="md-nav__icon md-icon"></span>
+          Articles
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../articles/" class="md-nav__link">
+        About Articles
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4_2" type="checkbox" id="__nav_3_4_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4_2">
+          Regulation paper
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Regulation paper" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_4_2">
+          <span class="md-nav__icon md-icon"></span>
+          Regulation paper
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4_2_1" type="checkbox" id="__nav_3_4_2_1" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4_2_1">
+          Rpts
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Rpts" data-md-level="4">
+        <label class="md-nav__title" for="__nav_3_4_2_1">
+          <span class="md-nav__icon md-icon"></span>
+          Rpts
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../articles/regulation-paper/rpts/CosmosCashRegs/" class="md-nav__link">
+        Cosmos Cash
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_5" type="checkbox" id="__nav_3_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_5">
+          Topics
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Topics" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_5">
+          <span class="md-nav__icon md-icon"></span>
+          Topics
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../topics/Compare%20USDC%20vs%20USDT%20vs%20CASH-ISSUER/" class="md-nav__link">
+        USDC vs USDT vs Cosmos Cash Issuer
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          How To
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="How To" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          How To
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../How-To/" class="md-nav__link">
+        How-to guides
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../How-To/chain_001_faucet/" class="md-nav__link">
+        Get Testnet Tokens (Faucet)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../How-To/general_001_swagger/" class="md-nav__link">
+        Swagger
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5">
+          Networks
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Networks" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Networks
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Networks/testnet/" class="md-nav__link">
+        Testnet
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Reference/" class="md-nav__link">
+        Reference Documentation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Reference/GLOSSARY/" class="md-nav__link">
+        GLOSSARY
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Reference/MODULES/" class="md-nav__link">
+        Cosmos Cash Modules
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6_4" type="checkbox" id="__nav_6_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6_4">
+          Architecture
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Architecture" data-md-level="2">
+        <label class="md-nav__title" for="__nav_6_4">
+          <span class="md-nav__icon md-icon"></span>
+          Architecture
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Reference/architecture/" class="md-nav__link">
+        Architecture
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Reference/architecture/CONTRIBUTING/" class="md-nav__link">
+        CONTRIBUTING
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_7" type="checkbox" id="__nav_7" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_7">
+          Tutorials
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Tutorials" data-md-level="1">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          Tutorials
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Tutorials/" class="md-nav__link">
+        Index
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#status" class="md-nav__link">
+    Status
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#abstract" class="md-nav__link">
+    Abstract
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#context" class="md-nav__link">
+    Context
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decision" class="md-nav__link">
+    Decision
+  </a>
+  
+    <nav class="md-nav" aria-label="Decision">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#structure" class="md-nav__link">
+    Structure
+  </a>
+  
+    <nav class="md-nav" aria-label="Structure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#root-level-documents" class="md-nav__link">
+    Root level documents
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modules" class="md-nav__link">
+    Modules
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docs" class="md-nav__link">
+    docs/
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docsreference" class="md-nav__link">
+    docs/Reference
+  </a>
+  
+    <nav class="md-nav" aria-label="docs/Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#docsreferenceuse-cases" class="md-nav__link">
+    docs/Reference/use-cases
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docsreferencearchitecture" class="md-nav__link">
+    docs/Reference/architecture
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docsexplanation" class="md-nav__link">
+    docs/Explanation
+  </a>
+  
+    <nav class="md-nav" aria-label="docs/Explanation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#docsexplanationadr" class="md-nav__link">
+    docs/Explanation/ADR
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docsexplanationarticles" class="md-nav__link">
+    docs/Explanation/articles
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docstutorials" class="md-nav__link">
+    docs/Tutorials
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docshow-to" class="md-nav__link">
+    docs/How-To
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#templates" class="md-nav__link">
+    Templates
+  </a>
+  
+    <nav class="md-nav" aria-label="Templates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#code-comments" class="md-nav__link">
+    Code Comments
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#commit-comments" class="md-nav__link">
+    Commit Comments
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consequences" class="md-nav__link">
+    Consequences
+  </a>
+  
+    <nav class="md-nav" aria-label="Consequences">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#backwards-compatibility" class="md-nav__link">
+    Backwards Compatibility
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#positive" class="md-nav__link">
+    Positive
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#negative" class="md-nav__link">
+    Negative
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#further-discussions" class="md-nav__link">
+    Further Discussions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    References
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+<a href="https://github.com/allinbits/cosmos-cash/edit/master/docs/Explanation/ADR/adr-002-docs-structure.md" title="Edit this page" class="md-content__button md-icon">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+</a>
+
+
+<h1 id="adr-002-documentation-structure">ADR 002: Documentation Structure</h1>
+<h2 id="status">Status</h2>
+<p>ACCEPTED</p>
+<h2 id="abstract">Abstract</h2>
+<p>This ADR proposes a documentation strategy based on the <em>Grand Unified Theory of Documentation</em> (David Laing) as described by <a href="https://documentation.divio.com/">Divio</a>.</p>
+<p>The documentation strategy outlines four specific use cases for documentation. Based on these use cases and other non-functional requirements, a structure is proposed that will address these concerns using GitHub as the Content Management System. </p>
+<p>The documentation strategy also proposes:</p>
+<ul>
+<li>The use and re-use of document and format templates</li>
+<li>Specific <a href="https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-on-github/about-code-owners#about-code-owners">code owners</a> for documentation </li>
+<li>Comment and commit templates combined with <a href="https://git-scm.com/docs/githooks">githook</a> checks</li>
+</ul>
+<p>The outcome shall be focused, consistent, high quality documentation. </p>
+<h2 id="context">Context</h2>
+<p>Good documentation is important to the success of software projects.</p>
+<p><em>Writing excellent code doesn't end when your code compiles or even if your test coverage reaches 100%. It's easy to write something a computer understands, it's much harder to write something both a human and a computer understand. Your mission as a Code Health-conscious engineer is to write for humans first, computers second. Documentation is an important part of this skill.</em> <a href="https://google.github.io/styleguide/docguide/best_practices.html">Google Documentation Best Practice</a></p>
+<p>The documentation use cases, as outlined by Divio are:</p>
+<ul>
+<li>Allow a new user to get started</li>
+<li>Show a user how to solve a specific problem</li>
+<li>Describe the machinery, for example, classes, functions, interfaces, parameters, and so on</li>
+<li>Explanation and context for design, scope, and so on</li>
+</ul>
+<p><img alt="Documentation Quadrants" src="https://documentation.divio.com/_images/overview.png" /> </p>
+<p>The goals of well-structured and well-written documentation include:</p>
+<ul>
+<li>Findability: depending on the use case, the technical content can be discovered and accessed</li>
+<li>Style: The documentation is written in an appropriate style for the use case</li>
+<li>Consistency: Each type of documentation is written in a consistent style</li>
+<li>Scoped: Documentation is scoped to a specific use case; for example, a tutorial can provide links but does not include technical content that describes why the software works, a tutorial just teaches how to use it</li>
+</ul>
+<p>Additional Documentation non-functional use cases include:</p>
+<ul>
+<li>Technical content SHOULD BE as close to the code as reasonably practicable and strive to use the docs as code workflow</li>
+<li>Technical content SHOULD BE generated from code as much as possible</li>
+<li>Technical content SHOULD USE a consistent format </li>
+<li>Technical content SHOULD BE useable from within the repository</li>
+<li>Technical content COULD HAVE an automatic process that converts the content to a website based on <a href="https://readthedocs.com/">Read The Docs</a>, <a href="https://www.gitbook.com/">Gitbook</a>, or other suitable hosting systems</li>
+</ul>
+<h2 id="decision">Decision</h2>
+<p>To address the use cases outlined in the context, this ADR proposes the following decisions:</p>
+<ul>
+<li>Use GitHub as primary content management <a href="https://github.com/allinbits/cosmos-cash">https://github.com/allinbits/cosmos-cash</a></li>
+<li>Use Markdown and LaTeX to deliver research publications</li>
+</ul>
+<p>Given GitHub will form the content management system, we propose the following structure:</p>
+<h3 id="structure">Structure</h3>
+<p>The documentation structure shall use as much as possible a content structure similar to the <a href="https://documentation.divio.com/introduction/">Divio user cases</a>.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Tutorials</th>
+<th>How-to guides</th>
+<th>Reference</th>
+<th>Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Oriented to</strong></td>
+<td>Learning</td>
+<td>A goal</td>
+<td>Information</td>
+<td>Understanding</td>
+</tr>
+<tr>
+<td><strong>Must</strong></td>
+<td>Allow a newcomer to get started</td>
+<td>Show how to solve a specific problem</td>
+<td>Describe the machinery</td>
+<td>Explain</td>
+</tr>
+<tr>
+<td><strong>Takes the form of</strong></td>
+<td>A lesson</td>
+<td>A series of steps</td>
+<td>A dry description</td>
+<td>A discursive explanation</td>
+</tr>
+<tr>
+<td><strong>Analogy</strong></td>
+<td>Teaching a child to cook</td>
+<td>Recipe in a cookery book</td>
+<td>An encyclopedia article</td>
+<td>A paper on culinary social history</td>
+</tr>
+</tbody>
+</table>
+<p>The specific implementation for Cosmos Cash SHOULD BE as per the following tree structure.</p>
+<pre><code>/
+├── README
+├── CONTRIBUTING
+├── TECHNICAL-SETUP
+├── CODEOWNERS
+├── x/
+|   ├── module_a/
+|       ├── README
+|       ├── docs/
+|           ├── state
+|           ├── state_transitions
+|           ├── messages
+├── docs/
+    ├── README
+    ├── CODEOWNERS
+    ├── Explanation/
+    |   ├── README
+    |   ├── ADR/
+    |   |   ├── README
+    |   |   ├── PROCESS
+    |   |   ├── adr-template
+    |   |   ├── adr-{number}-{desc}
+    |   ├── articles/
+    |   |   ├── regulation-litepaper/
+    |   |       ├── ARTICLE
+    |   ├── research/
+    |       ├── README
+    |       ├── research_topic/
+    ├── How-To/
+    |   ├── HowToDoSomething/
+    |   ├── HowToDoSomethingElse/
+    ├── Reference/
+    |   ├── README
+    |   ├── GLOSSARY
+    |   ├── MODULES
+    |   ├── use-cases/
+    |   |   ├── use-case-A
+    |   |   ├── use-case-B
+    |   ├── architecture/
+    ├── Tutorials/
+        ├── Tutorial_1/
+        ├── Tutorial_2/
+</code></pre>
+<h4 id="root-level-documents">Root level documents</h4>
+<p>The following files are required at the repo root level:</p>
+<ul>
+<li><strong>README.md</strong> - General repo overview to introduce the product and orientate the user. All README files must follow the best practices as outlined in the <a href="https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-on-github/about-readmes">GitHub README</a> guidelines.</li>
+<li><strong>TECHNICAL-SETUP.md</strong> - Specific steps on getting started with the repo, can be a link to a tutorial or include the specific action-oriented steps<ul>
+<li>Links to specific tooling setup requirements for development tools, linters, and so on</li>
+<li>Dependencies such as <a href="https://pre-commit.com/">pre-commit</a> package manager</li>
+<li>Building the code</li>
+<li>Running tests</li>
+</ul>
+</li>
+<li><strong>CONTRIBUTING.md</strong> - Details on how new users can contribute to the project. In specific:<ul>
+<li>Committing changes</li>
+<li>Commit message formats (see <a href="#commit-comments">Commit Comments</a></li>
+<li>Raising PRs</li>
+<li>Code of Conduct</li>
+</ul>
+</li>
+<li><strong>CODEOWNERS</strong> - Although not part of the documentation itself, a <a href="https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-on-github/about-code-owners">CODEOWNERS file</a> defines the code maintainers who are responsible for code in a repository and perform quality assurance on comments, PRs, and issues.</li>
+</ul>
+<h4 id="modules">Modules</h4>
+<p>In line with Cosmos SDK convention (TODO: needs reference) each module contains its own relevant documentation:</p>
+<ul>
+<li><strong>Module specifications</strong> - A document that outlines state transitions <code>x/module-name/docs/</code></li>
+<li><strong>Module-level README.md</strong> e.g. x/module-name/README.md</li>
+</ul>
+<p>README files are classed as reference documentation. Content in module-level README files is descriptive, but explanatory. Explanations should be part of issues, Pull Requests, and docs/explanation/architecture.</p>
+<h4 id="docs">docs/</h4>
+<p>The <code>docs</code> folder shall include the following files and folders:</p>
+<ul>
+<li><strong>README.md</strong> - SHALL USE this for introduction and orientating the user, based on the content of this ADR and other materials.</li>
+<li><strong>CODEOWNERS</strong> - This <a href="https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-on-github/about-code-owners">CODEOWNERS file</a> details the reviewers for documentation folder. The listed code owners SHALL INCLUDE the code maintainers in the root CODEOWNERS file plus a member of the Tendermint Technical Writing Team.</li>
+</ul>
+<h4 id="docsreference">docs/Reference</h4>
+<p>Reference documentation includes a number of different forms:</p>
+<ul>
+<li><strong>README.md</strong> - This document outlines the purpose of the reference documentation as per the use-case documentation strategy and methodology. In addition, the README also links to documentation that is created from the code itself, specifically:<ul>
+<li>Code Documentation in form of Go Docs</li>
+<li>Swagger API documentation</li>
+</ul>
+</li>
+<li><strong>GLOSSARY.md</strong> - Review and maintenance must be regularly and consistently applied. These form the terms of reference for users and ensure that discussion and design are based on consistent terms of reference. This file will be similar to <a href="https://v1.cosmos.network/glossary">Cosmos Network Glossary</a> and can reference this.</li>
+<li><strong>MODULES.md</strong> - A markdown document that has references to module-relevant documentation</li>
+</ul>
+<h5 id="docsreferenceuse-cases">docs/Reference/use-cases</h5>
+<p>The <code>use-cases</code> folder describes Cosmos Cash use cases. Ideally, use cases are written in behavior-driven development (BDD) format. Use case content should be dry in nature and avoid explanations that should be covered in the explanation documentation.</p>
+<h5 id="docsreferencearchitecture">docs/Reference/architecture</h5>
+<p>The <code>architecture</code> folder contains architecture diagrams such as component, activity, and sequence diagrams as relevant. Specifically, these assets should be in a format suitable for version management and easy to update. Therefore, these diagrams should be in SVG or DOT format and not image formats (JPEG, PNG, and so on).</p>
+<h4 id="docsexplanation">docs/Explanation</h4>
+<p>The <code>Explanation</code> folder contains content that provides context for readers and is discursive in nature. See the <a href="https://documentation.divio.com/explanation/#">Divio Explanation page</a> for more detail.</p>
+<ul>
+<li><strong>docs/explanation/README.md</strong> - This file orients the reader and explains the content. </li>
+</ul>
+<h5 id="docsexplanationadr">docs/Explanation/ADR</h5>
+<p>The <code>ADR</code> folder tracks decisions regarding design and architecture (such as this documentation strategy). ADR content includes the following:</p>
+<ul>
+<li><strong>docs/explanation/adr/README</strong> - introduction to ADR</li>
+<li><strong>docs/explanation/adr/PROCESS.md</strong> - describes how to raise ADRs</li>
+<li><strong>docs/explanation/adr/adr-template.md</strong> - template for raising ADR</li>
+<li><strong>docs/explanation/adr/adr-{number}-{desc}.md</strong> - an ADR document</li>
+</ul>
+<h5 id="docsexplanationarticles">docs/Explanation/articles</h5>
+<p>The <code>articles</code> folder contains a sub-folder for each published article. Published articles this COULD REFER to blog posts. The folder should be named such that it describes the article's purpose. Each sub-folder SHALL CONTAIN all the content relevant to the article (for example, images, bibliographies, and so on). These articles can be converted into PDF format using Pandoc. </p>
+<p>To convert articles to PDF using Pandoc:</p>
+<ul>
+<li>There SHOULD BE a makefile with targets for calling Pandoc. Note: the process for building PDF files is not part of the commit or release processes, but ad-hoc</li>
+<li>There SHOULD BE a LaTeX template file that can create PDF files that have a consistent look and feel. This COULD BE the <a href="https://github.com/Wandmalfarbe/pandoc-latex-template">Eisvogel template</a> with suitable modifications.</li>
+<li>The makefile and template should be independent of the article</li>
+<li>There SHOULD BE a README.md that describes how to use the makefile and template and build articles</li>
+</ul>
+<blockquote>
+<p><strong>Note:</strong> Explanations can come in other forms, particularly issue discussion and Pull Requests.</p>
+</blockquote>
+<h4 id="docstutorials">docs/Tutorials</h4>
+<p>As indicated in the overview, tutorials SHALL BE documents that target beginners and guide a user step-by-step through a process with the aim of achieving some goal. Please see the <a href="https://documentation.divio.com/tutorials/">Divio tutorial page</a> for details.</p>
+<ul>
+<li>There SHALL BE a folder for each tutorial. See the <a href="https://github.com/cosmos/sdk-tutorials">Cosmos SDK tutorials</a> as an example.</li>
+<li>The folder SHALL CONTAIN all of the content that is relevant for that tutorial. </li>
+<li>The content SHOULD BE consistent in format with <a href="https://tutorials.cosmos.network/">Cosmos SDK tutorials</a>. </li>
+</ul>
+<h4 id="docshow-to">docs/How-To</h4>
+<p>In contrast to tutorials, <a href="https://documentation.divio.com/how-to-guides/">how-to guides</a> are a series of actionable steps to help an experienced reader solve a specific problem. These how-to guides SHALL USE templates similar to the tutorials - see above.</p>
+<h3 id="templates">Templates</h3>
+<p>The documentation SHOULD USE Markdown templates to develop structured technical content, like module messages follow templates in the Cosmos SDK. </p>
+<ul>
+<li><a href="https://github.com/thegooddocsproject">The good docs project</a></li>
+<li><a href="https://readme.so/editor">Readme editor</a></li>
+</ul>
+<h4 id="code-comments">Code Comments</h4>
+<p>PR review comments also form part of the documentation. Comments SHALL FOLLOW recommendation as per <a href="https://conventionalcomments.org/">Conventional Comments</a></p>
+<pre><code>&lt;label&gt; [decoration]: &lt;subject&gt;
+
+[discussion]
+</code></pre>
+<p>where <code>label = (praise|nitpick|suggestion|issue|question|thought|chore)</code></p>
+<h4 id="commit-comments">Commit Comments</h4>
+<p>Commits comments will also follow a similar format as laid out following the standard defined by <a href="https://www.conventionalcommits.org/en/v1.0.0/#summary">Conventional Commits</a>. This commit convention SHOULD BE enforced as part of <a href="https://pre-commit.com/">pre-commit</a> checks.</p>
+<h2 id="consequences">Consequences</h2>
+<p>This section describes the resulting context, after applying the decision. </p>
+<h3 id="backwards-compatibility">Backwards Compatibility</h3>
+<p>After this ADR is implemented, existing documentation will be migrated from existing sources that include:</p>
+<ul>
+<li>Notion</li>
+<li>Other Git repos</li>
+<li>Published papers</li>
+<li>Blog posts </li>
+</ul>
+<h3 id="positive">Positive</h3>
+<p>As a result of this documentation strategy:</p>
+<ul>
+<li>Content development and maintenance will follow best practices that ensure content is easy to navigate and read</li>
+<li>Content will be in a consistent format</li>
+<li>Commits, Issues, and Pull Requests in the repo will follow best practices</li>
+<li>CHANGELOG and release documentation will benefit from better commit messages, reducing developer effort</li>
+</ul>
+<h3 id="negative">Negative</h3>
+<ul>
+<li>There may be more effort required</li>
+<li>Moving modules into new repos may cause inconsistenties in the repo</li>
+</ul>
+<h2 id="further-discussions">Further Discussions</h2>
+<p>While an ADR is in the DRAFT or PROPOSED stage, this section should contain a summary of issues to be solved in future iterations (usually referencing comments from a pull-request discussion).</p>
+<p>Later, this section can optionally list ideas or improvements the author or reviewers found during the analysis of this ADR.</p>
+<h2 id="references">References</h2>
+<ul>
+<li><a href="https://github.com/google/styleguide/blob/gh-pages/docguide/style.md">Google Style Guide for Markdown</a></li>
+<li><a href="https://www.writethedocs.org/">Write the Docs global community</a></li>
+<li><a href="https://www.writethedocs.org/code-of-conduct/#the-principles">Write the Docs Code of Conduct</a></li>
+</ul>
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href="../PROCESS/" class="md-footer__link md-footer__link--prev" aria-label="Previous: ADR Creation Process" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              ADR Creation Process
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../adr-003-issuer/" class="md-footer__link md-footer__link--next" aria-label="Next: ADR 003: Cosmos Cash Issuance model" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              ADR 003: Cosmos Cash Issuance model
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.sections", "search.suggest", "search.highlight", "search.share"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../assets/javascripts/workers/search.22074ed6.min.js"}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.960e086b.min.js"></script>
+      
+    
+  </body>
+</html>

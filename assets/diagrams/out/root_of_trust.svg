@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="447px" preserveAspectRatio="none" style="width:410px;height:447px;background:#FFFFFF;" version="1.1" viewBox="0 0 410 447" width="410px" zoomAndPan="magnify"><defs/><g><rect fill="none" height="26.2969" style="stroke:none;stroke-width:1.0;" width="121" x="143" y="15"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="111" x="148" y="32.9951">Root of Trust</text><ellipse cx="205" cy="57.2969" fill="#222222" rx="10" ry="10" style="stroke:none;stroke-width:1.0;"/><rect fill="#FFFFFF" height="124.1719" style="stroke:#222222;stroke-width:2.0;" width="388" x="11" y="77.2969"/><path d="M108,77.2969 L108,86.5938 L98,96.5938 L11,96.5938 " fill="none" style="stroke:#222222;stroke-width:2.0;"/><text fill="#000000" font-family="sans" font-size="14" lengthAdjust="spacing" textLength="87" x="14" y="91.292">Chain Setup</text><rect fill="#D3D3D3" height="75.875" rx="12.5" ry="12.5" style="stroke:#222222;stroke-width:1.5;" width="368" x="21" y="113.5938"/><text fill="#000000" font-family="sans" font-size="12" lengthAdjust="spacing" textLength="348" x="31" y="134.7324">An offline ceremony between network initial stakeholders</text><text fill="#000000" font-family="sans" font-size="12" lengthAdjust="spacing" textLength="269" x="31" y="148.7012">collects the list of addresses that are added</text><text fill="#000000" font-family="sans" font-size="12" lengthAdjust="spacing" textLength="273" x="31" y="162.6699">to the regulator module genesis parameters:</text><text fill="#000000" font-family="sans" font-size="12" lengthAdjust="spacing" textLength="150" x="31" y="176.6387">these addresses are the</text><text fill="#000000" font-family="sans" font-size="12" font-weight="bold" lengthAdjust="spacing" textLength="93" x="185" y="176.6387">RootOfTrust</text><rect fill="#FFFFFF" height="212.2344" style="stroke:#222222;stroke-width:2.0;" width="276.5" x="75" y="211.4688"/><path d="M184,211.4688 L184,220.7656 L174,230.7656 L75,230.7656 " fill="none" style="stroke:#222222;stroke-width:2.0;"/><text fill="#000000" font-family="sans" font-size="14" lengthAdjust="spacing" textLength="99" x="78" y="225.4639">Chain Startup</text><rect fill="#FFFFFF" height="33.9688" rx="12.5" ry="12.5" style="stroke:#222222;stroke-width:1.5;" width="90" x="160" y="247.7656"/><text fill="#000000" font-family="sans" font-size="12" lengthAdjust="spacing" textLength="70" x="170" y="268.9043">Chain starts</text><polygon fill="#FEFECE" points="142,301.7344,268,301.7344,280,313.7344,268,325.7344,142,325.7344,130,313.7344,142,301.7344" style="stroke:#222222;stroke-width:1.5;"/><text fill="#000000" font-family="sans" font-size="11" lengthAdjust="spacing" textLength="126" x="142" y="317.5425">RootOfTrust is empty?</text><text fill="#000000" font-family="sans" font-size="11" lengthAdjust="spacing" textLength="21" x="109" y="311.1401">yes</text><text fill="#000000" font-family="sans" font-size="11" lengthAdjust="spacing" textLength="14" x="280" y="311.1401">no</text><rect fill="#FFC0CB" height="33.9688" rx="12.5" ry="12.5" style="stroke:#222222;stroke-width:1.5;" width="50" x="95" y="335.7344"/><text fill="#000000" font-family="sans" font-size="12" lengthAdjust="spacing" textLength="30" x="105" y="356.873">Error</text><ellipse cx="120" cy="399.7031" fill="#FFFFFF" rx="10" ry="10" style="stroke:#222222;stroke-width:1.5;"/><line style="stroke:#222222;stroke-width:2.5;" x1="113.8128" x2="126.1872" y1="393.5159" y2="405.8903"/><line style="stroke:#222222;stroke-width:2.5;" x1="126.1872" x2="113.8128" y1="393.5159" y2="405.8903"/><rect fill="#FFFFFF" height="33.9688" rx="12.5" ry="12.5" style="stroke:#222222;stroke-width:1.5;" width="83" x="248.5" y="335.7344"/><text fill="#000000" font-family="sans" font-size="12" lengthAdjust="spacing" textLength="63" x="258.5" y="356.873">Start chain</text><ellipse cx="290" cy="400.7031" fill="#FFFFFF" rx="11" ry="11" style="stroke:#222222;stroke-width:1.0;"/><ellipse cx="290" cy="400.7031" fill="#222222" rx="6" ry="6" style="stroke:#909090;stroke-width:1.0;"/><line style="stroke:#222222;stroke-width:1.5;" x1="205" x2="205" y1="67.2969" y2="113.5938"/><polygon fill="#222222" points="201,103.5938,205,113.5938,209,103.5938,205,107.5938" style="stroke:#222222;stroke-width:1.0;"/><line style="stroke:#222222;stroke-width:1.5;" x1="120" x2="120" y1="369.7031" y2="389.7031"/><polygon fill="#222222" points="116,379.7031,120,389.7031,124,379.7031,120,383.7031" style="stroke:#222222;stroke-width:1.0;"/><line style="stroke:#222222;stroke-width:1.5;" x1="290" x2="290" y1="369.7031" y2="389.7031"/><polygon fill="#222222" points="286,379.7031,290,389.7031,294,379.7031,290,383.7031" style="stroke:#222222;stroke-width:1.0;"/><line style="stroke:#222222;stroke-width:1.5;" x1="130" x2="120" y1="313.7344" y2="313.7344"/><line style="stroke:#222222;stroke-width:1.5;" x1="120" x2="120" y1="313.7344" y2="335.7344"/><polygon fill="#222222" points="116,325.7344,120,335.7344,124,325.7344,120,329.7344" style="stroke:#222222;stroke-width:1.0;"/><line style="stroke:#222222;stroke-width:1.5;" x1="280" x2="290" y1="313.7344" y2="313.7344"/><line style="stroke:#222222;stroke-width:1.5;" x1="290" x2="290" y1="313.7344" y2="335.7344"/><polygon fill="#222222" points="286,325.7344,290,335.7344,294,325.7344,290,329.7344" style="stroke:#222222;stroke-width:1.0;"/><line style="stroke:#222222;stroke-width:1.5;" x1="205" x2="205" y1="281.7344" y2="301.7344"/><polygon fill="#222222" points="201,291.7344,205,301.7344,209,291.7344,205,295.7344" style="stroke:#222222;stroke-width:1.0;"/><line style="stroke:#222222;stroke-width:1.5;" x1="205" x2="205" y1="189.4688" y2="247.7656"/><polygon fill="#222222" points="201,237.7656,205,247.7656,209,237.7656,205,241.7656" style="stroke:#222222;stroke-width:1.0;"/><rect fill="none" height="11.6406" style="stroke:none;stroke-width:1.0;" width="295" x="56" y="422.7031"/><text fill="#888888" font-family="sans-serif" font-size="10" lengthAdjust="spacing" textLength="295" x="56" y="431.9854">Cosmos Cash: https://github.com/allinbits/cosmos-cash</text><!--MD5=[25b98ed2553f5c5e27b2bf21d111d533]
+@startuml
+title Root of Trust
+footer Cosmos Cash: https://github.com/allinbits/cosmos-cash
+
+<style>
+activityDiagram {
+  LineColor #222
+  FontName sans
+}
+</style>
+skinparam monochrome false
+skinparam shadowing false
+
+
+start
+partition "Chain Setup" {
+    #lightgray:An offline ceremony between network initial stakeholders
+    collects the list of addresses that are added
+    to the regulator module genesis parameters:
+    these addresses are the **RootOfTrust**;
+}
+
+
+partition "Chain Startup" {
+    #white:Chain starts;
+    if (RootOfTrust is empty?) then (yes)
+        #pink:Error;
+        end
+    else (no)
+        #white:Start chain;
+        stop
+    endif
+}
+@enduml
+
+PlantUML version 1.2022.2beta1(Unknown compile time)
+(GPL source distribution)
+Java Runtime: Java(TM) SE Runtime Environment
+JVM: Java HotSpot(TM) 64-Bit Server VM
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>

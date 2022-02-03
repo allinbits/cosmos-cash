@@ -1,0 +1,124 @@
+@startuml Architecture
+' !theme tendermint from ../themes/
+
+frame "Issuer Controller" as iss_ctrlr {
+    [Business Logic] as ctrlr_logic
+    [HTTP Handler] as ctrlr_handler
+    frame "Pub Sub" as ctrlr_pubsub {
+        [TopicA] as tpca
+        [TopicB] as tpcb
+    }
+    [Listener] as listena
+    [Listener] as listenb
+    [Webhook handler] as ctrlr_webhook
+}
+
+frame "Storage" as ctrlr_storage {
+    database "Postgres" as ctrlr_postgres
+}
+
+
+frame "Issuer Agent" as iss_agent{
+    [Webhooks] as agent_wh
+    (REST API) as restapi
+    frame "DIDComm  Protocols" as didcomm {
+        [protocol 1] as p1
+        [protocol 2] as p2
+    }
+    [Handlers] as handlers
+    [Orchestrator] as orch
+    [Resolvers] as resv
+    [wallet] as wallet
+}
+
+[Regulator Agent] as reg_agent
+
+frame "Tails Server" as tails_server {
+
+}
+
+frame "DB" as iss_storage {
+    database "Postgres" as wallet_postgres
+}
+
+cloud "Internet" as net {
+    [Agent] as other_agent_1
+    [Agent] as other_agent_2
+}
+
+frame "Universal Resolver"  as unires {
+    (driver) as cash_driver
+}
+
+frame "Cosmos Cash" as cash{
+    frame "resolver" as cash_resolver {
+        [test]
+    }
+    frame "node" as cash_node {
+        [DID] as did_module
+        [VC] as vc_module
+        [Issuer] as issuer_module
+        [IBC] as ibc_module
+        (ABCI) as abci
+        [Tendermint Core] as core
+    }
+}
+
+frame "chains" as chains {
+    frame "Shared Security" as security {
+        (Cosmos Cash) as cash_1
+        (stablecoin hub) as hub
+        (identity chain) as ident_chain
+        (USDC) as usdc_chain
+        (USDT) as usdt_chain
+
+        [IBC Relayer] as ibc_hub_usdt
+        [IBC Relayer] as ibc_hub_usdc
+        [IBC Relayer] as ibc_cash_hub
+    }
+}
+ctrlr_webhook -- tpca
+ctrlr_webhook -- tpcb
+tpca -- listena
+tpcb -- listenb
+listena -- ctrlr_logic
+listenb -- ctrlr_logic
+ctrlr_logic -- ctrlr_handler
+ctrlr_logic ... ctrlr_postgres
+ctrlr_handler -- restapi
+ctrlr_webhook -- agent_wh
+
+
+iss_agent -- tails_server
+
+agent_wh -- didcomm
+restapi -- handlers
+handlers -- didcomm
+didcomm -- orch
+orch -- resv
+orch -- wallet
+wallet -- wallet_postgres
+orch -- net
+
+did_module -- abci
+vc_module -- abci
+issuer_module -- abci
+abci -- core
+
+resv -- unires
+unires -- cash_resolver
+
+
+core -- ident_chain
+core -- cash_1
+cash_1 -- ibc_cash_hub
+ibc_module -- ibc_cash_hub
+ibc_cash_hub -- hub
+hub -- ibc_hub_usdc
+ibc_hub_usdc -- usdc_chain
+hub -- ibc_hub_usdt
+ibc_hub_usdt -- usdt_chain
+
+cash_resolver -- ident_chain
+
+@enduml

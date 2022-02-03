@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="325px" preserveAspectRatio="none" style="width:656px;height:325px;background:#FFFFFF;" version="1.1" viewBox="0 0 656 325" width="656px" zoomAndPan="magnify"><defs/><g><rect fill="none" height="26.2969" style="stroke:none;stroke-width:1.0;" width="127" x="238" y="15"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="117" x="243" y="32.9951">Chain of Trust</text><rect fill="#FEFECE" height="36.2969" rx="12.5" ry="12.5" style="stroke:#A80036;stroke-width:1.5;" width="109" x="10" y="155.8164"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="89" x="20" y="178.8115">RootOfTrust</text><rect fill="#FEFECE" height="36.2969" rx="12.5" ry="12.5" style="stroke:#A80036;stroke-width:1.5;" width="103" x="169" y="141.7422"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="83" x="179" y="164.7373">Regulator 1</text><rect fill="#FEFECE" height="36.2969" rx="12.5" ry="12.5" style="stroke:#A80036;stroke-width:1.5;" width="123" x="322" y="113.5938"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="103" x="332" y="136.5889">Token Issuer 1</text><rect fill="#FEFECE" height="36.2969" rx="12.5" ry="12.5" style="stroke:#A80036;stroke-width:1.5;" width="143" x="495" y="57.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="123" x="505" y="80.292">Account Holder 1</text><path d="M445,131.7422 L455,131.7422 C470,131.7422 470,75.4453 485,75.4453 L495,75.4453 " fill="none" style="stroke:#A80036;stroke-width:1.0;"/><rect fill="#FEFECE" height="36.2969" rx="12.5" ry="12.5" style="stroke:#A80036;stroke-width:1.5;" width="149" x="495" y="113.5938"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="129" x="505" y="136.5889">Account Holder ...</text><path d="M445,131.7422 L455,131.7422 C470,131.7422 470,131.7422 485,131.7422 L495,131.7422 " fill="none" style="stroke:#A80036;stroke-width:1.0;"/><rect fill="#FEFECE" height="36.2969" rx="12.5" ry="12.5" style="stroke:#A80036;stroke-width:1.5;" width="143" x="495" y="169.8906"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="123" x="505" y="192.8857">Account Holder Y</text><path d="M445,131.7422 L455,131.7422 C470,131.7422 470,188.0391 485,188.0391 L495,188.0391 " fill="none" style="stroke:#A80036;stroke-width:1.0;"/><path d="M272,159.8906 L282,159.8906 C297,159.8906 297,131.7422 312,131.7422 L322,131.7422 " fill="none" style="stroke:#A80036;stroke-width:1.0;"/><rect fill="#FEFECE" height="36.2969" rx="12.5" ry="12.5" style="stroke:#A80036;stroke-width:1.5;" width="129" x="322" y="169.8906"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="109" x="332" y="192.8857">Token Issuer ...</text><path d="M272,159.8906 L282,159.8906 C297,159.8906 297,188.0391 312,188.0391 L322,188.0391 " fill="none" style="stroke:#A80036;stroke-width:1.0;"/><rect fill="#FEFECE" height="36.2969" rx="12.5" ry="12.5" style="stroke:#A80036;stroke-width:1.5;" width="124" x="322" y="226.1875"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="104" x="332" y="249.1826">Token Issuer X</text><path d="M272,159.8906 L282,159.8906 C297,159.8906 297,244.3359 312,244.3359 L322,244.3359 " fill="none" style="stroke:#A80036;stroke-width:1.0;"/><path d="M119,173.9648 L129,173.9648 C144,173.9648 144,159.8906 159,159.8906 L169,159.8906 " fill="none" style="stroke:#A80036;stroke-width:1.0;"/><rect fill="#FEFECE" height="36.2969" rx="12.5" ry="12.5" style="stroke:#A80036;stroke-width:1.5;" width="104" x="169" y="198.0391"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="84" x="179" y="221.0342">Regulator ..</text><path d="M119,173.9648 L129,173.9648 C144,173.9648 144,216.1875 159,216.1875 L169,216.1875 " fill="none" style="stroke:#A80036;stroke-width:1.0;"/><rect fill="#FEFECE" height="36.2969" rx="12.5" ry="12.5" style="stroke:#A80036;stroke-width:1.5;" width="100" x="169" y="254.3359"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="80" x="179" y="277.3311">Reguator N</text><path d="M119,173.9648 L129,173.9648 C144,173.9648 144,272.4844 159,272.4844 L169,272.4844 " fill="none" style="stroke:#A80036;stroke-width:1.0;"/><rect fill="none" height="11.6406" style="stroke:none;stroke-width:1.0;" width="295" x="154" y="300.6328"/><text fill="#888888" font-family="sans-serif" font-size="10" lengthAdjust="spacing" textLength="295" x="154" y="309.915">Cosmos Cash: https://github.com/allinbits/cosmos-cash</text><!--MD5=[99daddf12c1a6b56de162883bf2f34c8]
+@startmindmap
+
+title Chain of Trust
+footer Cosmos Cash: https://github.com/allinbits/cosmos-cash
+
+<style>
+activityDiagram {
+  LineColor #222
+  FontName sans
+}
+</style>
+skinparam monochrome false
+skinparam shadowing false
+
+
+* RootOfTrust
+** Regulator 1
+*** Token Issuer 1
+**** Account Holder 1
+**** Account Holder ...
+**** Account Holder Y
+*** Token Issuer ...
+*** Token Issuer X
+** Regulator ..
+** Reguator N
+
+
+
+
+@endmindmap
+
+PlantUML version 1.2022.2beta1(Unknown compile time)
+(GPL source distribution)
+Java Runtime: Java(TM) SE Runtime Environment
+JVM: Java HotSpot(TM) 64-Bit Server VM
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>

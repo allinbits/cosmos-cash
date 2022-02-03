@@ -1,0 +1,1736 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.9">
+    
+    
+      
+        <title>USDC vs USDT vs Cosmos Cash Issuer - Cosmos Cash Documentation Portal</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.2b4465f4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.e6a45f82.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#usdc-vs-usdt-vs-cosmos-cash-issuer" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Cosmos Cash Documentation Portal" class="md-header__button md-logo" aria-label="Cosmos Cash Documentation Portal" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Cosmos Cash Documentation Portal
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              USDC vs USDT vs Cosmos Cash Issuer
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08z"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/allinbits/cosmos-cash/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Cosmos Cash Documentation Portal" class="md-nav__button md-logo" aria-label="Cosmos Cash Documentation Portal" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    Cosmos Cash Documentation Portal
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/allinbits/cosmos-cash/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        Cosmos Cash
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ABOUT/" class="md-nav__link">
+        About Documentation
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          Explanation
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Explanation" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Explanation
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        About Explanation Documentation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../presentations/" class="md-nav__link">
+        Presentations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_3" type="checkbox" id="__nav_3_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_3">
+          ADR
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="ADR" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_3">
+          <span class="md-nav__icon md-icon"></span>
+          ADR
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ADR/" class="md-nav__link">
+        About Architecture Decision Records (ADR)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ADR/PROCESS/" class="md-nav__link">
+        ADR Creation Process
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ADR/adr-002-docs-structure/" class="md-nav__link">
+        ADR 002: Documentation Structure
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ADR/adr-003-issuer/" class="md-nav__link">
+        ADR 003: Cosmos Cash Issuance model
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ADR/adr-004-did/" class="md-nav__link">
+        ADR 004: DID
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ADR/adr-005-registration-credential/" class="md-nav__link">
+        ADR 005: A VASP Registration Credential based on W3C Standards
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ADR/adr-006-license-credential/" class="md-nav__link">
+        ADR 006: An Issuer License based on W3C Verifiable Credential Standards
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ADR/adr-007-root-of-trust/" class="md-nav__link">
+        ADR 007: Root of trust
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ADR/adr-template/" class="md-nav__link">
+        ADR Template
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4" type="checkbox" id="__nav_3_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4">
+          Articles
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Articles" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_4">
+          <span class="md-nav__icon md-icon"></span>
+          Articles
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../articles/" class="md-nav__link">
+        About Articles
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4_2" type="checkbox" id="__nav_3_4_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4_2">
+          Regulation paper
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Regulation paper" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_4_2">
+          <span class="md-nav__icon md-icon"></span>
+          Regulation paper
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4_2_1" type="checkbox" id="__nav_3_4_2_1" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4_2_1">
+          Rpts
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Rpts" data-md-level="4">
+        <label class="md-nav__title" for="__nav_3_4_2_1">
+          <span class="md-nav__icon md-icon"></span>
+          Rpts
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../articles/regulation-paper/rpts/CosmosCashRegs/" class="md-nav__link">
+        Cosmos Cash
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_5" type="checkbox" id="__nav_3_5" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_5">
+          Topics
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Topics" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_5">
+          <span class="md-nav__icon md-icon"></span>
+          Topics
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          USDC vs USDT vs Cosmos Cash Issuer
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        USDC vs USDT vs Cosmos Cash Issuer
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#methodology" class="md-nav__link">
+    Methodology
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tldr" class="md-nav__link">
+    TL;DR;
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usdt-erc20-smart-contracts" class="md-nav__link">
+    USDT ERC20 Smart Contracts
+  </a>
+  
+    <nav class="md-nav" aria-label="USDT ERC20 Smart Contracts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#source" class="md-nav__link">
+    Source
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#analysis" class="md-nav__link">
+    Analysis
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#roles" class="md-nav__link">
+    Roles
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#functions" class="md-nav__link">
+    Functions
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usdc-erc-20-smart-contracts" class="md-nav__link">
+    USDC ERC-20 smart contracts
+  </a>
+  
+    <nav class="md-nav" aria-label="USDC ERC-20 smart contracts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#source_1" class="md-nav__link">
+    Source
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#analysis_1" class="md-nav__link">
+    Analysis
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#roles_1" class="md-nav__link">
+    Roles
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#functions_1" class="md-nav__link">
+    Functions
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cosmos-cash-issuer-module" class="md-nav__link">
+    Cosmos Cash Issuer Module
+  </a>
+  
+    <nav class="md-nav" aria-label="Cosmos Cash Issuer Module">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#source_2" class="md-nav__link">
+    Source
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#functions_2" class="md-nav__link">
+    Functions
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gap-analysis" class="md-nav__link">
+    Gap Analysis
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          How To
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="How To" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          How To
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../How-To/" class="md-nav__link">
+        How-to guides
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../How-To/chain_001_faucet/" class="md-nav__link">
+        Get Testnet Tokens (Faucet)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../How-To/general_001_swagger/" class="md-nav__link">
+        Swagger
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5">
+          Networks
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Networks" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Networks
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Networks/testnet/" class="md-nav__link">
+        Testnet
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Reference/" class="md-nav__link">
+        Reference Documentation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Reference/GLOSSARY/" class="md-nav__link">
+        GLOSSARY
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Reference/MODULES/" class="md-nav__link">
+        Cosmos Cash Modules
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6_4" type="checkbox" id="__nav_6_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6_4">
+          Architecture
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Architecture" data-md-level="2">
+        <label class="md-nav__title" for="__nav_6_4">
+          <span class="md-nav__icon md-icon"></span>
+          Architecture
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Reference/architecture/" class="md-nav__link">
+        Architecture
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Reference/architecture/CONTRIBUTING/" class="md-nav__link">
+        CONTRIBUTING
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_7" type="checkbox" id="__nav_7" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_7">
+          Tutorials
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Tutorials" data-md-level="1">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          Tutorials
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Tutorials/" class="md-nav__link">
+        Index
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#methodology" class="md-nav__link">
+    Methodology
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tldr" class="md-nav__link">
+    TL;DR;
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usdt-erc20-smart-contracts" class="md-nav__link">
+    USDT ERC20 Smart Contracts
+  </a>
+  
+    <nav class="md-nav" aria-label="USDT ERC20 Smart Contracts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#source" class="md-nav__link">
+    Source
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#analysis" class="md-nav__link">
+    Analysis
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#roles" class="md-nav__link">
+    Roles
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#functions" class="md-nav__link">
+    Functions
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usdc-erc-20-smart-contracts" class="md-nav__link">
+    USDC ERC-20 smart contracts
+  </a>
+  
+    <nav class="md-nav" aria-label="USDC ERC-20 smart contracts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#source_1" class="md-nav__link">
+    Source
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#analysis_1" class="md-nav__link">
+    Analysis
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#roles_1" class="md-nav__link">
+    Roles
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#functions_1" class="md-nav__link">
+    Functions
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cosmos-cash-issuer-module" class="md-nav__link">
+    Cosmos Cash Issuer Module
+  </a>
+  
+    <nav class="md-nav" aria-label="Cosmos Cash Issuer Module">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#source_2" class="md-nav__link">
+    Source
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#functions_2" class="md-nav__link">
+    Functions
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gap-analysis" class="md-nav__link">
+    Gap Analysis
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+<a href="https://github.com/allinbits/cosmos-cash/edit/master/docs/Explanation/topics/Compare USDC vs USDT vs CASH-ISSUER.md" title="Edit this page" class="md-content__button md-icon">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+</a>
+
+
+<h1 id="usdc-vs-usdt-vs-cosmos-cash-issuer">USDC vs USDT vs Cosmos Cash Issuer</h1>
+<ul>
+<li><a href="#usdc-vs-usdt-vs-cosmos-cash-issuer">USDC vs USDT vs Cosmos Cash Issuer</a></li>
+<li><a href="#summary">Summary</a></li>
+<li><a href="#methodology">Methodology</a></li>
+<li><a href="#tldr">TL;DR;</a></li>
+<li><a href="#usdt-erc20-smart-contracts">USDT ERC20 Smart Contracts</a><ul>
+<li><a href="#source">Source</a></li>
+<li><a href="#analysis">Analysis</a></li>
+<li><a href="#roles">Roles</a></li>
+<li><a href="#functions">Functions</a></li>
+</ul>
+</li>
+<li><a href="#usdc-erc-20-smart-contracts">USDC ERC-20 smart contracts</a><ul>
+<li><a href="#source-1">Source</a></li>
+<li><a href="#analysis-1">Analysis</a></li>
+<li><a href="#roles-1">Roles</a></li>
+<li><a href="#functions-1">Functions</a></li>
+</ul>
+</li>
+<li><a href="#cosmos-cash-issuer-module">Cosmos Cash Issuer Module</a><ul>
+<li><a href="#source-2">Source</a></li>
+<li><a href="#functions-2">Functions</a></li>
+</ul>
+</li>
+<li><a href="#gap-analysis">Gap Analysis</a></li>
+</ul>
+<hr />
+<h2 id="summary">Summary</h2>
+<p>USDC and USDT are both Ethereum, ERC-20 smart contract-based stablecoins pegged one-to-one to the US Dollar (USD). However, each USD-backed stablecoin has different implementations. This article will</p>
+<ul>
+<li>Perform a high-level functional gap analysis of each smart contract</li>
+<li>Compare to the current Cosmos Cash proof-of-concept implementation</li>
+<li>Conclude best practices that will inform the Issuer ADR for Cosmos Cash.</li>
+</ul>
+<blockquote>
+<p>Why USDT and  USDC? These are currently the leading stablecoin tokens with total market capitalisation of over 90Bn USD (source: coinmarketcap.com)</p>
+</blockquote>
+<h2 id="methodology">Methodology</h2>
+<p>Each function is labelled based on the following criteria:</p>
+<ul>
+<li><strong>BESPOKE:</strong> custom functionality</li>
+<li><strong><a href="https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/ERC20.sol">ERC20</a>:</strong> part of the ERC20 standard</li>
+<li><strong><a href="https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/security/Pausable.sol">PAUSABLE</a>:</strong> part of the solidity pausable contract standard</li>
+<li><strong><a href="https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol">OWNABLE</a>:</strong> part of the solidity ownable contract standard </li>
+<li><strong><a href="https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/proxy/Proxy.sol">PROXY</a>:</strong> these functions are part of Solidity’s delegate proxy upgradability pattern</li>
+<li><strong><a href="https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/presets/ERC20PresetMinterPauser.sol">MINTABLE</a>:</strong> part of the solidity mintable contract standard</li>
+<li><strong><a href="https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/extensions/ERC20Burnable.sol">BURNABLE</a>:</strong> part of the solidity burnable contract standard</li>
+<li><strong><a href="https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/AccessControl.sol">RBAC</a>:</strong> part of the solidity roles contract standard </li>
+</ul>
+<h2 id="tldr">TL;DR;</h2>
+<table>
+<thead>
+<tr>
+<th align="left">Label</th>
+<th align="left">USDT</th>
+<th align="left">USDC</th>
+<th align="left">Cosmos Cash Issuer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Mintable</td>
+<td align="left">issue(amount)</td>
+<td align="left">mint(_to, _amount)</td>
+<td align="left">mintToken(amount, owner)</td>
+</tr>
+<tr>
+<td align="left">Burnable</td>
+<td align="left">redeem(amount)</td>
+<td align="left">burn(_amount)</td>
+<td align="left">burnToken(amount, owner)</td>
+</tr>
+<tr>
+<td align="left">Pausable</td>
+<td align="left">pause</td>
+<td align="left">pause</td>
+<td align="left">TO DO</td>
+</tr>
+<tr>
+<td align="left">Pausable</td>
+<td align="left">unpause</td>
+<td align="left">unpause</td>
+<td align="left">TO DO</td>
+</tr>
+<tr>
+<td align="left">blacklist</td>
+<td align="left">addBlacklist</td>
+<td align="left">blacklist(_account)</td>
+<td align="left">TO DO</td>
+</tr>
+<tr>
+<td align="left">blacklist</td>
+<td align="left">removeBlacklist(_clearedUser)</td>
+<td align="left">unBlacklist(_account)</td>
+<td align="left">TO DO</td>
+</tr>
+<tr>
+<td align="left">blacklist</td>
+<td align="left">destroyBlackFunds(_blackListedUser)</td>
+<td align="left">n/a</td>
+<td align="left">TO DO</td>
+</tr>
+<tr>
+<td align="left">blacklist</td>
+<td align="left">n/a</td>
+<td align="left">rescueERC20(tokenContract, to, amount)</td>
+<td align="left">TO DO</td>
+</tr>
+<tr>
+<td align="left">ERC20</td>
+<td align="left">transfer(_from, _value)</td>
+<td align="left">transfer(_from, _value)</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">ERC20</td>
+<td align="left">transferFrom(_from, _to, _value)</td>
+<td align="left">transferFrom(_from, _to, _value)</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">ERC20</td>
+<td align="left">approve(_spender, _value)</td>
+<td align="left">approve(_spender, _value)</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">Ownable</td>
+<td align="left">transferOwnership(newOwner)</td>
+<td align="left">transferOwnership(newOwner)</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">Bespoke</td>
+<td align="left">setParams(newBasisPoints, newMaxFee)</td>
+<td align="left">n/a</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">Bespoke</td>
+<td align="left">n/a</td>
+<td align="left">transferWithAuthorization(from, to, value, validAfter, validBefore, nonce, v, r, s)</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">Bespoke</td>
+<td align="left">n/a</td>
+<td align="left">configureMinter(minter, minterAllowedAmount)</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">Bespoke</td>
+<td align="left">n/a</td>
+<td align="left">receiveWithAuthorization(from, to, value, validAfter, validBefore, nonce, v, r, s)</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">Bespoke</td>
+<td align="left">n/a</td>
+<td align="left">cancelAuthorization(authorizer, nonce, v, r, s)</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">RBAC</td>
+<td align="left"></td>
+<td align="left">increaseAllowance(spender, increment)</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">RBAC</td>
+<td align="left"></td>
+<td align="left">decreaseAllowance(spender, decrement)</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">RBAC</td>
+<td align="left">n/a</td>
+<td align="left">removeMinter(minter)</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">RBAC</td>
+<td align="left">n/a</td>
+<td align="left">updateBlacklister(_newBlacklister)</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">RBAC</td>
+<td align="left">n/a</td>
+<td align="left">updateMasterMinter(_newMasterMinter)</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">RBAC</td>
+<td align="left">n/a</td>
+<td align="left">updatePauser(_newPauser)</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">RBAC</td>
+<td align="left">n/a</td>
+<td align="left">updateRescuer(newRescuer)</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">Proxy</td>
+<td align="left">n/a</td>
+<td align="left">initialize(tokenName, tokenSymbol, tokenCurrency, tokenDecimals, newMasterMinter, newPauser, newBlacklister, newOwner)</td>
+<td align="left">createIssuer(token, fee, owner)</td>
+</tr>
+<tr>
+<td align="left">Proxy</td>
+<td align="left">n/a</td>
+<td align="left">initializeV2(string)</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">Proxy</td>
+<td align="left">n/a</td>
+<td align="left">initializeV2_1(newName)</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">Proxy</td>
+<td align="left">deprecate(_upgradedAddress)</td>
+<td align="left">n/a</td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="usdt-erc20-smart-contracts">USDT ERC20 Smart Contracts</h2>
+<h3 id="source">Source</h3>
+<p>This analysis used this definition of the <a href="https://etherscan.io/token/0xdac17f958d2ee523a2206206994597c13d831ec7#writeContract">USDT ERC-20 smart contract</a>. This is found at  0xdac17f958d2ee523a2206206994597c13d831ec7</p>
+<h3 id="analysis">Analysis</h3>
+<p>The USDT smart contracts have <strong>five</strong> main areas of note:</p>
+<ul>
+<li>Tokens freezing PAUASABLE</li>
+<li>Tokens minting, burning MINTABLE, BURNABLE</li>
+<li>Role-Based Access Control</li>
+<li>User denylisting</li>
+<li>Upgrading function (albeit limited)</li>
+</ul>
+<h3 id="roles">Roles</h3>
+<p>This contract has admin privileges for <strong>TWO</strong> roles, each comprising of one address:</p>
+<ul>
+<li><strong>OWNER</strong> - owner owns the contract and can call admin functions</li>
+<li><strong>BLACKLISTER</strong> - can add and remove users from a blacklist</li>
+</ul>
+<h3 id="functions">Functions</h3>
+<p><code>issue(amount)</code> - <strong>BESPOKE/MINTABLE:</strong> mints a certain amount of tokens.</p>
+<p><code>redeem(amount)</code> - <strong>BESPOKE/BURNABLE:</strong> redeems or burns an amount tokens.</p>
+<p><code>pause</code> - <strong>PAUSABLE:</strong> pauses the token transfers. This function can only be called by the contract owner, the issuer of USDT tokens.</p>
+<p><code>unpause</code> - <strong>PAUSABLE:</strong> unpauses token transfers only callable by the token.</p>
+<p><code>addBlacklist(_evilUser)</code> - <strong>BESPOKE:</strong> this function freezes a user's assets by adding an address to a denylist.</p>
+<p><code>removeBlacklist(_clearedUser)</code> - <strong>BESPOKE:</strong> removes a user from a denylist serves, effectively unfreezing a user account.</p>
+<p><code>destroyBlackFunds(_blackListedUser)</code> - <strong>BESPOKE:</strong> burns tokens of a blacklisted address.</p>
+<p><code>transfer(_from, _value)</code> - <strong>ERC20:</strong> transfer tokens from one user to another.</p>
+<p><code>transferFrom(_from, _to, _value)</code> - <strong>ERC20:</strong> Transfers tokens from one address to another, usually called in conjunction with the <code>approve</code> function.</p>
+<p><code>approve(_spender, _value)</code> - <strong>ERC20:</strong> this function approves an address or contracts to use funds on behalf of another user.</p>
+<p><code>transferOwnership(newOwner)</code> - <strong>OWNABLE:</strong> transfers the owner of the contracts to another address.</p>
+<p><code>setParams(newBasisPoints, newMaxFee)</code> - This is <strong>BESPOKE:</strong> functionality that sets specific params on the contract, probable something to do with earning on each transaction; currently, both are zero.</p>
+<p><code>deprecate(_upgradedAddress)</code> - <strong>BESPOKE:</strong> this function is used as part of an upgradability pattern and sets a previous contract as deprecated. The use of this pattern is specific to the upgrading of Ethereum contracts. The reasons for this e are explained in this <a href="https://blog.coinbase.com/usdc-v2-upgrading-a-multi-billion-dollar-erc-20-token-b57cd9437096">Coinbase design blog post</a></p>
+<hr />
+<h2 id="usdc-erc-20-smart-contracts">USDC ERC-20 smart contracts</h2>
+<h3 id="source_1">Source</h3>
+<p>This analysis used this definition of the <a href="https://etherscan.io/token/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48#writeProxyContract">USDC ERC-20 smart contract</a>. This is found at  0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48</p>
+<h3 id="analysis_1">Analysis</h3>
+<p>The USDC contract is more complex than USDT, but like USDT, the functions are based upon <strong>five</strong> function types:</p>
+<ul>
+<li>Tokens freezing.</li>
+<li>Tokens minting/burning.</li>
+<li>RBAC.</li>
+<li>User denylisting.</li>
+<li>Upgrades, using a <strong>Delegate Proxy</strong> pattern.</li>
+</ul>
+<h3 id="roles_1">Roles</h3>
+<p>Unlike USDT, USDC has more granular permissions. There are <strong>FIVE</strong> roles, each comprising one address:</p>
+<ul>
+<li><strong>OWNER</strong> - owner owns the contract and can call admin functions.</li>
+<li><strong>BLACKLISTER</strong> - can add and remove users from a blacklist.</li>
+<li><strong>MASTERMINTER</strong> - can add and remove minters and update minter allowances.</li>
+<li><strong>RESCUER</strong> - can rescue funds from a user, currently a NULL address.</li>
+<li><strong>PAUSER</strong> - can call the pause and unpause functions on the contract.</li>
+</ul>
+<h3 id="functions_1">Functions</h3>
+<p><code>mint(_to, _amount)</code> - <strong>MINTABLE:</strong> mint tokens to a given user.</p>
+<p><code>burn(_amount)</code> - <strong>BURNABLE:</strong> burns a certain number of tokens.</p>
+<p><code>pause</code> - <strong>PAUSABLE:</strong> pauses the token transfers in the contract, only callable by the owner.</p>
+<p><code>unpause</code> - <strong>PAUSABLE:</strong> unpauses token transfers only callable.</p>
+<p><code>blacklist(_account)</code> - <strong>BESPOKE:</strong> this function freezes a user's assets by adding the address to a denylist.</p>
+<p><code>unBlacklist(_account)</code> - <strong>BESPOKE:</strong> removes a user from a denylist serves as freezing an accounts.</p>
+<p><code>rescueERC20(tokenContract, to, amount)</code> - <strong>BESPOKE:</strong> function to rescue funds.</p>
+<p><code>transfer(_from, _value)</code> - <strong>ERC20:</strong> transfer tokens from one user to another.</p>
+<p><code>transferFrom(_from, _to, _value)</code> - <strong>ERC20:</strong> Transfers tokens from one address to another, usually called in conjunction with the <code>approve</code> function.</p>
+<p><code>approve(_spender, _value)</code> - <strong>ERC20:</strong> this function approves an address or contract to use funds on behalf of another user.</p>
+<p><code>transferOwnership(newOwner)</code> - <strong>OWNABLE:</strong> transfers the owner of the contracts to another address.</p>
+<p><code>transferWithAuthorization(from, to, value, validAfter, validBefore, nonce, v, r, s)</code> - <strong>BESPOKE</strong>: This allows a user to send tokens with a signature from another user. </p>
+<p><code>cancelAuthorization(authoriser, nonce, v, r, s)</code> - <strong>BESPOKE:</strong> This stops a user from sending tokens with a signature from a user. </p>
+<p><code>configureMinter(minter, minterAllowedAmount)</code> - <strong>BESPOKE:</strong> allows a minter to mint a certain amount of tokens.</p>
+<p><code>increaseAllowance(spender, increment)</code> - <strong>BESPOKE:</strong> This increases the amount a user can spend per transaction for another user.</p>
+<p><code>decreaseAllowance(spender, decrement)</code> - <strong>BESPOKE:</strong> This decreases the amount a user can spend per transaction for another user.</p>
+<p><code>recieveWithAuthorization(from, to, value, validAfter, validBefore, nonce, v, r, s)</code> - <strong>BESPOKE</strong>: This allows a user to send tokens with a signature from a user.</p>
+<p><code>removeMinter(minter)</code> - <strong>RBAC:</strong> removes an address from the minter role callable by <strong>MASTERMINTER</strong>.</p>
+<p><code>updateBlacklister(_newBlacklister)</code> - <strong>RBAC:</strong> update the admin role <strong>BLACKLIST</strong>.</p>
+<p><code>updateMasterMinter(_newMasterMinter)</code> - <strong>RBAC:</strong> update the admin role <strong>MASTERMINTER</strong>.</p>
+<p><code>updatePauser(_newPauser)</code> - <strong>RBAC:</strong> update the admin role <strong>PAUSER</strong>.</p>
+<p><code>updateRescuer(newRescuer)</code> - <strong>RBAC:</strong> update the admin role <strong>RESCUER</strong>.</p>
+<p><code>initialize(tokenName, tokenSymbol, tokenCurrency, tokenDecimals, newMasterMinter, newPauser, newBlacklister, newOwner)</code> - <strong>PROXY:</strong> This functionality is used as part of the delegate proxy pattern. It initialises the smart contract and allows delegate proxy functionality. The use of this pattern is specific to the upgrading of Ethereum contracts. The reasons for this e are explained in this <a href="https://blog.coinbase.com/usdc-v2-upgrading-a-multi-billion-dollar-erc-20-token-b57cd9437096">Coinbase design blog post</a>.</p>
+<p><code>initializeV2(string)</code> - <strong>PROXY:</strong> This functionality is used as part of the delegate proxy pattern; it initialises the contract and allows delegate proxy functionality.</p>
+<p><code>initializeV2_1(newName)</code> - <strong>PROXY:</strong> This functionality is used as part of the delegate proxy pattern; it initialises the contract and allows delegate proxy functionality.</p>
+<hr />
+<h2 id="cosmos-cash-issuer-module">Cosmos Cash Issuer Module</h2>
+<h3 id="source_2">Source</h3>
+<p>This analysis is based on the <a href="https://github.com/allinbits/cosmos-cash/blob/main/x/issuer/keeper/handler.go#L21-L29">Cosmos Cash proof of concept issuer implementation</a>.</p>
+<h3 id="functions_2">Functions</h3>
+<p><code>createIssuer(token, fee, owner)</code> - This creates an issuer and a token. This initialises the token, and the issuer is the token owner. This is where we could define the token’s PAUSER, BLACKLISTER, MASTERMINTER or other ROLES.</p>
+<p><code>mintToken(amount, owner)</code> - mints new tokens to the owner’s address.</p>
+<p><code>burnToken(amount, owner)</code> - removes tokens from the owner’s address.</p>
+<hr />
+<h2 id="gap-analysis">Gap Analysis</h2>
+<p>The gap between the issuer module and the USDC and USDT smart contracts is not significant. For the Issuer module to be compatible with EVM based smart contracts, the following features must be implemented.</p>
+<ol>
+<li>
+<p><strong>BESPOKE:</strong> <code>Blockedlist</code> </p>
+<ul>
+<li>The blocklist functionality is adding and removing a user from a blocked list<ul>
+<li>addToBlockedList</li>
+<li>removeFromBlocklist</li>
+<li>burnBlockedlistTokens</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>PAUSABLE:</strong> <code>Freeze/Pause</code> token </p>
+<ul>
+<li>Freeze token functionality is a kill switch that stops all trading with an issuer token<ul>
+<li>freezeToken/pauseToken</li>
+<li>unfreezeToken/unpauseToken</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>RBAC:</strong> A <code>Role-Based Access Control</code> credential system is required to interact with the contract or module. There are different implementation options available:</p>
+<ol>
+<li>Defining admin roles in the genesis block.</li>
+<li>This could be implemented using Decentralized IDentity and <strong>public</strong> verifiable credentials such that:<ul>
+<li>The verifiable credential can be issued by a regulator actor or DID to an issuer DID.</li>
+<li>The verifiable credential can allow minting and burning of tokens plus other functions</li>
+<li>The Issuer DID can have multiple DID controllers who can represent different functions in the issuers, such as Operations and Compliance.</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>
+<p><strong>ERC20:</strong> Some <code>ERC20</code> token functions are not in the SDK bank module
+        - transferFrom(to, from, amount)
+        - approve(address)</p>
+</li>
+</ol>
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href="../../articles/regulation-paper/rpts/CosmosCashRegs/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Cosmos Cash" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Cosmos Cash
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../../../How-To/" class="md-footer__link md-footer__link--next" aria-label="Next: How-to guides" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              How-to guides
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.sections", "search.suggest", "search.highlight", "search.share"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../assets/javascripts/workers/search.22074ed6.min.js"}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.960e086b.min.js"></script>
+      
+    
+  </body>
+</html>

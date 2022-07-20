@@ -2,7 +2,7 @@
 
 ## A
 
-### Asset-referenced tokens (ART)
+### asset-referenced tokens (ART)
 
 Several fiat currencies, one or several commodities or one or several
 crypto-assets, or a combination of such assets (the so called “reserve assets”) within the [MiCA](#market-in-crypto-assets-mica) context.
@@ -11,7 +11,7 @@ crypto-assets, or a combination of such assets (the so called “reserve assets�
 
 ## C
 
-### Crypto-asset service provider (CASP)
+### crypto-asset service provider (CASP)
 
 Any person whose occupation or business is the provision of one or more
 crypto-asset services to third parties on a professional basis.
@@ -20,57 +20,91 @@ crypto-asset services to third parties on a professional basis.
 
 ### Decentralized Identifier (DID)
 
-W3C defines a Decentralized Identifier (DID) as a _portable URL-based identifier ... associated with an entity ... An
-example of a DID is `did:example:123456abcdef"*`_
+A type of identifier that enables verifiable, decentralized digital identity. A globally unique persistent identifier that does not require a centralized registration authority and is often generated and/or registered cryptographically. DIDs are fully conformant [Universal Resource Identifiers (URIs)](https://www.ietf.org/rfc/rfc3986.txt). [W3C defines a DID](https://www.w3.org/TR/did-core/#a-simple-example) as a _portable URL-based identifier ... associated with an entity ... An example of a DID is `did:example:123456abcdef"*`_.  
 
-### E-money tokens (EMT)
+### e-money tokens (EMT)
 
-A type of crypto asset for one single fiat currency
+A type of crypto asset for one single fiat currency.
+
+## H
+
+### holder
+
+In the SSI ecosystem, the holder receives identity credentials from an issuer.
+
+## I
+
+### identity management (IdM)
+
+A framework of policies and technologies to ensure that users have the appropriate access to technology resources.
+
+### identity provider (IdP)
+
+The primary component of an identity management (IdM) system that creates, stores, and manages digital identities to provide services such as signup, authentication, and authorization.
+
+### issuer
+
+In the SSI ecosystem, the issuer generates and issues identity credentials.
+
+### key management system (KMS)
+
+A system for the management of cryptographic keys and their metadata.
 
 ## L
 
-### Legal Person
+### legal person
 
-Any person or entity that is able to perform legal activities, such as enter into contracts, own property, and so on
+Any person or entity that is able to perform legal activities, such as enter into contracts, own property, and so on.
 
 ## M
 
-### Market in Crypto-Assets (MiCA)
+### Market in Crypto-assets (MiCA)
 
 [Legislation](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A52020PC0593)
-that covers crypto assets in the European Union
+that covers crypto assets in the European Union.
+
+### mediator
+
+In the SSI ecosystem, the mediator participates in agent-to-agent message delivery. 
+
+### mediator agent 
+
+SSI agents, built on the Aries Go Framework, serve as a bridge between agents. 
 
 ## R
 
-### Regulator
+### regulator
 
 An entity that is established by governments or other organizations to oversee the functioning and fairness of financial markets
 and the firms that engage in financial activity.
 
 ## S
 
-### Self-sovereign identity (SSI)
+### self-sovereign identity (SSI)
 
 An approach to digital identity that gives individuals control of their digital
-identities
+identities, this emerging identity model allows any person, organization, or subject to have multiple sovereign, persistent, and portable identities.
 
 ## V
 
-### Verifiable credential (VC)
+### verifiable credential (VC)
 
-A standard data model and representation format for cryptographically-verifiable digital
-credentials defined by the [W3C Verifiable Credentials specification](https://www.w3.org/TR/did-core/#bib-vc-data-model)
+A tamper-evident credential that has authorship that can be cryptographically verified. A standard data model and representation format for cryptographically-verifiable digital credentials is defined by the [W3C Verifiable Credentials specification](https://www.w3.org/TR/did-core/#bib-vc-data-model).
 
-### Verifiable data registry (VDR)
+### verifiable data registry (VDR)
 
-A system that facilitates the creation, verification, updating, and/or deactivation of decentralized identifiers and [DID](#decentralized-identifier-did)
+A system that facilitates the creation, verification, updating, and deactivation of decentralized identifiers and [DID](#decentralized-identifier-did)
 documents. A verifiable data registry might also be used for other cryptographically-verifiable data structures such as
-verifiable credentials.
+verifiable credentials (VCs).
 
-### Verifiable presentation (VP)
+### verifiable presentation (VP)
 
 A tamper-evident presentation encoded in such a way that authorship of the data can be
-trusted after a process of cryptographic verification
+trusted after a process of cryptographic verification.
+
+### verifier
+
+In the SSI ecosystem, the verifier receives and validates a holder's credentials.
 
 ### Virtual Asset Service Provider (VASP)
 
@@ -85,7 +119,7 @@ asset.” [FATF guidance to the G20](https://www.fatf-gafi.org/publications/virt
 
 ## Z
 
-### Zero-knowledge Proof (ZKP)
+### zero-knowledge proof (ZKP)
 
 In cryptography, a zero-knowledge proof or zero-knowledge protocol is a method by which one party (the prover) can prove to another party (the verifier) that a given statement is true, without conveying any information apart from the fact that the statement is indeed true. The essence of zero-knowledge proofs is that it is trivial to prove that one possesses knowledge of certain information by simply revealing it; the challenge is to prove such possession without revealing the information itself or any additional information ([Zero-knowledge proof on wikipedia](https://en.wikipedia.org/wiki/Zero-knowledge_proof)).
 
